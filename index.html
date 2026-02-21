@@ -42,6 +42,78 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
+        .current-set {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .set-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .set-card {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            border: 3px solid transparent;
+        }
+
+        .set-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .set-card-all {
+            background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+            grid-column: 1 / -1;
+        }
+
+        .set-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .set-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .set-info {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .set-topics {
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+        }
+
+        .taler-display {
+            background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            margin-top: 30px;
+        }
+
         .score-board {
             display: flex;
             justify-content: space-around;
@@ -327,9 +399,46 @@
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <div class="game-container" id="setSelection">
         <div class="header">
             <h1>🎮 English Spelling Adventure</h1>
+            <p style="color: #666; margin-top: 10px;">Wähle dein Vokabel-Set:</p>
+        </div>
+
+        <div class="set-selection">
+            <div class="set-card" onclick="startGame('theme2')">
+                <div class="set-icon">🏫</div>
+                <div class="set-title">Theme 2: At School</div>
+                <div class="set-info">70 Vokabeln</div>
+                <div class="set-topics">Schulfächer • Essen • Wochentage • Schule</div>
+            </div>
+
+            <div class="set-card" onclick="startGame('theme3')">
+                <div class="set-icon">🎭</div>
+                <div class="set-title">Theme 3: Hobbies and Activities</div>
+                <div class="set-info">91 Vokabeln</div>
+                <div class="set-topics">Hobbys • Gefühle • Aktivitäten • Zeit</div>
+            </div>
+
+            <div class="set-card set-card-all" onclick="startGame('all')">
+                <div class="set-icon">🌟</div>
+                <div class="set-title">Alle Vokabeln</div>
+                <div class="set-info">161 Vokabeln</div>
+                <div class="set-topics">Theme 2 + Theme 3 gemischt</div>
+            </div>
+        </div>
+
+        <div class="taler-display">
+            <div style="font-size: 2em;">🪙</div>
+            <div>Deine Taler: <strong><span id="displayTalers">0</span>/50</strong></div>
+            <button class="btn btn-clear" onclick="resetTalersFromMenu()" style="margin-top: 10px; font-size: 0.9em;">Taler zurücksetzen</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer" style="display: none;">
+        <div class="header">
+            <h1>🎮 English Spelling Adventure</h1>
+            <div class="current-set" id="currentSetName"></div>
         </div>
 
         <div class="score-board">
@@ -388,7 +497,90 @@
     </div>
 
     <script>
-        const vocabulary = [
+        const vocabularyTheme2 = [
+            // Theme 2: At school - Page 1
+            { english: 'idea', german: 'Idee, Einfall', image: '💡', hint: 'Ein guter Gedanke' },
+            { english: 'next', german: 'nächste(r, s)', image: '➡️', hint: 'Was kommt danach?' },
+            { english: 'outside', german: 'draußen', image: '🌳', hint: 'Nicht drinnen' },
+            { english: 'quite', german: 'ziemlich, ganz', image: '✨', hint: 'Sehr, aber nicht ganz' },
+            { english: 'sure', german: 'sicher', image: '✓', hint: 'Ohne Zweifel' },
+            { english: 'thanks', german: 'Danke', image: '🙏', hint: 'Höflich sein' },
+            { english: 'diary', german: 'Tagebuch', image: '📔', hint: 'Persönliche Notizen' },
+            { english: 'music', german: 'Musik', image: '🎵', hint: 'Klingt gut' },
+            { english: 'lunch', german: 'Mittagessen', image: '🍽️', hint: 'Mahlzeit am Mittag' },
+            { english: 'meet', german: 'treffen', image: '👥', hint: 'Jemanden sehen' },
+            { english: 'after', german: 'nach', image: '⏰', hint: 'Danach' },
+            { english: 'real', german: 'wirklich, echt', image: '💯', hint: 'Nicht falsch' },
+            { english: 'both', german: 'beide(s)', image: '👥', hint: 'Zwei zusammen' },
+            { english: 'french', german: 'Französisch', image: '🇫🇷', hint: 'Sprache aus Frankreich' },
+            { english: 'make', german: 'machen, erstellen', image: '🔨', hint: 'Etwas herstellen' },
+            { english: 'think', german: 'denken, glauben, meinen', image: '🤔', hint: 'Im Kopf überlegen' },
+            { english: 'stupid', german: 'dumm, blöd', image: '😵', hint: 'Nicht schlau' },
+            { english: 'pet', german: 'Haustier', image: '🐕', hint: 'Tier zu Hause' },
+            { english: 'art', german: 'Kunst(unterricht)', image: '🎨', hint: 'Kreatives Fach' },
+            { english: 'library', german: 'Bibliothek, Bücherei', image: '📚', hint: 'Viele Bücher zum Ausleihen' },
+            { english: 'science', german: 'Naturwissenschaft', image: '🔬', hint: 'Biologie, Chemie, Physik' },
+            { english: 'number', german: 'Zahl, Ziffer, Nummer', image: '🔢', hint: '1, 2, 3...' },
+            { english: 'drama', german: 'Drama, Theater', image: '🎭', hint: 'Schauspiel' },
+            { english: 'english', german: 'Englisch', image: '🇬🇧', hint: 'Diese Sprache!' },
+            { english: 'geography', german: 'Erdkunde, Geografie', image: '🗺️', hint: 'Länder und Städte' },
+            { english: 'history', german: 'Geschichte', image: '📜', hint: 'Die Vergangenheit' },
+            { english: 'maths', german: 'Mathe', image: '➗', hint: 'Rechnen' },
+            { english: 'face', german: 'Gesicht', image: '😊', hint: 'Augen, Nase, Mund' },
+            { english: 'seat', german: 'Sitzplatz', image: '💺', hint: 'Zum Hinsetzen' },
+            { english: 'lunchbox', german: 'Lunchbox, Brotdose', image: '🥪', hint: 'Essen für die Pause' },
+            { english: 'grumpy', german: 'mürrisch, schlecht gelaunt', image: '😠', hint: 'Schlechte Laune' },
+            { english: 'first', german: 'zuerst, als Erstes', image: '🥇', hint: 'Nummer eins' },
+            
+            // Theme 2: At school - Page 2
+            { english: 'timetable', german: 'Stundenplan', image: '📅', hint: 'Wann welches Fach?' },
+            { english: 'today', german: 'heute', image: '📆', hint: 'Dieser Tag' },
+            { english: 'before', german: 'vor', image: '⏪', hint: 'Vorher' },
+            { english: 'morning', german: 'Morgen, Vormittag', image: '🌅', hint: 'Früh am Tag' },
+            { english: 'break', german: 'Pause', image: '⏸️', hint: 'Kurze Unterbrechung' },
+            { english: 'sir', german: 'Herr', image: '👨‍🏫', hint: 'Höfliche Anrede männlich' },
+            { english: 'afternoon', german: 'Nachmittag', image: '🌤️', hint: 'Nach dem Mittag' },
+            { english: 'when', german: 'wann', image: '⏰', hint: 'Zu welcher Zeit?' },
+            { english: 'what', german: 'welche(r, s)', image: '❓', hint: 'Welches?' },
+            { english: 'puzzle', german: 'Rätsel, Fragespiel', image: '🧩', hint: 'Knifflige Aufgabe' },
+            { english: 'understand', german: 'verstehen', image: '💭', hint: 'Begreifen' },
+            { english: 'weird', german: 'merkwürdig, seltsam, komisch', image: '🤨', hint: 'Nicht normal' },
+            { english: 'crown', german: 'Krone', image: '👑', hint: 'König trägt das' },
+            { english: 'flag', german: 'Fahne, Flagge', image: '🚩', hint: 'Symbol eines Landes' },
+            { english: 'try', german: 'versuchen, probieren', image: '💪', hint: 'Es versuchen' },
+            { english: 'monday', german: 'Montag', image: '📅', hint: 'Erster Wochentag' },
+            { english: 'tuesday', german: 'Dienstag', image: '📅', hint: 'Zweiter Wochentag' },
+            { english: 'wednesday', german: 'Mittwoch', image: '📅', hint: 'Mitte der Woche' },
+            { english: 'thursday', german: 'Donnerstag', image: '📅', hint: 'Vierter Wochentag' },
+            { english: 'friday', german: 'Freitag', image: '📅', hint: 'Letzter Schultag' },
+            { english: 'saturday', german: 'Samstag', image: '📅', hint: 'Wochenende beginnt' },
+            { english: 'sunday', german: 'Sonntag', image: '📅', hint: 'Letzter Tag der Woche' },
+            { english: 'sit', german: 'sitzen', image: '🪑', hint: 'Auf einem Stuhl' },
+            { english: 'pupil', german: 'Schüler/in', image: '👨‍🎓', hint: 'Lernt in der Schule' },
+            { english: 'menu', german: 'Speisekarte', image: '📋', hint: 'Liste mit Essen' },
+            { english: 'meal', german: 'Mahlzeit, Essen', image: '🍽️', hint: 'Frühstück, Mittag, Abend' },
+            { english: 'salad', german: 'Salat', image: '🥗', hint: 'Gesund und grün' },
+            { english: 'other', german: 'andere(r, s)', image: '↔️', hint: 'Nicht dieser' },
+            { english: 'language', german: 'Sprache', image: '💬', hint: 'Deutsch, Englisch...' },
+            { english: 'vegetarian', german: 'Vegetarier/in, vegetarisch', image: '🥕', hint: 'Ohne Fleisch' },
+            { english: 'dessert', german: 'Nachtisch', image: '🍰', hint: 'Süßes nach dem Essen' },
+            { english: 'fresh', german: 'neu, ungebraucht, frisch', image: '✨', hint: 'Nicht alt' },
+            { english: 'fruit', german: 'Frucht, Obst', image: '🍎', hint: 'Apfel, Banane...' },
+            { english: 'chicken', german: 'Huhn, Hähnchen', image: '🍗', hint: 'Geflügel' },
+            { english: 'rice', german: 'Reis', image: '🍚', hint: 'Weißes Korn aus Asien' },
+            { english: 'cheese', german: 'Käse', image: '🧀', hint: 'Aus Milch gemacht' },
+            { english: 'tomato', german: 'Tomate', image: '🍅', hint: 'Rot und rund' },
+            { english: 'apple', german: 'Apfel', image: '🍎', hint: 'Rote Frucht' },
+            { english: 'sauce', german: 'Soße, Sauce', image: '🥫', hint: 'Flüssige Beilage' },
+            { english: 'banana', german: 'Banane', image: '🍌', hint: 'Gelb und krumm' },
+            { english: 'lamb', german: 'Lamm(fleisch)', image: '🐑', hint: 'Fleisch vom Schaf' },
+            { english: 'potato', german: 'Kartoffel', image: '🥔', hint: 'Pommes frites daraus' },
+            { english: 'chips', german: 'Pommes frites', image: '🍟', hint: 'Frittiert und salzig' },
+            { english: 'food', german: 'Essen, Nahrung, Futter', image: '🍔', hint: 'Was man isst' },
+            { english: 'nice', german: 'schön, angenehm, nett, freundlich', image: '😊', hint: 'Gut und freundlich' }
+        ];
+
+        const vocabularyTheme3 = [
             // Theme 3: Hobbies and activities - Page 1
             { english: 'hour', german: 'Stunde', image: '⏰', hint: 'Zeiteinheit' },
             { english: 'later', german: 'Später', image: '⏱️', hint: 'Nicht jetzt' },
@@ -526,6 +718,8 @@
         let correctFirstTryCount = 0; // Counter for words correct on first try
         let talersEarned = 0; // Talers earned this round
         let totalTalers = 0; // Total talers across all rounds
+        let currentVocabularySet = ''; // Which set is currently active
+        let vocabulary = []; // Will be set based on selection
 
         function shuffleArray(array) {
             const newArray = [...array];
@@ -534,6 +728,28 @@
                 [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
             return newArray;
+        }
+
+        function startGame(setChoice) {
+            // Set vocabulary based on choice
+            if (setChoice === 'theme2') {
+                vocabulary = vocabularyTheme2;
+                currentVocabularySet = 'Theme 2: At School';
+            } else if (setChoice === 'theme3') {
+                vocabulary = vocabularyTheme3;
+                currentVocabularySet = 'Theme 3: Hobbies and Activities';
+            } else if (setChoice === 'all') {
+                vocabulary = [...vocabularyTheme2, ...vocabularyTheme3];
+                currentVocabularySet = 'Alle Vokabeln (Theme 2 + 3)';
+            }
+            
+            // Hide selection, show game
+            document.getElementById('setSelection').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('currentSetName').textContent = currentVocabularySet;
+            
+            // Initialize game
+            initGame();
         }
 
         function initGame() {
@@ -567,6 +783,24 @@
             document.getElementById('total').textContent = shuffledVocabulary.length;
             loadWord();
         }
+
+        function resetTalersFromMenu() {
+            if (confirm('Möchtest du wirklich alle Taler zurücksetzen? Dies kann nicht rückgängig gemacht werden.')) {
+                localStorage.setItem('vocabularyGameTalers', '0');
+                totalTalers = 0;
+                document.getElementById('displayTalers').textContent = '0';
+                alert('Taler wurden zurückgesetzt! Viel Erfolg beim nächsten Mal! 🪙');
+            }
+        }
+
+        // Load talers on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTalers = localStorage.getItem('vocabularyGameTalers');
+            if (savedTalers) {
+                totalTalers = parseInt(savedTalers);
+                document.getElementById('displayTalers').textContent = totalTalers;
+            }
+        });
 
         function loadWord() {
             // Check if we finished all main words
@@ -982,9 +1216,6 @@
         document.getElementById('checkBtn').addEventListener('click', checkAnswer);
         document.getElementById('skipBtn').addEventListener('click', skipWord);
         document.getElementById('clearBtn').addEventListener('click', clearAnswer);
-
-        // Initialize game
-        initGame();
     </script>
 </body>
 </html>
