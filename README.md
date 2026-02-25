@@ -61,7 +61,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - Lernhorizont: gewichtete Vokabelauswahl priorisiert schwächere Wörter
 - Emoji-Vorhang: bereits gekonnte Vokabeln werden theatralisch enthüllt
 - Fortschritt wird pro Übersetzungsrichtung getrackt (DE→EN / EN→DE / DE→LA / LA→DE)
-- Lernstatistik auf der Ergebnis-Seite (Vokabeln mit ≥3× richtig = gelernt)
+- Lernstatistik pro Kapitel auf der Ergebnis-Seite (3× richtig = gelernt)
 - Button "Lernfortschritt zurücksetzen" auf der Startseite
 
 ### Version 2.1.0 (25.02.2026)
