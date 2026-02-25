@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Vocabulary Adventure 2.0</title>
+    <title>🎮 English Spelling Adventure</title>
     <style>
         * {
             margin: 0;
@@ -18,26 +18,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 20px;
         }
 
         .game-container {
             background: white;
             border-radius: 30px;
-            padding: 20px;
+            padding: 40px;
             max-width: 800px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        @media (min-width: 768px) {
-            .game-container {
-                padding: 40px;
-            }
-            
-            body {
-                padding: 20px;
-            }
         }
 
         .header {
@@ -47,395 +37,131 @@
 
         .header h1 {
             color: #667eea;
-            font-size: 1.8em;
+            font-size: 2.5em;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        @media (min-width: 768px) {
-            .header h1 {
-                font-size: 2.5em;
-            }
-        }
-
-        .current-set {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 15px;
-            font-size: 0.75em;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        @media (min-width: 768px) {
-            .current-set {
-                padding: 8px 20px;
-                border-radius: 20px;
-                font-size: 0.9em;
-            }
-        }
-
-        /* Changelog Modal */
-        .changelog-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .changelog-content {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            text-align: center;
-            animation: popIn 0.5s;
-        }
-
-        .changelog-content h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
-
-        .changelog-content ul {
-            text-align: left;
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
-
-        .changelog-content li {
-            padding: 10px 15px;
-            margin: 8px 0;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
-            border-radius: 10px;
-            font-size: 1em;
-            border-left: 4px solid #667eea;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .set-selection {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        @media (min-width: 768px) {
-            .set-selection {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-                margin: 30px 0;
-            }
-        }
-
-        .set-card {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 20px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        @media (min-width: 768px) {
-            .set-card {
-                padding: 30px;
-            }
-        }
-
-        .set-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .set-card-theme2 {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-        }
-
-        .set-card-theme3 {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        }
-
-        .set-card-all {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        }
-
-        .set-card-latin {
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            color: white;
-        }
-
-        .set-card-english {
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-        }
-
-        .set-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-
-        @media (min-width: 768px) {
-            .set-icon {
-                font-size: 4em;
-                margin-bottom: 20px;
-            }
-        }
-
-        .set-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        @media (min-width: 768px) {
-            .set-title {
-                font-size: 1.5em;
-            }
-        }
-
-        .set-card-latin .set-title,
-        .set-card-latin .set-info,
-        .set-card-latin .set-topics {
-            color: white;
-        }
-
-        .set-info {
-            font-size: 1em;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .set-topics {
-            font-size: 0.85em;
-            color: #888;
-        }
-
-        .taler-display {
-            background: linear-gradient(135deg, #ffd89b 0%, #ffb347 100%);
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 1em;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
         .score-board {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-around;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
+            margin-bottom: 30px;
             padding: 15px;
-            border-radius: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .score-board {
-                gap: 20px;
-                padding: 20px;
-            }
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
         }
 
         .score-item {
             text-align: center;
-            flex: 1;
-            min-width: 80px;
         }
 
-        .score-label {
-            font-size: 0.8em;
-            color: #666;
-            margin-bottom: 5px;
+        .score-item .label {
+            font-size: 0.9em;
+            opacity: 0.9;
         }
 
-        @media (min-width: 768px) {
-            .score-label {
-                font-size: 0.9em;
-            }
-        }
-
-        .score-value {
-            font-size: 1.5em;
+        .score-item .value {
+            font-size: 2em;
             font-weight: bold;
-            color: #667eea;
         }
 
-        @media (min-width: 768px) {
-            .score-value {
-                font-size: 2em;
-            }
+        .taler-item {
+            background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+            padding: 10px 15px;
+            border-radius: 10px;
+            animation: shine 2s infinite;
         }
 
-        .word-display {
+        @keyframes shine {
+            0%, 100% { box-shadow: 0 0 10px rgba(249, 212, 35, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(249, 212, 35, 0.8); }
+        }
+
+        .taler-item .value {
+            font-size: 1.8em;
+        }
+
+        .word-card {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
             text-align: center;
-            margin: 30px 0;
         }
 
         .word-image {
-            font-size: 60px;
-            margin-bottom: 20px;
+            font-size: 100px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
         }
 
-        @media (min-width: 768px) {
-            .word-image {
-                font-size: 100px;
-            }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .word-german {
-            font-size: 1.3em;
+            font-size: 1.8em;
             color: #333;
             margin-bottom: 10px;
             font-weight: bold;
         }
 
-        @media (min-width: 768px) {
-            .word-german {
-                font-size: 1.8em;
-            }
-        }
-
-        .word-latin {
-            font-size: 1.5em;
-            color: #19547b;
-            margin-bottom: 15px;
-            font-weight: bold;
+        .word-hint {
+            font-size: 1em;
+            color: #666;
             font-style: italic;
-        }
-
-        @media (min-width: 768px) {
-            .word-latin {
-                font-size: 2em;
-            }
         }
 
         .auto-hint {
-            font-size: 1em;
-            color: #999;
-            font-style: italic;
-            margin-top: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .auto-hint {
-                font-size: 1.3em;
-            }
-        }
-
-        /* Multiple Choice for Latin */
-        .choices-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 30px 0;
-        }
-
-        .choice-btn {
-            background: white;
-            border: 3px solid #667eea;
-            border-radius: 15px;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
-            position: relative;
-            font-family: inherit;
-        }
-
-        .choice-btn:hover {
-            background: #f0f4ff;
-            transform: translateX(5px);
-        }
-
-        .choice-btn.correct {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        .choice-btn.wrong {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: white;
-        }
-
-        .choice-number {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
+            margin-top: 15px;
+            font-size: 1.3em;
+            color: #667eea;
             font-weight: bold;
+            min-height: 30px;
+            animation: fadeIn 0.5s;
         }
 
-        /* Letter Slots and Tiles */
-        .letter-slots {
+        .auto-hint.show {
+            color: #f5576c;
+        }
+
+        .answer-area {
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin: 20px 0;
+            margin-bottom: 30px;
+            min-height: 80px;
             flex-wrap: wrap;
         }
 
         .letter-slot {
-            width: 45px;
-            height: 55px;
-            border: 3px dashed #ccc;
+            width: 60px;
+            height: 70px;
+            border: 3px dashed #667eea;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
-            background: #f8f8f8;
+            color: #667eea;
+            background: #f0f4ff;
             transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        @media (min-width: 768px) {
-            .letter-slot {
-                width: 60px;
-                height: 70px;
-                font-size: 2em;
-            }
         }
 
         .letter-slot.filled {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
-            border: 3px solid #667eea;
+            border-style: solid;
+            transform: scale(1.05);
         }
 
         .letter-slot.correct {
             background: #10b981;
             border-color: #10b981;
-            animation: bounce 0.5s;
+            animation: celebrate 0.5s;
         }
 
         .letter-slot.wrong {
@@ -444,9 +170,9 @@
             animation: shake 0.5s;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(10deg); }
         }
 
         @keyframes shake {
@@ -455,36 +181,29 @@
             75% { transform: translateX(10px); }
         }
 
-        .letter-tiles {
+        .letters-pool {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin: 20px 0;
+            gap: 10px;
             flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
         .letter-tile {
-            width: 45px;
-            height: 55px;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            width: 60px;
+            height: 70px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
-            cursor: pointer;
+            color: white;
+            cursor: grab;
+            user-select: none;
             transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            color: #333;
-        }
-
-        @media (min-width: 768px) {
-            .letter-tile {
-                width: 60px;
-                height: 70px;
-                font-size: 2em;
-            }
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .letter-tile:hover {
@@ -492,542 +211,190 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
-        .letter-tile.used {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: scale(0.9);
+        .letter-tile:active {
+            cursor: grabbing;
         }
 
-        .feedback {
-            text-align: center;
-            font-size: 1.2em;
-            margin: 20px 0;
-            min-height: 30px;
-            font-weight: bold;
+        .letter-tile.used {
+            opacity: 0.3;
+            pointer-events: none;
         }
 
         .buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 15px 30px;
+            font-size: 1.2em;
             border: none;
             border-radius: 15px;
-            font-size: 1em;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
+            transition: all 0.3s;
             color: white;
-            font-family: inherit;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        @media (min-width: 768px) {
-            .btn {
-                padding: 15px 30px;
-                font-size: 1.1em;
-            }
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
+        .btn small {
+            font-size: 0.7em;
+            opacity: 0.8;
+            font-weight: normal;
         }
 
         .btn-check {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .btn-skip {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
-        .btn-continue {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
         .btn-clear {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
-        .btn small {
-            font-size: 0.75em;
-            opacity: 0.9;
-            display: none;
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
-        @media (min-width: 768px) {
-            .btn small {
-                display: inline;
-            }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            min-height: 40px;
+        }
+
+        .feedback.correct {
+            color: #10b981;
+            animation: fadeIn 0.5s;
+        }
+
+        .feedback.wrong {
+            color: #ef4444;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
             display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .celebration-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: white;
+            padding: 50px;
             border-radius: 30px;
-            padding: 30px;
             text-align: center;
-            max-width: 500px;
-            width: 100%;
-            animation: popIn 0.5s;
-            max-height: 90vh;
-            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
         }
 
-        @media (min-width: 768px) {
-            .celebration-content {
-                padding: 50px;
-            }
+        .celebration.show {
+            display: block;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0); }
+            to { transform: translate(-50%, -50%) scale(1); }
         }
 
         .celebration h2 {
-            font-size: 2em;
+            font-size: 3em;
             color: #667eea;
             margin-bottom: 20px;
         }
 
-        @media (min-width: 768px) {
-            .celebration h2 {
-                font-size: 3em;
-            }
-        }
-
         .celebration .final-score {
-            font-size: 1em;
+            font-size: 2em;
             color: #333;
-            margin-bottom: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .celebration .final-score {
-                font-size: 1.2em;
-                margin-bottom: 30px;
-            }
-        }
-
-        .confetti {
-            font-size: 3em;
-            margin: 20px 0;
+            margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
-
-    <!-- Changelog Modal -->
-    <div class="changelog-modal" id="changelogModal" style="display: none;">
-        <div class="changelog-content">
-            <h2>🎉 Neu in Version 2.0.0!</h2>
-            <ul id="changelogList"></ul>
-            <button class="btn btn-check" onclick="closeChangelog()">Los geht's! 🚀</button>
-        </div>
-    </div>
-
-    <!-- Language Selection -->
-    <div class="game-container" id="languageSelection">
-        <div class="header">
-            <h1>🎮 Vocabulary Adventure</h1>
-            <p style="color: #666; margin-top: 10px;">Wähle deine Sprache:</p>
-        </div>
-
-        <div class="set-selection">
-            <div class="set-card set-card-english" onclick="selectLanguage('english')">
-                <div class="set-icon">🇬🇧</div>
-                <div class="set-title">English</div>
-                <div class="set-info">Spelling Adventure</div>
-                <div class="set-topics">2 Themes • 140 Vokabeln</div>
-            </div>
-
-            <div class="set-card set-card-latin" onclick="selectLanguage('latin')">
-                <div class="set-icon">🏛️</div>
-                <div class="set-title">Latein</div>
-                <div class="set-info">Übersetzungs-Training</div>
-                <div class="set-topics">Kapitel 3 • 41 Vokabeln</div>
-            </div>
-        </div>
-
-        <div class="taler-display">
-            <div style="font-size: 2em;">🪙</div>
-            <div>Deine Taler: <strong><span id="displayTalers">0</span>/50</strong></div>
-            <button class="btn btn-clear" onclick="resetTalersFromMenu()" style="margin-top: 10px; font-size: 0.9em;">Taler zurücksetzen</button>
-        </div>
-    </div>
-
-    <!-- Chapter Selection (for Latin) -->
-    <div class="game-container" id="chapterSelection" style="display: none;">
-        <div class="header">
-            <h1>🏛️ Latein</h1>
-            <p style="color: #666; margin-top: 10px;">Wähle ein Kapitel:</p>
-        </div>
-
-        <div class="set-selection">
-            <div class="set-card set-card-latin" onclick="selectChapter('latin-3')">
-                <div class="set-icon">📖</div>
-                <div class="set-title">Kapitel 3</div>
-                <div class="set-info">41 Vokabeln</div>
-                <div class="set-topics">Lektionen 1-5</div>
-            </div>
-        </div>
-
-        <button class="btn btn-clear" onclick="backToLanguageSelection()" style="margin-top: 20px;">← Zurück</button>
-    </div>
-
-    <!-- Theme Selection (for English) -->
-    <div class="game-container" id="setSelection" style="display: none;">
-        <div class="header">
-            <h1>🇬🇧 English Spelling Adventure</h1>
-            <p style="color: #666; margin-top: 10px;">Wähle dein Vokabel-Set:</p>
-        </div>
-
-        <div class="set-selection">
-            <div class="set-card set-card-theme2" onclick="startGame('theme2')">
-                <div class="set-icon">🏫</div>
-                <div class="set-title">Theme 2: At School</div>
-                <div class="set-info">70 Vokabeln</div>
-                <div class="set-topics">Schulfächer • Essen • Wochentage • Schule</div>
-            </div>
-
-            <div class="set-card set-card-theme3" onclick="startGame('theme3')">
-                <div class="set-icon">🎭</div>
-                <div class="set-title">Theme 3: Hobbies and Activities</div>
-                <div class="set-info">70 Vokabeln</div>
-                <div class="set-topics">Hobbys • Gefühle • Aktivitäten • Zeit</div>
-            </div>
-
-            <div class="set-card set-card-all" onclick="startGame('all')">
-                <div class="set-icon">🌟</div>
-                <div class="set-title">Alle Vokabeln</div>
-                <div class="set-info">140 Vokabeln</div>
-                <div class="set-topics">Theme 2 + Theme 3 gemischt</div>
-            </div>
-        </div>
-
-        <button class="btn btn-clear" onclick="backToLanguageSelection()" style="margin-top: 20px;">← Zurück</button>
-    </div>
-
-    <!-- Game Container (English Spelling) -->
-    <div class="game-container" id="gameContainer" style="display: none;">
+    <div class="game-container">
         <div class="header">
             <h1>🎮 English Spelling Adventure</h1>
-            <div class="current-set" id="currentSetName">Theme 2</div>
         </div>
 
         <div class="score-board">
             <div class="score-item">
-                <div class="score-label">Fortschritt</div>
-                <div class="score-value"><span id="progress">0</span>/<span id="total">0</span></div>
+                <div class="label">Punkte</div>
+                <div class="value" id="score">0</div>
             </div>
             <div class="score-item">
-                <div class="score-label">Richtig</div>
-                <div class="score-value" style="color: #10b981;"><span id="correct">0</span></div>
+                <div class="label">Wort</div>
+                <div class="value"><span id="current">1</span>/<span id="total">10</span></div>
             </div>
             <div class="score-item">
-                <div class="score-label">Wiederholen</div>
-                <div class="score-value" style="color: #f59e0b;"><span id="repeats">0</span></div>
+                <div class="label">Richtig</div>
+                <div class="value" id="correct">0</div>
             </div>
             <div class="score-item">
-                <div class="score-label">🪙 Taler</div>
-                <div class="score-value" style="color: #fbbf24;"><span id="talers">0</span>/50</div>
+                <div class="label">🔄 Wiederh.</div>
+                <div class="value" id="repeats">0</div>
+            </div>
+            <div class="score-item taler-item">
+                <div class="label">🪙 Taler</div>
+                <div class="value"><span id="totalTalers">0</span>/50</div>
             </div>
         </div>
 
-        <div class="word-display">
-            <div class="word-image" id="wordImage">🎯</div>
-            <div class="word-german" id="wordGerman">Bereit?</div>
+        <div class="word-card">
+            <div class="word-image" id="wordImage">🐱</div>
+            <div class="word-german" id="wordGerman">Katze</div>
+            <div class="word-hint" id="wordHint">Ein Haustier mit vier Beinen</div>
             <div class="auto-hint" id="autoHint"></div>
         </div>
 
-        <div class="letter-slots" id="letterSlots"></div>
-        <div class="letter-tiles" id="letterTiles"></div>
+        <div class="answer-area" id="answerArea"></div>
 
-        <div class="feedback" id="feedback"></div>
+        <div class="letters-pool" id="lettersPool"></div>
 
         <div class="buttons">
             <button class="btn btn-clear" id="clearBtn">🔄 Löschen <small>(ESC)</small></button>
             <button class="btn btn-check" id="checkBtn">✓ Prüfen <small>(ENTER)</small></button>
             <button class="btn btn-skip" id="skipBtn">→ Überspringen</button>
-            <button class="btn btn-continue" id="continueBtn" style="display: none;">▶️ Weiter</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9em;">
+            💡 <strong>Tipp:</strong> Du kannst die Buchstaben auch mit der Tastatur eingeben! 
+            <br>Backspace = letzten Buchstaben löschen | ESC = alles löschen | Enter = prüfen
         </div>
     </div>
 
-    <!-- Game Container (Latin Translation) -->
-    <div class="game-container" id="latinGameContainer" style="display: none;">
-        <div class="header">
-            <h1>🏛️ Latein Training</h1>
-            <div class="current-set" id="latinCurrentSet">Kapitel 3</div>
-        </div>
-
-        <div class="score-board">
-            <div class="score-item">
-                <div class="score-label">Fortschritt</div>
-                <div class="score-value"><span id="latinProgress">0</span>/<span id="latinTotal">0</span></div>
-            </div>
-            <div class="score-item">
-                <div class="score-label">Richtig</div>
-                <div class="score-value" style="color: #10b981;"><span id="latinCorrect">0</span></div>
-            </div>
-            <div class="score-item">
-                <div class="score-label">Wiederholen</div>
-                <div class="score-value" style="color: #f59e0b;"><span id="latinRepeats">0</span></div>
-            </div>
-            <div class="score-item">
-                <div class="score-label">🪙 Taler</div>
-                <div class="score-value" style="color: #fbbf24;"><span id="latinTalers">0</span>/50</div>
-            </div>
-        </div>
-
-        <div class="word-display">
-            <div class="word-image" id="latinWordImage">🏛️</div>
-            <div id="latinQuestionContainer">
-                <div class="word-latin" id="latinWord">Salvē!</div>
-                <div class="auto-hint" id="latinHint"></div>
-            </div>
-        </div>
-
-        <!-- Multiple Choice Container (Latin to German) -->
-        <div class="choices-container" id="choicesContainer" style="display: none;"></div>
-
-        <!-- Spelling Container (German to Latin) -->
-        <div id="spellingContainer" style="display: none;">
-            <div class="letter-slots" id="latinLetterSlots"></div>
-            <div class="letter-tiles" id="latinLetterTiles"></div>
-        </div>
-
-        <div class="feedback" id="latinFeedback"></div>
-
-        <div class="buttons" id="latinButtons">
-            <button class="btn btn-clear" id="latinClearBtn" style="display: none;">🔄 Löschen</button>
-            <button class="btn btn-skip" id="latinSkipBtn">→ Überspringen</button>
-            <button class="btn btn-continue" id="latinContinueBtn" style="display: none;">▶️ Weiter</button>
-        </div>
-    </div>
-
-    <!-- Celebration Screen -->
     <div class="celebration" id="celebration">
-        <div class="celebration-content">
-            <h2>🎉 Geschafft!</h2>
-            <div class="confetti">🎊🎈🎉</div>
-            <div class="final-score" id="finalScore"></div>
-            <button class="btn btn-check" onclick="resetGame()">🔄 Nochmal spielen</button>
-            <button class="btn btn-skip" onclick="backToMenu()" style="margin-top: 10px;">← Zurück zum Menü</button>
-        </div>
+        <h2>🎉 Super gemacht! 🎉</h2>
+        <div class="final-score" id="finalScore"></div>
+        <button class="btn btn-check" onclick="location.reload()">Nochmal spielen</button>
+        <button class="btn btn-clear" onclick="resetTalers()" style="margin-top: 10px;">🔄 Taler zurücksetzen</button>
     </div>
 
     <script>
-        // Version Management
-        const APP_VERSION = '2.0.0';
-        const CHANGELOG = {
-            '2.0.0': {
-                date: '2025-02-24',
-                changes: [
-                    '🎓 Latein hinzugefügt! Neue Sprache zum Lernen',
-                    '📚 Kapitelauswahl für Latein (Kapitel 3)',
-                    '🔄 Zwei Übersetzungsrichtungen: Latein→Deutsch & Deutsch→Latein',
-                    '✅ Multiple-Choice für Latein→Deutsch',
-                    '⌨️ Buchstabieren für Deutsch→Latein',
-                    '🐛 Bug-Fix: Mehrfaches Enter-Drücken behoben',
-                    '➡️ "Weiter"-Button beim Überspringen',
-                    '🔧 Verbesserte Wiederholungslogik'
-                ]
-            }
-        };
-
-        // Check if changelog should be shown
-        function checkChangelog() {
-            const lastSeenVersion = localStorage.getItem('lastSeenVersion');
-            if (lastSeenVersion !== APP_VERSION) {
-                showChangelog();
-                localStorage.setItem('lastSeenVersion', APP_VERSION);
-            }
-        }
-
-        function showChangelog() {
-            const modal = document.getElementById('changelogModal');
-            const list = document.getElementById('changelogList');
-            
-            const versionData = CHANGELOG[APP_VERSION];
-            list.innerHTML = versionData.changes.map(change => 
-                `<li>${change}</li>`
-            ).join('');
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeChangelog() {
-            document.getElementById('changelogModal').style.display = 'none';
-        }
-
-        // Game State
-        let currentLanguage = null; // 'english' or 'latin'
-        let currentMode = null; // 'spelling' or 'translation'
-        let translationDirection = null; // 'latin-to-german' or 'german-to-latin'
-        let currentWordIndex = 0;
-        let score = 0;
-        let correctCount = 0;
-        let currentWord = '';
-        let currentTranslation = '';
-        let selectedLetters = [];
-        let shuffledVocabulary = [];
-        let wordStats = {};
-        let currentWordStartTime = 0;
-        let attemptCount = 0;
-        let wordsToRepeat = [];
-        let isRepeatPhase = false;
-        let hintTimeout = null;
-        let correctFirstTryCount = 0;
-        let talersEarned = 0;
-        let totalTalers = 0;
-        let currentVocabularySet = '';
-        let vocabulary = [];
-        let isProcessing = false;
-
-        // Latin Vocabulary - Kapitel 3
-        const vocabularyLatin = [
-            { latin: 'Salvē! Salvēte!', german: 'Sei gegrüßt! Seid gegrüßt!', image: '👋' },
-            { latin: 'narrāre', german: 'erzählen', image: '📖' },
-            { latin: 'puella', german: 'das Mädchen', image: '👧' },
-            { latin: 'statim', german: 'sofort', image: '⚡' },
-            { latin: 'parāre', german: '(vor)bereiten, vorhaben, erwerben', image: '📋' },
-            { latin: 'iniūria', german: 'das Unrecht, die Beleidigung', image: '⚖️' },
-            { latin: 'sustinēre', german: 'ertragen, standhalten', image: '💪' },
-            { latin: 'quemadmodum', german: 'wie, auf welche Weise', image: '❓' },
-            { latin: 'prohibēre', german: 'abhalten, hindern, verhindern', image: '🚫' },
-            { latin: 'paulum', german: 'ein wenig', image: '🤏' },
-            { latin: 'respondēre', german: 'antworten', image: '💬' },
-            { latin: 'certē', german: 'gewiss, sicherlich', image: '✅' },
-            { latin: 'indicāre', german: 'anzeigen, melden', image: '📢' },
-            { latin: 'negāre', german: 'leugnen, verneinen, verweigern', image: '❌' },
-            { latin: 'culpa', german: 'die Schuld', image: '⚠️' },
-            { latin: 'probāre', german: 'prüfen, beweisen, für gut befinden', image: '🔍' },
-            { latin: 'bene', german: 'gut', image: '👍' },
-            { latin: 'Circus Maximus', german: 'der Circus Maximus (Rennbahn für Wagenrennen in Rom)', image: '🏟️' },
-            { latin: 'ūnā', german: 'zusammen, zugleich', image: '👥' },
-            { latin: 'prōvidēre', german: 'sorgen für', image: '🛡️' },
-            { latin: 'socius', german: 'der Gefährte, der Verbündete', image: '🤝' },
-            { latin: 'vocāre', german: 'rufen, nennen', image: '📣' },
-            { latin: 'iterum', german: 'wieder(um), zum zweiten Mal', image: '🔄' },
-            { latin: 'superāre', german: 'besiegen, überwinden, übertreffen', image: '🏆' },
-            { latin: 'dum', german: 'während, solange, bis', image: '⏳' },
-            { latin: 'temptāre', german: 'versuchen, prüfen, angreifen', image: '⚔️' },
-            { latin: 'cavēre', german: 'vorsichtig sein, sich hüten (vor)', image: '⚠️' },
-            { latin: 'nōn dēbēre', german: 'nicht dürfen, nicht müssen', image: '🚫' },
-            { latin: 'sententia', german: 'die Meinung, der Satz, der Sinn', image: '💭' },
-            { latin: 'placēre', german: 'gefallen', image: '😊' },
-            { latin: 'pārēre', german: 'gehorchen', image: '🙇' },
-            { latin: 'paulō', german: '(um) ein wenig', image: '🤏' },
-            { latin: 'paulō post', german: 'wenig später, kurz darauf', image: '⏱️' },
-            { latin: 'gladius', german: 'das Schwert', image: '⚔️' },
-            { latin: 'animus', german: 'der Geist, der Mut, die Gesinnung', image: '🧠' },
-            { latin: 'deesse', german: 'fehlen, abwesend sein, nicht da sein', image: '❌' },
-            { latin: 'mandāre', german: 'übergeben, einen Auftrag geben', image: '📝' },
-            { latin: 'poena', german: 'die Strafe', image: '⚖️' },
-            { latin: 'instāre', german: 'bevorstehen, bedrängen, drohen', image: '⚡' },
-            { latin: 'et ... et', german: 'sowohl ... als auch', image: '➕' },
-            { latin: 'grātia', german: 'der Dank', image: '🙏' },
-            { latin: 'grātiam dēbēre', german: 'Dank schulden', image: '🙏' }
-        ];
-
-        // English Vocabulary (existing)
-        const vocabularyTheme2 = [
-            { english: 'maths', german: 'Mathematik', image: '🔢', hint: 'Rechnen' },
-            { english: 'art', german: 'Kunst', image: '🎨', hint: 'Malen' },
-            { english: 'music', german: 'Musik', image: '🎵', hint: 'Töne' },
-            { english: 'pe', german: 'Sport', image: '⚽', hint: 'Bewegung' },
-            { english: 'science', german: 'Naturwissenschaft', image: '🔬', hint: 'Experimente' },
-            { english: 'english', german: 'Englisch', image: '🇬🇧', hint: 'Sprache' },
-            { english: 'history', german: 'Geschichte', image: '📜', hint: 'Vergangenheit' },
-            { english: 'geography', german: 'Erdkunde', image: '🌍', hint: 'Länder' },
-            { english: 'monday', german: 'Montag', image: '📅', hint: 'Wochenanfang' },
-            { english: 'tuesday', german: 'Dienstag', image: '📅', hint: 'Zweiter Tag' },
-            { english: 'wednesday', german: 'Mittwoch', image: '📅', hint: 'Mitte der Woche' },
-            { english: 'thursday', german: 'Donnerstag', image: '📅', hint: 'Fast Freitag' },
-            { english: 'friday', german: 'Freitag', image: '📅', hint: 'Vor dem Wochenende' },
-            { english: 'saturday', german: 'Samstag', image: '📅', hint: 'Wochenende' },
-            { english: 'sunday', german: 'Sonntag', image: '📅', hint: 'Ruhetag' },
-            { english: 'breakfast', german: 'Frühstück', image: '🍳', hint: 'Morgens' },
-            { english: 'lunch', german: 'Mittagessen', image: '🍽️', hint: 'Mittags' },
-            { english: 'dinner', german: 'Abendessen', image: '🍽️', hint: 'Abends' },
-            { english: 'bread', german: 'Brot', image: '🍞', hint: 'Gebacken' },
-            { english: 'butter', german: 'Butter', image: '🧈', hint: 'Aufs Brot' },
-            { english: 'cheese', german: 'Käse', image: '🧀', hint: 'Gelb' },
-            { english: 'egg', german: 'Ei', image: '🥚', hint: 'Von Hühnern' },
-            { english: 'milk', german: 'Milch', image: '🥛', hint: 'Weiß' },
-            { english: 'water', german: 'Wasser', image: '💧', hint: 'Trinken' },
-            { english: 'juice', german: 'Saft', image: '🧃', hint: 'Aus Früchten' },
-            { english: 'tea', german: 'Tee', image: '🍵', hint: 'Warm' },
-            { english: 'coffee', german: 'Kaffee', image: '☕', hint: 'Wachmacher' },
-            { english: 'apple', german: 'Apfel', image: '🍎', hint: 'Rund und rot' },
-            { english: 'banana', german: 'Banane', image: '🍌', hint: 'Gelb und lang' },
-            { english: 'orange', german: 'Orange', image: '🍊', hint: 'Farbe und Frucht' },
-            { english: 'sandwich', german: 'Sandwich', image: '🥪', hint: 'Zwei Brotscheiben' },
-            { english: 'salad', german: 'Salat', image: '🥗', hint: 'Grün und gesund' },
-            { english: 'soup', german: 'Suppe', image: '🍲', hint: 'Flüssig und warm' },
-            { english: 'meat', german: 'Fleisch', image: '🍖', hint: 'Protein' },
-            { english: 'fish', german: 'Fisch', image: '🐟', hint: 'Schwimmt' },
-            { english: 'chicken', german: 'Huhn', image: '🍗', hint: 'Geflügel' },
-            { english: 'rice', german: 'Reis', image: '🍚', hint: 'Weiße Körner' },
-            { english: 'pasta', german: 'Nudeln', image: '🍝', hint: 'Italienisch' },
-            { english: 'potato', german: 'Kartoffel', image: '🥔', hint: 'Braun' },
-            { english: 'tomato', german: 'Tomate', image: '🍅', hint: 'Rot' },
-            { english: 'carrot', german: 'Karotte', image: '🥕', hint: 'Orange' },
-            { english: 'cucumber', german: 'Gurke', image: '🥒', hint: 'Grün und lang' },
-            { english: 'chocolate', german: 'Schokolade', image: '🍫', hint: 'Süß' },
-            { english: 'ice cream', german: 'Eis', image: '🍦', hint: 'Kalt und süß' },
-            { english: 'teacher', german: 'Lehrer/in', image: '👨‍🏫', hint: 'Unterrichtet' },
-            { english: 'student', german: 'Schüler/in', image: '🧑‍🎓', hint: 'Lernt' },
-            { english: 'classroom', german: 'Klassenzimmer', image: '🏫', hint: 'Raum zum Lernen' },
-            { english: 'book', german: 'Buch', image: '📚', hint: 'Zum Lesen' },
-            { english: 'pen', german: 'Stift', image: '🖊️', hint: 'Zum Schreiben' },
-            { english: 'pencil', german: 'Bleistift', image: '✏️', hint: 'Radierbar' },
-            { english: 'ruler', german: 'Lineal', image: '📏', hint: 'Zum Messen' },
-            { english: 'rubber', german: 'Radiergummi', image: '🧹', hint: 'Löscht' },
-            { english: 'bag', german: 'Tasche', image: '🎒', hint: 'Zum Tragen' },
-            { english: 'desk', german: 'Schreibtisch', image: '🪑', hint: 'Zum Arbeiten' },
-            { english: 'chair', german: 'Stuhl', image: '🪑', hint: 'Zum Sitzen' },
-            { english: 'board', german: 'Tafel', image: '⬛', hint: 'Vorne im Klassenzimmer' },
-            { english: 'chalk', german: 'Kreide', image: '✏️', hint: 'Für die Tafel' },
-            { english: 'computer', german: 'Computer', image: '💻', hint: 'Elektronisch' },
-            { english: 'homework', german: 'Hausaufgaben', image: '📝', hint: 'Zu Hause machen' },
-            { english: 'test', german: 'Test', image: '📄', hint: 'Prüfung' },
-            { english: 'break', german: 'Pause', image: '⏸️', hint: 'Erholung' },
-            { english: 'playground', german: 'Spielplatz', image: '🎪', hint: 'Draußen spielen' },
-            { english: 'friend', german: 'Freund/in', image: '👫', hint: 'Nah' },
-            { english: 'school', german: 'Schule', image: '🏫', hint: 'Lernen' },
-            { english: 'lesson', german: 'Unterrichtsstunde', image: '📖', hint: 'Fach' },
-            { english: 'subject', german: 'Schulfach', image: '📚', hint: 'Was man lernt' },
-            { english: 'question', german: 'Frage', image: '❓', hint: 'Wissen wollen' },
-            { english: 'answer', german: 'Antwort', image: '💬', hint: 'Auf eine Frage' },
-            { english: 'learn', german: 'lernen', image: '🧠', hint: 'Wissen aneignen' }
-        ];
-
-        const vocabularyTheme3 = [
+        const vocabulary = [
+            // Theme 3: Hobbies and activities - Page 1
             { english: 'hour', german: 'Stunde', image: '⏰', hint: 'Zeiteinheit' },
             { english: 'later', german: 'Später', image: '⏱️', hint: 'Nicht jetzt' },
             { english: 'dance', german: 'Tanz', image: '💃', hint: 'Bewegung zur Musik' },
             { english: 'class', german: 'Schulklasse, Kurs', image: '👨‍🏫', hint: 'Unterricht' },
-            { english: 'charity', german: 'Barmherzigkeit, Wohltätigkeitsorganisation', image: '❤️', hint: 'Gutes tun' },
+            { english: 'charity', german: 'Barmherzigkeit, Wohltätigkeit', image: '❤️', hint: 'Gutes tun' },
             { english: 'gym', german: 'Turnen', image: '🤸', hint: 'Sport in der Halle' },
             { english: 'minute', german: 'Minute', image: '⏱️', hint: '60 Sekunden' },
             { english: 'biscuit', german: 'Keks, Biskuit', image: '🍪', hint: 'Süßes Gebäck' },
@@ -1049,12 +416,13 @@
             { english: 'give', german: 'geben', image: '🎁', hint: 'Schenken' },
             { english: 'baker', german: 'Bäcker/in', image: '👨‍🍳', hint: 'Macht Brot' },
             { english: 'sound', german: 'klingen', image: '🔊', hint: 'Wie etwas klingt' },
-            { english: 'this', german: 'diese(r, s), das', image: '👉', hint: 'Dieses hier' },
             { english: 'everyone', german: 'alle(s)', image: '👥', hint: 'Jede Person' },
             { english: 'all', german: 'alle(s)', image: '💯', hint: 'Alles zusammen' },
+            
+            // Theme 3: Hobbies and activities - Page 2
             { english: 'competition', german: 'Wettbewerb', image: '🏁', hint: 'Wer ist der Beste?' },
             { english: 'describe', german: 'beschreiben', image: '✍️', hint: 'Mit Worten erklären' },
-            { english: 'much', german: 'viel', image: '📊', hint: 'Eine große Menge' },
+            { english: 'match', german: 'viel', image: '📊', hint: 'Eine große Menge' },
             { english: 'anything', german: 'etwas, irgendwas', image: '❓', hint: 'Irgendetwas' },
             { english: 'reading', german: 'Lesen', image: '📖', hint: 'Ein Buch lesen' },
             { english: 'dancing', german: 'Tanzen', image: '💃', hint: 'Zur Musik bewegen' },
@@ -1084,6 +452,8 @@
             { english: 'support', german: 'unterstützen', image: '🤝', hint: 'Jemandem helfen' },
             { english: 'laugh', german: 'lachen', image: '😂', hint: 'Wenn etwas lustig ist' },
             { english: 'hear', german: 'hören', image: '👂', hint: 'Mit den Ohren' },
+            
+            // Theme 3: Hobbies and activities - Page 3
             { english: 'job', german: 'Stelle, Job, Arbeit', image: '💼', hint: 'Was man arbeitet' },
             { english: 'true', german: 'wahr', image: '✅', hint: 'Nicht falsch' },
             { english: 'empty', german: 'entleeren, ausräumen', image: '📭', hint: 'Leer machen' },
@@ -1093,251 +463,246 @@
             { english: 'often', german: 'oft', image: '📊', hint: 'Viele Male' },
             { english: 'sometimes', german: 'manchmal', image: '🎲', hint: 'Ab und zu' },
             { english: 'usually', german: 'gewöhnlich, normalerweise', image: '📅', hint: 'Meistens' },
-            { english: 'supermarket', german: 'Supermarkt', image: '🛒', hint: 'Zum Einkaufen' }
+            { english: 'supermarket', german: 'Supermarkt', image: '🛒', hint: 'Zum Einkaufen' },
+            { english: 'when', german: 'als, wenn', image: '⏰', hint: 'Zu welcher Zeit' },
+            { english: 'buy', german: 'kaufen', image: '💳', hint: 'Mit Geld bekommen' },
+            { english: 'delicious', german: 'köstlich, lecker', image: '😋', hint: 'Sehr gut schmeckend' },
+            { english: 'decoration', german: 'Dekoration, Verzierung', image: '🎨', hint: 'Zum Schmücken' },
+            { english: 'decorate', german: 'dekorieren, verzieren', image: '🎄', hint: 'Schön machen' },
+            { english: 'need', german: 'müssen, brauchen', image: '❗', hint: 'Etwas ist nötig' },
+            { english: 'bake', german: 'backen', image: '🧁', hint: 'Im Ofen machen' },
+            { english: 'every', german: 'jede(r, s)', image: '💯', hint: 'Alle ohne Ausnahme' },
+            { english: 'eat', german: 'essen, fressen', image: '🍽️', hint: 'Nahrung zu sich nehmen' },
+            { english: 'night', german: 'Nacht, Abend', image: '🌙', hint: 'Wenn es dunkel ist' },
+            { english: 'perfect', german: 'perfekt', image: '💯', hint: 'Ohne Fehler' },
+            { english: 'story', german: 'Geschichte, Erzählung', image: '📚', hint: 'Eine Geschichte erzählen' },
+            { english: 'back', german: 'zurück', image: '↩️', hint: 'Wieder da' },
+            { english: 'message', german: 'Nachricht, Botschaft', image: '💬', hint: 'Mitteilung' },
+            { english: 'help', german: 'Hilfe', image: '🆘', hint: 'Unterstützung' },
+            { english: 'smile', german: 'lächeln', image: '😊', hint: 'Freundlich schauen' },
+            { english: 'taste', german: 'schmecken', image: '👅', hint: 'Mit der Zunge probieren' },
+            { english: 'nothing', german: 'nichts', image: '⭕', hint: 'Gar nichts' },
+            { english: 'begin', german: 'anfangen, beginnen', image: '▶️', hint: 'Starten' },
+            { english: 'suddenly', german: 'plötzlich', image: '⚡', hint: 'Unerwartet schnell' },
+            { english: 'doorbell', german: 'Türklingel', image: '🔔', hint: 'An der Tür' },
+            { english: 'shout', german: 'anschreien', image: '📢', hint: 'Laut rufen' },
+            { english: 'hide', german: 'sich verstecken', image: '🙈', hint: 'Nicht gefunden werden' },
+            { english: 'explain', german: 'erklären', image: '👨‍🏫', hint: 'Verständlich machen' },
+            { english: 'surprised', german: 'überrascht, erstaunt', image: '😲', hint: 'Nicht erwartet' },
+            { english: 'happen', german: 'geschehen, passieren', image: '❓', hint: 'Sich ereignen' },
+            { english: 'winner', german: 'Gewinner/in, Sieger/in', image: '🥇', hint: 'Wer gewinnt' },
+            
+            // Theme 3: Hobbies and activities - Page 4
+            { english: 'unfortunately', german: 'unglücklicherweise, leider', image: '😔', hint: 'Schade' },
+            { english: 'text', german: 'Textnachricht, SMS', image: '📱', hint: 'Nachricht am Handy' },
+            { english: 'strange', german: 'sonderbar, merkwürdig, fremd', image: '🤔', hint: 'Seltsam' },
+            { english: 'audience', german: 'Publikum, Zuschauer', image: '👥', hint: 'Die Zuschauer' },
+            { english: 'long', german: 'lang', image: '📏', hint: 'Nicht kurz' },
+            { english: 'guitar', german: 'Gitarre', image: '🎸', hint: 'Musikinstrument mit Saiten' },
+            { english: 'player', german: 'Spieler/in', image: '⚽', hint: 'Wer spielt' },
+            { english: 'finish', german: 'beenden, aufhören', image: '🏁', hint: 'Zu Ende bringen' },
+            { english: 'dancer', german: 'Tänzer/in', image: '💃', hint: 'Wer tanzt' },
+            { english: 'move', german: 'sich bewegen', image: '🏃', hint: 'In Bewegung sein' },
+            { english: 'group', german: 'Gruppe', image: '👨‍👩‍👧‍👦', hint: 'Mehrere zusammen' },
+            { english: 'cheer', german: 'jubeln', image: '🎉', hint: 'Laut feiern' },
+            { english: 'line', german: 'Linie, Zeile', image: '➖', hint: 'Eine Reihe' },
+            { english: 'feel', german: 'sich fühlen', image: '❤️', hint: 'Ein Gefühl haben' },
+            { english: 'practise', german: 'üben', image: '🎯', hint: 'Besser werden' },
+            { english: 'another', german: 'noch eine(r), ein(e) andere(r)', image: '➕', hint: 'Noch eins' }
         ];
 
-        // Initialize
-        window.onload = function() {
-            loadTotalTalers();
-            updateTalerDisplay();
-            checkChangelog();
-        };
+        let currentWordIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let currentWord = '';
+        let selectedLetters = [];
+        let shuffledVocabulary = [];
+        let wordStats = {}; // Statistics for each word
+        let currentWordStartTime = 0; // Time when word was shown
+        let attemptCount = 0; // Number of attempts for current word
+        let wordsToRepeat = []; // Words that need repetition at the end
+        let isRepeatPhase = false; // Are we in the repeat phase?
+        let hintTimeout = null; // Timer for automatic hint
+        let correctFirstTryCount = 0; // Counter for words correct on first try
+        let talersEarned = 0; // Talers earned this round
+        let totalTalers = 0; // Total talers across all rounds
 
-        function loadTotalTalers() {
-            const saved = localStorage.getItem('totalTalers');
-            totalTalers = saved ? parseInt(saved) : 0;
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
         }
 
-        function saveTotalTalers() {
-            localStorage.setItem('totalTalers', totalTalers.toString());
-        }
-
-        function updateTalerDisplay() {
-            document.getElementById('displayTalers').textContent = totalTalers;
-        }
-
-        function resetTalersFromMenu() {
-            if (confirm('Möchtest du wirklich alle Taler zurücksetzen?')) {
+        function initGame() {
+            shuffledVocabulary = shuffleArray(vocabulary).slice(0, 15);
+            
+            // Load total talers from localStorage
+            const savedTalers = localStorage.getItem('vocabularyGameTalers');
+            if (savedTalers) {
+                totalTalers = parseInt(savedTalers);
+            } else {
                 totalTalers = 0;
-                saveTotalTalers();
-                updateTalerDisplay();
             }
-        }
-
-        // Navigation Functions
-        function selectLanguage(language) {
-            currentLanguage = language;
-            document.getElementById('languageSelection').style.display = 'none';
             
-            if (language === 'english') {
-                document.getElementById('setSelection').style.display = 'block';
-            } else if (language === 'latin') {
-                document.getElementById('chapterSelection').style.display = 'block';
-            }
-        }
-
-        function backToLanguageSelection() {
-            document.getElementById('setSelection').style.display = 'none';
-            document.getElementById('chapterSelection').style.display = 'none';
-            document.getElementById('languageSelection').style.display = 'block';
-            currentLanguage = null;
-        }
-
-        function selectChapter(chapter) {
-            if (chapter === 'latin-3') {
-                currentVocabularySet = 'Kapitel 3';
-                startLatinGame();
-            }
-        }
-
-        // Start Games
-        function startGame(setChoice) {
-            currentMode = 'spelling';
-            currentVocabularySet = setChoice;
+            // Update display
+            document.getElementById('totalTalers').textContent = totalTalers;
             
-            if (setChoice === 'theme2') {
-                vocabulary = [...vocabularyTheme2];
-                document.getElementById('currentSetName').textContent = 'Theme 2: At School';
-            } else if (setChoice === 'theme3') {
-                vocabulary = [...vocabularyTheme3];
-                document.getElementById('currentSetName').textContent = 'Theme 3: Hobbies and Activities';
-            } else if (setChoice === 'all') {
-                vocabulary = [...vocabularyTheme2, ...vocabularyTheme3];
-                document.getElementById('currentSetName').textContent = 'Alle Vokabeln';
-            }
-
-            shuffledVocabulary = shuffleArray([...vocabulary]);
-            currentWordIndex = 0;
-            score = 0;
-            correctCount = 0;
+            // Reset round counters
             correctFirstTryCount = 0;
             talersEarned = 0;
-            wordsToRepeat = [];
-            isRepeatPhase = false;
-            wordStats = {};
-
+            
+            // Initialize statistics for each word
             shuffledVocabulary.forEach(word => {
                 wordStats[word.english] = {
                     attempts: 0,
                     mistakes: 0,
-                    totalTime: 0
+                    totalTime: 0,
+                    correctOnFirstTry: false
                 };
             });
-
-            document.getElementById('setSelection').style.display = 'none';
-            document.getElementById('gameContainer').style.display = 'block';
-            document.getElementById('total').textContent = shuffledVocabulary.length;
-            document.getElementById('talers').textContent = totalTalers;
             
+            document.getElementById('total').textContent = shuffledVocabulary.length;
             loadWord();
         }
 
-        function startLatinGame() {
-            currentMode = 'translation';
-            currentLanguage = 'latin';
-            vocabulary = [...vocabularyLatin];
-            shuffledVocabulary = shuffleArray([...vocabulary]);
-            
-            currentWordIndex = 0;
-            score = 0;
-            correctCount = 0;
-            correctFirstTryCount = 0;
-            talersEarned = 0;
-            wordsToRepeat = [];
-            isRepeatPhase = false;
-            wordStats = {};
-
-            shuffledVocabulary.forEach(word => {
-                wordStats[word.latin] = {
-                    attempts: 0,
-                    mistakes: 0,
-                    totalTime: 0
-                };
-            });
-
-            document.getElementById('chapterSelection').style.display = 'none';
-            document.getElementById('latinGameContainer').style.display = 'block';
-            document.getElementById('latinTotal').textContent = shuffledVocabulary.length;
-            document.getElementById('latinTalers').textContent = totalTalers;
-            
-            loadLatinWord();
-        }
-
-        // Helper Functions
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function playSound(type) {
-            // Placeholder for sound effects
-        }
-
-        // English Spelling Game Logic
         function loadWord() {
-            if (currentWordIndex >= shuffledVocabulary.length) {
-                if (!isRepeatPhase && wordsToRepeat.length > 0) {
-                    startRepeatPhase();
+            // Check if we finished all main words
+            if (!isRepeatPhase && currentWordIndex >= shuffledVocabulary.length) {
+                // Start repeat phase if there are words to repeat
+                if (wordsToRepeat.length > 0) {
+                    isRepeatPhase = true;
+                    currentWordIndex = 0;
+                    shuffledVocabulary = wordsToRepeat;
+                    wordsToRepeat = []; // Clear for potential second repeat
+                    document.getElementById('feedback').textContent = '🔄 Jetzt wiederholen wir die schwierigen Vokabeln!';
+                    document.getElementById('feedback').className = 'feedback';
+                    setTimeout(() => {
+                        document.getElementById('feedback').textContent = '';
+                        loadWord();
+                    }, 2000);
+                    return;
+                } else {
+                    showCelebration();
                     return;
                 }
+            }
+            
+            // Check if we finished repeat phase
+            if (isRepeatPhase && currentWordIndex >= shuffledVocabulary.length) {
                 showCelebration();
                 return;
             }
 
-            const wordObj = shuffledVocabulary[currentWordIndex];
-            currentWord = wordObj.english.toLowerCase();
-            selectedLetters = [];
-            attemptCount = 0;
-            currentWordStartTime = Date.now();
-
+            // Clear any existing hint timeout
             if (hintTimeout) {
                 clearTimeout(hintTimeout);
             }
 
-            document.getElementById('wordImage').textContent = wordObj.image;
-            document.getElementById('wordGerman').textContent = wordObj.german;
-            document.getElementById('autoHint').textContent = '';
+            const word = shuffledVocabulary[currentWordIndex];
+            currentWord = word.english.toLowerCase();
+            selectedLetters = [];
+            attemptCount = 0;
+            currentWordStartTime = Date.now();
+
+            document.getElementById('wordImage').textContent = word.image;
+            document.getElementById('wordGerman').textContent = word.german;
+            document.getElementById('wordHint').textContent = word.hint;
+            document.getElementById('current').textContent = currentWordIndex + 1;
             document.getElementById('feedback').textContent = '';
-            document.getElementById('progress').textContent = currentWordIndex + 1;
-            document.getElementById('correct').textContent = correctCount;
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('autoHint').textContent = '';
+            document.getElementById('autoHint').className = 'auto-hint';
 
-            createLetterSlots();
-            createLetterTiles();
+            createAnswerSlots();
+            createLetterPool();
 
+            // Start 15-second timer for automatic hint
             hintTimeout = setTimeout(() => {
-                document.getElementById('autoHint').textContent = `💡 Tipp: ${wordObj.hint}`;
+                showAutoHint();
             }, 15000);
         }
 
-        function createLetterSlots() {
-            const container = document.getElementById('letterSlots');
-            container.innerHTML = '';
-            
+        function showAutoHint() {
+            const autoHintElement = document.getElementById('autoHint');
+            // Show first letter as hint
+            const firstLetter = currentWord[0].toUpperCase();
+            autoHintElement.textContent = `💡 Tipp: Das Wort beginnt mit "${firstLetter}"`;
+            autoHintElement.className = 'auto-hint show';
+        }
+
+        function createAnswerSlots() {
+            const answerArea = document.getElementById('answerArea');
+            answerArea.innerHTML = '';
+
             for (let i = 0; i < currentWord.length; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'letter-slot';
                 slot.dataset.index = i;
-                slot.onclick = () => removeLetterFromSlot(i);
-                container.appendChild(slot);
+                slot.addEventListener('click', () => removeLetterFromSlot(i));
+                answerArea.appendChild(slot);
             }
         }
 
-        function createLetterTiles() {
-            const letters = currentWord.split('');
-            const extraLetters = 'abcdefghijklmnopqrstuvwxyz'.split('')
-                .filter(l => !letters.includes(l))
-                .sort(() => Math.random() - 0.5)
-                .slice(0, Math.min(3, 26 - letters.length));
+        function createLetterPool() {
+            const lettersPool = document.getElementById('lettersPool');
+            lettersPool.innerHTML = '';
+
+            // Create letters from the word
+            const wordLetters = currentWord.split('');
             
-            const allLetters = [...letters, ...extraLetters]
-                .sort(() => Math.random() - 0.5);
+            // Add some random extra letters
+            const extraLetters = 'abcdefghijklmnopqrstuvwxyz';
+            const numExtras = Math.min(5, Math.floor(currentWord.length / 2) + 2);
+            
+            for (let i = 0; i < numExtras; i++) {
+                let randomLetter;
+                do {
+                    randomLetter = extraLetters[Math.floor(Math.random() * extraLetters.length)];
+                } while (wordLetters.includes(randomLetter));
+                wordLetters.push(randomLetter);
+            }
 
-            const container = document.getElementById('letterTiles');
-            container.innerHTML = '';
+            // Shuffle all letters
+            const shuffledLetters = shuffleArray(wordLetters);
 
-            allLetters.forEach((letter, index) => {
+            shuffledLetters.forEach((letter, index) => {
                 const tile = document.createElement('div');
                 tile.className = 'letter-tile';
                 tile.textContent = letter.toUpperCase();
                 tile.dataset.letter = letter;
                 tile.dataset.id = index;
-                tile.onclick = () => selectLetter(letter, index);
-                container.appendChild(tile);
+                tile.addEventListener('click', () => selectLetter(letter, index));
+                lettersPool.appendChild(tile);
             });
         }
 
         function selectLetter(letter, id) {
-            const tile = document.querySelector(`.letter-tile[data-id="${id}"]`);
+            if (selectedLetters.length >= currentWord.length) return;
+
+            const tile = document.querySelector(`[data-id="${id}"]`);
             if (tile.classList.contains('used')) return;
 
-            if (selectedLetters.length < currentWord.length) {
-                selectedLetters.push({ letter, id });
-                tile.classList.add('used');
-                updateSlots();
+            selectedLetters.push({ letter, id });
+            tile.classList.add('used');
 
-                if (selectedLetters.length === currentWord.length) {
-                    setTimeout(checkAnswer, 300);
-                }
-            }
+            updateAnswerArea();
         }
 
         function removeLetterFromSlot(index) {
             if (index >= selectedLetters.length) return;
-            
+
             const removed = selectedLetters[index];
-            const tile = document.querySelector(`.letter-tile[data-id="${removed.id}"]`);
-            if (tile) {
-                tile.classList.remove('used');
-            }
-            
+            const tile = document.querySelector(`[data-id="${removed.id}"]`);
+            tile.classList.remove('used');
+
             selectedLetters.splice(index, 1);
-            updateSlots();
+            updateAnswerArea();
         }
 
-        function updateSlots() {
+        function updateAnswerArea() {
             const slots = document.querySelectorAll('.letter-slot');
             slots.forEach((slot, index) => {
                 if (selectedLetters[index]) {
@@ -1351,65 +716,104 @@
         }
 
         function checkAnswer() {
-            if (isProcessing) return;
-            isProcessing = true;
-
             const answer = selectedLetters.map(l => l.letter).join('');
             const slots = document.querySelectorAll('.letter-slot');
             const feedback = document.getElementById('feedback');
-
-            if (!answer || answer.length !== currentWord.length) {
-                isProcessing = false;
-                return;
+            
+            // Clear hint timeout
+            if (hintTimeout) {
+                clearTimeout(hintTimeout);
             }
-
+            
             attemptCount++;
-            const timeSpent = (Date.now() - currentWordStartTime) / 1000;
+
+            // Check each letter individually
+            let correctLetters = 0;
+            slots.forEach((slot, index) => {
+                if (selectedLetters[index]) {
+                    if (selectedLetters[index].letter === currentWord[index]) {
+                        slot.classList.add('correct');
+                        slot.classList.remove('wrong');
+                        correctLetters++;
+                    } else {
+                        slot.classList.add('wrong');
+                        slot.classList.remove('correct');
+                    }
+                }
+            });
+
+            // Calculate time taken
+            const timeElapsed = (Date.now() - currentWordStartTime) / 1000; // in seconds
+            
+            // Update statistics
             const stats = wordStats[currentWord];
             stats.attempts++;
-            stats.totalTime += timeSpent;
 
-            if (answer === currentWord) {
-                feedback.textContent = '✅ Richtig!';
-                feedback.style.color = '#10b981';
-                slots.forEach(slot => slot.classList.add('correct'));
+            if (answer === currentWord && correctLetters === currentWord.length) {
+                // Correct answer!
+                stats.totalTime += timeElapsed;
+                
+                // Check if this was correct on first try
+                if (attemptCount === 1) {
+                    stats.correctOnFirstTry = true;
+                    correctFirstTryCount++;
+                    
+                    // Award Taler every 2 correct first tries
+                    if (correctFirstTryCount % 2 === 0) {
+                        talersEarned++;
+                        totalTalers++;
+                        
+                        // Save to localStorage
+                        localStorage.setItem('vocabularyGameTalers', totalTalers.toString());
+                        
+                        // Update display with animation
+                        const talerDisplay = document.getElementById('totalTalers');
+                        talerDisplay.textContent = totalTalers;
+                        talerDisplay.parentElement.parentElement.style.animation = 'none';
+                        setTimeout(() => {
+                            talerDisplay.parentElement.parentElement.style.animation = 'celebrate 0.5s';
+                        }, 10);
+                    }
+                }
+                
+                feedback.textContent = '🎉 Richtig! Super gemacht!';
+                feedback.className = 'feedback correct';
+                
                 score += 10;
                 correctCount++;
-
-                if (attemptCount === 1) {
-                    correctFirstTryCount++;
-                    talersEarned++;
-                    totalTalers++;
-                    saveTotalTalers();
-                    document.getElementById('talers').textContent = totalTalers;
-                }
+                document.getElementById('score').textContent = score;
+                document.getElementById('correct').textContent = correctCount;
 
                 playSound('correct');
-
+                
+                // Decide if word needs repetition (only in main phase, not during repeat)
                 if (!isRepeatPhase) {
                     const avgTime = stats.totalTime / stats.attempts;
+                    const mistakeRatio = stats.mistakes / stats.attempts;
                     
-                    if (attemptCount > 1 || avgTime > 30) {
+                    // Add to repeat list if:
+                    // - Took more than 1 attempt (had mistakes)
+                    // - Took longer than 30 seconds (penalty time)
+                    // - Mistake ratio > 30%
+                    if (attemptCount > 1 || avgTime > 30 || mistakeRatio > 0.3) {
                         const currentWordObj = shuffledVocabulary[currentWordIndex];
-                        const alreadyInRepeat = wordsToRepeat.some(w => w.english === currentWordObj.english);
-                        if (!alreadyInRepeat) {
-                            wordsToRepeat.push(currentWordObj);
-                            document.getElementById('repeats').textContent = wordsToRepeat.length;
-                        }
+                        wordsToRepeat.push(currentWordObj);
+                        // Update repeat counter display
+                        document.getElementById('repeats').textContent = wordsToRepeat.length;
                     }
                 }
 
                 setTimeout(() => {
-                    isProcessing = false;
                     currentWordIndex++;
                     loadWord();
                 }, 2000);
             } else {
-                feedback.textContent = '❌ Nicht ganz! Versuch es nochmal.';
-                feedback.style.color = '#ef4444';
-                slots.forEach(slot => slot.classList.add('wrong'));
+                // Wrong answer
                 stats.mistakes++;
-
+                
+                feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
+                feedback.className = 'feedback wrong';
+                
                 playSound('wrong');
 
                 setTimeout(() => {
@@ -1417,567 +821,170 @@
                         slot.classList.remove('wrong');
                         slot.classList.remove('correct');
                     });
-                    isProcessing = false;
                 }, 1500);
             }
         }
 
         function skipWord() {
-            if (isProcessing) return;
-            isProcessing = true;
-
             const feedback = document.getElementById('feedback');
             feedback.textContent = `Die richtige Antwort war: ${currentWord.toUpperCase()}`;
             feedback.className = 'feedback';
-            feedback.style.color = '#667eea';
-            feedback.style.fontSize = '1.8em';
-
+            
+            // Clear hint timeout
             if (hintTimeout) {
                 clearTimeout(hintTimeout);
             }
-
+            
+            // Mark as mistake
             const stats = wordStats[currentWord];
             stats.mistakes++;
             stats.attempts++;
-
+            
+            // Always add skipped words to repeat list (only in main phase)
             if (!isRepeatPhase) {
                 const currentWordObj = shuffledVocabulary[currentWordIndex];
-                const alreadyInRepeat = wordsToRepeat.some(w => w.english === currentWordObj.english);
-                if (!alreadyInRepeat) {
-                    wordsToRepeat.push(currentWordObj);
-                    document.getElementById('repeats').textContent = wordsToRepeat.length;
-                }
+                wordsToRepeat.push(currentWordObj);
+                // Update repeat counter display
+                document.getElementById('repeats').textContent = wordsToRepeat.length;
             }
 
-            document.getElementById('skipBtn').style.display = 'none';
-            document.getElementById('checkBtn').style.display = 'none';
-            document.getElementById('clearBtn').style.display = 'none';
-            document.getElementById('continueBtn').style.display = 'inline-block';
-        }
-
-        function continueToNextWord() {
-            document.getElementById('skipBtn').style.display = 'inline-block';
-            document.getElementById('checkBtn').style.display = 'inline-block';
-            document.getElementById('clearBtn').style.display = 'inline-block';
-            document.getElementById('continueBtn').style.display = 'none';
-
-            isProcessing = false;
-            currentWordIndex++;
-            loadWord();
+            setTimeout(() => {
+                currentWordIndex++;
+                loadWord();
+            }, 2000);
         }
 
         function clearAnswer() {
             selectedLetters.forEach(item => {
-                const tile = document.querySelector(`.letter-tile[data-id="${item.id}"]`);
-                if (tile) {
-                    tile.classList.remove('used');
-                }
-            });
-            selectedLetters = [];
-            updateSlots();
-            document.getElementById('feedback').textContent = '';
-        }
-
-        // Latin Game Logic
-        function loadLatinWord() {
-            if (currentWordIndex >= shuffledVocabulary.length) {
-                if (!isRepeatPhase && wordsToRepeat.length > 0) {
-                    startLatinRepeatPhase();
-                    return;
-                }
-                showLatinCelebration();
-                return;
-            }
-
-            const wordObj = shuffledVocabulary[currentWordIndex];
-            attemptCount = 0;
-            currentWordStartTime = Date.now();
-
-            // Randomly choose direction
-            translationDirection = Math.random() < 0.5 ? 'latin-to-german' : 'german-to-latin';
-
-            if (hintTimeout) {
-                clearTimeout(hintTimeout);
-            }
-
-            document.getElementById('latinWordImage').textContent = wordObj.image;
-            document.getElementById('latinFeedback').textContent = '';
-            document.getElementById('latinProgress').textContent = currentWordIndex + 1;
-            document.getElementById('latinCorrect').textContent = correctCount;
-
-            if (translationDirection === 'latin-to-german') {
-                loadMultipleChoice(wordObj);
-            } else {
-                loadSpellingMode(wordObj);
-            }
-        }
-
-        function loadMultipleChoice(wordObj) {
-            currentWord = wordObj.latin;
-            currentTranslation = wordObj.german;
-
-            document.getElementById('latinWord').textContent = wordObj.latin;
-            document.getElementById('latinHint').textContent = '🇩🇪 Wähle die richtige deutsche Übersetzung:';
-            document.getElementById('choicesContainer').style.display = 'flex';
-            document.getElementById('spellingContainer').style.display = 'none';
-            document.getElementById('latinClearBtn').style.display = 'none';
-
-            // Generate wrong answers
-            const wrongAnswers = vocabularyLatin
-                .filter(w => w.latin !== wordObj.latin && w.german !== wordObj.german)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, Math.random() < 0.5 ? 3 : 4)
-                .map(w => w.german);
-
-            const allChoices = [wordObj.german, ...wrongAnswers]
-                .sort(() => Math.random() - 0.5);
-
-            const container = document.getElementById('choicesContainer');
-            container.innerHTML = '';
-
-            allChoices.forEach((choice, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.innerHTML = `<span class="choice-number">${index + 1}</span>${choice}`;
-                btn.onclick = () => checkLatinChoice(choice, wordObj.german, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function checkLatinChoice(selected, correct, btn) {
-            if (isProcessing) return;
-            isProcessing = true;
-
-            attemptCount++;
-            const timeSpent = (Date.now() - currentWordStartTime) / 1000;
-            const stats = wordStats[currentWord];
-            stats.attempts++;
-            stats.totalTime += timeSpent;
-
-            const feedback = document.getElementById('latinFeedback');
-            const allBtns = document.querySelectorAll('.choice-btn');
-            allBtns.forEach(b => b.style.pointerEvents = 'none');
-
-            if (selected === correct) {
-                btn.classList.add('correct');
-                feedback.textContent = '✅ Richtig!';
-                feedback.style.color = '#10b981';
-                correctCount++;
-
-                if (attemptCount === 1) {
-                    correctFirstTryCount++;
-                    talersEarned++;
-                    totalTalers++;
-                    saveTotalTalers();
-                    document.getElementById('latinTalers').textContent = totalTalers;
-                }
-
-                playSound('correct');
-
-                if (!isRepeatPhase) {
-                    const avgTime = stats.totalTime / stats.attempts;
-                    if (attemptCount > 1 || avgTime > 30) {
-                        const currentWordObj = shuffledVocabulary[currentWordIndex];
-                        const alreadyInRepeat = wordsToRepeat.some(w => w.latin === currentWordObj.latin);
-                        if (!alreadyInRepeat) {
-                            wordsToRepeat.push(currentWordObj);
-                            document.getElementById('latinRepeats').textContent = wordsToRepeat.length;
-                        }
-                    }
-                }
-
-                setTimeout(() => {
-                    isProcessing = false;
-                    currentWordIndex++;
-                    loadLatinWord();
-                }, 2000);
-            } else {
-                btn.classList.add('wrong');
-                stats.mistakes++;
-                feedback.textContent = '❌ Nicht ganz! Versuch es nochmal.';
-                feedback.style.color = '#ef4444';
-                playSound('wrong');
-
-                setTimeout(() => {
-                    btn.classList.remove('wrong');
-                    allBtns.forEach(b => b.style.pointerEvents = 'auto');
-                    feedback.textContent = '';
-                    isProcessing = false;
-                }, 1500);
-            }
-        }
-
-        function loadSpellingMode(wordObj) {
-            currentWord = wordObj.latin.toLowerCase().replace(/[^a-z]/g, '');
-            currentTranslation = wordObj.german;
-            selectedLetters = [];
-
-            document.getElementById('latinWord').textContent = wordObj.german;
-            document.getElementById('latinHint').textContent = '🏛️ Schreibe das lateinische Wort:';
-            document.getElementById('choicesContainer').style.display = 'none';
-            document.getElementById('spellingContainer').style.display = 'block';
-            document.getElementById('latinClearBtn').style.display = 'inline-block';
-
-            createLatinLetterSlots();
-            createLatinLetterTiles();
-        }
-
-        function createLatinLetterSlots() {
-            const container = document.getElementById('latinLetterSlots');
-            container.innerHTML = '';
-
-            for (let i = 0; i < currentWord.length; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'letter-slot';
-                slot.dataset.index = i;
-                slot.onclick = () => removeLatinLetterFromSlot(i);
-                container.appendChild(slot);
-            }
-        }
-
-        function createLatinLetterTiles() {
-            const letters = currentWord.split('');
-            const extraLetters = 'abcdefghijklmnopqrstuvwxyz'.split('')
-                .filter(l => !letters.includes(l))
-                .sort(() => Math.random() - 0.5)
-                .slice(0, Math.min(3, 26 - letters.length));
-
-            const allLetters = [...letters, ...extraLetters]
-                .sort(() => Math.random() - 0.5);
-
-            const container = document.getElementById('latinLetterTiles');
-            container.innerHTML = '';
-
-            allLetters.forEach((letter, index) => {
-                const tile = document.createElement('div');
-                tile.className = 'letter-tile';
-                tile.textContent = letter.toUpperCase();
-                tile.dataset.letter = letter;
-                tile.dataset.id = index;
-                tile.onclick = () => selectLatinLetter(letter, index);
-                container.appendChild(tile);
-            });
-        }
-
-        function selectLatinLetter(letter, id) {
-            const tile = document.querySelector(`#latinLetterTiles .letter-tile[data-id="${id}"]`);
-            if (tile.classList.contains('used')) return;
-
-            if (selectedLetters.length < currentWord.length) {
-                selectedLetters.push({ letter, id });
-                tile.classList.add('used');
-                updateLatinSlots();
-
-                if (selectedLetters.length === currentWord.length) {
-                    setTimeout(checkLatinSpelling, 300);
-                }
-            }
-        }
-
-        function removeLatinLetterFromSlot(index) {
-            if (index >= selectedLetters.length) return;
-
-            const removed = selectedLetters[index];
-            const tile = document.querySelector(`#latinLetterTiles .letter-tile[data-id="${removed.id}"]`);
-            if (tile) {
+                const tile = document.querySelector(`[data-id="${item.id}"]`);
                 tile.classList.remove('used');
-            }
-
-            selectedLetters.splice(index, 1);
-            updateLatinSlots();
-        }
-
-        function updateLatinSlots() {
-            const slots = document.querySelectorAll('#latinLetterSlots .letter-slot');
-            slots.forEach((slot, index) => {
-                if (selectedLetters[index]) {
-                    slot.textContent = selectedLetters[index].letter.toUpperCase();
-                    slot.classList.add('filled');
-                } else {
-                    slot.textContent = '';
-                    slot.classList.remove('filled');
-                }
-            });
-        }
-
-        function checkLatinSpelling() {
-            if (isProcessing) return;
-            isProcessing = true;
-
-            const answer = selectedLetters.map(l => l.letter).join('');
-            const slots = document.querySelectorAll('#latinLetterSlots .letter-slot');
-            const feedback = document.getElementById('latinFeedback');
-
-            if (!answer || answer.length !== currentWord.length) {
-                isProcessing = false;
-                return;
-            }
-
-            attemptCount++;
-            const timeSpent = (Date.now() - currentWordStartTime) / 1000;
-            const stats = wordStats[shuffledVocabulary[currentWordIndex].latin];
-            stats.attempts++;
-            stats.totalTime += timeSpent;
-
-            if (answer === currentWord) {
-                feedback.textContent = '✅ Richtig!';
-                feedback.style.color = '#10b981';
-                slots.forEach(slot => slot.classList.add('correct'));
-                correctCount++;
-
-                if (attemptCount === 1) {
-                    correctFirstTryCount++;
-                    talersEarned++;
-                    totalTalers++;
-                    saveTotalTalers();
-                    document.getElementById('latinTalers').textContent = totalTalers;
-                }
-
-                playSound('correct');
-
-                if (!isRepeatPhase) {
-                    const avgTime = stats.totalTime / stats.attempts;
-                    if (attemptCount > 1 || avgTime > 30) {
-                        const currentWordObj = shuffledVocabulary[currentWordIndex];
-                        const alreadyInRepeat = wordsToRepeat.some(w => w.latin === currentWordObj.latin);
-                        if (!alreadyInRepeat) {
-                            wordsToRepeat.push(currentWordObj);
-                            document.getElementById('latinRepeats').textContent = wordsToRepeat.length;
-                        }
-                    }
-                }
-
-                setTimeout(() => {
-                    isProcessing = false;
-                    currentWordIndex++;
-                    loadLatinWord();
-                }, 2000);
-            } else {
-                feedback.textContent = '❌ Nicht ganz! Versuch es nochmal.';
-                feedback.style.color = '#ef4444';
-                slots.forEach(slot => slot.classList.add('wrong'));
-                stats.mistakes++;
-
-                playSound('wrong');
-
-                setTimeout(() => {
-                    slots.forEach(slot => {
-                        slot.classList.remove('wrong');
-                        slot.classList.remove('correct');
-                    });
-                    isProcessing = false;
-                }, 1500);
-            }
-        }
-
-        function skipLatinWord() {
-            if (isProcessing) return;
-            isProcessing = true;
-
-            const feedback = document.getElementById('latinFeedback');
-            const currentWordObj = shuffledVocabulary[currentWordIndex];
-
-            if (translationDirection === 'latin-to-german') {
-                feedback.textContent = `Die richtige Antwort war: ${currentWordObj.german}`;
-            } else {
-                feedback.textContent = `Die richtige Antwort war: ${currentWordObj.latin.toUpperCase()}`;
-            }
-
-            feedback.style.color = '#667eea';
-            feedback.style.fontSize = '1.8em';
-
-            if (hintTimeout) {
-                clearTimeout(hintTimeout);
-            }
-
-            const stats = wordStats[currentWordObj.latin];
-            stats.mistakes++;
-            stats.attempts++;
-
-            if (!isRepeatPhase) {
-                const alreadyInRepeat = wordsToRepeat.some(w => w.latin === currentWordObj.latin);
-                if (!alreadyInRepeat) {
-                    wordsToRepeat.push(currentWordObj);
-                    document.getElementById('latinRepeats').textContent = wordsToRepeat.length;
-                }
-            }
-
-            document.getElementById('latinSkipBtn').style.display = 'none';
-            document.getElementById('latinContinueBtn').style.display = 'inline-block';
-        }
-
-        function continueLatinToNextWord() {
-            document.getElementById('latinSkipBtn').style.display = 'inline-block';
-            document.getElementById('latinContinueBtn').style.display = 'none';
-
-            isProcessing = false;
-            currentWordIndex++;
-            loadLatinWord();
-        }
-
-        function clearLatinAnswer() {
-            selectedLetters.forEach(item => {
-                const tile = document.querySelector(`#latinLetterTiles .letter-tile[data-id="${item.id}"]`);
-                if (tile) {
-                    tile.classList.remove('used');
-                }
             });
             selectedLetters = [];
-            updateLatinSlots();
-            document.getElementById('latinFeedback').textContent = '';
+            updateAnswerArea();
         }
 
-        // Repeat Phases
-        function startRepeatPhase() {
-            isRepeatPhase = true;
-            shuffledVocabulary = shuffleArray([...wordsToRepeat]);
-            wordsToRepeat = [];
-            currentWordIndex = 0;
-            document.getElementById('repeats').textContent = '0';
-            loadWord();
-        }
-
-        function startLatinRepeatPhase() {
-            isRepeatPhase = true;
-            shuffledVocabulary = shuffleArray([...wordsToRepeat]);
-            wordsToRepeat = [];
-            currentWordIndex = 0;
-            document.getElementById('latinRepeats').textContent = '0';
-            loadLatinWord();
-        }
-
-        // Celebration
         function showCelebration() {
-            const finalScoreText = `
-                Du hast ${correctCount} von ${vocabulary.length} Wörtern richtig geschrieben!<br>
-                ${correctFirstTryCount} davon beim ersten Versuch! 🌟<br><br>
-                🪙 Du hast ${talersEarned} Taler verdient!<br>
-                Gesamt: ${totalTalers} Taler
+            const celebration = document.getElementById('celebration');
+            const finalScore = document.getElementById('finalScore');
+            
+            const totalWords = Object.keys(wordStats).length;
+            const totalAttempts = Object.values(wordStats).reduce((sum, s) => sum + s.attempts, 0);
+            const correctOnFirstTry = Object.values(wordStats).filter(s => s.correctOnFirstTry).length;
+            const avgTime = Object.values(wordStats).reduce((sum, s) => sum + (s.totalTime / s.attempts || 0), 0) / totalWords;
+            
+            const successRate = Math.round((correctCount / totalAttempts) * 100);
+            
+            let celebrationHTML = `
+                <strong>🎯 Statistik:</strong><br><br>
+                <strong>${correctOnFirstTry}</strong> von <strong>${totalWords}</strong> Vokabeln beim ersten Mal richtig!<br>
+                Erfolgsquote: ${successRate}%<br>
+                Gesamtversuche: ${totalAttempts}<br>
+                Durchschnittliche Zeit: ${avgTime.toFixed(1)}s<br><br>
             `;
-            document.getElementById('finalScore').innerHTML = finalScoreText;
-            document.getElementById('celebration').style.display = 'flex';
+            
+            // Show Talers earned this round
+            if (talersEarned > 0) {
+                celebrationHTML += `<div style="background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%); padding: 15px; border-radius: 15px; margin: 15px 0;">
+                    🪙 <strong>Du hast ${talersEarned} Taler verdient!</strong><br>
+                    Gesamt: ${totalTalers} / 50 Taler
+                </div>`;
+            }
+            
+            // Check for 50 Taler victory
+            if (totalTalers >= 50) {
+                celebrationHTML += `
+                    <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 20px; border-radius: 15px; margin: 15px 0; animation: celebrate 1s infinite;">
+                        <div style="font-size: 3em;">🏆</div>
+                        <strong style="font-size: 1.5em;">GEWONNEN!</strong><br>
+                        Du hast 50 Taler erreicht!<br>
+                        Zeig das deinen Eltern! 🎉
+                    </div>
+                `;
+            }
+            
+            celebrationHTML += `<strong>Gesamtpunkte: ${score}</strong>`;
+            
+            finalScore.innerHTML = celebrationHTML;
+            
+            celebration.classList.add('show');
         }
 
-        function showLatinCelebration() {
-            const finalScoreText = `
-                Du hast ${correctCount} von ${vocabulary.length} Vokabeln richtig übersetzt!<br>
-                ${correctFirstTryCount} davon beim ersten Versuch! 🌟<br><br>
-                🪙 Du hast ${talersEarned} Taler verdient!<br>
-                Gesamt: ${totalTalers} Taler
-            `;
-            document.getElementById('finalScore').innerHTML = finalScoreText;
-            document.getElementById('celebration').style.display = 'flex';
-        }
+        function playSound(type) {
+            // Simple audio feedback using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
 
-        function resetGame() {
-            document.getElementById('celebration').style.display = 'none';
-            if (currentLanguage === 'english') {
-                startGame(currentVocabularySet);
-            } else if (currentLanguage === 'latin') {
-                startLatinGame();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'correct') {
+                oscillator.frequency.value = 523.25; // C5
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } else {
+                oscillator.frequency.value = 200;
+                oscillator.type = 'sawtooth';
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
             }
         }
 
-        function backToMenu() {
-            document.getElementById('celebration').style.display = 'none';
-            document.getElementById('gameContainer').style.display = 'none';
-            document.getElementById('latinGameContainer').style.display = 'none';
-            document.getElementById('languageSelection').style.display = 'block';
-            updateTalerDisplay();
-            currentLanguage = null;
+        function resetTalers() {
+            if (confirm('Möchtest du wirklich alle Taler zurücksetzen? Dies kann nicht rückgängig gemacht werden.')) {
+                localStorage.setItem('vocabularyGameTalers', '0');
+                totalTalers = 0;
+                document.getElementById('totalTalers').textContent = '0';
+                alert('Taler wurden zurückgesetzt! Viel Erfolg beim nächsten Mal! 🪙');
+            }
         }
+
+        // Keyboard input handler
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toLowerCase();
+            
+            // Check if it's a letter
+            if (key.length === 1 && key >= 'a' && key <= 'z') {
+                // Find an unused tile with this letter
+                const tiles = document.querySelectorAll('.letter-tile');
+                for (let tile of tiles) {
+                    if (tile.dataset.letter === key && !tile.classList.contains('used')) {
+                        const id = parseInt(tile.dataset.id);
+                        selectLetter(key, id);
+                        break;
+                    }
+                }
+            }
+            
+            // Backspace to remove last letter
+            if (key === 'backspace' && selectedLetters.length > 0) {
+                const lastIndex = selectedLetters.length - 1;
+                removeLetterFromSlot(lastIndex);
+            }
+            
+            // Enter to check answer
+            if (key === 'enter' && selectedLetters.length === currentWord.length) {
+                checkAnswer();
+            }
+            
+            // Escape to clear
+            if (key === 'escape') {
+                clearAnswer();
+            }
+        });
 
         // Event Listeners
         document.getElementById('checkBtn').addEventListener('click', checkAnswer);
         document.getElementById('skipBtn').addEventListener('click', skipWord);
         document.getElementById('clearBtn').addEventListener('click', clearAnswer);
-        document.getElementById('continueBtn').addEventListener('click', continueToNextWord);
-        
-        document.getElementById('latinSkipBtn').addEventListener('click', skipLatinWord);
-        document.getElementById('latinClearBtn').addEventListener('click', clearLatinAnswer);
-        document.getElementById('latinContinueBtn').addEventListener('click', continueLatinToNextWord);
 
-        // Keyboard Shortcuts (English)
-        document.addEventListener('keydown', (event) => {
-            if (document.getElementById('gameContainer').style.display === 'block') {
-                const key = event.key.toLowerCase();
-
-                if ((key === ' ' || key === 'enter') && document.getElementById('continueBtn').style.display !== 'none') {
-                    event.preventDefault();
-                    continueToNextWord();
-                    return;
-                }
-
-                if (key.length === 1 && key >= 'a' && key <= 'z') {
-                    const tiles = document.querySelectorAll('.letter-tile');
-                    for (let tile of tiles) {
-                        if (tile.dataset.letter === key && !tile.classList.contains('used')) {
-                            const id = parseInt(tile.dataset.id);
-                            selectLetter(key, id);
-                            break;
-                        }
-                    }
-                }
-
-                if (key === 'backspace' && selectedLetters.length > 0) {
-                    const lastIndex = selectedLetters.length - 1;
-                    removeLetterFromSlot(lastIndex);
-                }
-
-                if (key === 'enter' && selectedLetters.length === currentWord.length) {
-                    checkAnswer();
-                }
-
-                if (key === 'escape') {
-                    clearAnswer();
-                }
-            }
-
-            // Keyboard for Latin Multiple Choice
-            if (document.getElementById('latinGameContainer').style.display === 'block' && 
-                document.getElementById('choicesContainer').style.display === 'flex') {
-                const key = event.key;
-                if (key >= '1' && key <= '5') {
-                    const index = parseInt(key) - 1;
-                    const btns = document.querySelectorAll('.choice-btn');
-                    if (btns[index] && !isProcessing) {
-                        btns[index].click();
-                    }
-                }
-            }
-
-            // Keyboard for Latin Spelling
-            if (document.getElementById('latinGameContainer').style.display === 'block' && 
-                document.getElementById('spellingContainer').style.display !== 'none') {
-                const key = event.key.toLowerCase();
-
-                if ((key === ' ' || key === 'enter') && document.getElementById('latinContinueBtn').style.display !== 'none') {
-                    event.preventDefault();
-                    continueLatinToNextWord();
-                    return;
-                }
-
-                if (key.length === 1 && key >= 'a' && key <= 'z') {
-                    const tiles = document.querySelectorAll('#latinLetterTiles .letter-tile');
-                    for (let tile of tiles) {
-                        if (tile.dataset.letter === key && !tile.classList.contains('used')) {
-                            const id = parseInt(tile.dataset.id);
-                            selectLatinLetter(key, id);
-                            break;
-                        }
-                    }
-                }
-
-                if (key === 'backspace' && selectedLetters.length > 0) {
-                    const lastIndex = selectedLetters.length - 1;
-                    removeLatinLetterFromSlot(lastIndex);
-                }
-
-                if (key === 'escape') {
-                    clearLatinAnswer();
-                }
-            }
-        });
+        // Initialize game
+        initGame();
     </script>
 </body>
 </html>
