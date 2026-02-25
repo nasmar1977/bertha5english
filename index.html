@@ -836,6 +836,17 @@
     </style>
 </head>
 <body>
+    <!-- CHANGELOG SPLASH (shown once per version) -->
+    <div class="game-container" id="changelogSplash" style="display: none;">
+        <div class="header">
+            <h1>🎮 Was ist neu?</h1>
+            <p style="color: #666; margin-top: 10px;">Vokabel-Abenteuer – Updates</p>
+        </div>
+        <div id="changelogContent" style="text-align: left; padding: 10px 20px; max-height: 55vh; overflow-y: auto;">
+        </div>
+        <button class="btn btn-check" onclick="dismissChangelog()" style="margin-top: 18px; font-size: 1.15em;">Los geht's! ➜</button>
+    </div>
+
     <!-- LANGUAGE SELECTION (Top Level) -->
     <div class="game-container" id="languageSelection">
         <div class="header">
@@ -1762,8 +1773,58 @@
         // NAVIGATION FUNCTIONS
         // ===================================================================
 
+        // ===================================================================
+        // CHANGELOG SPLASH – shown once per version
+        // ===================================================================
+
+        const APP_VERSION = '2.1.0';
+
+        const changelogEntries = [
+            {
+                version: '2.1.0',
+                date: '25.02.2026',
+                items: [
+                    '🏛️ <b>Latein Lektion 4</b> – 42 neue Vokabeln (Diana & Verwandlung)',
+                    '✍️ 14 Verb-Formen + 9 Beispielsätze für Lektion 4',
+                    '📋 Changelog-Vorschaltseite (wird einmalig pro Version angezeigt)',
+                ]
+            },
+            {
+                version: '2.0.0',
+                date: '25.02.2026',
+                items: [
+                    '🏛️ <b>Latein</b> als zweite Sprache (Lektion 3)',
+                    '🔤 Makron-Support (ā, ē, ī, ō, ū)',
+                    '📝 Vier Module: Vokabeln, Verb-Formen, Beispielsätze, Gemischt',
+                ]
+            },
+        ];
+
+        function showChangelogIfNew() {
+            const seen = localStorage.getItem('changelog_seen_version');
+            if (seen === APP_VERSION) return;
+            document.getElementById('languageSelection').style.display = 'none';
+            const container = document.getElementById('changelogContent');
+            container.innerHTML = changelogEntries.map(e =>
+                `<div style="margin-bottom: 16px;">
+                    <div style="font-weight: bold; font-size: 1.05em; color: #4a90d9;">v${e.version} <span style="font-weight: normal; color: #999; font-size: 0.9em;">(${e.date})</span></div>
+                    <ul style="margin: 6px 0 0 0; padding-left: 20px;">${e.items.map(i => `<li style="margin: 4px 0; line-height: 1.4;">${i}</li>`).join('')}</ul>
+                </div>`
+            ).join('');
+            document.getElementById('changelogSplash').style.display = 'block';
+        }
+
+        function dismissChangelog() {
+            localStorage.setItem('changelog_seen_version', APP_VERSION);
+            document.getElementById('changelogSplash').style.display = 'none';
+            document.getElementById('languageSelection').style.display = 'block';
+        }
+
+        // Show changelog on page load
+        document.addEventListener('DOMContentLoaded', showChangelogIfNew);
+
         function hideAllScreens() {
-            ['languageSelection','setSelection','latinChapterSelection','latinModuleSelection','gameContainer'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','gameContainer'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
         }

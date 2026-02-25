@@ -30,10 +30,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Datum:** 25.02.2026
 **Englisch:** 140 Vokabeln (Theme 2 + Theme 3)
-**Latein:** Lektion 3 – 42 Vokabeln, 18 Verb-Formen, 12 Beispielsätze
+**Latein:** Lektion 3 + 4 – 84 Vokabeln, 32 Verb-Formen, 21 Beispielsätze
 
 ## 🚀 Wie benutzen?
 
@@ -54,6 +54,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.1.0 (25.02.2026)
+- Latein Lektion 4 hinzugefügt: 42 Vokabeln (Diana & Verwandlung)
+- 14 Verb-Formen + 9 Beispielsätze für Lektion 4
+- Changelog-Vorschaltseite (wird einmalig pro neuer Version angezeigt)
 
 ### Version 2.0.0 (25.02.2026)
 - Latein als zweite Sprache hinzugefügt (Lektion 3)
