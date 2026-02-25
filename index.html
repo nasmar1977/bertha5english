@@ -3373,16 +3373,25 @@
                 `;
             }
 
-            // Show overall learning progress
+            // Show learning progress for current chapter/set
             const allProgress = loadProgress();
-            const totalVocabCount = vocabularyTheme2.length + vocabularyTheme3.length
-                + Object.values(latinData).reduce((sum, ch) => {
-                    let c = ch.vocabulary.length + (ch.multiWord ? ch.multiWord.length : 0)
-                        + (ch.verbForms ? ch.verbForms.length : 0)
-                        + (ch.sentences ? ch.sentences.length : 0);
-                    return sum + c;
-                }, 0);
-            // Count unique base words learned (any direction with correct >= 3)
+            let chapterKeys = new Set();
+            let chapterLabel = '';
+            if (currentLanguage === 'english') {
+                vocabulary.forEach(w => {
+                    chapterKeys.add('en:' + w.english.toLowerCase());
+                });
+                chapterLabel = currentVocabularySet;
+            } else if (currentLatinChapter) {
+                const ch = currentLatinChapter;
+                ch.vocabulary.forEach(v => chapterKeys.add('la:v_' + v.latin));
+                if (ch.multiWord) ch.multiWord.forEach(mw => chapterKeys.add('la:mw_lg_' + mw.latin));
+                if (ch.verbForms) ch.verbForms.forEach(vf => chapterKeys.add('la:vf_i2f_' + vf.infinitive));
+                if (ch.sentences) ch.sentences.forEach(s => chapterKeys.add('la:sent_' + s.answer));
+                chapterLabel = ch.name;
+            }
+            const chapterTotal = chapterKeys.size;
+            // Count words with correct >= 3 in any direction
             const learnedBaseWords = new Set();
             Object.entries(allProgress).forEach(([key, p]) => {
                 if (p.correct >= 3) {
@@ -3390,9 +3399,9 @@
                     learnedBaseWords.add(baseKey);
                 }
             });
-            const learnedCount = learnedBaseWords.size;
+            const learnedCount = [...learnedBaseWords].filter(bk => chapterKeys.has(bk)).length;
             celebrationHTML += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 12px; margin: 15px 0;">
-                📊 Insgesamt gelernt: <strong>${learnedCount}</strong> / ${totalVocabCount} Vokabeln
+                📊 ${chapterLabel}: <strong>${learnedCount}</strong> / ${chapterTotal} Vokabeln gelernt <span style="font-size: 0.8em; opacity: 0.85;">(3× richtig)</span>
             </div>`;
 
             celebrationHTML += `<strong>Gesamtpunkte: ${score}</strong>`;
