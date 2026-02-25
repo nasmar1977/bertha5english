@@ -833,6 +833,61 @@
             .sentence-latin { font-size: 1.4em; }
             .sentence-template { font-size: 1.5em; }
         }
+
+        /* Emoji Curtain */
+        .word-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .curtain {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2;
+        }
+        .curtain.active {
+            display: flex;
+        }
+        .curtain-left, .curtain-right {
+            width: 50%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #8b1a1a 0px, #a52a2a 6px, #8b1a1a 12px, #701414 18px
+            );
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        .curtain-left {
+            border-right: 2px solid #5a0e0e;
+        }
+        .curtain-right {
+            border-left: 2px solid #5a0e0e;
+        }
+        .curtain-left::after, .curtain-right::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 20px;
+            background: #d4a017;
+            border-radius: 0 0 4px 4px;
+            margin-top: 4px;
+        }
+        .curtain-left::after {
+            margin-left: auto;
+            margin-right: 4px;
+        }
+        .curtain-right::after {
+            margin-left: 4px;
+        }
+        .curtain.reveal .curtain-left {
+            transform: translateX(-100%);
+            transition: transform 0.6s ease-in-out;
+        }
+        .curtain.reveal .curtain-right {
+            transform: translateX(100%);
+            transition: transform 0.6s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -869,6 +924,7 @@
             <div style="font-size: 2em;">🪙</div>
             <div>Deine Taler: <strong><span id="displayTalersMain">0</span>/50</strong></div>
             <button class="btn btn-clear" onclick="resetTalersFromMenu()" style="margin-top: 10px; font-size: 0.9em;">Taler zurücksetzen</button>
+            <button class="btn btn-skip" onclick="resetProgress()" style="margin-top: 10px; font-size: 0.9em;">Lernfortschritt zurücksetzen</button>
         </div>
     </div>
 
@@ -884,21 +940,21 @@
             <div class="set-card" onclick="startGame('theme2')">
                 <div class="set-icon">🏫</div>
                 <div class="set-title">Theme 2: At School</div>
-                <div class="set-info">70 Vokabeln</div>
+                <div class="set-info">77 Vokabeln</div>
                 <div class="set-topics">Schulfächer • Essen • Wochentage • Schule</div>
             </div>
 
             <div class="set-card" onclick="startGame('theme3')">
                 <div class="set-icon">🎭</div>
                 <div class="set-title">Theme 3: Hobbies and Activities</div>
-                <div class="set-info">70 Vokabeln</div>
+                <div class="set-info">98 Vokabeln</div>
                 <div class="set-topics">Hobbys • Gefühle • Aktivitäten • Zeit</div>
             </div>
 
             <div class="set-card set-card-all" onclick="startGame('all')">
                 <div class="set-icon">🌟</div>
                 <div class="set-title">Alle Vokabeln</div>
-                <div class="set-info">140 Vokabeln</div>
+                <div class="set-info">175 Vokabeln</div>
                 <div class="set-topics">Theme 2 + Theme 3 gemischt</div>
             </div>
         </div>
@@ -922,7 +978,7 @@
             <div class="set-card latin" onclick="selectLatinChapter('chapter4')">
                 <div class="set-icon">🏛️</div>
                 <div class="set-title">Lektion 4</div>
-                <div class="set-info">42 Vokabeln</div>
+                <div class="set-info">43 Vokabeln</div>
                 <div class="set-topics">Diana • Verwandlung • Vokabeln • Verben • Sätze</div>
             </div>
         </div>
@@ -991,7 +1047,13 @@
         </div>
 
         <div class="word-card">
-            <div class="word-image" id="wordImage">🐱</div>
+            <div class="word-image-wrapper" id="wordImageWrapper">
+                <div class="word-image" id="wordImage">🐱</div>
+                <div class="curtain" id="emojiCurtain">
+                    <div class="curtain-left"></div>
+                    <div class="curtain-right"></div>
+                </div>
+            </div>
             <div class="word-german" id="wordGerman">Katze</div>
             <div class="word-hint" id="wordHint">Ein Haustier mit vier Beinen</div>
             <div class="auto-hint" id="autoHint"></div>
@@ -1770,6 +1832,128 @@
         }
 
         // ===================================================================
+        // LEARNING PROGRESS (localStorage)
+        // ===================================================================
+
+        function loadProgress() {
+            try {
+                const data = localStorage.getItem('vocabProgress');
+                return data ? JSON.parse(data) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem('vocabProgress', JSON.stringify(progress));
+        }
+
+        function getWordKey(item, mode) {
+            // English vocabulary: direction-specific key
+            if (item.english) {
+                const dir = mode === 'mc' ? 'en>de' : 'de>en';
+                return 'en:' + dir + ':' + item.english.toLowerCase();
+            }
+            // Latin vocab items: direction depends on mode (spelling=DE→LA, mc=LA→DE)
+            if (item.id && item.type === 'vocab') {
+                const m = mode !== undefined ? mode : item.mode;
+                const dir = m === 'mc' ? 'la>de' : 'de>la';
+                return 'la:' + dir + ':' + item.id;
+            }
+            // Latin verbs/sentences/multiword: direction already encoded in item.id
+            if (item.id) {
+                return 'la:' + item.id;
+            }
+            return null;
+        }
+
+        // Returns all possible direction keys for weighted sampling
+        function getAllWordKeys(item) {
+            if (item.english) {
+                return [
+                    'en:de>en:' + item.english.toLowerCase(),
+                    'en:en>de:' + item.english.toLowerCase()
+                ];
+            }
+            if (item.id && item.type === 'vocab') {
+                return [
+                    'la:de>la:' + item.id,
+                    'la:la>de:' + item.id
+                ];
+            }
+            if (item.id) {
+                return ['la:' + item.id];
+            }
+            return [];
+        }
+
+        function recordAnswer(key, isCorrect) {
+            if (!key) return;
+            const progress = loadProgress();
+            if (!progress[key]) {
+                progress[key] = { correct: 0, wrong: 0, lastSeen: Date.now() };
+            }
+            if (isCorrect) {
+                progress[key].correct++;
+            } else {
+                progress[key].wrong++;
+            }
+            progress[key].lastSeen = Date.now();
+            saveProgress(progress);
+        }
+
+        function weightedSample(pool, n, progressData) {
+            if (pool.length <= n) return shuffleArray(pool);
+
+            const weights = pool.map(item => {
+                const keys = getAllWordKeys(item);
+                let totalCorrect = 0, totalWrong = 0, seen = false;
+                keys.forEach(key => {
+                    const prog = progressData[key];
+                    if (prog) {
+                        totalCorrect += prog.correct;
+                        totalWrong += prog.wrong;
+                        seen = true;
+                    }
+                });
+                if (!seen) return 2.0; // Never seen → slightly elevated
+                let w = 1.0 + (totalWrong * 2.0) - (totalCorrect * 0.3);
+                return Math.max(0.2, w); // Minimum 0.2
+            });
+
+            const selected = [];
+            const used = new Set();
+
+            for (let i = 0; i < n; i++) {
+                // Recalculate total weight excluding used indices
+                let totalWeight = 0;
+                for (let j = 0; j < pool.length; j++) {
+                    if (!used.has(j)) totalWeight += weights[j];
+                }
+
+                let r = Math.random() * totalWeight;
+                for (let j = 0; j < pool.length; j++) {
+                    if (used.has(j)) continue;
+                    r -= weights[j];
+                    if (r <= 0) {
+                        selected.push(pool[j]);
+                        used.add(j);
+                        break;
+                    }
+                }
+            }
+
+            return shuffleArray(selected);
+        }
+
+        function resetProgress() {
+            if (confirm('Lernfortschritt zurücksetzen? Alle Vokabel-Statistiken werden gelöscht.')) {
+                localStorage.removeItem('vocabProgress');
+                alert('Lernfortschritt zurückgesetzt!');
+            }
+        }
+
+        // ===================================================================
         // NAVIGATION FUNCTIONS
         // ===================================================================
 
@@ -1777,9 +1961,19 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.1.0';
+        const APP_VERSION = '2.2.0';
 
         const changelogEntries = [
+            {
+                version: '2.2.0',
+                date: '25.02.2026',
+                items: [
+                    '🧠 <b>Lernhorizont</b> – schwächere Vokabeln kommen häufiger dran',
+                    '🎭 <b>Emoji-Vorhang</b> – bereits gekonnte Wörter werden verhüllt, Vorhang öffnet sich bei Antwort',
+                    '📊 Fortschritt pro Übersetzungsrichtung (DE→EN separat von EN→DE)',
+                    '📈 Lernstatistik auf der Ergebnis-Seite',
+                ]
+            },
             {
                 version: '2.1.0',
                 date: '25.02.2026',
@@ -1926,7 +2120,8 @@
 
             // Build round items for Latin
             latinRoundItems = buildLatinRoundItems(ch, module);
-            latinRoundItems = shuffleArray(latinRoundItems).slice(0, Math.min(15, latinRoundItems.length));
+            const progress = loadProgress();
+            latinRoundItems = weightedSample(latinRoundItems, Math.min(15, latinRoundItems.length), progress);
 
             initLatinGame();
         }
@@ -2070,7 +2265,8 @@
             isRepeatPhase = false;
             wordStats = {};
 
-            shuffledVocabulary = shuffleArray(vocabulary).slice(0, 15);
+            const progress = loadProgress();
+            shuffledVocabulary = weightedSample(vocabulary, 15, progress);
 
             // Assign random mode per word for this round
             roundModes = shuffledVocabulary.map(() => Math.random() < 0.5 ? 'spelling' : 'mc');
@@ -2181,6 +2377,21 @@
             document.getElementById('autoHint').textContent = '';
             document.getElementById('autoHint').className = 'auto-hint';
             document.getElementById('mcContinueBtn').style.display = 'none';
+
+            // Curtain logic: hide emoji if already answered correctly before (not in repeat phase)
+            const curtain = document.getElementById('emojiCurtain');
+            if (!isRepeatPhase) {
+                const itemKey = getWordKey(item);
+                const prog = loadProgress()[itemKey];
+                if (prog && prog.correct >= 1) {
+                    curtain.classList.add('active');
+                    curtain.classList.remove('reveal');
+                } else {
+                    curtain.classList.remove('active', 'reveal');
+                }
+            } else {
+                curtain.classList.remove('active', 'reveal');
+            }
 
             // Hide all areas first
             document.getElementById('spellingArea').style.display = 'none';
@@ -2315,10 +2526,14 @@
 
             if (answer === expected && correctLetters === currentWord.length) {
                 stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(currentLatinItem), true);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 handleCorrectAnswer(stats, timeElapsed);
                 setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 2000);
             } else {
                 stats.mistakes++;
+                recordAnswer(getWordKey(currentLatinItem), false);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
                 feedback.className = 'feedback wrong';
                 playSound('wrong');
@@ -2379,11 +2594,15 @@
 
             if (isCorrect) {
                 stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(currentLatinItem), true);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 handleCorrectAnswer(stats, timeElapsed);
                 setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 2000);
             } else {
                 selectedOption.classList.add('mc-wrong');
                 stats.mistakes++;
+                recordAnswer(getWordKey(currentLatinItem), false);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 feedback.textContent = '';
                 feedback.className = 'feedback';
                 playSound('wrong');
@@ -2508,10 +2727,14 @@
 
             if (answer === currentWord && correctLetters === currentWord.length) {
                 stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(currentLatinItem), true);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 handleCorrectAnswer(stats, timeElapsed);
                 setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 2000);
             } else {
                 stats.mistakes++;
+                recordAnswer(getWordKey(currentLatinItem), false);
+                document.getElementById('emojiCurtain').classList.add('reveal');
                 feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
                 feedback.className = 'feedback wrong';
                 playSound('wrong');
@@ -2580,6 +2803,8 @@
             const stats = wordStats[currentLatinItem.id];
             stats.mistakes++;
             stats.attempts++;
+            recordAnswer(getWordKey(currentLatinItem), false);
+            document.getElementById('emojiCurtain').classList.add('reveal');
 
             if (!isRepeatPhase) addLatinToRepeatList();
 
@@ -2657,6 +2882,21 @@
             document.getElementById('autoHint').className = 'auto-hint';
             document.getElementById('mcContinueBtn').style.display = 'none';
             document.getElementById('sentenceArea').style.display = 'none';
+
+            // Curtain logic: hide emoji if already answered correctly before (not in repeat phase)
+            const curtain = document.getElementById('emojiCurtain');
+            if (!isRepeatPhase) {
+                const wordKey = getWordKey(word, currentMode);
+                const prog = loadProgress()[wordKey];
+                if (prog && prog.correct >= 1) {
+                    curtain.classList.add('active');
+                    curtain.classList.remove('reveal');
+                } else {
+                    curtain.classList.remove('active', 'reveal');
+                }
+            } else {
+                curtain.classList.remove('active', 'reveal');
+            }
 
             if (currentMode === 'spelling') {
                 loadSpellingMode(word);
@@ -2823,6 +3063,8 @@
 
             if (answer === currentWord && correctLetters === currentWord.length) {
                 stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), true);
+                document.getElementById('emojiCurtain').classList.add('reveal');
 
                 if (attemptCount === 1) {
                     stats.correctOnFirstTry = true;
@@ -2864,6 +3106,8 @@
                 }, 2000);
             } else {
                 stats.mistakes++;
+                recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), false);
+                document.getElementById('emojiCurtain').classList.add('reveal');
 
                 feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
                 feedback.className = 'feedback wrong';
@@ -2894,6 +3138,8 @@
             const stats = wordStats[currentWord];
             stats.mistakes++;
             stats.attempts++;
+            recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), false);
+            document.getElementById('emojiCurtain').classList.add('reveal');
 
             if (!isRepeatPhase) {
                 addToRepeatList();
@@ -3009,6 +3255,8 @@
 
             if (isCorrect) {
                 stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), true);
+                document.getElementById('emojiCurtain').classList.add('reveal');
 
                 if (attemptCount === 1) {
                     stats.correctOnFirstTry = true;
@@ -3051,6 +3299,8 @@
             } else {
                 selectedOption.classList.add('mc-wrong');
                 stats.mistakes++;
+                recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), false);
+                document.getElementById('emojiCurtain').classList.add('reveal');
 
                 feedback.textContent = '';
                 feedback.className = 'feedback';
@@ -3122,6 +3372,28 @@
                     </div>
                 `;
             }
+
+            // Show overall learning progress
+            const allProgress = loadProgress();
+            const totalVocabCount = vocabularyTheme2.length + vocabularyTheme3.length
+                + Object.values(latinData).reduce((sum, ch) => {
+                    let c = ch.vocabulary.length + (ch.multiWord ? ch.multiWord.length : 0)
+                        + (ch.verbForms ? ch.verbForms.length : 0)
+                        + (ch.sentences ? ch.sentences.length : 0);
+                    return sum + c;
+                }, 0);
+            // Count unique base words learned (any direction with correct >= 3)
+            const learnedBaseWords = new Set();
+            Object.entries(allProgress).forEach(([key, p]) => {
+                if (p.correct >= 3) {
+                    const baseKey = key.replace(/:(de>en|en>de|de>la|la>de):/, ':');
+                    learnedBaseWords.add(baseKey);
+                }
+            });
+            const learnedCount = learnedBaseWords.size;
+            celebrationHTML += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 12px; margin: 15px 0;">
+                📊 Insgesamt gelernt: <strong>${learnedCount}</strong> / ${totalVocabCount} Vokabeln
+            </div>`;
 
             celebrationHTML += `<strong>Gesamtpunkte: ${score}</strong>`;
 

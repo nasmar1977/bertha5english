@@ -8,9 +8,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ Sprachauswahl: Englisch oder Latein
 - ✅ Taler-Belohnungssystem (50 Taler = Tagesziel!)
 - ✅ Intelligentes Wiederholungssystem (falsche/langsame Wörter werden wiederholt)
-- ✅ 15 Vokabeln pro Runde, zufällig gemischt
+- ✅ 15 Vokabeln pro Runde, gewichtet nach Lernfortschritt (schwächere Wörter kommen häufiger)
+- ✅ Emoji-Vorhang: bereits gekonnte Vokabeln werden verhüllt, Vorhang öffnet sich bei Antwort
+- ✅ Fortschritt pro Übersetzungsrichtung (DE→EN separat von EN→DE)
 - ✅ Automatische Tipps nach 15 Sekunden (nur Spelling-Modus)
-- ✅ Fortschritt wird gespeichert (localStorage)
+- ✅ Fortschritt wird sitzungsübergreifend gespeichert (localStorage)
 - ✅ Mobilfreundlich & Tastatur-Steuerung
 
 ### 🇬🇧 Englisch
@@ -30,10 +32,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.1.0
+**Version:** 2.2.0
 **Datum:** 25.02.2026
-**Englisch:** 140 Vokabeln (Theme 2 + Theme 3)
-**Latein:** Lektion 3 + 4 – 84 Vokabeln, 32 Verb-Formen, 21 Beispielsätze
+**Englisch:** 175 Vokabeln (Theme 2: 77 + Theme 3: 98)
+**Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen, 21 Beispielsätze
 
 ## 🚀 Wie benutzen?
 
@@ -54,6 +56,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.2.0 (25.02.2026)
+- Lernhorizont: gewichtete Vokabelauswahl priorisiert schwächere Wörter
+- Emoji-Vorhang: bereits gekonnte Vokabeln werden theatralisch enthüllt
+- Fortschritt wird pro Übersetzungsrichtung getrackt (DE→EN / EN→DE / DE→LA / LA→DE)
+- Lernstatistik auf der Ergebnis-Seite (Vokabeln mit ≥3× richtig = gelernt)
+- Button "Lernfortschritt zurücksetzen" auf der Startseite
 
 ### Version 2.1.0 (25.02.2026)
 - Latein Lektion 4 hinzugefügt: 42 Vokabeln (Diana & Verwandlung)
