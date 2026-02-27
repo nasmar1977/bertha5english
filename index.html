@@ -2161,9 +2161,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.4.0';
+        const APP_VERSION = '2.5.0';
 
         const changelogEntries = [
+            {
+                version: '2.5.0',
+                date: '27.02.2026',
+                items: [
+                    '📖 <b>Deutsche Spalte</b> im Tabellentraining – auch Infinitiv & Deutsch als Lücke',
+                    '🎓 <b>Getrennte Tabellen</b> nach Konjugation (ā/ē/ī/unregelm.) & Deklination (a/o)',
+                    '📈 <b>Progression</b>: Erst einzelne Typen üben, bei 60% Trefferquote → kombinierte Tabelle',
+                ]
+            },
             {
                 version: '2.4.0',
                 date: '27.02.2026',
@@ -2507,14 +2516,39 @@
             }
 
             if (module === 'tables') {
-                const tableTypes = [];
+                const progress = loadProgress();
 
-                // Verb-Tabelle: alle Verben des Kapitels
-                const verbRows = [];
+                // Helper: Konjugationsklasse aus Infinitiv ableiten
+                function getConjugation(inf) {
+                    if (inf.endsWith('āre')) return 'ā-Konjugation';
+                    if (inf.endsWith('ēre')) return 'ē-Konjugation';
+                    if (inf.endsWith('īre')) return 'ī-Konjugation';
+                    return 'unregelmäßig';
+                }
+
+                // Helper: Prüft ob eine Sub-Tabelle gemeistert ist (>=60% Zellen mit correct>=2)
+                function isTableGroupMastered(rows, tblType) {
+                    let total = 0, mastered = 0;
+                    rows.forEach(row => {
+                        Object.keys(row).forEach(key => {
+                            if (!row[key]) return;
+                            total++;
+                            const progKey = 'la:tbl_' + tblType.charAt(0) + '_' + key + '_' + row.label;
+                            const p = progress[progKey];
+                            if (p && p.correct >= 2) mastered++;
+                        });
+                    });
+                    return total > 0 && (mastered / total) >= 0.6;
+                }
+
+                // --- Verben nach Konjugation gruppieren ---
+                const conjGroups = {};
                 ch.verbForms.forEach(vf => {
                     if (!vf.present) return;
+                    const conj = getConjugation(vf.infinitive);
+                    if (!conjGroups[conj]) conjGroups[conj] = [];
                     const row = {
-                        label: vf.infinitive,
+                        label: vf.infinitive, german: vf.german,
                         sg1: vf.firstPerson,
                         sg2: vf.present.sg2, sg3: vf.present.sg3,
                         pl1: vf.present.pl1, pl2: vf.present.pl2, pl3: vf.present.pl3
@@ -2523,29 +2557,53 @@
                         row.imp_sg = vf.imperative.sg;
                         row.imp_pl = vf.imperative.pl;
                     }
-                    verbRows.push(row);
+                    conjGroups[conj].push(row);
                 });
-                if (verbRows.length > 0) {
-                    tableTypes.push({ tableType: 'verb', rows: verbRows });
-                }
+                const verbSubTables = Object.keys(conjGroups).map(conj => ({
+                    tableType: 'verb', conjugation: conj, rows: conjGroups[conj]
+                }));
 
-                // Nomen-Tabelle: alle Nomen des Kapitels
+                // --- Nomen nach Deklination gruppieren ---
+                const nounSubTables = [];
                 if (ch.nouns) {
-                    const nounRows = [];
+                    const declGroups = {};
                     ch.nouns.forEach(n => {
-                        const row = { label: n.nom_sg };
+                        const decl = n.declension.replace(/\s*\(.*\)/, '');
+                        if (!declGroups[decl]) declGroups[decl] = [];
+                        const row = { label: n.nom_sg, german: n.german };
                         ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg',
                          'nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'].forEach(k => {
                             row[k] = n[k] || null;
                         });
-                        nounRows.push(row);
+                        declGroups[decl].push(row);
                     });
-                    if (nounRows.length > 0) {
-                        tableTypes.push({ tableType: 'noun', rows: nounRows });
-                    }
+                    Object.keys(declGroups).forEach(decl => {
+                        if (declGroups[decl].length > 0) {
+                            nounSubTables.push({ tableType: 'noun', declension: decl, rows: declGroups[decl] });
+                        }
+                    });
                 }
 
-                // Abwechselnd: 3-5 Felder aus Tabelle A, dann B, ...
+                // --- Progression: einzelne oder kombinierte Tabellen ---
+                const tableTypes = [];
+
+                const allVerbsMastered = verbSubTables.length > 0 && verbSubTables.every(t => isTableGroupMastered(t.rows, 'verb'));
+                if (allVerbsMastered) {
+                    const allVerbRows = verbSubTables.flatMap(t => t.rows);
+                    tableTypes.push({ tableType: 'verb', conjugation: 'alle Konjugationen', rows: allVerbRows });
+                } else {
+                    verbSubTables.filter(t => !isTableGroupMastered(t.rows, 'verb')).forEach(t => tableTypes.push(t));
+                }
+
+                const allNounsMastered = nounSubTables.length > 0 && nounSubTables.every(t => isTableGroupMastered(t.rows, 'noun'));
+                if (allNounsMastered) {
+                    const allNounRows = nounSubTables.flatMap(t => t.rows);
+                    tableTypes.push({ tableType: 'noun', declension: 'alle Deklinationen', rows: allNounRows });
+                } else {
+                    nounSubTables.filter(t => !isTableGroupMastered(t.rows, 'noun')).forEach(t => tableTypes.push(t));
+                }
+
+                // --- Abwechselnd 3-5 Felder pro Tabelle, max 15 ---
                 let tableIndex = Math.random() < 0.5 ? 0 : 1;
                 if (tableTypes.length === 1) tableIndex = 0;
 
@@ -2556,7 +2614,7 @@
                     const allCells = [];
                     tbl.rows.forEach((row, rowIdx) => {
                         Object.keys(row).forEach(key => {
-                            if (key === 'label' || !row[key]) return;
+                            if (!row[key]) return;
                             allCells.push({ rowIdx, key, value: row[key], rowLabel: row.label });
                         });
                     });
@@ -2564,9 +2622,17 @@
                     const selected = shuffleArray([...allCells]).slice(0, blanksCount);
                     selected.forEach(cell => {
                         if (items.length >= 15) return;
+                        let question;
+                        if (cell.key === 'label') {
+                            question = tbl.rows[cell.rowIdx].german + ': ' + getTableCellLabel(cell.key) + '?';
+                        } else {
+                            question = cell.rowLabel + ': ' + getTableCellLabel(cell.key) + '?';
+                        }
                         items.push({
                             type: 'table', mode: 'table',
                             tableType: tbl.tableType,
+                            conjugation: tbl.conjugation || null,
+                            declension: tbl.declension || null,
                             tableRows: tbl.rows,
                             blankRowIdx: cell.rowIdx,
                             blankKey: cell.key,
@@ -2574,7 +2640,7 @@
                             displayAnswer: cell.value,
                             image: tbl.tableType === 'verb' ? '✍️' : '📐',
                             hint: getTableCellLabel(cell.key),
-                            question: cell.rowLabel + ': ' + getTableCellLabel(cell.key) + '?',
+                            question: question,
                             id: 'tbl_' + tbl.tableType.charAt(0) + '_' + cell.key + '_' + cell.rowLabel
                         });
                     });
@@ -2587,6 +2653,7 @@
 
         function getTableCellLabel(key) {
             const labels = {
+                label: 'Latein', german: 'Deutsch',
                 sg1: '1.Sg.', sg2: '2.Sg.', sg3: '3.Sg.',
                 pl1: '1.Pl.', pl2: '2.Pl.', pl3: '3.Pl.',
                 imp_sg: 'Imp.Sg.', imp_pl: 'Imp.Pl.',
@@ -3156,7 +3223,9 @@
 
         function renderFullTable(item) {
             const isVerb = item.tableType === 'verb';
-            const title = isVerb ? 'VERBA' : 'NOMINA';
+            const title = isVerb
+                ? ('VERBA — ' + (item.conjugation || ''))
+                : ('NOMINA — ' + (item.declension || ''));
             const columns = isVerb
                 ? [{key:'sg1',label:'1.Sg.'},{key:'sg2',label:'2.Sg.'},{key:'sg3',label:'3.Sg.'},
                    {key:'pl1',label:'1.Pl.'},{key:'pl2',label:'2.Pl.'},{key:'pl3',label:'3.Pl.'},
@@ -3166,6 +3235,9 @@
                    {key:'nom_pl',label:'Nom.Pl.'},{key:'gen_pl',label:'Gen.Pl.'},{key:'dat_pl',label:'Dat.Pl.'},
                    {key:'akk_pl',label:'Akk.Pl.'},{key:'abl_pl',label:'Abl.Pl.'}];
 
+            // Prepend label + german columns
+            const allColumns = [{key:'label',label:isVerb ? 'Infinitiv' : 'Wort'}, {key:'german',label:'Deutsch'}, ...columns];
+
             let html = `<div class="terminal-header">
                 <span class="terminal-dot red"></span>
                 <span class="terminal-dot yellow"></span>
@@ -3173,22 +3245,23 @@
                 <span class="terminal-title">${title}</span>
             </div>
             <div class="terminal-body"><table class="terminal-tbl">
-            <thead><tr><th>${isVerb ? 'Infinitiv' : 'Wort'}</th>`;
-            columns.forEach(c => { html += `<th>${c.label}</th>`; });
+            <thead><tr>`;
+            allColumns.forEach(c => { html += `<th>${c.label}</th>`; });
             html += `</tr></thead><tbody>`;
 
             item.tableRows.forEach((row, rowIdx) => {
                 const isActiveRow = rowIdx === item.blankRowIdx;
                 html += `<tr${isActiveRow ? ' style="background:rgba(57,255,20,0.05)"' : ''}>`;
-                html += `<td class="row-label">${row.label}</td>`;
-                columns.forEach(col => {
+                allColumns.forEach(col => {
                     const val = row[col.key];
-                    if (rowIdx === item.blankRowIdx && col.key === item.blankKey) {
-                        html += `<td class="cell-blank"><input type="text" id="tableInput" autocomplete="off" autocapitalize="off" spellcheck="false"></td>`;
+                    const isBlank = rowIdx === item.blankRowIdx && col.key === item.blankKey;
+                    const isLabel = col.key === 'label';
+                    if (isBlank) {
+                        html += `<td class="cell-blank${isLabel ? ' row-label' : ''}"><input type="text" id="tableInput" autocomplete="off" autocapitalize="off" spellcheck="false"></td>`;
                     } else if (val === undefined || val === null) {
                         html += `<td style="color:#484f58;">—</td>`;
                     } else {
-                        html += `<td>${val}</td>`;
+                        html += `<td${isLabel ? ' class="row-label"' : ''}>${val}</td>`;
                     }
                 });
                 html += `</tr>`;
