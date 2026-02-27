@@ -2054,7 +2054,7 @@
                 const dir = mode === 'mc' ? 'en>de' : 'de>en';
                 return 'en:' + dir + ':' + item.english.toLowerCase();
             }
-            // Latin vocab items: direction depends on mode (spelling=DE→LA, mc=LA→DE)
+            // Latin vocab items: direction depends on mode
             if (item.id && item.type === 'vocab') {
                 const m = mode !== undefined ? mode : item.mode;
                 const dir = m === 'mc' ? 'la>de' : 'de>la';
@@ -2361,45 +2361,62 @@
             let items = [];
 
             if (module === 'vocab' || module === 'mixed') {
-                // Single-word vocab: random spelling or MC, Latin→DE direction
+                // Single-word vocab: 70% LA→DE, 30% DE→LA
                 ch.vocabulary.forEach(v => {
-                    const mode = Math.random() < 0.5 ? 'spelling' : 'mc';
-                    items.push({
-                        type: 'vocab', mode: mode,
-                        prompt: v.german, answer: v.latin.toLowerCase(),
-                        displayAnswer: v.latin,
-                        image: v.image, hint: v.hint,
-                        question: 'Wie heißt das auf Latein?',
-                        distractors: v.distractors,
-                        mcCorrect: v.german,
-                        mcPrompt: v.latin,
-                        mcQuestion: 'Was bedeutet dieses Wort auf Deutsch?',
-                        id: 'v_' + v.latin
-                    });
+                    if (Math.random() < 0.7) {
+                        // LA→DE: MC (oder Spelling für einfache deutsche Wörter)
+                        const isSimpleGerman = !v.german.includes(';') && !v.german.includes(',');
+                        const mode = isSimpleGerman && Math.random() < 0.5 ? 'spelling' : 'mc';
+                        items.push({
+                            type: 'vocab', mode: mode,
+                            prompt: v.latin, answer: v.german.toLowerCase(),
+                            displayAnswer: v.german,
+                            image: v.image, hint: v.hint,
+                            question: 'Was bedeutet das auf Deutsch?',
+                            distractors: v.distractors,
+                            mcCorrect: v.german,
+                            mcPrompt: v.latin,
+                            mcQuestion: 'Was bedeutet dieses Wort auf Deutsch?',
+                            id: 'v_' + v.latin
+                        });
+                    } else {
+                        // DE→LA: Spelling (deutsches Wort sehen, Latein tippen)
+                        items.push({
+                            type: 'vocab', mode: 'spelling',
+                            prompt: v.german, answer: v.latin.toLowerCase(),
+                            displayAnswer: v.latin,
+                            image: v.image, hint: v.hint,
+                            question: 'Wie heißt das auf Latein?',
+                            distractors: v.distractors,
+                            mcCorrect: v.german,
+                            mcPrompt: v.latin,
+                            mcQuestion: 'Was bedeutet dieses Wort auf Deutsch?',
+                            id: 'v_' + v.latin
+                        });
+                    }
                 });
 
-                // Multi-word: MC only, both directions
+                // Multi-word: 70% LA→DE, 30% DE→LA (MC)
                 ch.multiWord.forEach(mw => {
-                    // Latin → German
-                    items.push({
-                        type: 'multiword', mode: 'mc',
-                        mcPrompt: mw.latin,
-                        mcCorrect: mw.german,
-                        mcQuestion: 'Was bedeutet das auf Deutsch?',
-                        image: '🏛️', hint: '',
-                        distractors: mw.germanDistractors,
-                        id: 'mw_lg_' + mw.latin
-                    });
-                    // German → Latin
-                    items.push({
-                        type: 'multiword', mode: 'mc',
-                        mcPrompt: mw.german,
-                        mcCorrect: mw.latin,
-                        mcQuestion: 'Wie heißt das auf Latein?',
-                        image: '🏛️', hint: '',
-                        distractors: mw.latinDistractors,
-                        id: 'mw_gl_' + mw.latin
-                    });
+                    if (Math.random() < 0.7) {
+                        items.push({
+                            type: 'multiword', mode: 'mc',
+                            mcPrompt: mw.latin, mcCorrect: mw.german,
+                            mcQuestion: 'Was bedeutet das auf Deutsch?',
+                            image: '🏛️', hint: '',
+                            distractors: mw.germanDistractors,
+                            id: 'mw_lg_' + mw.latin
+                        });
+                    } else {
+                        items.push({
+                            type: 'multiword', mode: 'mc',
+                            mcPrompt: mw.german, mcCorrect: mw.latin,
+                            mcQuestion: 'Wie heißt das auf Latein?',
+                            image: '🏛️', hint: '',
+                            distractors: mw.latinDistractors,
+                            id: 'mw_gl_' + mw.latin
+                        });
+                    }
                 });
             }
 
