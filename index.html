@@ -2365,7 +2365,7 @@
                 ch.vocabulary.forEach(v => {
                     if (Math.random() < 0.7) {
                         // LA→DE: MC (oder Spelling für einfache deutsche Wörter)
-                        const isSimpleGerman = !v.german.includes(';') && !v.german.includes(',');
+                        const isSimpleGerman = !v.german.includes(';') && !v.german.includes(',') && !v.german.includes('(') && v.german.length <= 12;
                         const mode = isSimpleGerman && Math.random() < 0.5 ? 'spelling' : 'mc';
                         items.push({
                             type: 'vocab', mode: mode,
