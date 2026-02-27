@@ -2603,22 +2603,12 @@
                     nounSubTables.filter(t => !isTableGroupMastered(t.rows, 'noun')).forEach(t => tableTypes.push(t));
                 }
 
-                // --- Abwechselnd Verben/Nomen, 3-5 Felder pro Tabelle, max 15 ---
-                const verbTables = shuffleArray(tableTypes.filter(t => t.tableType === 'verb'));
-                const nounTables = shuffleArray(tableTypes.filter(t => t.tableType === 'noun'));
-                let vIdx = 0, nIdx = 0;
-                let pickVerb = Math.random() < 0.5;
+                // --- Abwechselnd 3-5 Felder pro Tabelle, max 15 ---
+                let tableIndex = Math.random() < 0.5 ? 0 : 1;
+                if (tableTypes.length === 1) tableIndex = 0;
 
-                while (items.length < 15 && (verbTables.length > 0 || nounTables.length > 0)) {
-                    let tbl;
-                    if (pickVerb && verbTables.length > 0) {
-                        tbl = verbTables[vIdx % verbTables.length]; vIdx++;
-                    } else if (nounTables.length > 0) {
-                        tbl = nounTables[nIdx % nounTables.length]; nIdx++;
-                    } else {
-                        tbl = verbTables[vIdx % verbTables.length]; vIdx++;
-                    }
-                    pickVerb = !pickVerb;
+                while (items.length < 15 && tableTypes.length > 0) {
+                    const tbl = tableTypes[tableIndex % tableTypes.length];
                     const blanksCount = 3 + Math.floor(Math.random() * 3);
 
                     const allCells = [];
