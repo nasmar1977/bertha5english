@@ -27,6 +27,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - Mehrwörter: MC in beide Richtungen (Latein↔Deutsch)
 - **Verb-Formen**: 32 Verben – Infinitiv ↔ 1. Person, Präsens Indikativ Aktiv (alle 6 Personen), Imperativ Sg/Pl
 - **Substantive**: 18 Nomen deklinieren – Nom/Gen/Dat/Akk/Abl × Singular/Plural (a- und o-Deklination)
+- **Konjug.- & Deklinationsssschlange**: Verb- & Nomen-Endungen spielerisch üben
+  - Verben und Nomen werden zufällig gemischt aus dem Kapitel gezogen
+  - Verb-Schlange: Personen×Numerus-Grid (4×2), endet mit Imperativ
+  - Nomen-Schlange: Kasus×Numerus-Grid (5×2), deutsche Kasusformen (der/des/dem/den)
+  - Beispielsätze bei jedem Schritt, nur die Endung eingeben
 - **Tabellentraining**: Komplette Konjugations-/Deklinationstabellen im Terminal-Stil (nur Desktop)
   - Große Übersichtstabellen mit allen Verben/Nomen eines Kapitels
   - Zufällige Lücken ausfüllen, 3-5 pro Tabelle, dann Wechsel
@@ -36,7 +41,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.5.0
+**Version:** 2.7.0
 **Datum:** 27.02.2026
 **Englisch:** 175 Vokabeln (Theme 2: 77 + Theme 3: 98)
 **Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen (mit Präsens + Imperativ), 18 Substantive, 21 Beispielsätze
@@ -60,6 +65,18 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.7.0 (27.02.2026)
+- Substantiv-Schlange: Nomen deklinieren durch Kasus×Numerus-Grid (5×2)
+- Gemischte Auswahl: Verben und Nomen zufällig im Schlangen-Modul
+- Deutsche Kasusformen (der/des/dem/den) bei jedem Deklinationsschritt
+- Diāna (nur Singular) wird automatisch herausgefiltert
+
+### Version 2.6.0 (27.02.2026)
+- Neues Modul: Konjugationsschlange – Verb-Endungen spielerisch üben
+- Schlange wächst durchs Personen×Numerus-Grid, nur Endung tippen
+- Beispielsätze (Latein + Deutsch) bei jedem Schritt
+- Jede Schlange endet mit dem Imperativ
 
 ### Version 2.5.0 (27.02.2026)
 - Tabellentraining: Deutsche Spalte hinzugefügt, Infinitiv & Deutsch auch als Lücke

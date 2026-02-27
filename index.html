@@ -942,6 +942,145 @@
         }
         #tableCheckBtn:hover { background: #39ff14; color: #0d1117; }
         #tableSkipBtn { margin-left: 10px; margin-top: 10px; }
+
+        /* Konjugationsschlange */
+        .snake-card {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #f7dc6f 100%) !important;
+        }
+        .snake-card .module-title { color: #1a3a0a !important; }
+        .snake-card .module-info { color: #2d5a1a !important; }
+        #snakeArea { display: none; }
+        .snake-chain {
+            display: flex; align-items: center; gap: 0;
+            overflow-x: auto; padding: 20px 5px 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .snake-head {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+            border-radius: 25px 12px 12px 25px;
+            padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+            color: #1a3a0a; font-weight: bold; font-size: 0.9em;
+            white-space: nowrap; flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(86,171,47,0.4);
+        }
+        .snake-head-emoji { font-size: 1.4em; }
+        .snake-head-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .snake-head-inf { font-size: 1em; }
+        .snake-head-de { font-size: 0.75em; font-weight: normal; opacity: 0.8; }
+        .snake-connector {
+            width: 20px; height: 3px; background: #a8e063; flex-shrink: 0;
+        }
+        .snake-segment {
+            border-radius: 12px; padding: 8px 12px; text-align: center;
+            min-width: 70px; flex-shrink: 0; transition: all 0.4s;
+            border: 2px solid #ddd; background: #f8f8f8; color: #999;
+        }
+        .snake-segment-label { font-size: 0.7em; font-weight: bold; text-transform: uppercase; }
+        .snake-segment-form { font-size: 1em; margin-top: 2px; min-height: 1.2em; }
+        .snake-segment.completed {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            border-color: #388e3c; color: white;
+        }
+        .snake-segment.completed .snake-segment-label { color: rgba(255,255,255,0.85); }
+        .snake-segment.current {
+            border-color: #ff9800; background: #fff8e1; color: #e65100;
+            animation: snake-pulse 1.5s ease-in-out infinite;
+        }
+        .snake-segment.current .snake-segment-form { color: #e65100; font-weight: bold; }
+        @keyframes snake-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); }
+            50% { box-shadow: 0 0 20px rgba(255,152,0,0.6); }
+        }
+        .snake-celebrate {
+            animation: snake-exit 4s ease-in-out forwards;
+        }
+        @keyframes snake-wave {
+            0%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+            70% { transform: translateY(10px); }
+        }
+        @keyframes snake-exit {
+            0% { transform: translateX(0); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translateX(-120%); opacity: 0; }
+        }
+        .snake-praise {
+            text-align: center; font-size: 1.4em; font-weight: bold;
+            color: #4caf50; margin: 12px 0; animation: praise-pop 1s ease-out;
+        }
+        @keyframes praise-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .snake-segment.wrong {
+            border-color: #f44336; background: #ffebee; color: #c62828;
+        }
+        .snake-grid-container {
+            margin: 40px auto 12px; max-width: 320px; opacity: 0.6;
+        }
+        .snake-grid {
+            display: grid; grid-template-columns: auto 1fr 1fr;
+            gap: 3px; font-size: 0.85em;
+        }
+        .snake-grid-header {
+            text-align: center; font-weight: bold; color: #666;
+            padding: 4px 8px; font-size: 0.85em;
+        }
+        .snake-grid-label {
+            text-align: right; padding: 6px 8px; font-weight: bold; color: #555;
+            display: flex; align-items: center; justify-content: flex-end;
+        }
+        .snake-grid-cell {
+            text-align: center; padding: 6px 10px; border-radius: 8px;
+            border: 2px solid #e0e0e0; background: #f5f5f5; color: #bbb;
+            transition: all 0.3s; font-size: 0.95em;
+        }
+        .snake-grid-cell.visited {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            border-color: #388e3c; color: white; font-weight: bold;
+        }
+        .snake-grid-cell.current {
+            background: #fff8e1; border-color: #ff9800; color: #e65100;
+            font-weight: bold; animation: snake-pulse 1.5s ease-in-out infinite;
+        }
+        .snake-grid-cell.imp-row { border-style: dashed; }
+        .snake-example {
+            text-align: center; margin: 12px 0; padding: 10px 15px;
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            border-radius: 12px; border-left: 4px solid #4caf50;
+        }
+        .snake-example-lat { color: #2e7d32; font-size: 1.1em; font-weight: bold; }
+        .snake-example-de { color: #555; font-size: 0.95em; margin-top: 2px; }
+        .snake-instruction {
+            text-align: center; font-size: 1.15em; font-weight: bold;
+            color: #e65100; margin: 12px 0 8px; padding: 8px;
+        }
+        .snake-stem { font-weight: bold; }
+        .snake-ending-input {
+            font-size: inherit; font-weight: bold; color: #bf360c;
+            font-family: inherit;
+            border: none; border-bottom: 2px solid #ff9800;
+            background: transparent; outline: none;
+            min-width: 40px; max-width: 100px; padding: 0 2px;
+        }
+        .snake-ending-input:focus { border-bottom-color: #e65100; }
+        .snake-ending-input.correct { color: #4caf50; border-bottom-color: #4caf50; }
+        .snake-ending-input.wrong { color: #f44336; border-bottom-color: #f44336; }
+        .snake-check-btn {
+            display: block; margin: 10px auto 0; padding: 8px 24px;
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1em; font-weight: bold; cursor: pointer;
+            box-shadow: 0 3px 10px rgba(86,171,47,0.3);
+        }
+        .snake-check-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(86,171,47,0.4); }
+        .snake-target {
+            text-align: center; margin: 8px 0; padding: 12px 15px;
+            background: #fff8e1; border-radius: 12px; border-left: 4px solid #ff9800;
+        }
+        .snake-target-lat { color: #bf360c; font-size: 1.1em; font-weight: bold; }
+        .snake-target-de { color: #555; font-size: 0.95em; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -1067,6 +1206,11 @@
                 <div class="module-title" style="color: #39ff14;">Tabellentraining</div>
                 <div class="module-info" style="color: #8b949e;">Konjugieren &amp; Deklinieren<br><small>⚠️ Nur Desktop / Tablet</small></div>
             </div>
+            <div class="module-card snake-card" onclick="startLatinModule('snake')">
+                <div class="module-icon">🐍</div>
+                <div class="module-title">Konjug.- & Deklinationsssschlange</div>
+                <div class="module-info">Verb- & Nomen-Endungen üben</div>
+            </div>
             <div class="module-card" onclick="startLatinModule('sentences')">
                 <div class="module-icon">📝</div>
                 <div class="module-title">Beispielsätze</div>
@@ -1149,10 +1293,27 @@
 
         <!-- MODE 4: TABLE TRAINING (Desktop only) -->
         <div id="tableArea" style="display: none;">
+            <div id="tableInstruction" style="text-align: center; margin-bottom: 10px; font-size: 1.05em; color: #666; font-weight: 500;"></div>
             <div id="terminalContainer" class="terminal-container"></div>
             <div style="text-align: center;">
                 <button id="tableCheckBtn" onclick="checkTableAnswer()">✓ Prüfen (Enter)</button>
                 <button class="btn btn-skip" id="tableSkipBtn" onclick="skipTableAnswer()">→ Überspringen</button>
+            </div>
+        </div>
+
+        <!-- MODE 5: KONJUGATIONSSCHLANGE -->
+        <div id="snakeArea" style="display: none;">
+            <div class="snake-chain" id="snakeChain"></div>
+            <div class="snake-example" id="snakeExample"></div>
+            <div class="snake-instruction" id="snakeInstruction"></div>
+            <div class="snake-target" id="snakeTarget" style="display: none;"></div>
+            <div style="text-align: center; margin-top: 8px;">
+                <button class="snake-check-btn" id="snakeCheckBtn" style="display: none;" onclick="checkSnakeAnswer()">✓ Prüfen</button>
+                <button class="btn btn-continue" id="snakeContinueBtn" style="display: none;" onclick="snakeContinue()">▶️ Weiter</button>
+            </div>
+            <div class="snake-praise" id="snakePraise" style="display: none;"></div>
+            <div class="snake-grid-container">
+                <div class="snake-grid" id="snakeGrid"></div>
             </div>
         </div>
 
@@ -1372,32 +1533,32 @@
                     // a-Deklination
                     { nom_sg: 'puella', gen_sg: 'puellae', dat_sg: 'puellae', akk_sg: 'puellam', abl_sg: 'puellā',
                       nom_pl: 'puellae', gen_pl: 'puellārum', dat_pl: 'puellīs', akk_pl: 'puellās', abl_pl: 'puellīs',
-                      german: 'das Mädchen', image: '👧', declension: 'a-Deklination' },
+                      german: 'das Mädchen', germanPl: 'Mädchen', image: '👧', declension: 'a-Deklination' },
                     { nom_sg: 'iniūria', gen_sg: 'iniūriae', dat_sg: 'iniūriae', akk_sg: 'iniūriam', abl_sg: 'iniūriā',
                       nom_pl: 'iniūriae', gen_pl: 'iniūriārum', dat_pl: 'iniūriīs', akk_pl: 'iniūriās', abl_pl: 'iniūriīs',
-                      german: 'das Unrecht', image: '⚖️', declension: 'a-Deklination' },
+                      german: 'das Unrecht', germanPl: 'Unrechte', image: '⚖️', declension: 'a-Deklination' },
                     { nom_sg: 'culpa', gen_sg: 'culpae', dat_sg: 'culpae', akk_sg: 'culpam', abl_sg: 'culpā',
                       nom_pl: 'culpae', gen_pl: 'culpārum', dat_pl: 'culpīs', akk_pl: 'culpās', abl_pl: 'culpīs',
-                      german: 'die Schuld', image: '😔', declension: 'a-Deklination' },
+                      german: 'die Schuld', germanPl: 'Schulden', image: '😔', declension: 'a-Deklination' },
                     { nom_sg: 'sententia', gen_sg: 'sententiae', dat_sg: 'sententiae', akk_sg: 'sententiam', abl_sg: 'sententiā',
                       nom_pl: 'sententiae', gen_pl: 'sententiārum', dat_pl: 'sententiīs', akk_pl: 'sententiās', abl_pl: 'sententiīs',
-                      german: 'die Meinung', image: '💭', declension: 'a-Deklination' },
+                      german: 'die Meinung', germanPl: 'Meinungen', image: '💭', declension: 'a-Deklination' },
                     { nom_sg: 'poena', gen_sg: 'poenae', dat_sg: 'poenae', akk_sg: 'poenam', abl_sg: 'poenā',
                       nom_pl: 'poenae', gen_pl: 'poenārum', dat_pl: 'poenīs', akk_pl: 'poenās', abl_pl: 'poenīs',
-                      german: 'die Strafe', image: '⚖️', declension: 'a-Deklination' },
+                      german: 'die Strafe', germanPl: 'Strafen', image: '⚖️', declension: 'a-Deklination' },
                     { nom_sg: 'grātia', gen_sg: 'grātiae', dat_sg: 'grātiae', akk_sg: 'grātiam', abl_sg: 'grātiā',
                       nom_pl: 'grātiae', gen_pl: 'grātiārum', dat_pl: 'grātiīs', akk_pl: 'grātiās', abl_pl: 'grātiīs',
-                      german: 'der Dank', image: '🙏', declension: 'a-Deklination' },
+                      german: 'der Dank', germanPl: 'Danksagungen', image: '🙏', declension: 'a-Deklination' },
                     // o-Deklination
                     { nom_sg: 'socius', gen_sg: 'sociī', dat_sg: 'sociō', akk_sg: 'socium', abl_sg: 'sociō',
                       nom_pl: 'sociī', gen_pl: 'sociōrum', dat_pl: 'sociīs', akk_pl: 'sociōs', abl_pl: 'sociīs',
-                      german: 'der Gefährte', image: '🤜', declension: 'o-Deklination' },
+                      german: 'der Gefährte', germanPl: 'Gefährten', image: '🤜', declension: 'o-Deklination' },
                     { nom_sg: 'gladius', gen_sg: 'gladiī', dat_sg: 'gladiō', akk_sg: 'gladium', abl_sg: 'gladiō',
                       nom_pl: 'gladiī', gen_pl: 'gladiōrum', dat_pl: 'gladiīs', akk_pl: 'gladiōs', abl_pl: 'gladiīs',
-                      german: 'das Schwert', image: '⚔️', declension: 'o-Deklination' },
+                      german: 'das Schwert', germanPl: 'Schwerter', image: '⚔️', declension: 'o-Deklination' },
                     { nom_sg: 'animus', gen_sg: 'animī', dat_sg: 'animō', akk_sg: 'animum', abl_sg: 'animō',
                       nom_pl: 'animī', gen_pl: 'animōrum', dat_pl: 'animīs', akk_pl: 'animōs', abl_pl: 'animīs',
-                      german: 'der Geist', image: '🧠', declension: 'o-Deklination' },
+                      german: 'der Geist', germanPl: 'Geister', image: '🧠', declension: 'o-Deklination' },
                 ]
             },
 
@@ -1570,29 +1731,29 @@
                     // a-Deklination
                     { nom_sg: 'memoria', gen_sg: 'memoriae', dat_sg: 'memoriae', akk_sg: 'memoriam', abl_sg: 'memoriā',
                       nom_pl: 'memoriae', gen_pl: 'memoriārum', dat_pl: 'memoriīs', akk_pl: 'memoriās', abl_pl: 'memoriīs',
-                      german: 'die Erinnerung', image: '🧠', declension: 'a-Deklination' },
+                      german: 'die Erinnerung', germanPl: 'Erinnerungen', image: '🧠', declension: 'a-Deklination' },
                     { nom_sg: 'dea', gen_sg: 'deae', dat_sg: 'deae', akk_sg: 'deam', abl_sg: 'deā',
                       nom_pl: 'deae', gen_pl: 'deārum', dat_pl: 'deābus', akk_pl: 'deās', abl_pl: 'deābus',
-                      german: 'die Göttin', image: '👑', declension: 'a-Deklination' },
+                      german: 'die Göttin', germanPl: 'Göttinnen', image: '👑', declension: 'a-Deklination' },
                     { nom_sg: 'amīca', gen_sg: 'amīcae', dat_sg: 'amīcae', akk_sg: 'amīcam', abl_sg: 'amīcā',
                       nom_pl: 'amīcae', gen_pl: 'amīcārum', dat_pl: 'amīcīs', akk_pl: 'amīcās', abl_pl: 'amīcīs',
-                      german: 'die Freundin', image: '👩', declension: 'a-Deklination' },
+                      german: 'die Freundin', germanPl: 'Freundinnen', image: '👩', declension: 'a-Deklination' },
                     { nom_sg: 'īra', gen_sg: 'īrae', dat_sg: 'īrae', akk_sg: 'īram', abl_sg: 'īrā',
                       nom_pl: 'īrae', gen_pl: 'īrārum', dat_pl: 'īrīs', akk_pl: 'īrās', abl_pl: 'īrīs',
-                      german: 'der Zorn', image: '😡', declension: 'a-Deklination' },
+                      german: 'der Zorn', germanPl: 'Zornausbrüche', image: '😡', declension: 'a-Deklination' },
                     { nom_sg: 'fuga', gen_sg: 'fugae', dat_sg: 'fugae', akk_sg: 'fugam', abl_sg: 'fugā',
                       nom_pl: 'fugae', gen_pl: 'fugārum', dat_pl: 'fugīs', akk_pl: 'fugās', abl_pl: 'fugīs',
-                      german: 'die Flucht', image: '🏃‍♂️', declension: 'a-Deklination' },
+                      german: 'die Flucht', germanPl: 'Fluchten', image: '🏃‍♂️', declension: 'a-Deklination' },
                     { nom_sg: 'silva', gen_sg: 'silvae', dat_sg: 'silvae', akk_sg: 'silvam', abl_sg: 'silvā',
                       nom_pl: 'silvae', gen_pl: 'silvārum', dat_pl: 'silvīs', akk_pl: 'silvās', abl_pl: 'silvīs',
-                      german: 'der Wald', image: '🌲', declension: 'a-Deklination' },
+                      german: 'der Wald', germanPl: 'Wälder', image: '🌲', declension: 'a-Deklination' },
                     // o-Deklination
                     { nom_sg: 'campus', gen_sg: 'campī', dat_sg: 'campō', akk_sg: 'campum', abl_sg: 'campō',
                       nom_pl: 'campī', gen_pl: 'campōrum', dat_pl: 'campīs', akk_pl: 'campōs', abl_pl: 'campīs',
-                      german: 'das Feld', image: '🏟️', declension: 'o-Deklination' },
+                      german: 'das Feld', germanPl: 'Felder', image: '🏟️', declension: 'o-Deklination' },
                     { nom_sg: 'oculus', gen_sg: 'oculī', dat_sg: 'oculō', akk_sg: 'oculum', abl_sg: 'oculō',
                       nom_pl: 'oculī', gen_pl: 'oculōrum', dat_pl: 'oculīs', akk_pl: 'oculōs', abl_pl: 'oculīs',
-                      german: 'das Auge', image: '👁️', declension: 'o-Deklination' },
+                      german: 'das Auge', germanPl: 'Augen', image: '👁️', declension: 'o-Deklination' },
                     // Eigenname (nur Singular)
                     { nom_sg: 'Diāna', gen_sg: 'Diānae', dat_sg: 'Diānae', akk_sg: 'Diānam', abl_sg: 'Diānā',
                       nom_pl: null, gen_pl: null, dat_pl: null, akk_pl: null, abl_pl: null,
@@ -2161,9 +2322,29 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.5.0';
+        const APP_VERSION = '2.7.0';
 
         const changelogEntries = [
+            {
+                version: '2.7.0',
+                date: '27.02.2026',
+                items: [
+                    '🐍 <b>Substantiv-Schlange</b> – Nomen deklinieren durch Kasus×Numerus-Grid',
+                    '🎲 <b>Gemischte Auswahl</b> – Verben und Nomen zufällig gemischt',
+                    '📐 Nomen-Grid: 5×2 (Nom/Gen/Dat/Akk/Abl × Sg/Pl)',
+                    '🇩🇪 Deutsche Kasusformen (der/des/dem/den) bei jedem Schritt',
+                ]
+            },
+            {
+                version: '2.6.0',
+                date: '27.02.2026',
+                items: [
+                    '🐍 <b>Neues Modul: Konjugationsschlange</b> – Verb-Endungen spielerisch üben',
+                    '🎯 Schlange wächst durchs Personen×Numerus-Grid – nur Endung tippen!',
+                    '📖 Beispielsätze zeigen Latein + Deutsch bei jedem Schritt',
+                    '🏁 Jede Schlange endet mit dem Imperativ',
+                ]
+            },
             {
                 version: '2.5.0',
                 date: '27.02.2026',
@@ -2343,13 +2524,14 @@
             else if (module === 'verbs') moduleName = 'Verb-Formen';
             else if (module === 'nouns') moduleName = 'Substantive';
             else if (module === 'tables') moduleName = 'Tabellentraining';
+            else if (module === 'snake') moduleName = 'Konjug.- & Deklinationsssschlange';
             else if (module === 'sentences') moduleName = 'Beispielsätze';
             else moduleName = 'Alles gemischt';
             document.getElementById('currentSetName').textContent = ch.name + ' – ' + moduleName;
 
             // Build round items for Latin
             latinRoundItems = buildLatinRoundItems(ch, module);
-            if (module !== 'tables') {
+            if (module !== 'tables' && module !== 'snake') {
                 const progress = loadProgress();
                 latinRoundItems = weightedSample(latinRoundItems, Math.min(15, latinRoundItems.length), progress);
             }
@@ -2674,7 +2856,469 @@
                 }
             }
 
+            if (module === 'snake') {
+                // --- KONJUGATIONS- & DEKLINATIONSSCHLANGE ---
+                // Eligible verbs: present + imperative, no spaces
+                const snakeVerbs = ch.verbForms.filter(vf => {
+                    if (!vf.present || !vf.imperative) return false;
+                    const forms = [vf.firstPerson, vf.present.sg2, vf.present.sg3, vf.present.pl1, vf.present.pl2, vf.present.pl3, vf.imperative.sg, vf.imperative.pl];
+                    return forms.every(f => f && !f.includes(' '));
+                });
+                // Eligible nouns: all 10 case forms non-null (filters Diāna)
+                const snakeNouns = (ch.nouns || []).filter(n => {
+                    const nounKeys = ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg','nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'];
+                    return nounKeys.every(k => n[k]);
+                });
+                // Mixed pool – guarantee at least 1 verb + 1 noun, shuffle order
+                let selected;
+                if (snakeVerbs.length > 0 && snakeNouns.length > 0) {
+                    const pickVerb = shuffleArray(snakeVerbs)[0];
+                    const pickNoun = shuffleArray(snakeNouns)[0];
+                    const rest = shuffleArray([
+                        ...snakeVerbs.filter(v => v !== pickVerb).map(v => ({ ptype: 'verb', data: v })),
+                        ...snakeNouns.filter(n => n !== pickNoun).map(n => ({ ptype: 'noun', data: n }))
+                    ]);
+                    selected = shuffleArray([
+                        { ptype: 'verb', data: pickVerb },
+                        { ptype: 'noun', data: pickNoun },
+                        rest[0]
+                    ]);
+                } else {
+                    const pool = [
+                        ...snakeVerbs.map(vf => ({ ptype: 'verb', data: vf })),
+                        ...snakeNouns.map(n => ({ ptype: 'noun', data: n }))
+                    ];
+                    selected = shuffleArray(pool).slice(0, 3);
+                }
+
+                selected.forEach((entry, snakeIdx) => {
+                    const snakeId = 'snake_' + snakeIdx;
+
+                    if (entry.ptype === 'verb') {
+                        const verb = entry.data;
+                        const path = generateSnakePath();
+                        const stem = getLatinStem(verb.infinitive);
+                        const ctx = getSnakeContext(verb.infinitive);
+                        const previousSteps = [];
+
+                        path.forEach((step, stepIdx) => {
+                            const form = getVerbForm(verb, step.key);
+                            const ending = getEnding(form, stem);
+                            const sentence = makeSnakeSentence(verb, step.key, form, ctx);
+                            const target = makeSnakeTarget(verb, step.key, stem, ctx);
+
+                            let prevSentence = null;
+                            if (previousSteps.length > 0) {
+                                const ps = previousSteps[previousSteps.length - 1];
+                                prevSentence = makeSnakeSentence(verb, ps.key, ps.form, ctx);
+                            }
+
+                            const item = {
+                                type: 'snake', mode: 'snake_conjugate',
+                                snakeType: 'verb',
+                                snakeId: snakeId, stepIndex: stepIdx, totalSteps: path.length,
+                                verb: verb, stem: stem,
+                                headLabel: verb.infinitive, headDe: verb.german,
+                                currentKey: step.key, fullForm: form,
+                                previousSteps: JSON.parse(JSON.stringify(previousSteps)),
+                                sentenceLat: sentence.lat, sentenceDe: sentence.de,
+                                targetLat: target.lat, targetDe: target.de,
+                                prevLat: prevSentence ? prevSentence.lat : (verb.infinitive + ' = ' + verb.german),
+                                prevDe: prevSentence ? prevSentence.de : '',
+                                answer: ending.toLowerCase(), displayAnswer: form,
+                                image: '🐍', hint: '',
+                                id: 'snake_' + verb.infinitive + '_' + step.key
+                            };
+
+                            if (stepIdx === 0) {
+                                item.instruction = 'Bilde die ' + getSnakeKeyLabel(step.key) + '!';
+                            } else if (step.type === 'imperative') {
+                                item.instruction = 'Bilde den Imperativ ' + (step.key === 'imp_sg' ? 'Singular' : 'Plural') + '!';
+                            } else {
+                                item.instruction = getSnakeInstruction(path[stepIdx - 1].key, step.key);
+                            }
+
+                            previousSteps.push({ key: step.key, form: form });
+                            items.push(item);
+                        });
+                    } else {
+                        // Noun snake
+                        const noun = entry.data;
+                        const path = generateNounSnakePath();
+                        const stem = getNounStem(noun);
+                        const previousSteps = [];
+
+                        path.forEach((step, stepIdx) => {
+                            const form = noun[step.key];
+                            const ending = getEnding(form, stem);
+                            const sentence = makeNounSnakeSentence(noun, step.key, form);
+                            const target = makeNounSnakeTarget(noun, step.key, stem);
+
+                            let prevSentence = null;
+                            if (previousSteps.length > 0) {
+                                const ps = previousSteps[previousSteps.length - 1];
+                                prevSentence = makeNounSnakeSentence(noun, ps.key, ps.form);
+                            }
+
+                            const item = {
+                                type: 'snake', mode: 'snake_conjugate',
+                                snakeType: 'noun',
+                                snakeId: snakeId, stepIndex: stepIdx, totalSteps: path.length,
+                                noun: noun, stem: stem,
+                                headLabel: noun.nom_sg, headDe: noun.german,
+                                currentKey: step.key, fullForm: form,
+                                previousSteps: JSON.parse(JSON.stringify(previousSteps)),
+                                targetLat: target.lat, targetDe: target.de,
+                                prevLat: prevSentence ? prevSentence.lat : (noun.nom_sg + ' = ' + noun.german),
+                                prevDe: prevSentence ? prevSentence.de : '',
+                                answer: ending.toLowerCase(), displayAnswer: form,
+                                image: '🐍', hint: '',
+                                id: 'snake_noun_' + noun.nom_sg + '_' + step.key
+                            };
+
+                            if (stepIdx === 0) {
+                                item.instruction = 'Bilde den ' + getSnakeKeyLabel(step.key) + '!';
+                            } else {
+                                item.instruction = getSnakeInstruction(path[stepIdx - 1].key, step.key);
+                            }
+
+                            previousSteps.push({ key: step.key, form: form });
+                            items.push(item);
+                        });
+                    }
+                });
+            }
+
             return items;
+        }
+
+        // --- Snake Helper Functions ---
+
+        function getLatinStem(infinitive) {
+            if (infinitive.match(/[āēī]re$/)) return infinitive.slice(0, -3);
+            if (infinitive.endsWith('re')) return infinitive.slice(0, -2);
+            return infinitive;
+        }
+
+        function getVerbForm(verb, key) {
+            if (key === 'sg1') return verb.firstPerson;
+            if (key === 'imp_sg') return verb.imperative.sg;
+            if (key === 'imp_pl') return verb.imperative.pl;
+            return verb.present[key];
+        }
+
+        function getEnding(form, stem) {
+            const formStripped = stripMacrons(form.toLowerCase());
+            const stemStripped = stripMacrons(stem.toLowerCase());
+            let matchLen = 0;
+            for (let i = 0; i < stemStripped.length && i < formStripped.length; i++) {
+                if (formStripped[i] === stemStripped[i]) matchLen = i + 1;
+                else break;
+            }
+            return form.slice(matchLen);
+        }
+
+        function generateSnakePath() {
+            const allKeys = ['sg1','sg2','sg3','pl1','pl2','pl3'];
+            const steps = [];
+            let currentKey = allKeys[Math.floor(Math.random() * allKeys.length)];
+            steps.push({ key: currentKey, type: 'conjugate' });
+
+            let prevKey = null;
+            const numSteps = 3 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < numSteps; i++) {
+                const person = parseInt(currentKey.slice(2));
+                const numerus = currentKey.slice(0, 2);
+                let newKey;
+                let attempts = 0;
+                do {
+                    if (Math.random() < 0.5) {
+                        const others = [1,2,3].filter(p => p !== person);
+                        newKey = numerus + others[Math.floor(Math.random() * others.length)];
+                    } else {
+                        newKey = (numerus === 'sg' ? 'pl' : 'sg') + person;
+                    }
+                    attempts++;
+                } while ((newKey === currentKey || newKey === prevKey) && attempts < 20);
+                prevKey = currentKey;
+                currentKey = newKey;
+                steps.push({ key: currentKey, type: 'conjugate' });
+            }
+
+            steps.push({ key: Math.random() < 0.5 ? 'imp_sg' : 'imp_pl', type: 'imperative' });
+            return steps;
+        }
+
+        function generateNounSnakePath() {
+            const cases = ['nom', 'gen', 'dat', 'akk', 'abl'];
+            const numeri = ['sg', 'pl'];
+            let currentCase = cases[Math.floor(Math.random() * cases.length)];
+            let currentNum = numeri[Math.floor(Math.random() * numeri.length)];
+            let currentKey = currentCase + '_' + currentNum;
+            const steps = [{ key: currentKey, type: 'decline' }];
+            let prevKey = null;
+            const numSteps = 4 + Math.floor(Math.random() * 2); // 5-6 total
+            for (let i = 0; i < numSteps; i++) {
+                let newKey;
+                let attempts = 0;
+                do {
+                    if (Math.random() < 0.5) {
+                        const otherCases = cases.filter(c => c !== currentCase);
+                        const newCase = otherCases[Math.floor(Math.random() * otherCases.length)];
+                        newKey = newCase + '_' + currentNum;
+                    } else {
+                        const newNum = currentNum === 'sg' ? 'pl' : 'sg';
+                        newKey = currentCase + '_' + newNum;
+                    }
+                    attempts++;
+                } while ((newKey === currentKey || newKey === prevKey) && attempts < 20);
+                prevKey = currentKey;
+                currentKey = newKey;
+                currentCase = newKey.split('_')[0];
+                currentNum = newKey.split('_')[1];
+                steps.push({ key: currentKey, type: 'decline' });
+            }
+            return steps;
+        }
+
+        function getNounStem(noun) {
+            const keys = ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg','nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'];
+            const forms = keys.map(k => noun[k]).filter(f => f);
+            if (forms.length === 0) return '';
+            const stripped = forms.map(f => stripMacrons(f.toLowerCase()));
+            let prefixLen = stripped[0].length;
+            for (let i = 1; i < stripped.length; i++) {
+                let match = 0;
+                for (let j = 0; j < prefixLen && j < stripped[i].length; j++) {
+                    if (stripped[0][j] === stripped[i][j]) match = j + 1;
+                    else break;
+                }
+                prefixLen = match;
+            }
+            return forms[0].slice(0, prefixLen);
+        }
+
+        function getGermanCaseForm(noun, key) {
+            const germanNom = noun.german;
+            const parts = germanNom.trim().split(/\s+/);
+            const article = parts[0].toLowerCase();
+            const nounSg = parts.slice(1).join(' ');
+            const nounPl = noun.germanPl || nounSg;
+            if (!['der', 'die', 'das'].includes(article)) {
+                return germanNom; // proper names unchanged
+            }
+            const genus = article === 'der' ? 'm' : article === 'die' ? 'f' : 'n';
+            const articlesSg = {
+                m: { nom: 'der', gen: 'des', dat: 'dem', akk: 'den', abl: 'dem' },
+                f: { nom: 'die', gen: 'der', dat: 'der', akk: 'die', abl: 'der' },
+                n: { nom: 'das', gen: 'des', dat: 'dem', akk: 'das', abl: 'dem' }
+            };
+            const articlesPl = { nom: 'die', gen: 'der', dat: 'den', akk: 'die', abl: 'den' };
+            const caseName = key.split('_')[0];
+            const num = key.split('_')[1];
+            let nounForm = num === 'pl' ? nounPl : nounSg;
+            // Genitive singular: add -s for masculine/neuter
+            if (caseName === 'gen' && num === 'sg' && (genus === 'm' || genus === 'n')) {
+                if (genus === 'm' && nounSg.endsWith('e')) {
+                    nounForm = nounSg + 'n'; // weak masculine: der Gefährte → des Gefährten
+                } else if (!nounSg.endsWith('s') && !nounSg.endsWith('ß')) {
+                    nounForm = nounSg + 's';
+                }
+            }
+            // Dative/ablative plural: add -n if not already ending in -n/-s
+            if ((caseName === 'dat' || caseName === 'abl') && num === 'pl') {
+                if (!nounForm.endsWith('n') && !nounForm.endsWith('s')) {
+                    nounForm = nounForm + 'n';
+                }
+            }
+            const newArticle = num === 'pl' ? articlesPl[caseName] : articlesSg[genus][caseName];
+            return newArticle + ' ' + nounForm;
+        }
+
+        function makeNounSnakeSentence(noun, key, form) {
+            const caseName = key.split('_')[0];
+            const germanCase = getGermanCaseForm(noun, key);
+            switch (caseName) {
+                case 'nom':
+                    return { lat: 'Ecce ' + form + '!', de: 'Sieh, ' + germanCase + '!' };
+                case 'gen':
+                    return { lat: 'Dominus ' + form + ' venit.', de: 'Der Herr ' + germanCase + ' kommt.' };
+                case 'dat':
+                    return { lat: form + ' grātiās agō.', de: 'Ich danke ' + germanCase + '.' };
+                case 'akk':
+                    return { lat: form + ' videō.', de: 'Ich sehe ' + germanCase + '.' };
+                case 'abl':
+                    return { lat: 'Cum ' + form + ' veniō.', de: 'Ich komme mit ' + germanCase + '.' };
+                default:
+                    return { lat: form, de: germanCase };
+            }
+        }
+
+        function makeNounSnakeTarget(noun, key, stem) {
+            const caseName = key.split('_')[0];
+            const blankStem = stem + '___';
+            const form = noun[key];
+            const full = makeNounSnakeSentence(noun, key, form);
+            let lat;
+            switch (caseName) {
+                case 'nom': lat = 'Ecce ' + blankStem + '!'; break;
+                case 'gen': lat = 'Dominus ' + blankStem + ' venit.'; break;
+                case 'dat': lat = blankStem + ' grātiās agō.'; break;
+                case 'akk': lat = blankStem + ' videō.'; break;
+                case 'abl': lat = 'Cum ' + blankStem + ' veniō.'; break;
+                default: lat = blankStem;
+            }
+            return { lat: lat, de: full.de };
+        }
+
+        function getSnakeKeyLabel(key) {
+            const labels = {
+                sg1: '1. Person Singular', sg2: '2. Person Singular', sg3: '3. Person Singular',
+                pl1: '1. Person Plural', pl2: '2. Person Plural', pl3: '3. Person Plural',
+                imp_sg: 'Imperativ Singular', imp_pl: 'Imperativ Plural',
+                nom_sg: 'Nominativ Singular', nom_pl: 'Nominativ Plural',
+                gen_sg: 'Genitiv Singular', gen_pl: 'Genitiv Plural',
+                dat_sg: 'Dativ Singular', dat_pl: 'Dativ Plural',
+                akk_sg: 'Akkusativ Singular', akk_pl: 'Akkusativ Plural',
+                abl_sg: 'Ablativ Singular', abl_pl: 'Ablativ Plural'
+            };
+            return labels[key] || key;
+        }
+
+        function getSnakeKeyShort(key) {
+            const labels = {
+                sg1: '1.Sg.', sg2: '2.Sg.', sg3: '3.Sg.',
+                pl1: '1.Pl.', pl2: '2.Pl.', pl3: '3.Pl.',
+                imp_sg: 'Imp.Sg.', imp_pl: 'Imp.Pl.',
+                nom_sg: 'Nom.Sg.', nom_pl: 'Nom.Pl.',
+                gen_sg: 'Gen.Sg.', gen_pl: 'Gen.Pl.',
+                dat_sg: 'Dat.Sg.', dat_pl: 'Dat.Pl.',
+                akk_sg: 'Akk.Sg.', akk_pl: 'Akk.Pl.',
+                abl_sg: 'Abl.Sg.', abl_pl: 'Abl.Pl.'
+            };
+            return labels[key] || key;
+        }
+
+        function getSnakeInstruction(fromKey, toKey) {
+            if (toKey.startsWith('imp')) {
+                return 'Bilde den Imperativ ' + (toKey === 'imp_sg' ? 'Singular' : 'Plural') + '!';
+            }
+            // Noun keys (contain '_' and not imp)
+            if (toKey.includes('_')) {
+                const fromParts = fromKey.split('_');
+                const toParts = toKey.split('_');
+                const caseNames = { nom: 'Nominativ', gen: 'Genitiv', dat: 'Dativ', akk: 'Akkusativ', abl: 'Ablativ' };
+                if (fromParts[1] !== toParts[1]) {
+                    return 'Jetzt wechsle in den ' + (toParts[1] === 'sg' ? 'Singular' : 'Plural') + '!';
+                }
+                return 'Jetzt wechsle in den ' + caseNames[toParts[0]] + '!';
+            }
+            // Verb keys
+            const fromN = fromKey.slice(0, 2);
+            const toP = parseInt(toKey.slice(2));
+            const toN = toKey.slice(0, 2);
+            const personNames = {1:'1. Person', 2:'2. Person', 3:'3. Person'};
+            if (fromN !== toN) {
+                return 'Jetzt wechsle in den ' + (toN === 'sg' ? 'Singular' : 'Plural') + '!';
+            }
+            return 'Jetzt wechsle in die ' + personNames[toP] + '!';
+        }
+
+        // Satz-Kontexte für jedes Verb (Latein-Objekt + deutsches Objekt)
+        function getSnakeContext(infinitive) {
+            const contexts = {
+                // Lektion 3
+                'narrāre': { latObj: 'Fābulam', deObj: 'eine Geschichte' },
+                'parāre': { latObj: 'Cēnam', deObj: 'das Essen' },
+                'sustinēre': { latObj: 'Labōrem', deObj: 'die Mühe' },
+                'prohibēre': { latObj: 'Servum', deObj: 'den Sklaven', deExplicit: {
+                    sg1:'Ich halte den Sklaven ab.', sg2:'Du hältst den Sklaven ab.',
+                    sg3:'Er/Sie hält den Sklaven ab.', pl1:'Wir halten den Sklaven ab.',
+                    pl2:'Ihr haltet den Sklaven ab.', pl3:'Sie halten den Sklaven ab.',
+                    imp_sg:'Halte den Sklaven ab!', imp_pl:'Haltet den Sklaven ab!'} },
+                'respondēre': { latObj: 'Magistrō', deObj: 'dem Lehrer' },
+                'indicāre': { latObj: 'Viam', deObj: 'den Weg' },
+                'negāre': { latObj: 'Culpam', deObj: 'die Schuld' },
+                'probāre': { latObj: 'Cōnsilium', deObj: 'den Plan' },
+                'prōvidēre': { latObj: 'Prō familiā', deObj: 'für die Familie' },
+                'vocāre': { latObj: 'Amīcum', deObj: 'den Freund' },
+                'superāre': { latObj: 'Hostēs', deObj: 'die Feinde' },
+                'temptāre': { latObj: 'Fortūnam', deObj: 'das Glück' },
+                'cavēre': { latObj: 'Perīculum', deObj: '', deExplicit: {
+                    sg1:'Ich meide die Gefahr.', sg2:'Du meidest die Gefahr.',
+                    sg3:'Er/Sie meidet die Gefahr.', pl1:'Wir meiden die Gefahr.',
+                    pl2:'Ihr meidet die Gefahr.', pl3:'Sie meiden die Gefahr.',
+                    imp_sg:'Meide die Gefahr!', imp_pl:'Meidet die Gefahr!'} },
+                'placēre': { latObj: 'Dominō', deObj: 'dem Herrn', deExplicit: {
+                    sg1:'Ich gefalle dem Herrn.', sg2:'Du gefällst dem Herrn.',
+                    sg3:'Er/Sie gefällt dem Herrn.', pl1:'Wir gefallen dem Herrn.',
+                    pl2:'Ihr gefallt dem Herrn.', pl3:'Sie gefallen dem Herrn.',
+                    imp_sg:'Gefalle dem Herrn!', imp_pl:'Gefallt dem Herrn!'} },
+                'pārēre': { latObj: 'Magistrō', deObj: 'dem Lehrer' },
+                'mandāre': { latObj: 'Epistulam', deObj: 'den Brief', deExplicit: {
+                    sg1:'Ich übergebe den Brief.', sg2:'Du übergibst den Brief.',
+                    sg3:'Er/Sie übergibt den Brief.', pl1:'Wir übergeben den Brief.',
+                    pl2:'Ihr übergebt den Brief.', pl3:'Sie übergeben den Brief.',
+                    imp_sg:'Übergib den Brief!', imp_pl:'Übergebt den Brief!'} },
+                // Lektion 4
+                'movēre': { latObj: 'Saxum', deObj: 'den Stein' },
+                'nēscīre': { latObj: 'Viam', deObj: '', deExplicit: {
+                    sg1:'Ich weiß den Weg nicht.', sg2:'Du weißt den Weg nicht.',
+                    sg3:'Er/Sie weiß den Weg nicht.', pl1:'Wir wissen den Weg nicht.',
+                    pl2:'Ihr wisst den Weg nicht.', pl3:'Sie wissen den Weg nicht.',
+                    imp_sg:'Wisse es nicht!', imp_pl:'Wisst es nicht!'} },
+                'amāre': { latObj: 'Patriam', deObj: 'die Heimat' },
+                'timēre': { latObj: 'Perīculum', deObj: 'die Gefahr' },
+                'sentīre': { latObj: 'Dolōrem', deObj: 'den Schmerz' },
+                'ārdēre': { latObj: 'Īrā', deObj: 'vor Wut' },
+                'appellāre': { latObj: 'Amīcum', deObj: 'den Freund' },
+                'agitāre': { latObj: 'Equum', deObj: 'das Pferd' },
+                'terrēre': { latObj: 'Hostēs', deObj: 'die Feinde' },
+                'vītāre': { latObj: 'Perīculum', deObj: 'die Gefahr' },
+                'mūtāre': { latObj: 'Cōnsilium', deObj: 'den Plan' },
+                'circumvenīre': { latObj: 'Hostēs', deObj: 'die Feinde' },
+            };
+            return contexts[infinitive] || { latObj: '', deObj: '' };
+        }
+
+        function conjugateGermanSimple(germanInf, key) {
+            const clean = germanInf.replace(/\s*\(.*?\)/g, '').replace(/^sich\s+/, '').replace(/\s+für$/, '').trim();
+            const stem = clean.replace(/en$/, '').replace(/n$/, '');
+            const needsE = stem.endsWith('t') || stem.endsWith('d');
+            const endings = {
+                sg1: 'e', sg2: needsE ? 'est' : 'st', sg3: needsE ? 'et' : 't',
+                pl1: 'en', pl2: needsE ? 'et' : 't', pl3: 'en',
+                imp_sg: 'e', imp_pl: needsE ? 'et' : 't'
+            };
+            return stem + (endings[key] || 'en');
+        }
+
+        function makeSnakeSentence(verb, key, form, ctx) {
+            // If explicit German provided, use it
+            if (ctx.deExplicit && ctx.deExplicit[key]) {
+                const latSentence = ctx.latObj ? (ctx.latObj + ' ' + form + (key.startsWith('imp') ? '!' : '.')) : (form + (key.startsWith('imp') ? '!' : '.'));
+                return { lat: latSentence, de: ctx.deExplicit[key] };
+            }
+
+            const subjects = { sg1:'Ich', sg2:'Du', sg3:'Er/Sie', pl1:'Wir', pl2:'Ihr', pl3:'Sie' };
+            const deVerb = conjugateGermanSimple(verb.german, key);
+            const latSentence = ctx.latObj ? (ctx.latObj + ' ' + form + (key.startsWith('imp') ? '!' : '.')) : (form + (key.startsWith('imp') ? '!' : '.'));
+
+            let deSentence;
+            if (key === 'imp_sg' || key === 'imp_pl') {
+                deSentence = deVerb.charAt(0).toUpperCase() + deVerb.slice(1) + (ctx.deObj ? ' ' + ctx.deObj : '') + '!';
+            } else {
+                deSentence = subjects[key] + ' ' + deVerb + (ctx.deObj ? ' ' + ctx.deObj : '') + '.';
+            }
+            return { lat: latSentence, de: deSentence };
+        }
+
+        function makeSnakeTarget(verb, key, stem, ctx) {
+            const blankStem = stem + '___';
+            const latBlank = ctx.latObj ? (ctx.latObj + ' ' + blankStem + (key.startsWith('imp') ? '!' : '.')) : (blankStem + (key.startsWith('imp') ? '!' : '.'));
+            const form = getVerbForm(verb, key);
+            const full = makeSnakeSentence(verb, key, form, ctx);
+            return { lat: latBlank, de: full.de };
         }
 
         function getTableCellLabel(key) {
@@ -2869,15 +3513,21 @@
             document.getElementById('mcArea').style.display = 'none';
             document.getElementById('sentenceArea').style.display = 'none';
             document.getElementById('tableArea').style.display = 'none';
+            document.getElementById('snakeArea').style.display = 'none';
             document.getElementById('spellingButtons').style.display = 'none';
             document.getElementById('tipText').style.display = 'none';
 
-            // Word card: hide for table mode, show for others
+            // Word card: hide for table/snake mode, show for others
             const wordCard = document.querySelector('.word-card');
             if (item.mode === 'table') {
                 wordCard.style.display = 'none';
                 loadLatinTable(item);
-                return; // No hint timer or curtain needed for tables
+                return;
+            }
+            if (item.mode === 'snake_conjugate') {
+                wordCard.style.display = 'none';
+                loadLatinSnake(item);
+                return;
             }
             wordCard.style.display = '';
 
@@ -3238,6 +3888,11 @@
 
             document.getElementById('tableArea').style.display = 'block';
 
+            // Instruction above table
+            const instructionType = item.tableType === 'verb' ? 'Konjugation' : 'Deklination';
+            document.getElementById('tableInstruction').textContent =
+                'Wir trainieren ' + instructionType + '. Fülle das fehlende Kästchen aus!';
+
             const container = document.getElementById('terminalContainer');
             container.innerHTML = renderFullTable(item);
 
@@ -3366,6 +4021,293 @@
             }
             playSound('wrong');
             setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1500);
+        }
+
+        // ===================================================================
+        // KONJUGATIONSSCHLANGE – RENDERING & GAME LOGIC
+        // ===================================================================
+
+        let snakeRetrying = false;
+
+        function loadLatinSnake(item) {
+            currentMode = 'snake';
+            document.getElementById('snakeArea').style.display = 'block';
+            document.getElementById('snakeContinueBtn').style.display = 'none';
+            snakeRetrying = false;
+
+            renderSnakeChain(item);
+            renderSnakeGrid(item);
+
+            // Green box: previous state (or infinitive for first step)
+            const ex = document.getElementById('snakeExample');
+            if (item.prevDe) {
+                ex.innerHTML = '<div class="snake-example-lat">' + item.prevLat + '</div>' +
+                    '<div class="snake-example-de">' + item.prevDe + '</div>';
+            } else {
+                ex.innerHTML = '<div class="snake-example-lat">' + item.prevLat + '</div>';
+            }
+            ex.style.display = 'block';
+
+            // Instruction
+            document.getElementById('snakeInstruction').textContent = item.instruction;
+            document.getElementById('snakeInstruction').style.color = '';
+
+            // Target with inline input
+            const target = document.getElementById('snakeTarget');
+            const stemMarker = item.stem + '___';
+            const stemIdx = item.targetLat.indexOf(stemMarker);
+            const prefix = stemIdx >= 0 ? item.targetLat.substring(0, stemIdx) : '';
+            const suffix = stemIdx >= 0 ? item.targetLat.substring(stemIdx + stemMarker.length) : '.';
+
+            target.innerHTML = '<div class="snake-target-lat">' +
+                prefix + '<span class="snake-stem">' + item.stem + '</span>' +
+                '<input type="text" class="snake-ending-input" id="snakeEndingInput" ' +
+                'autocomplete="off" autocapitalize="off" spellcheck="false">' +
+                suffix + '</div>' +
+                '<div class="snake-target-de">' + item.targetDe + '</div>';
+            target.style.display = 'block';
+
+            // Show check button, hide praise
+            document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+            document.getElementById('snakePraise').style.display = 'none';
+            const chain = document.getElementById('snakeChain');
+            chain.classList.remove('snake-celebrate');
+            chain.style.opacity = '';
+            chain.style.transform = '';
+
+            setTimeout(() => document.getElementById('snakeEndingInput').focus(), 100);
+        }
+
+        function getSnakeYOffset(key) {
+            if (key.includes('sg')) return -8;
+            if (key.includes('pl')) return 8;
+            return 0;
+        }
+
+        function renderSnakeChain(item) {
+            const chain = document.getElementById('snakeChain');
+            chain.innerHTML = '';
+
+            const head = document.createElement('div');
+            head.className = 'snake-head';
+            head.innerHTML = '<span class="snake-head-emoji">🐍</span>' +
+                '<span class="snake-head-text">' +
+                '<span class="snake-head-inf">' + item.headLabel + '</span>' +
+                '<span class="snake-head-de">' + item.headDe + '</span></span>';
+            chain.appendChild(head);
+
+            let prevY = 0;
+            item.previousSteps.forEach(ps => {
+                const y = getSnakeYOffset(ps.key);
+                const conn = document.createElement('div');
+                conn.className = 'snake-connector';
+                conn.style.transform = 'translateY(' + ((prevY + y) / 2) + 'px)';
+                chain.appendChild(conn);
+                const seg = document.createElement('div');
+                seg.className = 'snake-segment completed';
+                seg.style.transform = 'translateY(' + y + 'px)';
+                seg.innerHTML = '<div class="snake-segment-label">' + getSnakeKeyShort(ps.key) + '</div>' +
+                    '<div class="snake-segment-form">' + ps.form + '</div>';
+                chain.appendChild(seg);
+                prevY = y;
+            });
+
+            const curY = getSnakeYOffset(item.currentKey);
+            const conn = document.createElement('div');
+            conn.className = 'snake-connector';
+            conn.style.transform = 'translateY(' + ((prevY + curY) / 2) + 'px)';
+            chain.appendChild(conn);
+            const cur = document.createElement('div');
+            cur.className = 'snake-segment current';
+            cur.id = 'snakeCurrentSegment';
+            cur.style.transform = 'translateY(' + curY + 'px)';
+            cur.innerHTML = '<div class="snake-segment-label">' + getSnakeKeyShort(item.currentKey) + '</div>' +
+                '<div class="snake-segment-form">???</div>';
+            chain.appendChild(cur);
+
+            setTimeout(() => chain.scrollLeft = chain.scrollWidth, 50);
+        }
+
+        function renderSnakeGrid(item) {
+            const grid = document.getElementById('snakeGrid');
+            grid.innerHTML = '';
+
+            grid.innerHTML += '<div class="snake-grid-header"></div>';
+            grid.innerHTML += '<div class="snake-grid-header">Singular</div>';
+            grid.innerHTML += '<div class="snake-grid-header">Plural</div>';
+
+            let rows;
+            if (item.snakeType === 'noun') {
+                rows = [
+                    { label: 'Nom.', sg: 'nom_sg', pl: 'nom_pl' },
+                    { label: 'Gen.', sg: 'gen_sg', pl: 'gen_pl' },
+                    { label: 'Dat.', sg: 'dat_sg', pl: 'dat_pl' },
+                    { label: 'Akk.', sg: 'akk_sg', pl: 'akk_pl' },
+                    { label: 'Abl.', sg: 'abl_sg', pl: 'abl_pl' }
+                ];
+            } else {
+                rows = [
+                    { label: '1. Pers.', sg: 'sg1', pl: 'pl1' },
+                    { label: '2. Pers.', sg: 'sg2', pl: 'pl2' },
+                    { label: '3. Pers.', sg: 'sg3', pl: 'pl3' },
+                    { label: 'Imperativ', sg: 'imp_sg', pl: 'imp_pl' }
+                ];
+            }
+
+            const visitedKeys = item.previousSteps.map(ps => ps.key);
+
+            rows.forEach(row => {
+                const lbl = document.createElement('div');
+                lbl.className = 'snake-grid-label';
+                lbl.textContent = row.label;
+                grid.appendChild(lbl);
+
+                [row.sg, row.pl].forEach(key => {
+                    const cell = document.createElement('div');
+                    let cls = 'snake-grid-cell';
+                    if (key.startsWith('imp')) cls += ' imp-row';
+                    if (visitedKeys.includes(key)) cls += ' visited';
+                    if (key === item.currentKey) cls += ' current';
+                    cell.className = cls;
+
+                    if (visitedKeys.includes(key)) {
+                        const ps = item.previousSteps.find(p => p.key === key);
+                        cell.textContent = ps ? ps.form : '✓';
+                    } else if (key === item.currentKey) {
+                        cell.textContent = '?';
+                    } else {
+                        cell.textContent = '·';
+                    }
+                    grid.appendChild(cell);
+                });
+            });
+        }
+
+        function celebrateSnake() {
+            const praiseTexts = ['Super!', 'Klasse!', 'Toll gemacht!', 'Perfekt!', 'Stark!', 'Bravo!'];
+            const praise = praiseTexts[Math.floor(Math.random() * praiseTexts.length)];
+            const praiseDom = document.getElementById('snakePraise');
+            praiseDom.textContent = '🐍 ' + praise + ' Schlange komplett! 🎉';
+            praiseDom.style.display = 'block';
+
+            // Wave animation: staggered on each child element
+            const chain = document.getElementById('snakeChain');
+            chain.classList.add('snake-celebrate');
+            Array.from(chain.children).forEach((child, i) => {
+                child.style.animation = 'snake-wave 0.8s ease-in-out infinite';
+                child.style.animationDelay = (i * 0.1) + 's';
+            });
+
+            setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 5000);
+        }
+
+        function checkSnakeAnswer() {
+            const input = document.getElementById('snakeEndingInput');
+            if (!input || !input.value.trim()) return;
+            const item = currentLatinItem;
+            const userAnswer = stripMacrons(input.value.trim().toLowerCase());
+            const expected = stripMacrons(item.answer);
+            const stats = wordStats[item.id];
+            const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
+
+            if (snakeRetrying) {
+                if (userAnswer === expected) {
+                    input.className = 'snake-ending-input correct';
+                    input.disabled = true;
+                    document.getElementById('snakeCheckBtn').style.display = 'none';
+                    const seg = document.getElementById('snakeCurrentSegment');
+                    seg.className = 'snake-segment completed';
+                    seg.querySelector('.snake-segment-form').textContent = item.fullForm;
+                    document.getElementById('snakeInstruction').textContent = '✓ Richtig!';
+                    document.getElementById('snakeInstruction').style.color = '#4caf50';
+                    // Celebration on last step
+                    const isLast = item.stepIndex === item.totalSteps - 1;
+                    if (isLast) {
+                        celebrateSnake();
+                    } else {
+                        setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1200);
+                    }
+                } else {
+                    input.className = 'snake-ending-input wrong';
+                    document.getElementById('snakeCheckBtn').style.display = 'none';
+                    document.getElementById('snakeInstruction').textContent =
+                        'Falsch! Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length);
+                    document.getElementById('snakeInstruction').style.color = '#f44336';
+                    playSound('wrong');
+                    setTimeout(() => {
+                        input.className = 'snake-ending-input';
+                        input.value = '';
+                        input.focus();
+                        document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+                        document.getElementById('snakeInstruction').textContent = 'Tippe die richtige Endung:';
+                        document.getElementById('snakeInstruction').style.color = '';
+                    }, 2000);
+                }
+                return;
+            }
+
+            attemptCount++;
+            stats.attempts++;
+
+            if (userAnswer === expected) {
+                stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(item), true);
+                input.className = 'snake-ending-input correct';
+                input.disabled = true;
+
+                // Reveal segment
+                const seg = document.getElementById('snakeCurrentSegment');
+                seg.className = 'snake-segment completed';
+                seg.querySelector('.snake-segment-form').textContent = item.fullForm;
+
+                // Show correct ending in target
+                input.value = item.answer;
+                document.getElementById('snakeCheckBtn').style.display = 'none';
+
+                handleCorrectAnswer(stats, timeElapsed);
+                playSound('correct');
+
+                // Celebration on last step of a snake
+                if (item.stepIndex === item.totalSteps - 1) {
+                    celebrateSnake();
+                } else {
+                    setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1500);
+                }
+            } else {
+                stats.mistakes++;
+                recordAnswer(getWordKey(item), false);
+                input.className = 'snake-ending-input wrong';
+
+                // Show correct answer
+                const seg = document.getElementById('snakeCurrentSegment');
+                seg.className = 'snake-segment wrong';
+
+                document.getElementById('snakeCheckBtn').style.display = 'none';
+                document.getElementById('snakeInstruction').textContent =
+                    'Falsch! Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length);
+                document.getElementById('snakeInstruction').style.color = '#f44336';
+
+                snakeRetrying = true;
+                playSound('wrong');
+                if (!isRepeatPhase) addToRepeatList();
+
+                setTimeout(() => {
+                    input.className = 'snake-ending-input';
+                    input.value = '';
+                    input.disabled = false;
+                    input.focus();
+                    document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+                    document.getElementById('snakeInstruction').textContent = 'Tippe die richtige Endung:';
+                    document.getElementById('snakeInstruction').style.color = '';
+                    seg.className = 'snake-segment current';
+                }, 2000);
+            }
+        }
+
+        function snakeContinue() {
+            document.getElementById('snakeContinueBtn').style.display = 'none';
+            currentWordIndex++;
+            loadLatinWord();
         }
 
         function handleCorrectAnswer(stats, timeElapsed) {
@@ -4083,6 +5025,15 @@
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     checkTableAnswer();
+                }
+                return;
+            }
+
+            // Snake mode: Enter to check
+            if (currentMode === 'snake') {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    checkSnakeAnswer();
                 }
                 return;
             }
