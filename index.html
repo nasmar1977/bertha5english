@@ -888,6 +888,60 @@
             transform: translateX(100%);
             transition: transform 0.6s ease-in-out;
         }
+        /* Terminal Table Training */
+        .terminal-container {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Courier New', Monaco, monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin: 0 auto 15px;
+        }
+        .terminal-header {
+            background: #161b22;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27c93f; }
+        .terminal-title { color: #8b949e; font-size: 0.85em; margin-left: 10px; }
+        .terminal-body { padding: 12px; overflow-x: auto; }
+        .terminal-tbl { border-collapse: collapse; color: #c9d1d9; font-size: 0.82em; white-space: nowrap; }
+        .terminal-tbl th {
+            color: #58a6ff; border-bottom: 2px solid #30363d;
+            padding: 5px 8px; text-align: left; position: sticky; top: 0; background: #0d1117;
+        }
+        .terminal-tbl td { padding: 5px 8px; border-bottom: 1px solid #21262d; }
+        .terminal-tbl .row-label { color: #d2a8ff; font-weight: bold; }
+        .terminal-tbl .cell-blank {
+            background: #161b22; border: 1px solid #39ff14; border-radius: 3px;
+        }
+        .terminal-tbl .cell-blank input {
+            background: transparent; color: #39ff14; border: none;
+            font-family: inherit; font-size: inherit; width: 100%; min-width: 80px;
+            outline: none; caret-color: #39ff14; padding: 2px;
+        }
+        .terminal-tbl .cell-correct-flash { color: #39ff14; background: rgba(57,255,20,0.15); }
+        .terminal-tbl .cell-wrong-flash { color: #ff4444; background: rgba(255,68,68,0.15); }
+        .terminal-prompt {
+            padding: 10px 14px; border-top: 1px solid #21262d;
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        .terminal-prompt .prompt-symbol { color: #39ff14; font-weight: bold; }
+        .terminal-prompt .prompt-hint { color: #8b949e; font-size: 0.9em; }
+        .terminal-prompt .prompt-error { color: #ff4444; font-size: 0.9em; }
+        #tableArea { display: none; }
+        #tableCheckBtn {
+            background: #161b22; color: #39ff14; border: 2px solid #39ff14;
+            padding: 10px 25px; border-radius: 8px; font-family: 'Courier New', monospace;
+            font-size: 1em; cursor: pointer; margin-top: 10px;
+        }
+        #tableCheckBtn:hover { background: #39ff14; color: #0d1117; }
+        #tableSkipBtn { margin-left: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -1008,6 +1062,11 @@
                 <div class="module-title">Substantive</div>
                 <div class="module-info">Deklinieren: Nom/Gen/Dat/Akk/Abl</div>
             </div>
+            <div class="module-card" onclick="startLatinModule('tables')" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+                <div class="module-icon">💻</div>
+                <div class="module-title" style="color: #39ff14;">Tabellentraining</div>
+                <div class="module-info" style="color: #8b949e;">Konjugieren &amp; Deklinieren<br><small>⚠️ Nur Desktop / Tablet</small></div>
+            </div>
             <div class="module-card" onclick="startLatinModule('sentences')">
                 <div class="module-icon">📝</div>
                 <div class="module-title">Beispielsätze</div>
@@ -1085,6 +1144,15 @@
             <div id="sentenceSpellingArea">
                 <div class="answer-area" id="sentenceAnswerArea"></div>
                 <div class="letters-pool" id="sentenceLettersPool"></div>
+            </div>
+        </div>
+
+        <!-- MODE 4: TABLE TRAINING (Desktop only) -->
+        <div id="tableArea" style="display: none;">
+            <div id="terminalContainer" class="terminal-container"></div>
+            <div style="text-align: center;">
+                <button id="tableCheckBtn" onclick="checkTableAnswer()">✓ Prüfen (Enter)</button>
+                <button class="btn btn-skip" id="tableSkipBtn" onclick="skipTableAnswer()">→ Überspringen</button>
             </div>
         </div>
 
@@ -2093,9 +2161,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.3.0';
+        const APP_VERSION = '2.4.0';
 
         const changelogEntries = [
+            {
+                version: '2.4.0',
+                date: '27.02.2026',
+                items: [
+                    '💻 <b>Tabellentraining</b> – Konjugations- & Deklinationstabellen im Terminal-Stil',
+                    '📊 Komplette Kapitel-Übersichtstabellen mit zufälligen Lücken',
+                    '🎯 Abwechselnd Verben- und Nomen-Tabellen (3-5 Felder pro Tabelle)',
+                ]
+            },
             {
                 version: '2.3.0',
                 date: '27.02.2026',
@@ -2256,14 +2333,17 @@
             if (module === 'vocab') moduleName = 'Vokabeln';
             else if (module === 'verbs') moduleName = 'Verb-Formen';
             else if (module === 'nouns') moduleName = 'Substantive';
+            else if (module === 'tables') moduleName = 'Tabellentraining';
             else if (module === 'sentences') moduleName = 'Beispielsätze';
             else moduleName = 'Alles gemischt';
             document.getElementById('currentSetName').textContent = ch.name + ' – ' + moduleName;
 
             // Build round items for Latin
             latinRoundItems = buildLatinRoundItems(ch, module);
-            const progress = loadProgress();
-            latinRoundItems = weightedSample(latinRoundItems, Math.min(15, latinRoundItems.length), progress);
+            if (module !== 'tables') {
+                const progress = loadProgress();
+                latinRoundItems = weightedSample(latinRoundItems, Math.min(15, latinRoundItems.length), progress);
+            }
 
             initLatinGame();
         }
@@ -2426,7 +2506,96 @@
                 });
             }
 
+            if (module === 'tables') {
+                const tableTypes = [];
+
+                // Verb-Tabelle: alle Verben des Kapitels
+                const verbRows = [];
+                ch.verbForms.forEach(vf => {
+                    if (!vf.present) return;
+                    const row = {
+                        label: vf.infinitive,
+                        sg1: vf.firstPerson,
+                        sg2: vf.present.sg2, sg3: vf.present.sg3,
+                        pl1: vf.present.pl1, pl2: vf.present.pl2, pl3: vf.present.pl3
+                    };
+                    if (vf.imperative) {
+                        row.imp_sg = vf.imperative.sg;
+                        row.imp_pl = vf.imperative.pl;
+                    }
+                    verbRows.push(row);
+                });
+                if (verbRows.length > 0) {
+                    tableTypes.push({ tableType: 'verb', rows: verbRows });
+                }
+
+                // Nomen-Tabelle: alle Nomen des Kapitels
+                if (ch.nouns) {
+                    const nounRows = [];
+                    ch.nouns.forEach(n => {
+                        const row = { label: n.nom_sg };
+                        ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg',
+                         'nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'].forEach(k => {
+                            row[k] = n[k] || null;
+                        });
+                        nounRows.push(row);
+                    });
+                    if (nounRows.length > 0) {
+                        tableTypes.push({ tableType: 'noun', rows: nounRows });
+                    }
+                }
+
+                // Abwechselnd: 3-5 Felder aus Tabelle A, dann B, ...
+                let tableIndex = Math.random() < 0.5 ? 0 : 1;
+                if (tableTypes.length === 1) tableIndex = 0;
+
+                while (items.length < 15 && tableTypes.length > 0) {
+                    const tbl = tableTypes[tableIndex % tableTypes.length];
+                    const blanksCount = 3 + Math.floor(Math.random() * 3);
+
+                    const allCells = [];
+                    tbl.rows.forEach((row, rowIdx) => {
+                        Object.keys(row).forEach(key => {
+                            if (key === 'label' || !row[key]) return;
+                            allCells.push({ rowIdx, key, value: row[key], rowLabel: row.label });
+                        });
+                    });
+
+                    const selected = shuffleArray([...allCells]).slice(0, blanksCount);
+                    selected.forEach(cell => {
+                        if (items.length >= 15) return;
+                        items.push({
+                            type: 'table', mode: 'table',
+                            tableType: tbl.tableType,
+                            tableRows: tbl.rows,
+                            blankRowIdx: cell.rowIdx,
+                            blankKey: cell.key,
+                            answer: cell.value.toLowerCase(),
+                            displayAnswer: cell.value,
+                            image: tbl.tableType === 'verb' ? '✍️' : '📐',
+                            hint: getTableCellLabel(cell.key),
+                            question: cell.rowLabel + ': ' + getTableCellLabel(cell.key) + '?',
+                            id: 'tbl_' + tbl.tableType.charAt(0) + '_' + cell.key + '_' + cell.rowLabel
+                        });
+                    });
+                    tableIndex++;
+                }
+            }
+
             return items;
+        }
+
+        function getTableCellLabel(key) {
+            const labels = {
+                sg1: '1.Sg.', sg2: '2.Sg.', sg3: '3.Sg.',
+                pl1: '1.Pl.', pl2: '2.Pl.', pl3: '3.Pl.',
+                imp_sg: 'Imp.Sg.', imp_pl: 'Imp.Pl.',
+                nom_sg: 'Nom.Sg.', gen_sg: 'Gen.Sg.', dat_sg: 'Dat.Sg.',
+                akk_sg: 'Akk.Sg.', abl_sg: 'Abl.Sg.',
+                nom_pl: 'Nom.Pl.', gen_pl: 'Gen.Pl.', dat_pl: 'Dat.Pl.',
+                akk_pl: 'Akk.Pl.', abl_pl: 'Abl.Pl.',
+            };
+            return labels[key] || key;
         }
 
         function initLatinGame() {
@@ -2606,15 +2775,25 @@
             document.getElementById('spellingArea').style.display = 'none';
             document.getElementById('mcArea').style.display = 'none';
             document.getElementById('sentenceArea').style.display = 'none';
+            document.getElementById('tableArea').style.display = 'none';
             document.getElementById('spellingButtons').style.display = 'none';
             document.getElementById('tipText').style.display = 'none';
+
+            // Word card: hide for table mode, show for others
+            const wordCard = document.querySelector('.word-card');
+            if (item.mode === 'table') {
+                wordCard.style.display = 'none';
+                loadLatinTable(item);
+                return; // No hint timer or curtain needed for tables
+            }
+            wordCard.style.display = '';
 
             if (item.mode === 'mc') {
                 loadLatinMC(item);
             } else if (item.mode === 'sentence') {
                 loadLatinSentence(item);
             } else {
-                // Spelling mode for vocab or verbs
+                // Spelling mode for vocab or verbs or nouns
                 loadLatinSpelling(item);
             }
 
@@ -2951,6 +3130,143 @@
                     slots.forEach(slot => { slot.classList.remove('wrong'); slot.classList.remove('correct'); });
                 }, 1500);
             }
+        }
+
+        // ===================================================================
+        // TABLE TRAINING (Terminal Mode)
+        // ===================================================================
+
+        let tableRetrying = false;
+
+        function loadLatinTable(item) {
+            currentMode = 'table';
+            currentWord = item.answer;
+            tableRetrying = false;
+
+            document.getElementById('tableArea').style.display = 'block';
+
+            const container = document.getElementById('terminalContainer');
+            container.innerHTML = renderFullTable(item);
+
+            setTimeout(() => {
+                const input = document.getElementById('tableInput');
+                if (input) input.focus();
+            }, 100);
+        }
+
+        function renderFullTable(item) {
+            const isVerb = item.tableType === 'verb';
+            const title = isVerb ? 'VERBA' : 'NOMINA';
+            const columns = isVerb
+                ? [{key:'sg1',label:'1.Sg.'},{key:'sg2',label:'2.Sg.'},{key:'sg3',label:'3.Sg.'},
+                   {key:'pl1',label:'1.Pl.'},{key:'pl2',label:'2.Pl.'},{key:'pl3',label:'3.Pl.'},
+                   {key:'imp_sg',label:'Imp.Sg.'},{key:'imp_pl',label:'Imp.Pl.'}]
+                : [{key:'nom_sg',label:'Nom.Sg.'},{key:'gen_sg',label:'Gen.Sg.'},{key:'dat_sg',label:'Dat.Sg.'},
+                   {key:'akk_sg',label:'Akk.Sg.'},{key:'abl_sg',label:'Abl.Sg.'},
+                   {key:'nom_pl',label:'Nom.Pl.'},{key:'gen_pl',label:'Gen.Pl.'},{key:'dat_pl',label:'Dat.Pl.'},
+                   {key:'akk_pl',label:'Akk.Pl.'},{key:'abl_pl',label:'Abl.Pl.'}];
+
+            let html = `<div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">${title}</span>
+            </div>
+            <div class="terminal-body"><table class="terminal-tbl">
+            <thead><tr><th>${isVerb ? 'Infinitiv' : 'Wort'}</th>`;
+            columns.forEach(c => { html += `<th>${c.label}</th>`; });
+            html += `</tr></thead><tbody>`;
+
+            item.tableRows.forEach((row, rowIdx) => {
+                const isActiveRow = rowIdx === item.blankRowIdx;
+                html += `<tr${isActiveRow ? ' style="background:rgba(57,255,20,0.05)"' : ''}>`;
+                html += `<td class="row-label">${row.label}</td>`;
+                columns.forEach(col => {
+                    const val = row[col.key];
+                    if (rowIdx === item.blankRowIdx && col.key === item.blankKey) {
+                        html += `<td class="cell-blank"><input type="text" id="tableInput" autocomplete="off" autocapitalize="off" spellcheck="false"></td>`;
+                    } else if (val === undefined || val === null) {
+                        html += `<td style="color:#484f58;">—</td>`;
+                    } else {
+                        html += `<td>${val}</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            html += `<div class="terminal-prompt">
+                <span class="prompt-symbol">❯</span>
+                <span class="prompt-hint" id="tablePromptHint">${item.question}</span>
+            </div>`;
+            return html;
+        }
+
+        function checkTableAnswer() {
+            const input = document.getElementById('tableInput');
+            if (!input || !input.value.trim()) return;
+            const userAnswer = stripMacrons(input.value.trim().toLowerCase());
+            const expected = stripMacrons(currentLatinItem.answer);
+            const blankCell = document.querySelector('.cell-blank');
+            const stats = wordStats[currentLatinItem.id];
+            const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
+
+            if (tableRetrying) {
+                if (userAnswer === expected) {
+                    blankCell.classList.remove('cell-blank', 'cell-wrong-flash');
+                    blankCell.classList.add('cell-correct-flash');
+                    blankCell.innerHTML = currentLatinItem.displayAnswer;
+                    setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1200);
+                } else {
+                    input.value = '';
+                    input.focus();
+                }
+                return;
+            }
+
+            attemptCount++;
+            stats.attempts++;
+
+            if (userAnswer === expected) {
+                stats.totalTime += timeElapsed;
+                recordAnswer(getWordKey(currentLatinItem), true);
+                blankCell.classList.remove('cell-blank');
+                blankCell.classList.add('cell-correct-flash');
+                blankCell.innerHTML = currentLatinItem.displayAnswer;
+                handleCorrectAnswer(stats, timeElapsed);
+                playSound('correct');
+                setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1500);
+            } else {
+                stats.mistakes++;
+                recordAnswer(getWordKey(currentLatinItem), false);
+                blankCell.classList.add('cell-wrong-flash');
+                input.value = '';
+
+                const promptHint = document.getElementById('tablePromptHint');
+                promptHint.className = 'prompt-error';
+                promptHint.textContent = 'Falsch! Tippe: ' + currentLatinItem.displayAnswer;
+
+                tableRetrying = true;
+                playSound('wrong');
+                if (!isRepeatPhase) addToRepeatList();
+                input.focus();
+            }
+        }
+
+        function skipTableAnswer() {
+            const stats = wordStats[currentLatinItem.id];
+            stats.attempts++;
+            stats.mistakes++;
+            recordAnswer(getWordKey(currentLatinItem), false);
+            if (!isRepeatPhase) addToRepeatList();
+            const blankCell = document.querySelector('.cell-blank');
+            if (blankCell) {
+                blankCell.classList.remove('cell-blank');
+                blankCell.classList.add('cell-wrong-flash');
+                blankCell.innerHTML = currentLatinItem.displayAnswer;
+            }
+            playSound('wrong');
+            setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1500);
         }
 
         function handleCorrectAnswer(stats, timeElapsed) {
@@ -3538,7 +3854,8 @@
 
         function addToRepeatList() {
             const currentWordObj = shuffledVocabulary[currentWordIndex];
-            const alreadyInRepeat = wordsToRepeat.some(w => w.english === currentWordObj.english);
+            const matchKey = currentWordObj.english || currentWordObj.id;
+            const alreadyInRepeat = wordsToRepeat.some(w => (w.english || w.id) === matchKey);
             if (!alreadyInRepeat) {
                 wordsToRepeat.push(currentWordObj);
                 document.getElementById('repeats').textContent = wordsToRepeat.length;
@@ -3601,6 +3918,8 @@
                     if (vf.imperative) chapterKeys.add('la:vf_imp_' + vf.infinitive);
                 });
                 if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:noun_' + n.nom_sg));
+                if (ch.verbForms) ch.verbForms.forEach(vf => chapterKeys.add('la:tbl_v_' + vf.infinitive));
+                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:tbl_n_' + n.nom_sg));
                 if (ch.sentences) ch.sentences.forEach(s => chapterKeys.add('la:sent_' + s.answer));
                 chapterLabel = ch.name;
             }
@@ -3614,6 +3933,8 @@
                     baseKey = baseKey.replace(/vf_pres_(sg2|sg3|pl1|pl2|pl3)_/, 'vf_pres_');
                     baseKey = baseKey.replace(/vf_imp_(sg|pl)_/, 'vf_imp_');
                     baseKey = baseKey.replace(/noun_(gen|dat|akk|abl|nom)_(sg|pl)_/, 'noun_');
+                    baseKey = baseKey.replace(/tbl_v_(sg1|sg2|sg3|pl1|pl2|pl3|imp_sg|imp_pl)_/, 'tbl_v_');
+                    baseKey = baseKey.replace(/tbl_n_(nom|gen|dat|akk|abl)_(sg|pl)_/, 'tbl_n_');
                     learnedBaseWords.add(baseKey);
                 }
             });
@@ -3658,6 +3979,15 @@
         // ===================================================================
 
         document.addEventListener('keydown', (event) => {
+            // Table mode: only intercept Enter, let browser handle rest
+            if (currentMode === 'table') {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    checkTableAnswer();
+                }
+                return;
+            }
+
             const key = event.key.toLowerCase();
 
             // Space or Enter to continue after skip

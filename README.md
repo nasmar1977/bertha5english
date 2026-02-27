@@ -27,13 +27,16 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - Mehrwörter: MC in beide Richtungen (Latein↔Deutsch)
 - **Verb-Formen**: 32 Verben – Infinitiv ↔ 1. Person, Präsens Indikativ Aktiv (alle 6 Personen), Imperativ Sg/Pl
 - **Substantive**: 18 Nomen deklinieren – Nom/Gen/Dat/Akk/Abl × Singular/Plural (a- und o-Deklination)
+- **Tabellentraining**: Komplette Konjugations-/Deklinationstabellen im Terminal-Stil (nur Desktop)
+  - Große Übersichtstabellen mit allen Verben/Nomen eines Kapitels
+  - Zufällige Lücken ausfüllen, 3-5 pro Tabelle, dann Wechsel
 - **Beispielsätze**: 21 Lückentexte – lateinischer Satz + deutsche Übersetzung mit Lücke
-- **Alles gemischt**: Kombination aller Module
+- **Alles gemischt**: Kombination aller Module (ohne Tabellentraining)
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Datum:** 27.02.2026
 **Englisch:** 175 Vokabeln (Theme 2: 77 + Theme 3: 98)
 **Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen (mit Präsens + Imperativ), 18 Substantive, 21 Beispielsätze
@@ -57,6 +60,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.4.0 (27.02.2026)
+- Tabellentraining: Konjugations- & Deklinationstabellen im Terminal-Stil
+- Komplette Kapitel-Übersichtstabellen mit zufälligen Lücken zum Ausfüllen
+- Abwechselnd Verben- und Nomen-Tabellen (3-5 Felder pro Tabelle)
+- Nur für Desktop / Tablet (Hinweis auf Modulkarte)
 
 ### Version 2.3.0 (27.02.2026)
 - Verb-Formen erweitert: Präsens Indikativ Aktiv (alle 6 Personen) + Imperativ (Sg/Pl) für 32 Verben
