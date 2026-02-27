@@ -25,17 +25,18 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **Vokabeln**: 34 Einzelwort-Vokabeln + 7 Mehrwort-Ausdrücke (Lektion 3)
   - Einzelwörter: Spelling (DE→Latein) oder MC (Latein→DE)
   - Mehrwörter: MC in beide Richtungen (Latein↔Deutsch)
-- **Verb-Formen**: 18 Verben – Infinitiv ↔ 1. Person Singular (Spelling)
-- **Beispielsätze**: 12 Lückentexte – lateinischer Satz + deutsche Übersetzung mit Lücke
+- **Verb-Formen**: 32 Verben – Infinitiv ↔ 1. Person, Präsens Indikativ Aktiv (alle 6 Personen), Imperativ Sg/Pl
+- **Substantive**: 18 Nomen deklinieren – Nom/Gen/Dat/Akk/Abl × Singular/Plural (a- und o-Deklination)
+- **Beispielsätze**: 21 Lückentexte – lateinischer Satz + deutsche Übersetzung mit Lücke
 - **Alles gemischt**: Kombination aller Module
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.2.0
-**Datum:** 25.02.2026
+**Version:** 2.3.0
+**Datum:** 27.02.2026
 **Englisch:** 175 Vokabeln (Theme 2: 77 + Theme 3: 98)
-**Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen, 21 Beispielsätze
+**Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen (mit Präsens + Imperativ), 18 Substantive, 21 Beispielsätze
 
 ## 🚀 Wie benutzen?
 
@@ -56,6 +57,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.3.0 (27.02.2026)
+- Verb-Formen erweitert: Präsens Indikativ Aktiv (alle 6 Personen) + Imperativ (Sg/Pl) für 32 Verben
+- Neues Modul "Substantive": 18 Nomen deklinieren (Nom/Gen/Dat/Akk/Abl × Sg/Pl)
+- a-Deklination (15 Nomen) + o-Deklination (4 Nomen) inkl. Diāna (nur Singular)
 
 ### Version 2.2.0 (25.02.2026)
 - Lernhorizont: gewichtete Vokabelauswahl priorisiert schwächere Wörter

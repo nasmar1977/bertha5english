@@ -1001,7 +1001,12 @@
             <div class="module-card" onclick="startLatinModule('verbs')">
                 <div class="module-icon">✍️</div>
                 <div class="module-title">Verb-Formen</div>
-                <div class="module-info">Infinitiv ↔ 1. Person Singular</div>
+                <div class="module-info">Infinitiv, Präsens &amp; Imperativ</div>
+            </div>
+            <div class="module-card" onclick="startLatinModule('nouns')">
+                <div class="module-icon">📐</div>
+                <div class="module-title">Substantive</div>
+                <div class="module-info">Deklinieren: Nom/Gen/Dat/Akk/Abl</div>
             </div>
             <div class="module-card" onclick="startLatinModule('sentences')">
                 <div class="module-icon">📝</div>
@@ -1011,7 +1016,7 @@
             <div class="module-card mixed" onclick="startLatinModule('mixed')">
                 <div class="module-icon">🌟</div>
                 <div class="module-title">Alles gemischt</div>
-                <div class="module-info">Vokabeln + Verben + Sätze</div>
+                <div class="module-info">Vokabeln + Verben + Substantive + Sätze</div>
             </div>
         </div>
     </div>
@@ -1214,24 +1219,60 @@
                       latinDistractors: ['poenam dare', 'culpam habēre', 'auxilium petere', 'laudem merēre'] },
                 ],
                 verbForms: [
-                    { infinitive: 'narrāre', firstPerson: 'narrō', german: 'erzählen' },
-                    { infinitive: 'parāre', firstPerson: 'parō', german: '(vor)bereiten' },
-                    { infinitive: 'sustinēre', firstPerson: 'sustineō', german: 'ertragen' },
-                    { infinitive: 'prohibēre', firstPerson: 'prohibeō', german: 'abhalten' },
-                    { infinitive: 'respondēre', firstPerson: 'respondeō', german: 'antworten' },
-                    { infinitive: 'indicāre', firstPerson: 'indicō', german: 'anzeigen' },
-                    { infinitive: 'negāre', firstPerson: 'negō', german: 'leugnen' },
-                    { infinitive: 'probāre', firstPerson: 'probō', german: 'prüfen' },
-                    { infinitive: 'prōvidēre', firstPerson: 'prōvideō', german: 'sorgen für' },
-                    { infinitive: 'vocāre', firstPerson: 'vocō', german: 'rufen' },
-                    { infinitive: 'superāre', firstPerson: 'superō', german: 'besiegen' },
-                    { infinitive: 'temptāre', firstPerson: 'temptō', german: 'versuchen' },
-                    { infinitive: 'cavēre', firstPerson: 'caveō', german: 'sich hüten' },
-                    { infinitive: 'placēre', firstPerson: 'placeō', german: 'gefallen' },
-                    { infinitive: 'pārēre', firstPerson: 'pāreō', german: 'gehorchen' },
-                    { infinitive: 'deesse', firstPerson: 'dēsum', german: 'fehlen' },
-                    { infinitive: 'mandāre', firstPerson: 'mandō', german: 'übergeben' },
-                    { infinitive: 'īnstāre', firstPerson: 'īnstō', german: 'bevorstehen' },
+                    { infinitive: 'narrāre', firstPerson: 'narrō', german: 'erzählen',
+                      present: { sg2: 'narrās', sg3: 'narrat', pl1: 'narrāmus', pl2: 'narrātis', pl3: 'narrant' },
+                      imperative: { sg: 'narrā', pl: 'narrāte' } },
+                    { infinitive: 'parāre', firstPerson: 'parō', german: '(vor)bereiten',
+                      present: { sg2: 'parās', sg3: 'parat', pl1: 'parāmus', pl2: 'parātis', pl3: 'parant' },
+                      imperative: { sg: 'parā', pl: 'parāte' } },
+                    { infinitive: 'sustinēre', firstPerson: 'sustineō', german: 'ertragen',
+                      present: { sg2: 'sustinēs', sg3: 'sustinet', pl1: 'sustinēmus', pl2: 'sustinētis', pl3: 'sustinent' },
+                      imperative: { sg: 'sustinē', pl: 'sustinēte' } },
+                    { infinitive: 'prohibēre', firstPerson: 'prohibeō', german: 'abhalten',
+                      present: { sg2: 'prohibēs', sg3: 'prohibet', pl1: 'prohibēmus', pl2: 'prohibētis', pl3: 'prohibent' },
+                      imperative: { sg: 'prohibē', pl: 'prohibēte' } },
+                    { infinitive: 'respondēre', firstPerson: 'respondeō', german: 'antworten',
+                      present: { sg2: 'respondēs', sg3: 'respondet', pl1: 'respondēmus', pl2: 'respondētis', pl3: 'respondent' },
+                      imperative: { sg: 'respondē', pl: 'respondēte' } },
+                    { infinitive: 'indicāre', firstPerson: 'indicō', german: 'anzeigen',
+                      present: { sg2: 'indicās', sg3: 'indicat', pl1: 'indicāmus', pl2: 'indicātis', pl3: 'indicant' },
+                      imperative: { sg: 'indicā', pl: 'indicāte' } },
+                    { infinitive: 'negāre', firstPerson: 'negō', german: 'leugnen',
+                      present: { sg2: 'negās', sg3: 'negat', pl1: 'negāmus', pl2: 'negātis', pl3: 'negant' },
+                      imperative: { sg: 'negā', pl: 'negāte' } },
+                    { infinitive: 'probāre', firstPerson: 'probō', german: 'prüfen',
+                      present: { sg2: 'probās', sg3: 'probat', pl1: 'probāmus', pl2: 'probātis', pl3: 'probant' },
+                      imperative: { sg: 'probā', pl: 'probāte' } },
+                    { infinitive: 'prōvidēre', firstPerson: 'prōvideō', german: 'sorgen für',
+                      present: { sg2: 'prōvidēs', sg3: 'prōvidet', pl1: 'prōvidēmus', pl2: 'prōvidētis', pl3: 'prōvident' },
+                      imperative: { sg: 'prōvidē', pl: 'prōvidēte' } },
+                    { infinitive: 'vocāre', firstPerson: 'vocō', german: 'rufen',
+                      present: { sg2: 'vocās', sg3: 'vocat', pl1: 'vocāmus', pl2: 'vocātis', pl3: 'vocant' },
+                      imperative: { sg: 'vocā', pl: 'vocāte' } },
+                    { infinitive: 'superāre', firstPerson: 'superō', german: 'besiegen',
+                      present: { sg2: 'superās', sg3: 'superat', pl1: 'superāmus', pl2: 'superātis', pl3: 'superant' },
+                      imperative: { sg: 'superā', pl: 'superāte' } },
+                    { infinitive: 'temptāre', firstPerson: 'temptō', german: 'versuchen',
+                      present: { sg2: 'temptās', sg3: 'temptat', pl1: 'temptāmus', pl2: 'temptātis', pl3: 'temptant' },
+                      imperative: { sg: 'temptā', pl: 'temptāte' } },
+                    { infinitive: 'cavēre', firstPerson: 'caveō', german: 'sich hüten',
+                      present: { sg2: 'cavēs', sg3: 'cavet', pl1: 'cavēmus', pl2: 'cavētis', pl3: 'cavent' },
+                      imperative: { sg: 'cavē', pl: 'cavēte' } },
+                    { infinitive: 'placēre', firstPerson: 'placeō', german: 'gefallen',
+                      present: { sg2: 'placēs', sg3: 'placet', pl1: 'placēmus', pl2: 'placētis', pl3: 'placent' },
+                      imperative: { sg: 'placē', pl: 'placēte' } },
+                    { infinitive: 'pārēre', firstPerson: 'pāreō', german: 'gehorchen',
+                      present: { sg2: 'pārēs', sg3: 'pāret', pl1: 'pārēmus', pl2: 'pārētis', pl3: 'pārent' },
+                      imperative: { sg: 'pārē', pl: 'pārēte' } },
+                    { infinitive: 'deesse', firstPerson: 'dēsum', german: 'fehlen',
+                      present: { sg2: 'dēes', sg3: 'dēest', pl1: 'dēsumus', pl2: 'dēestis', pl3: 'dēsunt' },
+                      imperative: null },
+                    { infinitive: 'mandāre', firstPerson: 'mandō', german: 'übergeben',
+                      present: { sg2: 'mandās', sg3: 'mandat', pl1: 'mandāmus', pl2: 'mandātis', pl3: 'mandant' },
+                      imperative: { sg: 'mandā', pl: 'mandāte' } },
+                    { infinitive: 'īnstāre', firstPerson: 'īnstō', german: 'bevorstehen',
+                      present: { sg2: 'īnstās', sg3: 'īnstat', pl1: 'īnstāmus', pl2: 'īnstātis', pl3: 'īnstant' },
+                      imperative: null },
                 ],
                 sentences: [
                     { latin: 'Crassus equum parat.', germanTemplate: 'Crassus ___ ein Pferd.', answer: 'erwirbt', image: '🐴',
@@ -1258,6 +1299,37 @@
                       hint: 'deesse = fehlen' },
                     { latin: 'Symmachō poena īnstat.', germanTemplate: 'Symmachus ___ eine Strafe.', answer: 'droht', image: '⚖️',
                       hint: 'īnstāre = drohen, bevorstehen' },
+                ],
+                nouns: [
+                    // a-Deklination
+                    { nom_sg: 'puella', gen_sg: 'puellae', dat_sg: 'puellae', akk_sg: 'puellam', abl_sg: 'puellā',
+                      nom_pl: 'puellae', gen_pl: 'puellārum', dat_pl: 'puellīs', akk_pl: 'puellās', abl_pl: 'puellīs',
+                      german: 'das Mädchen', image: '👧', declension: 'a-Deklination' },
+                    { nom_sg: 'iniūria', gen_sg: 'iniūriae', dat_sg: 'iniūriae', akk_sg: 'iniūriam', abl_sg: 'iniūriā',
+                      nom_pl: 'iniūriae', gen_pl: 'iniūriārum', dat_pl: 'iniūriīs', akk_pl: 'iniūriās', abl_pl: 'iniūriīs',
+                      german: 'das Unrecht', image: '⚖️', declension: 'a-Deklination' },
+                    { nom_sg: 'culpa', gen_sg: 'culpae', dat_sg: 'culpae', akk_sg: 'culpam', abl_sg: 'culpā',
+                      nom_pl: 'culpae', gen_pl: 'culpārum', dat_pl: 'culpīs', akk_pl: 'culpās', abl_pl: 'culpīs',
+                      german: 'die Schuld', image: '😔', declension: 'a-Deklination' },
+                    { nom_sg: 'sententia', gen_sg: 'sententiae', dat_sg: 'sententiae', akk_sg: 'sententiam', abl_sg: 'sententiā',
+                      nom_pl: 'sententiae', gen_pl: 'sententiārum', dat_pl: 'sententiīs', akk_pl: 'sententiās', abl_pl: 'sententiīs',
+                      german: 'die Meinung', image: '💭', declension: 'a-Deklination' },
+                    { nom_sg: 'poena', gen_sg: 'poenae', dat_sg: 'poenae', akk_sg: 'poenam', abl_sg: 'poenā',
+                      nom_pl: 'poenae', gen_pl: 'poenārum', dat_pl: 'poenīs', akk_pl: 'poenās', abl_pl: 'poenīs',
+                      german: 'die Strafe', image: '⚖️', declension: 'a-Deklination' },
+                    { nom_sg: 'grātia', gen_sg: 'grātiae', dat_sg: 'grātiae', akk_sg: 'grātiam', abl_sg: 'grātiā',
+                      nom_pl: 'grātiae', gen_pl: 'grātiārum', dat_pl: 'grātiīs', akk_pl: 'grātiās', abl_pl: 'grātiīs',
+                      german: 'der Dank', image: '🙏', declension: 'a-Deklination' },
+                    // o-Deklination
+                    { nom_sg: 'socius', gen_sg: 'sociī', dat_sg: 'sociō', akk_sg: 'socium', abl_sg: 'sociō',
+                      nom_pl: 'sociī', gen_pl: 'sociōrum', dat_pl: 'sociīs', akk_pl: 'sociōs', abl_pl: 'sociīs',
+                      german: 'der Gefährte', image: '🤜', declension: 'o-Deklination' },
+                    { nom_sg: 'gladius', gen_sg: 'gladiī', dat_sg: 'gladiō', akk_sg: 'gladium', abl_sg: 'gladiō',
+                      nom_pl: 'gladiī', gen_pl: 'gladiōrum', dat_pl: 'gladiīs', akk_pl: 'gladiōs', abl_pl: 'gladiīs',
+                      german: 'das Schwert', image: '⚔️', declension: 'o-Deklination' },
+                    { nom_sg: 'animus', gen_sg: 'animī', dat_sg: 'animō', akk_sg: 'animum', abl_sg: 'animō',
+                      nom_pl: 'animī', gen_pl: 'animōrum', dat_pl: 'animīs', akk_pl: 'animōs', abl_pl: 'animīs',
+                      german: 'der Geist', image: '🧠', declension: 'o-Deklination' },
                 ]
             },
 
@@ -1363,20 +1435,48 @@
                       latinDistractors: ['Dāvus aut Syrus', 'Dāvus sine Syrō', 'Dāvus contrā Syrum', 'Dāvus ante Syrum'] },
                 ],
                 verbForms: [
-                    { infinitive: 'movēre', firstPerson: 'moveō', german: 'bewegen' },
-                    { infinitive: 'nōlle', firstPerson: 'nōlō', german: 'nicht wollen' },
-                    { infinitive: 'nēscīre', firstPerson: 'nēsciō', german: 'nicht wissen' },
-                    { infinitive: 'amāre', firstPerson: 'amō', german: 'lieben' },
-                    { infinitive: 'timēre', firstPerson: 'timeō', german: 'fürchten' },
-                    { infinitive: 'sentīre', firstPerson: 'sentiō', german: 'fühlen' },
-                    { infinitive: 'ārdēre', firstPerson: 'ārdeō', german: 'brennen' },
-                    { infinitive: 'appellāre', firstPerson: 'appellō', german: 'rufen' },
-                    { infinitive: 'velle', firstPerson: 'volō', german: 'wollen' },
-                    { infinitive: 'agitāre', firstPerson: 'agitō', german: 'treiben' },
-                    { infinitive: 'terrēre', firstPerson: 'terreō', german: 'erschrecken' },
-                    { infinitive: 'vītāre', firstPerson: 'vītō', german: 'meiden' },
-                    { infinitive: 'mūtāre', firstPerson: 'mūtō', german: 'ändern' },
-                    { infinitive: 'circumvenīre', firstPerson: 'circumveniō', german: 'umringen' },
+                    { infinitive: 'movēre', firstPerson: 'moveō', german: 'bewegen',
+                      present: { sg2: 'movēs', sg3: 'movet', pl1: 'movēmus', pl2: 'movētis', pl3: 'movent' },
+                      imperative: { sg: 'movē', pl: 'movēte' } },
+                    { infinitive: 'nōlle', firstPerson: 'nōlō', german: 'nicht wollen',
+                      present: { sg2: 'nōn vīs', sg3: 'nōn vult', pl1: 'nōlumus', pl2: 'nōn vultis', pl3: 'nōlunt' },
+                      imperative: { sg: 'nōlī', pl: 'nōlīte' } },
+                    { infinitive: 'nēscīre', firstPerson: 'nēsciō', german: 'nicht wissen',
+                      present: { sg2: 'nēscīs', sg3: 'nēscit', pl1: 'nēscīmus', pl2: 'nēscītis', pl3: 'nēsciunt' },
+                      imperative: { sg: 'nēscī', pl: 'nēscīte' } },
+                    { infinitive: 'amāre', firstPerson: 'amō', german: 'lieben',
+                      present: { sg2: 'amās', sg3: 'amat', pl1: 'amāmus', pl2: 'amātis', pl3: 'amant' },
+                      imperative: { sg: 'amā', pl: 'amāte' } },
+                    { infinitive: 'timēre', firstPerson: 'timeō', german: 'fürchten',
+                      present: { sg2: 'timēs', sg3: 'timet', pl1: 'timēmus', pl2: 'timētis', pl3: 'timent' },
+                      imperative: { sg: 'timē', pl: 'timēte' } },
+                    { infinitive: 'sentīre', firstPerson: 'sentiō', german: 'fühlen',
+                      present: { sg2: 'sentīs', sg3: 'sentit', pl1: 'sentīmus', pl2: 'sentītis', pl3: 'sentiunt' },
+                      imperative: { sg: 'sentī', pl: 'sentīte' } },
+                    { infinitive: 'ārdēre', firstPerson: 'ārdeō', german: 'brennen',
+                      present: { sg2: 'ārdēs', sg3: 'ārdet', pl1: 'ārdēmus', pl2: 'ārdētis', pl3: 'ārdent' },
+                      imperative: { sg: 'ārdē', pl: 'ārdēte' } },
+                    { infinitive: 'appellāre', firstPerson: 'appellō', german: 'rufen',
+                      present: { sg2: 'appellās', sg3: 'appellat', pl1: 'appellāmus', pl2: 'appellātis', pl3: 'appellant' },
+                      imperative: { sg: 'appellā', pl: 'appellāte' } },
+                    { infinitive: 'velle', firstPerson: 'volō', german: 'wollen',
+                      present: { sg2: 'vīs', sg3: 'vult', pl1: 'volumus', pl2: 'vultis', pl3: 'volunt' },
+                      imperative: null },
+                    { infinitive: 'agitāre', firstPerson: 'agitō', german: 'treiben',
+                      present: { sg2: 'agitās', sg3: 'agitat', pl1: 'agitāmus', pl2: 'agitātis', pl3: 'agitant' },
+                      imperative: { sg: 'agitā', pl: 'agitāte' } },
+                    { infinitive: 'terrēre', firstPerson: 'terreō', german: 'erschrecken',
+                      present: { sg2: 'terrēs', sg3: 'terret', pl1: 'terrēmus', pl2: 'terrētis', pl3: 'terrent' },
+                      imperative: { sg: 'terrē', pl: 'terrēte' } },
+                    { infinitive: 'vītāre', firstPerson: 'vītō', german: 'meiden',
+                      present: { sg2: 'vītās', sg3: 'vītat', pl1: 'vītāmus', pl2: 'vītātis', pl3: 'vītant' },
+                      imperative: { sg: 'vītā', pl: 'vītāte' } },
+                    { infinitive: 'mūtāre', firstPerson: 'mūtō', german: 'ändern',
+                      present: { sg2: 'mūtās', sg3: 'mūtat', pl1: 'mūtāmus', pl2: 'mūtātis', pl3: 'mūtant' },
+                      imperative: { sg: 'mūtā', pl: 'mūtāte' } },
+                    { infinitive: 'circumvenīre', firstPerson: 'circumveniō', german: 'umringen',
+                      present: { sg2: 'circumvenīs', sg3: 'circumvenit', pl1: 'circumvenīmus', pl2: 'circumvenītis', pl3: 'circumveniunt' },
+                      imperative: { sg: 'circumvenī', pl: 'circumvenīte' } },
                 ],
                 sentences: [
                     { latin: 'Dea Symmachum in equum mūtat.', germanTemplate: 'Die Göttin ___ Symmachus in ein Pferd.', answer: 'verwandelt', image: '🐴',
@@ -1397,6 +1497,38 @@
                       hint: 'in m. Akk. = in ... hinein (wohin?)' },
                     { latin: 'Dāvus Syrusque adsunt.', germanTemplate: 'Davus ___ Syrus sind da.', answer: 'und', image: '👥',
                       hint: '-que = und (angehängt)' },
+                ],
+                nouns: [
+                    // a-Deklination
+                    { nom_sg: 'memoria', gen_sg: 'memoriae', dat_sg: 'memoriae', akk_sg: 'memoriam', abl_sg: 'memoriā',
+                      nom_pl: 'memoriae', gen_pl: 'memoriārum', dat_pl: 'memoriīs', akk_pl: 'memoriās', abl_pl: 'memoriīs',
+                      german: 'die Erinnerung', image: '🧠', declension: 'a-Deklination' },
+                    { nom_sg: 'dea', gen_sg: 'deae', dat_sg: 'deae', akk_sg: 'deam', abl_sg: 'deā',
+                      nom_pl: 'deae', gen_pl: 'deārum', dat_pl: 'deābus', akk_pl: 'deās', abl_pl: 'deābus',
+                      german: 'die Göttin', image: '👑', declension: 'a-Deklination' },
+                    { nom_sg: 'amīca', gen_sg: 'amīcae', dat_sg: 'amīcae', akk_sg: 'amīcam', abl_sg: 'amīcā',
+                      nom_pl: 'amīcae', gen_pl: 'amīcārum', dat_pl: 'amīcīs', akk_pl: 'amīcās', abl_pl: 'amīcīs',
+                      german: 'die Freundin', image: '👩', declension: 'a-Deklination' },
+                    { nom_sg: 'īra', gen_sg: 'īrae', dat_sg: 'īrae', akk_sg: 'īram', abl_sg: 'īrā',
+                      nom_pl: 'īrae', gen_pl: 'īrārum', dat_pl: 'īrīs', akk_pl: 'īrās', abl_pl: 'īrīs',
+                      german: 'der Zorn', image: '😡', declension: 'a-Deklination' },
+                    { nom_sg: 'fuga', gen_sg: 'fugae', dat_sg: 'fugae', akk_sg: 'fugam', abl_sg: 'fugā',
+                      nom_pl: 'fugae', gen_pl: 'fugārum', dat_pl: 'fugīs', akk_pl: 'fugās', abl_pl: 'fugīs',
+                      german: 'die Flucht', image: '🏃‍♂️', declension: 'a-Deklination' },
+                    { nom_sg: 'silva', gen_sg: 'silvae', dat_sg: 'silvae', akk_sg: 'silvam', abl_sg: 'silvā',
+                      nom_pl: 'silvae', gen_pl: 'silvārum', dat_pl: 'silvīs', akk_pl: 'silvās', abl_pl: 'silvīs',
+                      german: 'der Wald', image: '🌲', declension: 'a-Deklination' },
+                    // o-Deklination
+                    { nom_sg: 'campus', gen_sg: 'campī', dat_sg: 'campō', akk_sg: 'campum', abl_sg: 'campō',
+                      nom_pl: 'campī', gen_pl: 'campōrum', dat_pl: 'campīs', akk_pl: 'campōs', abl_pl: 'campīs',
+                      german: 'das Feld', image: '🏟️', declension: 'o-Deklination' },
+                    { nom_sg: 'oculus', gen_sg: 'oculī', dat_sg: 'oculō', akk_sg: 'oculum', abl_sg: 'oculō',
+                      nom_pl: 'oculī', gen_pl: 'oculōrum', dat_pl: 'oculīs', akk_pl: 'oculōs', abl_pl: 'oculīs',
+                      german: 'das Auge', image: '👁️', declension: 'o-Deklination' },
+                    // Eigenname (nur Singular)
+                    { nom_sg: 'Diāna', gen_sg: 'Diānae', dat_sg: 'Diānae', akk_sg: 'Diānam', abl_sg: 'Diānā',
+                      nom_pl: null, gen_pl: null, dat_pl: null, akk_pl: null, abl_pl: null,
+                      german: 'Diana', image: '🏹', declension: 'a-Deklination (Eigenname)' },
                 ]
             }
         };
@@ -1961,9 +2093,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.2.0';
+        const APP_VERSION = '2.3.0';
 
         const changelogEntries = [
+            {
+                version: '2.3.0',
+                date: '27.02.2026',
+                items: [
+                    '✍️ <b>Verb-Formen erweitert</b> – Präsens Indikativ Aktiv (alle 6 Personen) + Imperativ (Sg/Pl)',
+                    '📐 <b>Neues Modul: Substantive</b> – Nomen deklinieren (Nom/Gen/Dat/Akk/Abl × Sg/Pl)',
+                    '📊 18 Nomen + 32 Verben mit vollständigen Formen',
+                ]
+            },
             {
                 version: '2.2.0',
                 date: '25.02.2026',
@@ -2114,6 +2255,7 @@
             let moduleName = '';
             if (module === 'vocab') moduleName = 'Vokabeln';
             else if (module === 'verbs') moduleName = 'Verb-Formen';
+            else if (module === 'nouns') moduleName = 'Substantive';
             else if (module === 'sentences') moduleName = 'Beispielsätze';
             else moduleName = 'Alles gemischt';
             document.getElementById('currentSetName').textContent = ch.name + ' – ' + moduleName;
@@ -2199,7 +2341,74 @@
                             id: 'vf_f2i_' + vf.infinitive
                         });
                     }
+
+                    // Präsens Indikativ Aktiv: random person (sg2-pl3)
+                    if (vf.present) {
+                        const persons = [
+                            { key: 'sg2', label: '2. Pers. Sg.' },
+                            { key: 'sg3', label: '3. Pers. Sg.' },
+                            { key: 'pl1', label: '1. Pers. Pl.' },
+                            { key: 'pl2', label: '2. Pers. Pl.' },
+                            { key: 'pl3', label: '3. Pers. Pl.' }
+                        ];
+                        const p = persons[Math.floor(Math.random() * persons.length)];
+                        items.push({
+                            type: 'verb', mode: 'spelling',
+                            prompt: vf.infinitive + ' (' + vf.german + ')',
+                            answer: vf.present[p.key].toLowerCase(),
+                            displayAnswer: vf.present[p.key],
+                            image: '📝', hint: 'Bilde die ' + p.label,
+                            question: p.label + '?',
+                            id: 'vf_pres_' + p.key + '_' + vf.infinitive
+                        });
+                    }
+
+                    // Imperativ: random Sg/Pl
+                    if (vf.imperative) {
+                        const isPlural = Math.random() < 0.5;
+                        const form = isPlural ? vf.imperative.pl : vf.imperative.sg;
+                        const label = isPlural ? 'Imperativ Plural' : 'Imperativ Singular';
+                        items.push({
+                            type: 'verb', mode: 'spelling',
+                            prompt: vf.infinitive + ' (' + vf.german + ')',
+                            answer: form.toLowerCase(),
+                            displayAnswer: form,
+                            image: '📢', hint: 'Bilde den ' + label,
+                            question: label + '?',
+                            id: 'vf_imp_' + (isPlural ? 'pl' : 'sg') + '_' + vf.infinitive
+                        });
+                    }
                 });
+            }
+
+            if (module === 'nouns' || module === 'mixed') {
+                if (ch.nouns) {
+                    ch.nouns.forEach(n => {
+                        const cases = [
+                            { key: 'gen_sg', label: 'Genitiv Singular' },
+                            { key: 'dat_sg', label: 'Dativ Singular' },
+                            { key: 'akk_sg', label: 'Akkusativ Singular' },
+                            { key: 'abl_sg', label: 'Ablativ Singular' },
+                            { key: 'nom_pl', label: 'Nominativ Plural' },
+                            { key: 'gen_pl', label: 'Genitiv Plural' },
+                            { key: 'dat_pl', label: 'Dativ Plural' },
+                            { key: 'akk_pl', label: 'Akkusativ Plural' },
+                            { key: 'abl_pl', label: 'Ablativ Plural' }
+                        ];
+                        // Filter out null values (e.g. Diāna has no plural)
+                        const available = cases.filter(c => n[c.key]);
+                        const c = available[Math.floor(Math.random() * available.length)];
+                        items.push({
+                            type: 'noun', mode: 'spelling',
+                            prompt: n.nom_sg + ' (' + n.german + ')',
+                            answer: n[c.key].toLowerCase(),
+                            displayAnswer: n[c.key],
+                            image: n.image, hint: 'Bilde den ' + c.label,
+                            question: c.label + '?',
+                            id: 'noun_' + c.key + '_' + n.nom_sg
+                        });
+                    });
+                }
             }
 
             if (module === 'sentences' || module === 'mixed') {
@@ -3386,7 +3595,12 @@
                 const ch = currentLatinChapter;
                 ch.vocabulary.forEach(v => chapterKeys.add('la:v_' + v.latin));
                 if (ch.multiWord) ch.multiWord.forEach(mw => chapterKeys.add('la:mw_lg_' + mw.latin));
-                if (ch.verbForms) ch.verbForms.forEach(vf => chapterKeys.add('la:vf_i2f_' + vf.infinitive));
+                if (ch.verbForms) ch.verbForms.forEach(vf => {
+                    chapterKeys.add('la:vf_i2f_' + vf.infinitive);
+                    if (vf.present) chapterKeys.add('la:vf_pres_' + vf.infinitive);
+                    if (vf.imperative) chapterKeys.add('la:vf_imp_' + vf.infinitive);
+                });
+                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:noun_' + n.nom_sg));
                 if (ch.sentences) ch.sentences.forEach(s => chapterKeys.add('la:sent_' + s.answer));
                 chapterLabel = ch.name;
             }
@@ -3395,7 +3609,11 @@
             const learnedBaseWords = new Set();
             Object.entries(allProgress).forEach(([key, p]) => {
                 if (p.correct >= 3) {
-                    const baseKey = key.replace(/:(de>en|en>de|de>la|la>de):/, ':');
+                    let baseKey = key.replace(/:(de>en|en>de|de>la|la>de):/, ':');
+                    // Strip person/case specifics from verb and noun keys
+                    baseKey = baseKey.replace(/vf_pres_(sg2|sg3|pl1|pl2|pl3)_/, 'vf_pres_');
+                    baseKey = baseKey.replace(/vf_imp_(sg|pl)_/, 'vf_imp_');
+                    baseKey = baseKey.replace(/noun_(gen|dat|akk|abl|nom)_(sg|pl)_/, 'noun_');
                     learnedBaseWords.add(baseKey);
                 }
             });
