@@ -952,18 +952,110 @@
         #snakeArea { display: none; }
         .snake-chain {
             display: flex; align-items: center; gap: 0;
-            overflow-x: auto; padding: 20px 5px 20px;
+            overflow-x: auto; padding: 20px 5px 20px 28px;
             -webkit-overflow-scrolling: touch;
         }
         .snake-head {
-            background: linear-gradient(135deg, #56ab2f, #a8e063);
-            border-radius: 25px 12px 12px 25px;
-            padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+            position: relative;
+            background: linear-gradient(180deg, #7cc947 0%, #56ab2f 35%, #3d8c1f 75%, #4a9928 100%);
+            border-radius: 45% 12px 12px 35%;
+            padding: 10px 16px 10px 32px;
+            display: flex; align-items: center; gap: 8px;
             color: #1a3a0a; font-weight: bold; font-size: 0.9em;
             white-space: nowrap; flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(86,171,47,0.4);
+            box-shadow: 0 3px 12px rgba(86,171,47,0.5),
+                inset 0 2px 0 rgba(255,255,255,0.15),
+                inset 0 -2px 0 rgba(0,0,0,0.1);
+            min-height: 48px;
         }
-        .snake-head-emoji { font-size: 1.4em; }
+        /* Nostril */
+        .snake-head::before {
+            content: '';
+            position: absolute;
+            left: 6px; top: 38%;
+            width: 3px; height: 3px;
+            background: rgba(26,58,10,0.6);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        /* Mouth slit */
+        .snake-head::after {
+            content: '';
+            position: absolute;
+            left: -1px; top: 50%;
+            transform: translateY(-50%);
+            width: 5px; height: 3px;
+            background: #2d1a0a;
+            border-radius: 1px;
+            z-index: 1;
+        }
+        /* Reptile eye with vertical slit pupil */
+        .snake-eye {
+            position: absolute;
+            left: 12px; top: 7px;
+            width: 14px; height: 14px;
+            background: radial-gradient(circle at 40% 40%, #fff 15%, #ffeb3b 30%, #f9a825 55%, #333 60%);
+            border-radius: 50%;
+            border: 1.5px solid #1a3a0a;
+            z-index: 2;
+        }
+        .snake-eye::after {
+            content: '';
+            position: absolute;
+            left: 50%; top: 10%;
+            width: 3px; height: 80%;
+            background: #000;
+            border-radius: 1.5px;
+            transform: translateX(-50%);
+        }
+        /* Forked tongue – exits from the mouth slit */
+        .snake-tongue {
+            position: absolute;
+            right: calc(100% - 4px); top: 50%;
+            transform: translateY(-50%);
+            height: 2px;
+            background: #e53935;
+            z-index: 3;
+            width: 0;
+        }
+        .snake-tongue::before,
+        .snake-tongue::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 7px; height: 2px;
+            background: #e53935;
+            border-radius: 1px;
+        }
+        .snake-tongue::before {
+            top: -3px;
+            transform: rotate(25deg);
+            transform-origin: right center;
+        }
+        .snake-tongue::after {
+            top: 3px;
+            transform: rotate(-25deg);
+            transform-origin: right center;
+        }
+        /* Subtle idle tongue flick every 5s */
+        .snake-tongue.idle {
+            animation: tongue-idle 5s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+        @keyframes tongue-idle {
+            0%, 92%, 100% { width: 0; }
+            94%, 98% { width: 22px; }
+            96% { width: 29px; }
+        }
+        /* Fast celebration tongue flick */
+        .snake-tongue.flick {
+            animation: tongue-flick 0.4s ease-in-out infinite;
+        }
+        @keyframes tongue-flick {
+            0%, 100% { width: 0; }
+            30%, 70% { width: 32px; }
+        }
         .snake-head-text { display: flex; flex-direction: column; line-height: 1.2; }
         .snake-head-inf { font-size: 1em; }
         .snake-head-de { font-size: 0.75em; font-weight: normal; opacity: 0.8; }
@@ -4090,7 +4182,8 @@
 
             const head = document.createElement('div');
             head.className = 'snake-head';
-            head.innerHTML = '<span class="snake-head-emoji">🐍</span>' +
+            head.innerHTML = '<div class="snake-eye"></div>' +
+                '<div class="snake-tongue idle"></div>' +
                 '<span class="snake-head-text">' +
                 '<span class="snake-head-inf">' + item.headLabel + '</span>' +
                 '<span class="snake-head-de">' + item.headDe + '</span></span>';
@@ -4189,6 +4282,18 @@
             const praiseDom = document.getElementById('snakePraise');
             praiseDom.textContent = '🐍 ' + praise + ' Schlange komplett! 🎉';
             praiseDom.style.display = 'block';
+
+            // Tongue flick celebration
+            const tongue = document.querySelector('.snake-tongue');
+            if (tongue) {
+                tongue.classList.remove('idle');
+                tongue.classList.add('flick');
+            }
+
+            // Hissing sounds
+            playSnakeHiss();
+            setTimeout(() => playSnakeHiss(), 700);
+            setTimeout(() => playSnakeHiss(), 1400);
 
             // Wave animation: staggered on each child element
             const chain = document.getElementById('snakeChain');
@@ -5013,6 +5118,33 @@
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.3);
             }
+        }
+
+        function playSnakeHiss() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const duration = 0.35;
+                const bufferSize = ctx.sampleRate * duration;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 6000;
+                filter.Q.value = 3;
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                source.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                source.start();
+                source.stop(ctx.currentTime + duration);
+            } catch(e) {}
         }
 
         // ===================================================================
