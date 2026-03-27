@@ -85,7 +85,7 @@
 
         @media (min-width: 768px) {
             .set-selection {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                 gap: 20px;
                 margin: 30px 0;
             }
@@ -1266,6 +1266,12 @@
                 <div class="set-info">43 Vokabeln</div>
                 <div class="set-topics">Diana • Verwandlung • Vokabeln • Verben • Sätze</div>
             </div>
+            <div class="set-card latin" onclick="selectLatinChapter('chapter5')">
+                <div class="set-icon">🔥</div>
+                <div class="set-title">Lektion 5</div>
+                <div class="set-info">49 Vokabeln</div>
+                <div class="set-topics">Prometheus • Minerva • Vokabeln • Verben • Sätze</div>
+            </div>
         </div>
     </div>
 
@@ -1851,6 +1857,264 @@
                       nom_pl: null, gen_pl: null, dat_pl: null, akk_pl: null, abl_pl: null,
                       german: 'Diana', image: '🏹', declension: 'a-Deklination (Eigenname)' },
                 ]
+            },
+
+            chapter5: {
+                name: 'Lektion 5',
+                vocabulary: [
+                    // Abschnitt 1
+                    { latin: 'Minerva', german: 'Minerva (die Göttin der Weisheit)', image: '🦉', hint: 'Römische Göttin der Weisheit',
+                      distractors: ['Diana (Göttin der Jagd)', 'Venus (Göttin der Liebe)', 'Juno (Götterkönigin)', 'Ceres (Göttin der Ernte)'] },
+                    { latin: 'Prōmetheus', german: 'Prometheus (Göttersohn, Schöpfer der Menschen)', image: '🔥', hint: 'Er brachte den Menschen das Feuer',
+                      distractors: ['Herkules (Held)', 'Iuppiter (höchster Gott)', 'Vulcanus (Gott des Feuers)', 'Merkur (Götterbote)'] },
+                    { latin: 'vīta', german: 'das Leben', image: '🌱', hint: 'Vom Anfang bis zum Ende',
+                      distractors: ['der Tod', 'der Traum', 'die Seele', 'die Zeit'] },
+                    { latin: 'dōnāre', german: 'schenken', image: '🎁', hint: 'Jemandem etwas geben',
+                      distractors: ['nehmen', 'stehlen', 'kaufen', 'verlieren'] },
+                    { latin: 'dōnum', german: 'das Geschenk', image: '🎀', hint: 'Was man zum Geburtstag bekommt',
+                      distractors: ['die Strafe', 'der Auftrag', 'der Befehl', 'die Schuld'] },
+                    { latin: 'creātūra', german: 'das Geschöpf', image: '🐾', hint: 'Ein erschaffenes Lebewesen',
+                      distractors: ['der Schöpfer', 'die Natur', 'die Erde', 'der Himmel'] },
+                    { latin: 'dūcere', german: 'führen, ziehen', image: '🧭', hint: 'Den Weg zeigen',
+                      distractors: ['folgen', 'fliehen', 'stehen bleiben', 'warten'] },
+                    { latin: 'terra', german: 'die Erde, das Land', image: '🌍', hint: 'Der Boden unter den Füßen',
+                      distractors: ['der Himmel', 'das Meer', 'die Luft', 'das Feuer'] },
+                    { latin: 'caelum', german: 'der Himmel', image: '☁️', hint: 'Wo die Sterne sind',
+                      distractors: ['die Erde', 'das Meer', 'der Wald', 'der Berg'] },
+                    { latin: 'ostendere', german: 'zeigen, erklären', image: '👉', hint: 'Mit dem Finger darauf deuten',
+                      distractors: ['verstecken', 'vergessen', 'verschweigen', 'verdunkeln'] },
+                    // Abschnitt 2
+                    { latin: 'nātūra', german: 'die Art, das Wesen, die Beschaffenheit', image: '🌿', hint: 'Wie etwas von Natur aus ist',
+                      distractors: ['die Kunst', 'die Arbeit', 'die Meinung', 'die Strafe'] },
+                    { latin: 'cognōscere', german: 'erkennen, kennenlernen', image: '🔎', hint: 'Etwas herausfinden',
+                      distractors: ['vergessen', 'verlieren', 'verstecken', 'verwechseln'] },
+                    { latin: 'deus', german: 'der Gott, die Gottheit', image: '⚡', hint: 'Ein höheres Wesen',
+                      distractors: ['der Mensch', 'der König', 'der Held', 'der Priester'] },
+                    { latin: 'neque', german: 'und nicht, auch nicht', image: '🚫', hint: 'Verneinung + Verbindung',
+                      distractors: ['und auch', 'oder', 'aber', 'sondern'] },
+                    { latin: 'Iuppiter', german: 'Iuppiter (der höchste Gott der Römer)', image: '⚡', hint: 'Göttervater mit Blitz',
+                      distractors: ['Mars (Kriegsgott)', 'Neptun (Meeresgott)', 'Pluto (Unterweltgott)', 'Apollo (Sonnengott)'] },
+                    { latin: 'dīcere', german: 'sagen, sprechen', image: '🗣️', hint: 'Worte aus dem Mund',
+                      distractors: ['schweigen', 'hören', 'schreiben', 'lesen'] },
+                    { latin: 'autem', german: 'aber, andererseits', image: '↩️', hint: 'Gegensatz (nachgestellt)',
+                      distractors: ['und', 'auch', 'denn', 'also'] },
+                    { latin: 'quasi', german: 'gleichsam, wie', image: '🔄', hint: 'So als ob',
+                      distractors: ['weil', 'obwohl', 'damit', 'nachdem'] },
+                    { latin: 'colere', german: 'verehren, bewirtschaften', image: '🙏', hint: 'Die Götter ehren / das Land bebauen',
+                      distractors: ['zerstören', 'vergessen', 'hassen', 'fliehen'] },
+                    // Abschnitt 3
+                    { latin: 'sacrum', german: 'das Opfer, das Heiligtum', image: '🏛️', hint: 'Etwas Heiliges',
+                      distractors: ['die Strafe', 'das Geschenk', 'der Befehl', 'die Schuld'] },
+                    { latin: 'ā / ab', german: 'von, von … her', image: '⬅️', hint: 'Präposition m. Abl. – Herkunft',
+                      distractors: ['nach', 'zu', 'in', 'auf'] },
+                    { latin: 'dolus', german: 'die List, die Täuschung', image: '🦊', hint: 'Eine schlaue Falle',
+                      distractors: ['die Wahrheit', 'die Ehrlichkeit', 'der Mut', 'die Treue'] },
+                    { latin: 'superbia', german: 'der Stolz, die Überheblichkeit', image: '👑', hint: 'Sich für besser halten',
+                      distractors: ['die Bescheidenheit', 'die Angst', 'die Trauer', 'die Freude'] },
+                    { latin: 'flamma', german: 'die Flamme, das Feuer', image: '🔥', hint: 'Es brennt!',
+                      distractors: ['das Wasser', 'der Wind', 'das Eis', 'der Regen'] },
+                    { latin: 'adhūc', german: 'bis jetzt, (immer) noch', image: '⏳', hint: 'Bisher / weiterhin',
+                      distractors: ['niemals', 'schon', 'später', 'gestern'] },
+                    { latin: 'sine', german: 'ohne', image: '🚷', hint: 'Präposition m. Abl. – fehlt etwas',
+                      distractors: ['mit', 'wegen', 'durch', 'für'] },
+                    { latin: 'vīvere', german: 'leben', image: '💓', hint: 'Das Gegenteil von sterben',
+                      distractors: ['sterben', 'schlafen', 'träumen', 'vergessen'] },
+                    { latin: 'cōgere', german: 'zwingen, (ver)sammeln', image: '💪', hint: 'Jemanden zu etwas nötigen',
+                      distractors: ['bitten', 'erlauben', 'befreien', 'helfen'] },
+                    // Abschnitt 4
+                    { latin: 'imperium', german: 'der Befehl, die Herrschaft, das Reich', image: '👑', hint: 'Macht und Kontrolle',
+                      distractors: ['die Bitte', 'der Wunsch', 'die Freiheit', 'der Frieden'] },
+                    { latin: 'resistere', german: 'stehen bleiben, Widerstand leisten', image: '🛡️', hint: 'Sich nicht unterkriegen lassen',
+                      distractors: ['fliehen', 'aufgeben', 'gehorchen', 'folgen'] },
+                    { latin: 'petere', german: 'bitten, verlangen, aufsuchen, angreifen', image: '🎯', hint: 'Nach etwas streben',
+                      distractors: ['geben', 'schenken', 'verlieren', 'vergessen'] },
+                    { latin: 'tangere', german: 'berühren', image: '✋', hint: 'Mit der Hand anfassen',
+                      distractors: ['sehen', 'hören', 'riechen', 'schmecken'] },
+                    { latin: 'accendere', german: 'anzünden, anfeuern', image: '🕯️', hint: 'Feuer machen',
+                      distractors: ['löschen', 'abkühlen', 'verdunkeln', 'verstecken'] },
+                    { latin: 'posteā', german: 'nachher, später', image: '⏭️', hint: 'Danach / in der Zukunft',
+                      distractors: ['vorher', 'sofort', 'jetzt', 'gleichzeitig'] },
+                    { latin: 'lingua', german: 'die Sprache', image: '👅', hint: 'Womit man spricht',
+                      distractors: ['das Ohr', 'das Auge', 'die Hand', 'der Fuß'] },
+                    { latin: 'cōpia', german: 'die Menge, der Vorrat', image: '📦', hint: 'Viel von etwas',
+                      distractors: ['der Mangel', 'die Leere', 'die Not', 'die Armut'] },
+                    // Abschnitt 5
+                    { latin: 'verbum', german: 'das Wort, die Äußerung', image: '💬', hint: 'Sprache besteht daraus',
+                      distractors: ['der Satz', 'der Buchstabe', 'die Seite', 'das Buch'] },
+                    { latin: 'opera', german: 'die Arbeit, die Mühe', image: '⚒️', hint: 'Anstrengung und Fleiß',
+                      distractors: ['die Ruhe', 'die Pause', 'der Schlaf', 'das Spiel'] },
+                    { latin: 'littera', german: 'der Buchstabe', image: '🔤', hint: 'A, B, C, D ...',
+                      distractors: ['das Wort', 'der Satz', 'die Seite', 'das Buch'] },
+                    { latin: 'legere', german: 'lesen, auswählen', image: '📖', hint: 'Ein Buch aufschlagen',
+                      distractors: ['schreiben', 'sprechen', 'hören', 'vergessen'] },
+                    { latin: 'scrībere', german: 'schreiben, beschreiben', image: '✍️', hint: 'Mit dem Stift auf Papier',
+                      distractors: ['lesen', 'sprechen', 'hören', 'malen'] },
+                    { latin: 'invenīre', german: 'finden, erfinden', image: '💡', hint: 'Etwas Neues entdecken',
+                      distractors: ['verlieren', 'verstecken', 'vergessen', 'zerstören'] },
+                    { latin: 'oppidum', german: 'die Stadt, die Kleinstadt', image: '🏘️', hint: 'Wo viele Menschen wohnen',
+                      distractors: ['das Dorf', 'der Wald', 'das Feld', 'der Berg'] },
+                    { latin: 'cōnstituere', german: 'aufstellen, gründen, festsetzen, beschließen', image: '🏗️', hint: 'Etwas Neues errichten oder festlegen',
+                      distractors: ['zerstören', 'aufgeben', 'verlassen', 'vergessen'] },
+                    { latin: 'cōnsilium', german: 'die Beratung, der Beschluss, der Plan, der Rat', image: '📋', hint: 'Gemeinsam einen Plan fassen',
+                      distractors: ['die Tat', 'der Zufall', 'die Frage', 'der Streit'] },
+                ],
+                multiWord: [
+                    { latin: 'Populus deōs colit.', german: 'Das Volk verehrt die Götter.',
+                      germanDistractors: ['Das Volk fürchtet die Götter.', 'Das Volk vergisst die Götter.', 'Das Volk ruft die Götter.', 'Das Volk hasst die Götter.'],
+                      latinDistractors: ['Populus deōs timet.', 'Populus deōs vocat.', 'Populus deōs videt.', 'Populus deōs audit.'] },
+                    { latin: 'Afra sine amīcō venit.', german: 'Afra kommt ohne ihren Freund.',
+                      germanDistractors: ['Afra kommt mit ihrem Freund.', 'Afra geht zu ihrem Freund.', 'Afra ruft ihren Freund.', 'Afra sucht ihren Freund.'],
+                      latinDistractors: ['Afra cum amīcō venit.', 'Afra ad amīcum it.', 'Afra amīcum vocat.', 'Afra amīcum petit.'] },
+                    { latin: 'Symmachus ab amīcō pecūniam postulat.', german: 'Symmachus fordert von seinem Freund Geld.',
+                      germanDistractors: ['Symmachus gibt seinem Freund Geld.', 'Symmachus schenkt seinem Freund Geld.', 'Symmachus stiehlt seinem Freund Geld.', 'Symmachus leiht seinem Freund Geld.'],
+                      latinDistractors: ['Symmachus amīcō pecūniam dat.', 'Symmachus amīcō pecūniam dōnat.', 'Symmachus amīcī pecūniam capit.', 'Symmachus amīcō pecūniam reddit.'] },
+                    { latin: 'Diāna Symmachō resistit.', german: 'Diana leistet Symmachus Widerstand.',
+                      germanDistractors: ['Diana gehorcht Symmachus.', 'Diana hilft Symmachus.', 'Diana folgt Symmachus.', 'Diana fürchtet Symmachus.'],
+                      latinDistractors: ['Diāna Symmachō pāret.', 'Diāna Symmachum adiuvat.', 'Diāna Symmachum sequitur.', 'Diāna Symmachum timet.'] },
+                ],
+                verbForms: [
+                    { infinitive: 'dōnāre', firstPerson: 'dōnō', german: 'schenken',
+                      present: { sg2: 'dōnās', sg3: 'dōnat', pl1: 'dōnāmus', pl2: 'dōnātis', pl3: 'dōnant' },
+                      imperative: { sg: 'dōnā', pl: 'dōnāte' } },
+                    { infinitive: 'dūcere', firstPerson: 'dūcō', german: 'führen',
+                      present: { sg2: 'dūcis', sg3: 'dūcit', pl1: 'dūcimus', pl2: 'dūcitis', pl3: 'dūcunt' },
+                      imperative: { sg: 'dūc', pl: 'dūcite' } },
+                    { infinitive: 'ostendere', firstPerson: 'ostendō', german: 'zeigen',
+                      present: { sg2: 'ostendis', sg3: 'ostendit', pl1: 'ostendimus', pl2: 'ostenditis', pl3: 'ostendunt' },
+                      imperative: { sg: 'ostende', pl: 'ostendite' } },
+                    { infinitive: 'cognōscere', firstPerson: 'cognōscō', german: 'erkennen',
+                      present: { sg2: 'cognōscis', sg3: 'cognōscit', pl1: 'cognōscimus', pl2: 'cognōscitis', pl3: 'cognōscunt' },
+                      imperative: { sg: 'cognōsce', pl: 'cognōscite' } },
+                    { infinitive: 'dīcere', firstPerson: 'dīcō', german: 'sagen',
+                      present: { sg2: 'dīcis', sg3: 'dīcit', pl1: 'dīcimus', pl2: 'dīcitis', pl3: 'dīcunt' },
+                      imperative: { sg: 'dīc', pl: 'dīcite' } },
+                    { infinitive: 'colere', firstPerson: 'colō', german: 'verehren',
+                      present: { sg2: 'colis', sg3: 'colit', pl1: 'colimus', pl2: 'colitis', pl3: 'colunt' },
+                      imperative: { sg: 'cole', pl: 'colite' } },
+                    { infinitive: 'vīvere', firstPerson: 'vīvō', german: 'leben',
+                      present: { sg2: 'vīvis', sg3: 'vīvit', pl1: 'vīvimus', pl2: 'vīvitis', pl3: 'vīvunt' },
+                      imperative: { sg: 'vīve', pl: 'vīvite' } },
+                    { infinitive: 'cōgere', firstPerson: 'cōgō', german: 'zwingen',
+                      present: { sg2: 'cōgis', sg3: 'cōgit', pl1: 'cōgimus', pl2: 'cōgitis', pl3: 'cōgunt' },
+                      imperative: { sg: 'cōge', pl: 'cōgite' } },
+                    { infinitive: 'resistere', firstPerson: 'resistō', german: 'Widerstand leisten',
+                      present: { sg2: 'resistis', sg3: 'resistit', pl1: 'resistimus', pl2: 'resistitis', pl3: 'resistunt' },
+                      imperative: { sg: 'resiste', pl: 'resistite' } },
+                    { infinitive: 'petere', firstPerson: 'petō', german: 'bitten, angreifen',
+                      present: { sg2: 'petis', sg3: 'petit', pl1: 'petimus', pl2: 'petitis', pl3: 'petunt' },
+                      imperative: { sg: 'pete', pl: 'petite' } },
+                    { infinitive: 'tangere', firstPerson: 'tangō', german: 'berühren',
+                      present: { sg2: 'tangis', sg3: 'tangit', pl1: 'tangimus', pl2: 'tangitis', pl3: 'tangunt' },
+                      imperative: { sg: 'tange', pl: 'tangite' } },
+                    { infinitive: 'accendere', firstPerson: 'accendō', german: 'anzünden',
+                      present: { sg2: 'accendis', sg3: 'accendit', pl1: 'accendimus', pl2: 'accenditis', pl3: 'accendunt' },
+                      imperative: { sg: 'accende', pl: 'accendite' } },
+                    { infinitive: 'legere', firstPerson: 'legō', german: 'lesen',
+                      present: { sg2: 'legis', sg3: 'legit', pl1: 'legimus', pl2: 'legitis', pl3: 'legunt' },
+                      imperative: { sg: 'lege', pl: 'legite' } },
+                    { infinitive: 'scrībere', firstPerson: 'scrībō', german: 'schreiben',
+                      present: { sg2: 'scrībis', sg3: 'scrībit', pl1: 'scrībimus', pl2: 'scrībitis', pl3: 'scrībunt' },
+                      imperative: { sg: 'scrībe', pl: 'scrībite' } },
+                    { infinitive: 'invenīre', firstPerson: 'inveniō', german: 'finden',
+                      present: { sg2: 'invenīs', sg3: 'invenit', pl1: 'invenīmus', pl2: 'invenītis', pl3: 'inveniunt' },
+                      imperative: { sg: 'invenī', pl: 'invenīte' } },
+                    { infinitive: 'cōnstituere', firstPerson: 'cōnstituō', german: 'beschließen',
+                      present: { sg2: 'cōnstituis', sg3: 'cōnstituit', pl1: 'cōnstituimus', pl2: 'cōnstituitis', pl3: 'cōnstituunt' },
+                      imperative: { sg: 'cōnstitue', pl: 'cōnstituite' } },
+                ],
+                sentences: [
+                    { latin: 'Prōmetheus creātūrīs vītam dōnat.', germanTemplate: 'Prometheus ___ den Geschöpfen das Leben.', answer: 'schenkt', image: '🎁',
+                      hint: 'dōnāre = schenken' },
+                    { latin: 'Prōmetheus creātūrās per terram dūcit.', germanTemplate: 'Prometheus ___ die Geschöpfe durch das Land.', answer: 'führt', image: '🧭',
+                      hint: 'dūcere = führen' },
+                    { latin: 'Minerva nātūram ostendit.', germanTemplate: 'Minerva ___ die Natur.', answer: 'zeigt', image: '👉',
+                      hint: 'ostendere = zeigen' },
+                    { latin: 'Prōmetheus deōs cognōscit.', germanTemplate: 'Prometheus ___ die Götter.', answer: 'erkennt', image: '🔎',
+                      hint: 'cognōscere = erkennen' },
+                    { latin: 'Iuppiter dīcit: "Superbia!"', germanTemplate: 'Iuppiter ___: „Überheblichkeit!"', answer: 'sagt', image: '🗣️',
+                      hint: 'dīcere = sagen' },
+                    { latin: 'Prōmetheus sine timōre vīvit.', germanTemplate: 'Prometheus ___ ohne Furcht.', answer: 'lebt', image: '💓',
+                      hint: 'vīvere = leben' },
+                    { latin: 'Iuppiter Prōmetheum resistere cōgit.', germanTemplate: 'Iuppiter ___ Prometheus, Widerstand zu leisten.', answer: 'zwingt', image: '💪',
+                      hint: 'cōgere = zwingen' },
+                    { latin: 'Prōmetheus ignem accendit.', germanTemplate: 'Prometheus ___ das Feuer an.', answer: 'zündet', image: '🕯️',
+                      hint: 'accendere = anzünden' },
+                    { latin: 'Minerva litterās legit.', germanTemplate: 'Minerva ___ die Buchstaben.', answer: 'liest', image: '📖',
+                      hint: 'legere = lesen' },
+                    { latin: 'Prōmetheus verba scrībit.', germanTemplate: 'Prometheus ___ Worte.', answer: 'schreibt', image: '✍️',
+                      hint: 'scrībere = schreiben' },
+                    { latin: 'Prōmetheus oppidum cōnstituit.', germanTemplate: 'Prometheus ___ eine Stadt.', answer: 'gründet', image: '🏗️',
+                      hint: 'cōnstituere = gründen' },
+                    { latin: 'Prōmetheus cōnsilium capit.', germanTemplate: 'Prometheus fasst einen ___.', answer: 'Plan', image: '📋',
+                      hint: 'cōnsilium = der Plan, der Beschluss' },
+                ],
+                nouns: [
+                    // a-Deklination
+                    { nom_sg: 'vīta', gen_sg: 'vītae', dat_sg: 'vītae', akk_sg: 'vītam', abl_sg: 'vītā',
+                      nom_pl: 'vītae', gen_pl: 'vītārum', dat_pl: 'vītīs', akk_pl: 'vītās', abl_pl: 'vītīs',
+                      german: 'das Leben', germanPl: 'Leben', image: '🌱', declension: 'a-Deklination' },
+                    { nom_sg: 'creātūra', gen_sg: 'creātūrae', dat_sg: 'creātūrae', akk_sg: 'creātūram', abl_sg: 'creātūrā',
+                      nom_pl: 'creātūrae', gen_pl: 'creātūrārum', dat_pl: 'creātūrīs', akk_pl: 'creātūrās', abl_pl: 'creātūrīs',
+                      german: 'das Geschöpf', germanPl: 'Geschöpfe', image: '🐾', declension: 'a-Deklination' },
+                    { nom_sg: 'terra', gen_sg: 'terrae', dat_sg: 'terrae', akk_sg: 'terram', abl_sg: 'terrā',
+                      nom_pl: 'terrae', gen_pl: 'terrārum', dat_pl: 'terrīs', akk_pl: 'terrās', abl_pl: 'terrīs',
+                      german: 'die Erde', germanPl: 'Länder', image: '🌍', declension: 'a-Deklination' },
+                    { nom_sg: 'nātūra', gen_sg: 'nātūrae', dat_sg: 'nātūrae', akk_sg: 'nātūram', abl_sg: 'nātūrā',
+                      nom_pl: 'nātūrae', gen_pl: 'nātūrārum', dat_pl: 'nātūrīs', akk_pl: 'nātūrās', abl_pl: 'nātūrīs',
+                      german: 'die Natur', germanPl: 'Naturen', image: '🌿', declension: 'a-Deklination' },
+                    { nom_sg: 'superbia', gen_sg: 'superbiae', dat_sg: 'superbiae', akk_sg: 'superbiam', abl_sg: 'superbiā',
+                      nom_pl: 'superbiae', gen_pl: 'superbiārum', dat_pl: 'superbiīs', akk_pl: 'superbiās', abl_pl: 'superbiīs',
+                      german: 'der Stolz', germanPl: 'Überheblichkeiten', image: '👑', declension: 'a-Deklination' },
+                    { nom_sg: 'flamma', gen_sg: 'flammae', dat_sg: 'flammae', akk_sg: 'flammam', abl_sg: 'flammā',
+                      nom_pl: 'flammae', gen_pl: 'flammārum', dat_pl: 'flammīs', akk_pl: 'flammās', abl_pl: 'flammīs',
+                      german: 'die Flamme', germanPl: 'Flammen', image: '🔥', declension: 'a-Deklination' },
+                    { nom_sg: 'lingua', gen_sg: 'linguae', dat_sg: 'linguae', akk_sg: 'linguam', abl_sg: 'linguā',
+                      nom_pl: 'linguae', gen_pl: 'linguārum', dat_pl: 'linguīs', akk_pl: 'linguās', abl_pl: 'linguīs',
+                      german: 'die Sprache', germanPl: 'Sprachen', image: '👅', declension: 'a-Deklination' },
+                    { nom_sg: 'cōpia', gen_sg: 'cōpiae', dat_sg: 'cōpiae', akk_sg: 'cōpiam', abl_sg: 'cōpiā',
+                      nom_pl: 'cōpiae', gen_pl: 'cōpiārum', dat_pl: 'cōpiīs', akk_pl: 'cōpiās', abl_pl: 'cōpiīs',
+                      german: 'die Menge', germanPl: 'Vorräte', image: '📦', declension: 'a-Deklination' },
+                    { nom_sg: 'opera', gen_sg: 'operae', dat_sg: 'operae', akk_sg: 'operam', abl_sg: 'operā',
+                      nom_pl: 'operae', gen_pl: 'operārum', dat_pl: 'operīs', akk_pl: 'operās', abl_pl: 'operīs',
+                      german: 'die Arbeit', germanPl: 'Arbeiten', image: '⚒️', declension: 'a-Deklination' },
+                    // o-Deklination
+                    { nom_sg: 'dōnum', gen_sg: 'dōnī', dat_sg: 'dōnō', akk_sg: 'dōnum', abl_sg: 'dōnō',
+                      nom_pl: 'dōna', gen_pl: 'dōnōrum', dat_pl: 'dōnīs', akk_pl: 'dōna', abl_pl: 'dōnīs',
+                      german: 'das Geschenk', germanPl: 'Geschenke', image: '🎀', declension: 'o-Deklination' },
+                    { nom_sg: 'caelum', gen_sg: 'caelī', dat_sg: 'caelō', akk_sg: 'caelum', abl_sg: 'caelō',
+                      nom_pl: 'caela', gen_pl: 'caelōrum', dat_pl: 'caelīs', akk_pl: 'caela', abl_pl: 'caelīs',
+                      german: 'der Himmel', germanPl: 'Himmel', image: '☁️', declension: 'o-Deklination' },
+                    { nom_sg: 'sacrum', gen_sg: 'sacrī', dat_sg: 'sacrō', akk_sg: 'sacrum', abl_sg: 'sacrō',
+                      nom_pl: 'sacra', gen_pl: 'sacrōrum', dat_pl: 'sacrīs', akk_pl: 'sacra', abl_pl: 'sacrīs',
+                      german: 'das Opfer', germanPl: 'Opfer', image: '🏛️', declension: 'o-Deklination' },
+                    { nom_sg: 'dolus', gen_sg: 'dolī', dat_sg: 'dolō', akk_sg: 'dolum', abl_sg: 'dolō',
+                      nom_pl: 'dolī', gen_pl: 'dolōrum', dat_pl: 'dolīs', akk_pl: 'dolōs', abl_pl: 'dolīs',
+                      german: 'die List', germanPl: 'Listen', image: '🦊', declension: 'o-Deklination' },
+                    { nom_sg: 'imperium', gen_sg: 'imperiī', dat_sg: 'imperiō', akk_sg: 'imperium', abl_sg: 'imperiō',
+                      nom_pl: 'imperia', gen_pl: 'imperiōrum', dat_pl: 'imperiīs', akk_pl: 'imperia', abl_pl: 'imperiīs',
+                      german: 'die Herrschaft', germanPl: 'Herrschaften', image: '👑', declension: 'o-Deklination' },
+                    { nom_sg: 'verbum', gen_sg: 'verbī', dat_sg: 'verbō', akk_sg: 'verbum', abl_sg: 'verbō',
+                      nom_pl: 'verba', gen_pl: 'verbōrum', dat_pl: 'verbīs', akk_pl: 'verba', abl_pl: 'verbīs',
+                      german: 'das Wort', germanPl: 'Wörter', image: '💬', declension: 'o-Deklination' },
+                    { nom_sg: 'oppidum', gen_sg: 'oppidī', dat_sg: 'oppidō', akk_sg: 'oppidum', abl_sg: 'oppidō',
+                      nom_pl: 'oppida', gen_pl: 'oppidōrum', dat_pl: 'oppidīs', akk_pl: 'oppida', abl_pl: 'oppidīs',
+                      german: 'die Stadt', germanPl: 'Städte', image: '🏘️', declension: 'o-Deklination' },
+                    { nom_sg: 'cōnsilium', gen_sg: 'cōnsiliī', dat_sg: 'cōnsiliō', akk_sg: 'cōnsilium', abl_sg: 'cōnsiliō',
+                      nom_pl: 'cōnsilia', gen_pl: 'cōnsiliōrum', dat_pl: 'cōnsiliīs', akk_pl: 'cōnsilia', abl_pl: 'cōnsiliīs',
+                      german: 'der Plan', germanPl: 'Pläne', image: '📋', declension: 'o-Deklination' },
+                    // o-Deklination (unregelmäßig)
+                    { nom_sg: 'deus', gen_sg: 'deī', dat_sg: 'deō', akk_sg: 'deum', abl_sg: 'deō',
+                      nom_pl: 'deī', gen_pl: 'deōrum', dat_pl: 'deīs', akk_pl: 'deōs', abl_pl: 'deīs',
+                      german: 'der Gott', germanPl: 'Götter', image: '⚡', declension: 'o-Deklination' },
+                    // a-Deklination
+                    { nom_sg: 'littera', gen_sg: 'litterae', dat_sg: 'litterae', akk_sg: 'litteram', abl_sg: 'litterā',
+                      nom_pl: 'litterae', gen_pl: 'litterārum', dat_pl: 'litterīs', akk_pl: 'litterās', abl_pl: 'litterīs',
+                      german: 'der Buchstabe', germanPl: 'Buchstaben', image: '🔤', declension: 'a-Deklination' },
+                    // Eigennamen (nur Singular)
+                    { nom_sg: 'Minerva', gen_sg: 'Minervae', dat_sg: 'Minervae', akk_sg: 'Minervam', abl_sg: 'Minervā',
+                      nom_pl: null, gen_pl: null, dat_pl: null, akk_pl: null, abl_pl: null,
+                      german: 'Minerva', image: '🦉', declension: 'a-Deklination (Eigenname)' },
+                ]
             }
         };
 
@@ -2414,9 +2678,19 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.7.0';
+        const APP_VERSION = '2.8.0';
 
         const changelogEntries = [
+            {
+                version: '2.8.0',
+                date: '27.03.2026',
+                items: [
+                    '🏛️ <b>Latein Lektion 5</b> – 49 neue Vokabeln (Prometheus & Minerva)',
+                    '✍️ 16 Verb-Formen + 12 Beispielsätze + 4 Mehrwort-Ausdrücke',
+                    '📋 20 Substantive mit Deklinationstabelle (a- & o-Deklination)',
+                    '🔥 Themen: Schöpfung, Götter, Sprache & Schrift',
+                ]
+            },
             {
                 version: '2.7.0',
                 date: '27.02.2026',
@@ -2814,6 +3088,7 @@
                     if (inf.endsWith('āre')) return 'ā-Konjugation';
                     if (inf.endsWith('ēre')) return 'ē-Konjugation';
                     if (inf.endsWith('īre')) return 'ī-Konjugation';
+                    if (inf.endsWith('ere')) return 'kons. Konjugation';
                     return 'unregelmäßig';
                 }
 
@@ -2988,7 +3263,7 @@
 
                     if (entry.ptype === 'verb') {
                         const verb = entry.data;
-                        const path = generateSnakePath();
+                        const path = generateSnakePath(verb);
                         const stem = getLatinStem(verb.infinitive);
                         const ctx = getSnakeContext(verb.infinitive);
                         const previousSteps = [];
@@ -3110,7 +3385,7 @@
             return form.slice(matchLen);
         }
 
-        function generateSnakePath() {
+        function generateSnakePath(currentVerb) {
             const allKeys = ['sg1','sg2','sg3','pl1','pl2','pl3'];
             const steps = [];
             let currentKey = allKeys[Math.floor(Math.random() * allKeys.length)];
@@ -3137,7 +3412,15 @@
                 steps.push({ key: currentKey, type: 'conjugate' });
             }
 
-            steps.push({ key: Math.random() < 0.5 ? 'imp_sg' : 'imp_pl', type: 'imperative' });
+            // For 3rd conjugation verbs, imp_sg can be shorter than stem (e.g. dūc < dūce),
+            // resulting in an empty ending. Always use imp_pl in that case.
+            let impKey = Math.random() < 0.5 ? 'imp_sg' : 'imp_pl';
+            if (impKey === 'imp_sg' && currentVerb && currentVerb.imperative && currentVerb.imperative.sg) {
+                const stem = getLatinStem(currentVerb.infinitive);
+                const ending = getEnding(currentVerb.imperative.sg, stem);
+                if (!ending) impKey = 'imp_pl';
+            }
+            steps.push({ key: impKey, type: 'imperative' });
             return steps;
         }
 
@@ -3369,6 +3652,35 @@
                 'vītāre': { latObj: 'Perīculum', deObj: 'die Gefahr' },
                 'mūtāre': { latObj: 'Cōnsilium', deObj: 'den Plan' },
                 'circumvenīre': { latObj: 'Hostēs', deObj: 'die Feinde' },
+                // Lektion 5
+                'dōnāre': { latObj: 'Dōnum', deObj: 'ein Geschenk' },
+                'dūcere': { latObj: 'Exercitum', deObj: 'das Heer', deExplicit: {
+                    sg1:'Ich führe das Heer.', sg2:'Du führst das Heer.',
+                    sg3:'Er/Sie führt das Heer.', pl1:'Wir führen das Heer.',
+                    pl2:'Ihr führt das Heer.', pl3:'Sie führen das Heer.',
+                    imp_sg:'Führe das Heer!', imp_pl:'Führt das Heer!'} },
+                'ostendere': { latObj: 'Viam', deObj: 'den Weg' },
+                'cognōscere': { latObj: 'Verītātem', deObj: 'die Wahrheit' },
+                'dīcere': { latObj: 'Verba', deObj: 'Worte' },
+                'colere': { latObj: 'Deōs', deObj: 'die Götter' },
+                'vīvere': { latObj: 'In pace', deObj: 'in Frieden' },
+                'cōgere': { latObj: 'Servum', deObj: 'den Sklaven' },
+                'resistere': { latObj: 'Hostibus', deObj: 'den Feinden', deExplicit: {
+                    sg1:'Ich leiste den Feinden Widerstand.', sg2:'Du leistest den Feinden Widerstand.',
+                    sg3:'Er/Sie leistet den Feinden Widerstand.', pl1:'Wir leisten den Feinden Widerstand.',
+                    pl2:'Ihr leistet den Feinden Widerstand.', pl3:'Sie leisten den Feinden Widerstand.',
+                    imp_sg:'Leiste Widerstand!', imp_pl:'Leistet Widerstand!'} },
+                'petere': { latObj: 'Auxilium', deObj: 'Hilfe' },
+                'tangere': { latObj: 'Statuam', deObj: 'die Statue' },
+                'accendere': { latObj: 'Ignem', deObj: 'das Feuer' },
+                'legere': { latObj: 'Librum', deObj: 'ein Buch', deExplicit: {
+                    sg1:'Ich lese ein Buch.', sg2:'Du liest ein Buch.',
+                    sg3:'Er/Sie liest ein Buch.', pl1:'Wir lesen ein Buch.',
+                    pl2:'Ihr lest ein Buch.', pl3:'Sie lesen ein Buch.',
+                    imp_sg:'Lies ein Buch!', imp_pl:'Lest ein Buch!'} },
+                'scrībere': { latObj: 'Epistulam', deObj: 'einen Brief' },
+                'invenīre': { latObj: 'Thēsaurum', deObj: 'den Schatz' },
+                'cōnstituere': { latObj: 'Oppidum', deObj: 'eine Stadt' },
             };
             return contexts[infinitive] || { latObj: '', deObj: '' };
         }
