@@ -42,29 +42,33 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         .header h1 {
             color: #667eea;
-            font-size: 1.8em;
-            margin-bottom: 10px;
+            font-size: 1.25em;
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         @media (min-width: 768px) {
+            .header {
+                margin-bottom: 30px;
+            }
             .header h1 {
-                font-size: 2.5em;
+                font-size: 2.2em;
+                margin-bottom: 10px;
             }
         }
 
         .current-set {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 6px 15px;
-            border-radius: 15px;
-            font-size: 0.75em;
-            margin-top: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.65em;
+            margin-top: 5px;
             display: inline-block;
         }
 
@@ -129,24 +133,24 @@
 
         /* Say it in English - Phrase gap-fill */
         .phrase-situation {
-            font-size: 1.1em;
+            font-size: 0.85em;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-style: italic;
         }
         .phrase-sentence {
-            font-size: 1.5em;
+            font-size: 1.15em;
             font-weight: bold;
             color: #2c3e50;
-            line-height: 1.4;
-            margin-bottom: 5px;
+            line-height: 1.3;
+            margin-bottom: 3px;
         }
         .phrase-gap {
             background: #ffe0b2;
             border-bottom: 3px solid #ff9800;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            min-width: 80px;
+            min-width: 60px;
             display: inline-block;
             text-align: center;
         }
@@ -160,7 +164,9 @@
         }
 
         @media (min-width: 768px) {
+            .phrase-situation { font-size: 1.1em; margin-bottom: 8px; }
             .phrase-sentence { font-size: 1.8em; }
+            .phrase-gap { min-width: 80px; padding: 2px 8px; }
         }
 
         .set-icon {
@@ -236,29 +242,30 @@
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
-            margin-bottom: 20px;
-            padding: 10px;
+            margin-bottom: 12px;
+            padding: 6px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
-            gap: 10px;
+            gap: 4px;
         }
 
         @media (min-width: 768px) {
             .score-board {
                 margin-bottom: 30px;
                 padding: 15px;
+                gap: 10px;
             }
         }
 
         .score-item {
             text-align: center;
             flex: 1;
-            min-width: 80px;
+            min-width: 50px;
         }
 
         .score-item .label {
-            font-size: 0.75em;
+            font-size: 0.6em;
             opacity: 0.9;
         }
 
@@ -269,7 +276,7 @@
         }
 
         .score-item .value {
-            font-size: 1.5em;
+            font-size: 1.1em;
             font-weight: bold;
         }
 
@@ -281,16 +288,17 @@
 
         .taler-item {
             background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 4px 8px;
+            border-radius: 8px;
             animation: shine 2s infinite;
             flex-basis: 100%;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
         @media (min-width: 768px) {
             .taler-item {
                 padding: 10px 15px;
+                border-radius: 10px;
                 flex-basis: auto;
                 margin-top: 0;
             }
@@ -302,7 +310,7 @@
         }
 
         .taler-item .value {
-            font-size: 1.5em;
+            font-size: 1.1em;
         }
 
         @media (min-width: 768px) {
@@ -313,22 +321,23 @@
 
         .word-card {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
         @media (min-width: 768px) {
             .word-card {
+                border-radius: 20px;
                 padding: 30px;
                 margin-bottom: 30px;
             }
         }
 
         .word-image {
-            font-size: 60px;
-            margin-bottom: 10px;
+            font-size: 40px;
+            margin-bottom: 5px;
             animation: bounce 2s infinite;
         }
 
@@ -345,9 +354,9 @@
         }
 
         .word-german {
-            font-size: 1.3em;
+            font-size: 1.05em;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: bold;
         }
 
@@ -359,7 +368,7 @@
         }
 
         .word-hint {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: #666;
             font-style: italic;
         }
@@ -371,11 +380,11 @@
         }
 
         .auto-hint {
-            margin-top: 10px;
-            font-size: 1em;
+            margin-top: 5px;
+            font-size: 0.85em;
             color: #667eea;
             font-weight: bold;
-            min-height: 25px;
+            min-height: 20px;
             animation: fadeIn 0.5s;
         }
 
@@ -394,9 +403,9 @@
         .answer-area {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            margin-bottom: 20px;
-            min-height: 60px;
+            gap: 3px;
+            margin-bottom: 10px;
+            min-height: 45px;
             flex-wrap: wrap;
         }
 
@@ -409,14 +418,14 @@
         }
 
         .letter-slot {
-            width: 45px;
-            height: 55px;
-            border: 3px dashed #667eea;
-            border-radius: 10px;
+            width: 35px;
+            height: 42px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bold;
             color: #667eea;
             background: #f0f4ff;
@@ -427,6 +436,8 @@
             .letter-slot {
                 width: 60px;
                 height: 70px;
+                border: 3px dashed #667eea;
+                border-radius: 10px;
                 font-size: 2em;
             }
         }
@@ -464,9 +475,9 @@
         .letters-pool {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         @media (min-width: 768px) {
@@ -477,14 +488,14 @@
         }
 
         .letter-tile {
-            width: 45px;
-            height: 55px;
+            width: 35px;
+            height: 42px;
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bold;
             color: white;
             cursor: grab;
@@ -529,10 +540,10 @@
         }
 
         .btn {
-            padding: 12px 20px;
-            font-size: 1em;
+            padding: 8px 14px;
+            font-size: 0.85em;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
@@ -588,10 +599,10 @@
 
         .feedback {
             text-align: center;
-            margin-top: 15px;
-            font-size: 1.2em;
+            margin-top: 8px;
+            font-size: 0.9em;
             font-weight: bold;
-            min-height: 35px;
+            min-height: 25px;
         }
 
         @media (min-width: 768px) {
@@ -681,8 +692,8 @@
         .mc-options {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 6px;
+            margin-bottom: 10px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
@@ -698,9 +709,9 @@
         .mc-option {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
-            border: 3px solid #e0e0e0;
-            border-radius: 15px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
             background: #f8f9ff;
@@ -712,6 +723,8 @@
         @media (min-width: 768px) {
             .mc-option {
                 padding: 15px 20px;
+                border: 3px solid #e0e0e0;
+                border-radius: 15px;
                 font-size: 1.15em;
             }
         }
@@ -727,8 +740,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 26px;
+            height: 26px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 8px;
@@ -821,13 +834,21 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 15px;
+            padding: 6px 14px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.95em;
-            margin-bottom: 15px;
+            font-size: 0.8em;
+            margin-bottom: 8px;
             transition: all 0.3s;
+        }
+        @media (min-width: 768px) {
+            .back-btn {
+                padding: 10px 20px;
+                border-radius: 15px;
+                font-size: 0.95em;
+                margin-bottom: 15px;
+            }
         }
         .back-btn:hover {
             transform: translateY(-2px);
