@@ -117,10 +117,50 @@
             background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
         }
 
+        .set-card-phrases {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
         @media (min-width: 768px) {
-            .set-card-all {
+            .set-card-all, .set-card-phrases {
                 grid-column: 1 / -1;
             }
+        }
+
+        /* Say it in English - Phrase gap-fill */
+        .phrase-situation {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        .phrase-sentence {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.4;
+            margin-bottom: 5px;
+        }
+        .phrase-gap {
+            background: #ffe0b2;
+            border-bottom: 3px solid #ff9800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 80px;
+            display: inline-block;
+            text-align: center;
+        }
+        .phrase-gap.correct {
+            background: #c8e6c9;
+            border-bottom-color: #4caf50;
+        }
+        .phrase-gap.wrong {
+            background: #ffcdd2;
+            border-bottom-color: #f44336;
+        }
+
+        @media (min-width: 768px) {
+            .phrase-sentence { font-size: 1.8em; }
         }
 
         .set-icon {
@@ -1232,15 +1272,22 @@
             <div class="set-card" onclick="startGame('theme3')">
                 <div class="set-icon">🎭</div>
                 <div class="set-title">Theme 3: Hobbies and Activities</div>
-                <div class="set-info">98 Vokabeln</div>
+                <div class="set-info">129 Vokabeln</div>
                 <div class="set-topics">Hobbys • Gefühle • Aktivitäten • Zeit</div>
             </div>
 
             <div class="set-card set-card-all" onclick="startGame('all')">
                 <div class="set-icon">🌟</div>
                 <div class="set-title">Alle Vokabeln</div>
-                <div class="set-info">175 Vokabeln</div>
+                <div class="set-info">206 Vokabeln</div>
                 <div class="set-topics">Theme 2 + Theme 3 gemischt</div>
+            </div>
+
+            <div class="set-card set-card-phrases" onclick="startPhraseGame()">
+                <div class="set-icon">🗣️</div>
+                <div class="set-title">Say it in English</div>
+                <div class="set-info">27 Redewendungen</div>
+                <div class="set-topics">Uhrzeit • Vorschläge • Gefühle • Häufigkeit</div>
             </div>
         </div>
 
@@ -2208,7 +2255,7 @@
               distractors: ['Vormittag', 'Abend', 'Mittag', 'Morgen'] },
             { english: 'when', german: 'wann', image: '⏰', hint: 'Zu welcher Zeit?',
               distractors: ['wo', 'wer', 'was', 'wie'] },
-            { english: 'what', german: 'welche(r, s)', image: '❓', hint: 'Welches?',
+            { english: 'what', german: 'was, welche(r, s)', image: '❓', hint: 'Was? Welches?',
               distractors: ['wann', 'wo', 'wer', 'wie'] },
             { english: 'puzzle', german: 'Rätsel, Fragespiel', image: '🧩', hint: 'Knifflige Aufgabe',
               distractors: ['Pudding', 'Spiel', 'Problem', 'Muskel'] },
@@ -2288,7 +2335,7 @@
             // Theme 3: Hobbies and activities - Page 218 (p. 54)
             { english: 'hour', german: 'Stunde', image: '⏰', hint: 'Zeiteinheit',
               distractors: ['unser', 'Haus', 'Minute', 'Uhr'] },
-            { english: 'later', german: 'Später', image: '⏱️', hint: 'Nicht jetzt',
+            { english: 'later', german: 'später', image: '⏱️', hint: 'Nicht jetzt',
               distractors: ['früher', 'letzter', 'Brief', 'seitlich'] },
             { english: 'dance', german: 'Tanz', image: '💃', hint: 'Bewegung zur Musik',
               distractors: ['Chance', 'Lied', 'Musik', 'Sprung'] },
@@ -2296,7 +2343,7 @@
               distractors: ['Glas', 'Klasse (toll)', 'Klassiker', 'Gruppe'] },
             { english: 'charity', german: 'Barmherzigkeit, Wohltätigkeit', image: '❤️', hint: 'Gutes tun',
               distractors: ['Kirsche', 'Freiheit', 'Fröhlichkeit', 'Spende'] },
-            { english: 'gym', german: 'Turnen', image: '🤸', hint: 'Sport in der Halle',
+            { english: 'gym', german: 'Turnhalle, Turnen', image: '🤸', hint: 'Sport in der Halle',
               distractors: ['Spielplatz', 'Edelstein', 'Kaugummi', 'Spiel'] },
             { english: 'minute', german: 'Minute', image: '⏱️', hint: '60 Sekunden',
               distractors: ['winzig', 'Stunde', 'Sekunde', 'Moment'] },
@@ -2384,7 +2431,7 @@
               distractors: ['zustimmen', 'verschwinden', 'entdecken', 'mögen'] },
             { english: 'suggestion', german: 'Vorschlag', image: '💡', hint: 'Eine Idee vorschlagen',
               distractors: ['Frage', 'Zucker', 'Vermutung', 'Überraschung'] },
-            { english: 'act', german: 'Show, Akt', image: '🎭', hint: 'Teil einer Show',
+            { english: 'act', german: 'Nummer, Auftritt', image: '🎭', hint: 'Teil einer Show',
               distractors: ['Kunst', 'Aktion', 'Tatsache', 'Szene'] },
             { english: 'imagine', german: 'sich vorstellen', image: '💭', hint: 'In Gedanken sehen',
               distractors: ['Bild', 'Magie', 'nachahmen', 'verbessern'] },
@@ -2400,7 +2447,7 @@
               distractors: ['Morgen', 'gleichmäßig', 'Veranstaltung', 'Nacht'] },
             { english: 'surprise', german: 'überraschen', image: '🎁', hint: 'Unerwartet',
               distractors: ['Sonnenaufgang', 'überleben', 'vermuten', 'umgeben'] },
-            { english: 'brilliant', german: 'brilliant, strahlend, klasse', image: '✨', hint: 'Fantastisch',
+            { english: 'brilliant', german: 'brillant, strahlend, klasse', image: '✨', hint: 'Fantastisch',
               distractors: ['langweilig', 'hell', 'bringen', 'kurz'] },
             { english: 'clap', german: 'klatschen', image: '👏', hint: 'Mit den Händen',
               distractors: ['Klappe', 'fangen', 'Klasse', 'klopfen'] },
@@ -2416,7 +2463,7 @@
               distractors: ['Hobby', 'joggen', 'Witz', 'Freude'] },
             { english: 'true', german: 'wahr', image: '✅', hint: 'Nicht falsch',
               distractors: ['falsch', 'Baum', 'blau', 'versuchen'] },
-            { english: 'empty', german: 'entleeren, ausräumen', image: '📭', hint: 'Leer machen',
+            { english: 'empty', german: 'leer, entleeren, ausräumen', image: '📭', hint: 'Leer machen',
               distractors: ['voll', 'Eimer', 'füllen', 'eingeben'] },
             { english: 'load', german: 'aufladen, einräumen', image: '📥', hint: 'Voll machen',
               distractors: ['Brot', 'Straße', 'Laub', 'laut'] },
@@ -2432,8 +2479,8 @@
               distractors: ['ungewöhnlich', 'nützlich', 'selten', 'benutzen'] },
             { english: 'supermarket', german: 'Supermarkt', image: '🛒', hint: 'Zum Einkaufen',
               distractors: ['Markt', 'Kaufhaus', 'Marktplatz', 'Geschäft'] },
-            { english: 'when', german: 'als, wenn', image: '⏰', hint: 'Zu welcher Zeit',
-              distractors: ['wo', 'wer', 'was', 'wie'] },
+            { english: 'when (conjunction)', german: 'als, wenn', image: '⏰', hint: 'Verbindet zwei Sätze zeitlich',
+              distractors: ['wo', 'weil', 'obwohl', 'dass'] },
             { english: 'buy', german: 'kaufen', image: '💳', hint: 'Mit Geld bekommen',
               distractors: ['bei', 'verkaufen', 'Junge', 'tschüss'] },
             { english: 'delicious', german: 'köstlich, lecker', image: '😋', hint: 'Sehr gut schmeckend',
@@ -2474,7 +2521,7 @@
               distractors: ['langsam', 'traurig', 'sonnig', 'Sonntag'] },
             { english: 'doorbell', german: 'Türklingel', image: '🔔', hint: 'An der Tür',
               distractors: ['Türgriff', 'Glocke', 'Türklopfer', 'Klingel'] },
-            { english: 'shout', german: 'anschreien', image: '📢', hint: 'Laut rufen',
+            { english: 'shout', german: 'rufen, schreien', image: '📢', hint: 'Laut rufen',
               distractors: ['flüstern', 'kurz', 'zeigen', 'Dusche'] },
             { english: 'hide', german: 'sich verstecken', image: '🙈', hint: 'Nicht gefunden werden',
               distractors: ['hoch', 'reiten', 'breit', 'suchen'] },
@@ -2485,7 +2532,143 @@
             { english: 'happen', german: 'geschehen, passieren', image: '❓', hint: 'Sich ereignen',
               distractors: ['glücklich', 'fangen', 'vielleicht', 'helfen'] },
             { english: 'winner', german: 'Gewinner/in, Sieger/in', image: '🥇', hint: 'Wer gewinnt',
-              distractors: ['Verlierer/in', 'Winter', 'Abendessen', 'Anfänger/in'] }
+              distractors: ['Verlierer/in', 'Winter', 'Abendessen', 'Anfänger/in'] },
+
+            // Theme 3: Word lists - Page 220 (p. 55)
+            { english: 'unfortunately', german: 'unglücklicherweise, leider', image: '😔', hint: 'Wenn es schlecht läuft',
+              distractors: ['glücklicherweise', 'hoffentlich', 'natürlich', 'plötzlich'] },
+            { english: 'text message', german: 'Textnachricht, SMS', image: '📱', hint: 'Mit dem Handy schreiben',
+              distractors: ['Anruf', 'E-Mail', 'Brief', 'Postkarte'] },
+            { english: 'strange', german: 'sonderbar, merkwürdig, fremd', image: '🤨', hint: 'Nicht normal',
+              distractors: ['normal', 'stark', 'gerade', 'Straße'] },
+            { english: 'at the moment', german: 'im Augenblick, momentan', image: '⏱️', hint: 'Gerade jetzt',
+              distractors: ['gestern', 'morgen', 'später', 'nie'] },
+            { english: 'audience', german: 'Publikum, Besucher, Zuschauer', image: '👥', hint: 'Die Leute, die zuschauen',
+              distractors: ['Bühne', 'Schauspieler', 'Regisseur', 'Künstler'] },
+            { english: 'long', german: 'lang', image: '📏', hint: 'Nicht kurz',
+              distractors: ['kurz', 'laut', 'falsch', 'Lied'] },
+            { english: 'go', german: 'gehen', image: '🚶', hint: 'Sich zu Fuß bewegen',
+              distractors: ['kommen', 'stehen', 'tun', 'sehen'] },
+            { english: 'player', german: 'Spieler/in', image: '⚽', hint: 'Wer mitmacht',
+              distractors: ['Zuschauer', 'Trainer', 'Beten', 'Zahler'] },
+            { english: 'finish', german: '(be)enden, aufhören', image: '🏁', hint: 'Etwas zu Ende bringen',
+              distractors: ['anfangen', 'Fisch', 'finden', 'fein'] },
+            { english: 'stand up', german: 'aufstehen', image: '🧍', hint: 'Sich erheben',
+              distractors: ['hinsetzen', 'hinlegen', 'aufgeben', 'ausgehen'] },
+            { english: 'on stage', german: 'auf der Bühne', image: '🎭', hint: 'Wo man auftritt',
+              distractors: ['im Publikum', 'hinter der Bühne', 'im Kino', 'im Saal'] },
+            { english: 'dancer', german: 'Tänzer/in', image: '💃', hint: 'Wer tanzt',
+              distractors: ['Sänger/in', 'Gefahr', 'Antwort', 'Spieler/in'] },
+            { english: 'move', german: '(sich) bewegen', image: '🏃', hint: 'In Bewegung sein',
+              distractors: ['Film', 'lieben', 'beweisen', 'verbessern'] },
+            { english: 'group', german: 'Gruppe', image: '👨‍👩‍👧‍👦', hint: 'Mehrere zusammen',
+              distractors: ['Traube', 'greifen', 'wachsen', 'Boden'] },
+            { english: 'cheer', german: 'jubeln', image: '🎉', hint: 'Laut Freude zeigen',
+              distractors: ['Käse', 'Stuhl', 'billig', 'weinen'] },
+            { english: 'take a bow', german: 'sich verbeugen', image: '🎭', hint: 'Nach dem Auftritt',
+              distractors: ['klatschen', 'wegrennen', 'sich hinsetzen', 'winken'] },
+            { english: 'find out', german: 'herausfinden', image: '🔍', hint: 'Etwas entdecken',
+              distractors: ['verlieren', 'verstecken', 'vergessen', 'suchen'] },
+            { english: 'decide', german: '(sich) entscheiden, bestimmen', image: '🤔', hint: 'Eine Wahl treffen',
+              distractors: ['zögern', 'beschreiben', 'betrügen', 'ablehnen'] },
+            { english: 'line', german: 'Linie, Zeile', image: '📝', hint: 'Eine Reihe von Wörtern',
+              distractors: ['Löwe', 'Lüge', 'Lippe', 'Licht'] },
+            { english: 'feel', german: '(sich) fühlen', image: '💗', hint: 'Emotionen spüren',
+              distractors: ['fallen', 'füllen', 'Film', 'fliegen'] },
+            { english: 'practise', german: 'üben, praktizieren', image: '🏋️', hint: 'Immer wieder trainieren',
+              distractors: ['Praxis', 'predigen', 'loben', 'drucken'] },
+            { english: 'another', german: 'noch eine(r), eine(r) andere(r)', image: '🔄', hint: 'Ein(e) weitere(r)',
+              distractors: ['Antwort', 'Anker', 'wütend', 'irgendein'] },
+
+            // Theme 3: Weitere Vokabeln - Page 219/221
+            { english: 'take part in', german: 'teilnehmen an, mitmachen bei', image: '🙋', hint: 'Bei etwas mitmachen',
+              distractors: ['aufhören', 'zuschauen', 'ablehnen', 'weggehen'] },
+            { english: 'of course', german: 'natürlich', image: '👍', hint: 'Selbstverständlich!',
+              distractors: ['niemals', 'vielleicht', 'leider', 'kaum'] },
+            { english: 'come on', german: 'Komm(t) jetzt!, Mach(t) schon!', image: '💪', hint: 'Aufforderung loszulegen',
+              distractors: ['Geh weg!', 'Hör auf!', 'Warte!', 'Setz dich!'] },
+            { english: 'dance routine', german: 'Tanznummer', image: '💃', hint: 'Einstudierter Tanz',
+              distractors: ['Tanzschule', 'Tanzpartner', 'Tanzfläche', 'Tanzstil'] },
+            { english: 'take place', german: 'stattfinden', image: '📍', hint: 'Wann/wo etwas passiert',
+              distractors: ['Platz nehmen', 'mitnehmen', 'teilnehmen', 'einnehmen'] },
+            { english: 'at', german: 'auf, an, in, bei, um (Uhrzeit)', image: '📌', hint: 'Kleine Präposition',
+              distractors: ['und', 'aber', 'oder', 'von'] },
+            { english: 'too', german: 'zu (übermäßig)', image: '⚠️', hint: 'Zu viel, zu groß...',
+              distractors: ['auch', 'zwei', 'nach', 'bis'] },
+            { english: 'her', german: 'ihr, sie (Objekt)', image: '👩', hint: 'Pronomen weiblich',
+              distractors: ['sein', 'er', 'hier', 'hören'] },
+            { english: 'him', german: 'ihm, ihn', image: '👨', hint: 'Pronomen männlich (Objekt)',
+              distractors: ['sein', 'er', 'Hymne', 'Saum'] }
+        ];
+
+        // ===================================================================
+        // SAY IT IN ENGLISH – Phrases (Gap-Fill MC)
+        // ===================================================================
+
+        const phrasesTheme3 = [
+            // Uhrzeit fragen
+            { situation: 'nach der Uhrzeit fragen', sentence: '_______ the time?', answer: "What's",
+              distractors: ["Where's", "How's", "Who's"] },
+            // Uhrzeit sagen
+            { situation: 'die Uhrzeit sagen (2:00)', sentence: "It's two _______.", answer: "o'clock",
+              distractors: ['hours', 'times', 'past'] },
+            { situation: 'die Uhrzeit sagen (7:30)', sentence: "It's _______ past seven.", answer: 'half',
+              distractors: ['quarter', 'ten', 'twenty'] },
+            { situation: 'die Uhrzeit sagen (3:50)', sentence: "It's ten _______ four.", answer: 'to',
+              distractors: ['past', 'after', 'from'] },
+            { situation: 'die Uhrzeit sagen (4:15)', sentence: "It's _______ past four.", answer: 'quarter',
+              distractors: ['half', 'twenty', 'ten'] },
+            // Wann etwas stattfindet
+            { situation: 'sagen, wann etwas stattfindet', sentence: 'The audition _______ at 4 pm.', answer: 'takes place',
+              distractors: ['is going', 'comes up', 'stands by'] },
+            { situation: 'sagen, wann etwas stattfindet', sentence: 'The audition takes place _______ 4 pm.', answer: 'at',
+              distractors: ['on', 'in', 'by'] },
+            // Über Termine sprechen
+            { situation: 'über Termine sprechen', sentence: 'I have got a dance class _______ half past four.', answer: 'at',
+              distractors: ['on', 'in', 'by'] },
+            { situation: 'über Termine sprechen', sentence: 'I have got a dance class at half past four _______ Tuesday.', answer: 'on',
+              distractors: ['at', 'in', 'by'] },
+            { situation: 'über Termine sprechen', sentence: 'I have got football training at _______ past four on Wednesday.', answer: 'quarter',
+              distractors: ['half', 'ten', 'twenty'] },
+            // Immer / nie
+            { situation: 'sagen, was du immer tust', sentence: 'I _______ make my bed.', answer: 'always',
+              distractors: ['never', 'sometimes', 'often'] },
+            { situation: 'sagen, was du nie tust', sentence: 'I _______ make my bed.', answer: 'never',
+              distractors: ['always', 'sometimes', 'often'] },
+            // Oft / manchmal
+            { situation: 'sagen, was du oft tust', sentence: 'I _______ take out the rubbish.', answer: 'often',
+              distractors: ['never', 'always', 'sometimes'] },
+            { situation: 'sagen, was du manchmal tust', sentence: 'I _______ take out the rubbish.', answer: 'sometimes',
+              distractors: ['never', 'always', 'often'] },
+            // Vorschläge machen
+            { situation: 'einen Vorschlag machen', sentence: "_______ don't you take part in a talent show?", answer: 'Why',
+              distractors: ['What', 'How', 'When'] },
+            { situation: 'einen Vorschlag machen', sentence: "_______ meet at my house on Saturday afternoon.", answer: "Let's",
+              distractors: ["We'll", "Don't", "Can't"] },
+            { situation: 'einen Vorschlag machen', sentence: "Let's meet at my house. What do you _______?", answer: 'think',
+              distractors: ['say', 'want', 'know'] },
+            // Zustimmen / Ablehnen
+            { situation: 'einem Vorschlag zustimmen', sentence: "Of _______!", answer: 'course',
+              distractors: ['way', 'time', 'right'] },
+            { situation: 'einem Vorschlag zustimmen', sentence: "That's a _______ idea!", answer: 'great',
+              distractors: ['bad', 'strange', 'small'] },
+            { situation: 'einen Vorschlag ablehnen', sentence: 'No _______!', answer: 'way',
+              distractors: ['course', 'time', 'chance'] },
+            // Gefühle ausdrücken
+            { situation: 'sagen, dass jemand traurig ist', sentence: 'He feels _______.', answer: 'sad',
+              distractors: ['glad', 'angry', 'excited'] },
+            { situation: 'sagen, dass jemand besorgt ist', sentence: 'He feels _______.', answer: 'worried',
+              distractors: ['happy', 'excited', 'bored'] },
+            { situation: 'sagen, dass jemand froh ist', sentence: 'She is _______.', answer: 'glad',
+              distractors: ['sad', 'angry', 'nervous'] },
+            { situation: 'sagen, dass jemand glücklich ist', sentence: 'She is _______.', answer: 'happy',
+              distractors: ['sad', 'angry', 'worried'] },
+            { situation: 'sagen, dass jemand enttäuscht ist', sentence: 'He is _______.', answer: 'disappointed',
+              distractors: ['excited', 'glad', 'angry'] },
+            { situation: 'sagen, dass jemand wütend ist', sentence: 'She is _______.', answer: 'angry',
+              distractors: ['happy', 'glad', 'excited'] },
+            { situation: 'sagen, dass jemand aufgeregt ist', sentence: 'He is _______.', answer: 'excited',
+              distractors: ['disappointed', 'angry', 'sad'] },
         ];
 
         // ===================================================================
@@ -2512,6 +2695,11 @@
         let currentMode = 'spelling'; // 'spelling' or 'mc' or 'sentence'
         let mcAnswered = false; // Prevent double-clicks in MC mode
         let roundModes = []; // Pre-assigned mode per word in the round
+
+        // Phrase mode state
+        let isPhraseMode = false;
+        let phraseList = [];
+        let phrasesToRepeat = [];
 
         // Latin-specific state
         let currentLanguage = ''; // 'english' or 'latin'
@@ -2830,7 +3018,9 @@
             score = 0;
             correctCount = 0;
             wordsToRepeat = [];
+            phrasesToRepeat = [];
             isRepeatPhase = false;
+            isPhraseMode = false;
 
             hideAllScreens();
             if (currentLanguage === 'english') {
@@ -2853,6 +3043,7 @@
 
         function startGame(setChoice) {
             currentLanguage = 'english';
+            isPhraseMode = false;
             if (setChoice === 'theme2') {
                 vocabulary = vocabularyTheme2;
                 currentVocabularySet = 'Theme 2: At School';
@@ -5300,6 +5491,264 @@
         }
 
         // ===================================================================
+        // SAY IT IN ENGLISH – PHRASE GAP-FILL GAME
+        // ===================================================================
+
+        function startPhraseGame() {
+            currentLanguage = 'english';
+            isPhraseMode = true;
+            currentVocabularySet = 'Say it in English';
+
+            hideAllScreens();
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('gameTitle').textContent = '🗣️ Say it in English';
+            document.getElementById('currentSetName').textContent = 'Theme 3: Redewendungen';
+
+            initPhraseGame();
+        }
+
+        function initPhraseGame() {
+            currentWordIndex = 0;
+            score = 0;
+            correctCount = 0;
+            phrasesToRepeat = [];
+            isRepeatPhase = false;
+            wordStats = {};
+            mcAnswered = false;
+
+            const progress = loadProgress();
+            phraseList = weightedSamplePhrases(phrasesTheme3, 12, progress);
+
+            const savedTalers = localStorage.getItem('vocabularyGameTalers');
+            totalTalers = savedTalers ? parseInt(savedTalers) : 0;
+
+            document.getElementById('totalTalers').textContent = totalTalers;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('correct').textContent = '0';
+            document.getElementById('repeats').textContent = '0';
+
+            correctFirstTryCount = 0;
+            talersEarned = 0;
+
+            phraseList.forEach(p => {
+                wordStats[p.answer] = {
+                    attempts: 0, mistakes: 0, totalTime: 0, correctOnFirstTry: false
+                };
+            });
+
+            document.getElementById('total').textContent = phraseList.length;
+            loadPhrase();
+        }
+
+        function weightedSamplePhrases(pool, n, progressData) {
+            if (pool.length <= n) return shuffleArray(pool);
+
+            const weights = pool.map(item => {
+                const key = 'phrase:' + item.answer + ':' + item.situation;
+                const prog = progressData[key];
+                if (!prog) return 10;
+                if (prog.correct === 0) return 8;
+                if (prog.wrong > prog.correct) return 7;
+                return Math.max(1, 5 - prog.correct);
+            });
+
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            const selected = [];
+            const used = new Set();
+
+            while (selected.length < n) {
+                let rand = Math.random() * totalWeight;
+                for (let i = 0; i < pool.length; i++) {
+                    if (used.has(i)) continue;
+                    rand -= weights[i];
+                    if (rand <= 0) {
+                        selected.push(pool[i]);
+                        used.add(i);
+                        break;
+                    }
+                }
+            }
+            return shuffleArray(selected);
+        }
+
+        function loadPhrase() {
+            if (!isRepeatPhase && currentWordIndex >= phraseList.length) {
+                if (phrasesToRepeat.length > 0) {
+                    isRepeatPhase = true;
+                    currentWordIndex = 0;
+                    phraseList = shuffleArray(phrasesToRepeat);
+                    phrasesToRepeat = [];
+                    document.getElementById('total').textContent = phraseList.length;
+                    document.getElementById('feedback').textContent = '🔄 Jetzt wiederholen wir die schwierigen Sätze!';
+                    document.getElementById('feedback').className = 'feedback';
+                    setTimeout(() => {
+                        document.getElementById('feedback').textContent = '';
+                        loadPhrase();
+                    }, 2000);
+                    return;
+                } else {
+                    showCelebration();
+                    return;
+                }
+            }
+
+            if (isRepeatPhase && currentWordIndex >= phraseList.length) {
+                showCelebration();
+                return;
+            }
+
+            if (hintTimeout) clearTimeout(hintTimeout);
+
+            const phrase = phraseList[currentWordIndex];
+            currentWord = phrase.answer.toLowerCase();
+            attemptCount = 0;
+            mcAnswered = false;
+            currentWordStartTime = Date.now();
+            currentMode = 'mc';
+
+            // Hide all game sub-areas
+            document.getElementById('spellingArea').style.display = 'none';
+            document.getElementById('spellingButtons').style.display = 'none';
+            document.getElementById('sentenceArea').style.display = 'none';
+            document.getElementById('tipText').style.display = 'none';
+            document.getElementById('mcContinueBtn').style.display = 'none';
+
+            // Show phrase in the word card
+            const sentenceHTML = phrase.sentence.replace('_______',
+                '<span class="phrase-gap" id="phraseGap">?</span>');
+            document.getElementById('wordImage').textContent = '🗣️';
+            document.getElementById('wordGerman').innerHTML =
+                '<div class="phrase-situation">' + phrase.situation + '</div>' +
+                '<div class="phrase-sentence">' + sentenceHTML + '</div>';
+            document.getElementById('wordHint').textContent = 'Welches Wort fehlt?';
+            document.getElementById('autoHint').textContent = '';
+
+            document.getElementById('current').textContent = currentWordIndex + 1;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+
+            // Curtain: hide emoji
+            const curtain = document.getElementById('emojiCurtain');
+            curtain.classList.remove('active', 'reveal');
+
+            // Build MC options
+            document.getElementById('mcArea').style.display = 'block';
+            let options = [{ text: phrase.answer, correct: true }];
+            phrase.distractors.forEach(d => options.push({ text: d, correct: false }));
+            options = shuffleArray(options);
+
+            const mcContainer = document.getElementById('mcOptions');
+            mcContainer.innerHTML = '';
+            options.forEach((opt, idx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'mc-option';
+                optDiv.dataset.index = idx;
+                optDiv.dataset.correct = opt.correct;
+                optDiv.innerHTML = '<span class="mc-key">' + (idx + 1) + '</span><span class="mc-text">' + opt.text + '</span>';
+                optDiv.addEventListener('click', () => selectPhraseOption(idx));
+                mcContainer.appendChild(optDiv);
+            });
+
+            // Auto-hint after 15 seconds
+            hintTimeout = setTimeout(() => {
+                document.getElementById('autoHint').textContent = '💡 Tipp: ' + phrase.answer.charAt(0) + '...';
+                document.getElementById('autoHint').className = 'auto-hint visible';
+            }, 15000);
+        }
+
+        function selectPhraseOption(index) {
+            if (mcAnswered) return;
+            mcAnswered = true;
+
+            if (hintTimeout) clearTimeout(hintTimeout);
+            attemptCount++;
+
+            const options = document.querySelectorAll('.mc-option');
+            const selectedOption = options[index];
+            const isCorrect = selectedOption.dataset.correct === 'true';
+            const feedback = document.getElementById('feedback');
+            const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
+            const phrase = phraseList[currentWordIndex];
+            const stats = wordStats[phrase.answer];
+            stats.attempts++;
+
+            const phraseKey = 'phrase:' + phrase.answer + ':' + phrase.situation;
+
+            // Disable all options
+            options.forEach(opt => opt.classList.add('mc-disabled'));
+
+            // Highlight correct answer
+            options.forEach(opt => {
+                if (opt.dataset.correct === 'true') opt.classList.add('mc-correct');
+            });
+
+            // Fill the gap with the correct answer
+            const gap = document.getElementById('phraseGap');
+            if (gap) {
+                gap.textContent = phrase.answer;
+                gap.classList.add(isCorrect ? 'correct' : 'wrong');
+            }
+
+            if (isCorrect) {
+                stats.totalTime += timeElapsed;
+                recordAnswer(phraseKey, true);
+
+                if (attemptCount === 1) {
+                    stats.correctOnFirstTry = true;
+                    correctFirstTryCount++;
+
+                    if (correctFirstTryCount % 2 === 0) {
+                        talersEarned++;
+                        totalTalers++;
+                        localStorage.setItem('vocabularyGameTalers', totalTalers.toString());
+                        const talerDisplay = document.getElementById('totalTalers');
+                        talerDisplay.textContent = totalTalers;
+                        talerDisplay.parentElement.parentElement.style.animation = 'none';
+                        setTimeout(() => {
+                            talerDisplay.parentElement.parentElement.style.animation = 'celebrate 0.5s';
+                        }, 10);
+                    }
+                }
+
+                feedback.textContent = '🎉 Richtig! Super gemacht!';
+                feedback.className = 'feedback correct';
+                score += 10;
+                correctCount++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('correct').textContent = correctCount;
+                playSound('correct');
+
+                if (!isRepeatPhase && (attemptCount > 1 || timeElapsed > 30)) {
+                    addToPhraseRepeatList();
+                }
+
+                setTimeout(() => {
+                    currentWordIndex++;
+                    loadPhrase();
+                }, 2000);
+            } else {
+                selectedOption.classList.add('mc-wrong');
+                stats.mistakes++;
+                recordAnswer(phraseKey, false);
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+                playSound('wrong');
+
+                if (!isRepeatPhase) addToPhraseRepeatList();
+
+                document.getElementById('mcContinueBtn').style.display = 'inline-block';
+            }
+        }
+
+        function addToPhraseRepeatList() {
+            const phrase = phraseList[currentWordIndex];
+            if (!phrasesToRepeat.some(p => p.answer === phrase.answer && p.situation === phrase.situation)) {
+                phrasesToRepeat.push(phrase);
+                document.getElementById('repeats').textContent = phrasesToRepeat.length;
+            }
+        }
+
+        // ===================================================================
         // SHARED HELPERS
         // ===================================================================
 
@@ -5307,7 +5756,11 @@
             if (currentLanguage === 'latin') { latinMcContinue(); return; }
             document.getElementById('mcContinueBtn').style.display = 'none';
             currentWordIndex++;
-            loadWord();
+            if (isPhraseMode) {
+                loadPhrase();
+            } else {
+                loadWord();
+            }
         }
 
         function addToRepeatList() {
@@ -5506,6 +5959,8 @@
                     event.preventDefault();
                     if (currentLanguage === 'latin') {
                         selectLatinMC(index);
+                    } else if (isPhraseMode) {
+                        selectPhraseOption(index);
                     } else {
                         selectMCOption(index);
                     }
