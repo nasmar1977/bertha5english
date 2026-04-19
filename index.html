@@ -1251,6 +1251,12 @@
             padding: 2px 7px; font-size: 0.65em; font-weight: bold;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
+        .april-dark-toggle.active {
+            opacity: 1; filter: none;
+            background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .april-dark-toggle.active .dark-streak { background: #283593; }
         .april-dark-toggle.ready {
             cursor: pointer; opacity: 1; filter: none;
             background: linear-gradient(135deg, #ffd54f 0%, #ff8f00 100%);
@@ -1258,13 +1264,11 @@
             animation: darkPulse 1.6s ease-in-out infinite;
         }
         .april-dark-toggle.ready .dark-streak { background: #e65100; }
-        .april-dark-toggle.active {
-            cursor: pointer; opacity: 1; filter: none;
-            background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
-            box-shadow: 0 0 16px rgba(63, 81, 181, 0.7);
-            animation: none;
+        .april-dark-toggle.ready.active {
+            background: linear-gradient(135deg, #7e57c2 0%, #3949ab 100%);
+            box-shadow: 0 0 18px rgba(126, 87, 194, 0.8), 0 2px 6px rgba(0,0,0,0.2);
         }
-        .april-dark-toggle.active .dark-streak { background: #283593; }
+        .april-dark-toggle.ready.active .dark-streak { background: #4527a0; }
         @keyframes darkPulse {
             0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(255,179,0,0.8), 0 2px 6px rgba(0,0,0,0.2); }
             50%      { transform: scale(1.08); box-shadow: 0 0 28px rgba(255,179,0,1), 0 2px 10px rgba(0,0,0,0.3); }
@@ -1286,11 +1290,25 @@
             opacity: 1; transform: translateY(0);
         }
 
-        /* Dark mode für das Spielfeld (nur April + aktiv) */
+        /* Dark mode: Seitenhintergrund */
+        body.april-dark { background: linear-gradient(180deg, #0e1018 0%, #1a1d2e 100%); }
+        /* Dark mode für das Spielfeld + übergeordnete Menüs */
         body.april-dark .game-container {
             background: linear-gradient(180deg, #1a1d2e 0%, #0e1018 100%);
             color: #e8eaf6;
         }
+        body.april-dark .module-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            color: #e8eaf6; border-color: #5e35b1;
+        }
+        body.april-dark .module-card:hover { box-shadow: 0 8px 24px rgba(126, 87, 194, 0.5); }
+        body.april-dark .module-title { color: #ffd54f; }
+        body.april-dark .module-info  { color: #b0bec5; }
+        body.april-dark .set-card.english, body.april-dark .set-card.latin {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%); color: #e8eaf6;
+        }
+        body.april-dark .header h1, body.april-dark .header p { color: #e8eaf6; }
+        body.april-dark .back-btn { background: #37474f; color: #e8eaf6; }
         body.april-dark .word-card {
             background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
             color: #e8eaf6; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -2975,9 +2993,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.9.4';
+        const APP_VERSION = '2.9.5';
 
         const changelogEntries = [
+            {
+                version: '2.9.5',
+                date: '19.04.2026',
+                items: [
+                    'Nachtmodus bleibt beim Navigieren erhalten: sichtbar im April-Kapitel sowie in English-Kapitelwahl und Hauptmenü; zum Ausschalten sind erneut 5 richtige Antworten in Folge nötig.',
+                    'Dunkle Optik auch für Kachelmenüs (Sprachauswahl, English-Auswahl) wenn Nachtmodus aktiv.',
+                ]
+            },
             {
                 version: '2.9.4',
                 date: '19.04.2026',
@@ -3124,6 +3150,7 @@
             localStorage.setItem('changelog_seen_version', APP_VERSION);
             document.getElementById('changelogSplash').style.display = 'none';
             document.getElementById('languageSelection').style.display = 'block';
+            applyAprilDarkBody();
         }
 
         // Show changelog on page load
@@ -3143,21 +3170,25 @@
             } else if (lang === 'latin') {
                 document.getElementById('latinChapterSelection').style.display = 'block';
             }
+            applyAprilDarkBody();
         }
 
         function backToLanguage() {
             hideAllScreens();
             document.getElementById('languageSelection').style.display = 'block';
+            applyAprilDarkBody();
         }
 
         function backToLatinChapters() {
             hideAllScreens();
             document.getElementById('latinChapterSelection').style.display = 'block';
+            applyAprilDarkBody();
         }
 
         function backToLatinModules() {
             hideAllScreens();
             document.getElementById('latinModuleSelection').style.display = 'block';
+            applyAprilDarkBody();
         }
 
         function backFromGame() {
@@ -3173,7 +3204,7 @@
             isPhraseMode = false;
             isAprilChapter = false;
             hideAprilDarkToggle();
-            resetAprilDark();
+            resetAprilStreak();
 
             hideAllScreens();
             if (currentLanguage === 'english') {
@@ -3181,6 +3212,7 @@
             } else {
                 document.getElementById('latinModuleSelection').style.display = 'block';
             }
+            applyAprilDarkBody();
         }
 
         function selectLatinChapter(chapter) {
@@ -3188,6 +3220,7 @@
             hideAllScreens();
             document.getElementById('latinChapterName').textContent = currentLatinChapter.name;
             document.getElementById('latinModuleSelection').style.display = 'block';
+            applyAprilDarkBody();
         }
 
         // ===================================================================
@@ -3217,8 +3250,9 @@
             document.getElementById('gameTitle').textContent = '🎮 English Spelling Adventure';
             document.getElementById('currentSetName').textContent = currentVocabularySet;
 
-            resetAprilDark();
+            resetAprilStreak();
             if (isAprilChapter) { showAprilDarkToggle(); } else { hideAprilDarkToggle(); }
+            applyAprilDarkBody();
 
             initGame();
         }
@@ -3230,10 +3264,13 @@
         function startLatinModule(module) {
             currentLanguage = 'latin';
             currentLatinModule = module;
+            isAprilChapter = false;
 
             hideAllScreens();
             document.getElementById('gameContainer').style.display = 'block';
             document.getElementById('gameTitle').textContent = '🏛️ Latein-Abenteuer';
+            hideAprilDarkToggle();
+            applyAprilDarkBody();
 
             const ch = currentLatinChapter;
             let moduleName = '';
@@ -5523,11 +5560,10 @@
         // APRIL DARK MODE (nur in "Vokabeln April" verfügbar)
         // ===================================================================
 
-        function resetAprilDark() {
+        function resetAprilStreak() {
+            // Nur Streak/Ready zurücksetzen – aprilDarkActive bleibt erhalten.
             aprilStreak = 0;
             aprilDarkReady = false;
-            aprilDarkActive = false;
-            document.body.classList.remove('april-dark');
             updateAprilDarkUI();
         }
 
@@ -5538,7 +5574,24 @@
 
         function hideAprilDarkToggle() {
             document.getElementById('aprilDarkToggle').style.display = 'none';
-            document.body.classList.remove('april-dark');
+        }
+
+        // Entscheidet anhand der aktuell sichtbaren Seite, ob der Dark-Body aktiv sein soll.
+        // Dark-Mode erscheint nur in: April-Session, English-Kapitelwahl, Sprachauswahl (Hauptmenü).
+        function applyAprilDarkBody() {
+            if (!aprilDarkActive) {
+                document.body.classList.remove('april-dark');
+                return;
+            }
+            const visible = id => {
+                const el = document.getElementById(id);
+                return el && el.style.display !== 'none';
+            };
+            const isAprilSession = visible('gameContainer') && isAprilChapter;
+            const isEnglishMenu = visible('setSelection');
+            const isMainMenu    = visible('languageSelection');
+            const shouldDark = isAprilSession || isEnglishMenu || isMainMenu;
+            document.body.classList.toggle('april-dark', shouldDark);
         }
 
         function updateAprilDarkUI() {
@@ -5547,28 +5600,27 @@
             const badge = document.getElementById('aprilStreakBadge');
             const tip = document.getElementById('aprilDarkTooltip');
             if (!btn) return;
-            btn.classList.remove('ready', 'active');
+            btn.classList.toggle('active', aprilDarkActive);
+            btn.classList.toggle('ready', aprilDarkReady);
             badge.textContent = Math.min(aprilStreak, 5) + '/5';
-            if (aprilDarkActive) {
-                btn.classList.add('active');
-                icon.textContent = '☀️';
-                tip.textContent = 'Nachtmodus ist an. Klick mich zum Ausschalten – danach musst du wieder 5 richtige in Folge sammeln.';
+            icon.textContent = aprilDarkActive ? '☀️' : '🌙';
+            if (aprilDarkActive && aprilDarkReady) {
+                tip.textContent = 'Du kannst den Nachtmodus jetzt ausschalten. Klick mich! Danach Zähler wieder auf 0.';
+            } else if (aprilDarkActive) {
+                tip.textContent = 'Nachtmodus ist an. Sammle 5 richtige Antworten in Folge, um ihn wieder auszuschalten. (Aktuell ' + aprilStreak + '/5)';
             } else if (aprilDarkReady) {
-                icon.textContent = '🌙';
-                btn.classList.add('ready');
-                tip.textContent = 'Super! 5 in Folge geschafft. Klick, um den Nachtmodus einzuschalten. Danach Zähler wieder auf 0.';
+                tip.textContent = 'Super! 5 in Folge. Klick, um den Nachtmodus einzuschalten. Danach Zähler wieder auf 0.';
             } else {
-                icon.textContent = '🌙';
-                tip.textContent = 'Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück! (Aktuell ' + aprilStreak + '/5)';
+                tip.textContent = 'Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück. (Aktuell ' + aprilStreak + '/5)';
             }
         }
 
         function toggleAprilDark() {
             if (!aprilDarkReady) return;
             aprilDarkActive = !aprilDarkActive;
-            document.body.classList.toggle('april-dark', aprilDarkActive);
             aprilStreak = 0;
             aprilDarkReady = false;
+            applyAprilDarkBody();
             updateAprilDarkUI();
         }
 
@@ -5749,12 +5801,16 @@
         function startPhraseGame() {
             currentLanguage = 'english';
             isPhraseMode = true;
+            isAprilChapter = false;
             currentVocabularySet = 'Say it in English';
 
             hideAllScreens();
             document.getElementById('gameContainer').style.display = 'block';
             document.getElementById('gameTitle').textContent = '🗣️ Say it in English';
             document.getElementById('currentSetName').textContent = 'Theme 3: Redewendungen';
+
+            hideAprilDarkToggle();
+            applyAprilDarkBody();
 
             initPhraseGame();
         }
