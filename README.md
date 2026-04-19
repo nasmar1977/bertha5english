@@ -41,10 +41,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.7.0
-**Datum:** 27.02.2026
-**Englisch:** 175 Vokabeln (Theme 2: 77 + Theme 3: 98)
-**Latein:** Lektion 3 + 4 – 85 Vokabeln, 32 Verb-Formen (mit Präsens + Imperativ), 18 Substantive, 21 Beispielsätze
+**Version:** 2.9.3
+**Datum:** 19.04.2026
+**Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
+**Latein:** Lektion 3 + 4 + 5 – 134 Vokabeln, 48 Verb-Formen, 38 Substantive, 33 Beispielsätze
 
 ## 🚀 Wie benutzen?
 

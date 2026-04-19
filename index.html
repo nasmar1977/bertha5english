@@ -1293,7 +1293,13 @@
             <div class="module-card" onclick="startGame('theme3')">
                 <div class="module-icon">🎭</div>
                 <div class="module-title">Theme 3: Hobbies</div>
-                <div class="module-info">129 Vokabeln</div>
+                <div class="module-info">98 Vokabeln</div>
+            </div>
+
+            <div class="module-card" onclick="startGame('april')">
+                <div class="module-icon">📅</div>
+                <div class="module-title">Vokabeln April</div>
+                <div class="module-info">24 Vokabeln</div>
             </div>
 
             <div class="module-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);" onclick="startPhraseGame()">
@@ -1305,7 +1311,7 @@
             <div class="module-card mixed" onclick="startGame('all')">
                 <div class="module-icon">🌟</div>
                 <div class="module-title">Alle Vokabeln</div>
-                <div class="module-info">206 Vokabeln gemischt</div>
+                <div class="module-info">199 Vokabeln gemischt</div>
             </div>
         </div>
 
@@ -2553,60 +2559,19 @@
               distractors: ['Verlierer/in', 'Winter', 'Abendessen', 'Anfänger/in'] },
 
             // Theme 3: Word lists - Page 220 (p. 55)
-            { english: 'unfortunately', german: 'unglücklicherweise, leider', image: '😔', hint: 'Wenn es schlecht läuft',
-              distractors: ['glücklicherweise', 'hoffentlich', 'natürlich', 'plötzlich'] },
-            { english: 'text message', german: 'Textnachricht, SMS', image: '📱', hint: 'Mit dem Handy schreiben',
-              distractors: ['Anruf', 'E-Mail', 'Brief', 'Postkarte'] },
-            { english: 'strange', german: 'sonderbar, merkwürdig, fremd', image: '🤨', hint: 'Nicht normal',
-              distractors: ['normal', 'stark', 'gerade', 'Straße'] },
-            { english: 'at the moment', german: 'im Augenblick, momentan', image: '⏱️', hint: 'Gerade jetzt',
-              distractors: ['gestern', 'morgen', 'später', 'nie'] },
-            { english: 'audience', german: 'Publikum, Besucher, Zuschauer', image: '👥', hint: 'Die Leute, die zuschauen',
-              distractors: ['Bühne', 'Schauspieler', 'Regisseur', 'Künstler'] },
-            { english: 'long', german: 'lang', image: '📏', hint: 'Nicht kurz',
-              distractors: ['kurz', 'laut', 'falsch', 'Lied'] },
-            { english: 'go', german: 'gehen', image: '🚶', hint: 'Sich zu Fuß bewegen',
-              distractors: ['kommen', 'stehen', 'tun', 'sehen'] },
-            { english: 'player', german: 'Spieler/in', image: '⚽', hint: 'Wer mitmacht',
-              distractors: ['Zuschauer', 'Trainer', 'Beten', 'Zahler'] },
-            { english: 'finish', german: '(be)enden, aufhören', image: '🏁', hint: 'Etwas zu Ende bringen',
-              distractors: ['anfangen', 'Fisch', 'finden', 'fein'] },
-            { english: 'stand up', german: 'aufstehen', image: '🧍', hint: 'Sich erheben',
-              distractors: ['hinsetzen', 'hinlegen', 'aufgeben', 'ausgehen'] },
-            { english: 'on stage', german: 'auf der Bühne', image: '🎭', hint: 'Wo man auftritt',
-              distractors: ['im Publikum', 'hinter der Bühne', 'im Kino', 'im Saal'] },
-            { english: 'dancer', german: 'Tänzer/in', image: '💃', hint: 'Wer tanzt',
-              distractors: ['Sänger/in', 'Gefahr', 'Antwort', 'Spieler/in'] },
-            { english: 'move', german: '(sich) bewegen', image: '🏃', hint: 'In Bewegung sein',
-              distractors: ['Film', 'lieben', 'beweisen', 'verbessern'] },
-            { english: 'group', german: 'Gruppe', image: '👨‍👩‍👧‍👦', hint: 'Mehrere zusammen',
-              distractors: ['Traube', 'greifen', 'wachsen', 'Boden'] },
-            { english: 'cheer', german: 'jubeln', image: '🎉', hint: 'Laut Freude zeigen',
-              distractors: ['Käse', 'Stuhl', 'billig', 'weinen'] },
-            { english: 'take a bow', german: 'sich verbeugen', image: '🎭', hint: 'Nach dem Auftritt',
-              distractors: ['klatschen', 'wegrennen', 'sich hinsetzen', 'winken'] },
-            { english: 'find out', german: 'herausfinden', image: '🔍', hint: 'Etwas entdecken',
-              distractors: ['verlieren', 'verstecken', 'vergessen', 'suchen'] },
-            { english: 'decide', german: '(sich) entscheiden, bestimmen', image: '🤔', hint: 'Eine Wahl treffen',
-              distractors: ['zögern', 'beschreiben', 'betrügen', 'ablehnen'] },
-            { english: 'line', german: 'Linie, Zeile', image: '📝', hint: 'Eine Reihe von Wörtern',
-              distractors: ['Löwe', 'Lüge', 'Lippe', 'Licht'] },
-            { english: 'feel', german: '(sich) fühlen', image: '💗', hint: 'Emotionen spüren',
-              distractors: ['fallen', 'füllen', 'Film', 'fliegen'] },
-            { english: 'practise', german: 'üben, praktizieren', image: '🏋️', hint: 'Immer wieder trainieren',
-              distractors: ['Praxis', 'predigen', 'loben', 'drucken'] },
-            { english: 'another', german: 'noch eine(r), eine(r) andere(r)', image: '🔄', hint: 'Ein(e) weitere(r)',
-              distractors: ['Antwort', 'Anker', 'wütend', 'irgendein'] },
-
             // Theme 3: Weitere Vokabeln - Page 219/221
+        ];
+        // ===================================================================
+        // VOKABELN APRIL – Grundwortschatz aus Theme 3 (Word list S.55 + weitere)
+        // ===================================================================
+
+        const vocabularyApril = [
             { english: 'take part in', german: 'teilnehmen an, mitmachen bei', image: '🙋', hint: 'Bei etwas mitmachen',
               distractors: ['aufhören', 'zuschauen', 'ablehnen', 'weggehen'] },
             { english: 'of course', german: 'natürlich', image: '👍', hint: 'Selbstverständlich!',
               distractors: ['niemals', 'vielleicht', 'leider', 'kaum'] },
             { english: 'come on', german: 'Komm(t) jetzt!, Mach(t) schon!', image: '💪', hint: 'Aufforderung loszulegen',
               distractors: ['Geh weg!', 'Hör auf!', 'Warte!', 'Setz dich!'] },
-            { english: 'dance routine', german: 'Tanznummer', image: '💃', hint: 'Einstudierter Tanz',
-              distractors: ['Tanzschule', 'Tanzpartner', 'Tanzfläche', 'Tanzstil'] },
             { english: 'take place', german: 'stattfinden', image: '📍', hint: 'Wann/wo etwas passiert',
               distractors: ['Platz nehmen', 'mitnehmen', 'teilnehmen', 'einnehmen'] },
             { english: 'at', german: 'auf, an, in, bei, um (Uhrzeit)', image: '📌', hint: 'Kleine Präposition',
@@ -2616,8 +2581,41 @@
             { english: 'her', german: 'ihr, sie (Objekt)', image: '👩', hint: 'Pronomen weiblich',
               distractors: ['sein', 'er', 'hier', 'hören'] },
             { english: 'him', german: 'ihm, ihn', image: '👨', hint: 'Pronomen männlich (Objekt)',
-              distractors: ['sein', 'er', 'Hymne', 'Saum'] }
+              distractors: ['sein', 'er', 'Hymne', 'Saum'] },
+            { english: 'unfortunately', german: 'unglücklicherweise, leider', image: '😔', hint: 'Wenn es schlecht läuft',
+              distractors: ['glücklicherweise', 'hoffentlich', 'natürlich', 'plötzlich'] },
+            { english: 'text message', german: 'Textnachricht, SMS', image: '📱', hint: 'Mit dem Handy schreiben',
+              distractors: ['Anruf', 'E-Mail', 'Brief', 'Postkarte'] },
+            { english: 'at the moment', german: 'im Augenblick, momentan', image: '⏱️', hint: 'Gerade jetzt',
+              distractors: ['gestern', 'morgen', 'später', 'nie'] },
+            { english: 'audience', german: 'Publikum, Besucher, Zuschauer', image: '👥', hint: 'Die Leute, die zuschauen',
+              distractors: ['Bühne', 'Schauspieler', 'Regisseur', 'Künstler'] },
+            { english: 'long', german: 'lang', image: '📏', hint: 'Nicht kurz',
+              distractors: ['kurz', 'laut', 'falsch', 'Lied'] },
+            { english: 'guitar', german: 'Gitarre', image: '🎸', hint: 'Saiteninstrument',
+              distractors: ['Klavier', 'Geige', 'Trommel', 'Flöte'] },
+            { english: 'finish', german: '(be)enden, aufhören', image: '🏁', hint: 'Etwas zu Ende bringen',
+              distractors: ['anfangen', 'Fisch', 'finden', 'fein'] },
+            { english: 'stand up', german: 'aufstehen', image: '🧍', hint: 'Sich erheben',
+              distractors: ['hinsetzen', 'hinlegen', 'aufgeben', 'ausgehen'] },
+            { english: 'dancer', german: 'Tänzer/in', image: '💃', hint: 'Wer tanzt',
+              distractors: ['Sänger/in', 'Gefahr', 'Antwort', 'Spieler/in'] },
+            { english: 'move', german: '(sich) bewegen', image: '🏃', hint: 'In Bewegung sein',
+              distractors: ['Film', 'lieben', 'beweisen', 'verbessern'] },
+            { english: 'group', german: 'Gruppe', image: '👨‍👩‍👧‍👦', hint: 'Mehrere zusammen',
+              distractors: ['Traube', 'greifen', 'wachsen', 'Boden'] },
+            { english: 'find out', german: 'herausfinden', image: '🔍', hint: 'Etwas entdecken',
+              distractors: ['verlieren', 'verstecken', 'vergessen', 'suchen'] },
+            { english: 'decide', german: '(sich) entscheiden, bestimmen', image: '🤔', hint: 'Eine Wahl treffen',
+              distractors: ['zögern', 'beschreiben', 'betrügen', 'ablehnen'] },
+            { english: 'feel', german: '(sich) fühlen', image: '💗', hint: 'Emotionen spüren',
+              distractors: ['fallen', 'füllen', 'Film', 'fliegen'] },
+            { english: 'practise', german: 'üben, praktizieren', image: '🏋️', hint: 'Immer wieder trainieren',
+              distractors: ['Praxis', 'predigen', 'loben', 'drucken'] },
+            { english: 'another', german: 'noch eine(r), eine(r) andere(r)', image: '🔄', hint: 'Ein(e) weitere(r)',
+              distractors: ['Antwort', 'Anker', 'wütend', 'irgendein'] },
         ];
+
 
         // ===================================================================
         // SAY IT IN ENGLISH – Phrases (Gap-Fill MC)
@@ -2884,9 +2882,32 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.9.0';
+        const APP_VERSION = '2.9.3';
 
         const changelogEntries = [
+            {
+                version: '2.9.3',
+                date: '19.04.2026',
+                items: [
+                    '🐛 Fix: Leerzeichen bei mehrwörtigen Antworten (z.B. „of course") werden jetzt automatisch gesetzt',
+                ]
+            },
+            {
+                version: '2.9.2',
+                date: '19.04.2026',
+                items: [
+                    '📅 <b>Neues Kapitel „Vokabeln April"</b> – 24 fett gedruckte Grundwortschatz-Vokabeln aus Word list S.55',
+                    '🧹 Theme 3 auf 98 Kernvokabeln gestrafft (31 Zusatzeinträge aus v2.9.0 ausgelagert bzw. entfernt)',
+                    '🌟 „Alle Vokabeln" jetzt 199 Einträge (Theme 2 + Theme 3 + April)',
+                ]
+            },
+            {
+                version: '2.9.1',
+                date: '19.04.2026',
+                items: [
+                    '🎸 Korrektur: <b>go/gehen</b> → <b>guitar/Gitarre</b> (Transkriptionsfehler in Word list S.55)',
+                ]
+            },
             {
                 version: '2.9.0',
                 date: '12.04.2026',
@@ -3078,9 +3099,12 @@
             } else if (setChoice === 'theme3') {
                 vocabulary = vocabularyTheme3;
                 currentVocabularySet = 'Theme 3: Hobbies and Activities';
+            } else if (setChoice === 'april') {
+                vocabulary = vocabularyApril;
+                currentVocabularySet = 'Vokabeln April';
             } else if (setChoice === 'all') {
-                vocabulary = [...vocabularyTheme2, ...vocabularyTheme3];
-                currentVocabularySet = 'Alle Vokabeln (Theme 2 + 3)';
+                vocabulary = [...vocabularyTheme2, ...vocabularyTheme3, ...vocabularyApril];
+                currentVocabularySet = 'Alle Vokabeln (Theme 2 + 3 + April)';
             }
 
             hideAllScreens();
@@ -5164,7 +5188,8 @@
             const lettersPool = document.getElementById('lettersPool');
             lettersPool.innerHTML = '';
 
-            const wordLetters = currentWord.split('');
+            // Leerzeichen kommen NICHT in den Pool - sie werden beim Tippen automatisch gesetzt
+            const wordLetters = currentWord.split('').filter(c => c !== ' ');
             const extraLetters = 'abcdefghijklmnopqrstuvwxyz';
             const numExtras = Math.min(5, Math.floor(currentWord.length / 2) + 2);
 
@@ -5190,6 +5215,10 @@
         }
 
         function selectLetter(letter, id) {
+            // Führende Leerzeichen an aktueller Position überspringen
+            while (selectedLetters.length < currentWord.length && currentWord[selectedLetters.length] === ' ') {
+                selectedLetters.push({ letter: ' ', id: -1 });
+            }
             if (selectedLetters.length >= currentWord.length) return;
 
             const tile = document.querySelector(`[data-id="${id}"]`);
@@ -5198,19 +5227,35 @@
             selectedLetters.push({ letter, id });
             tile.classList.add('used');
 
+            // Nachfolgende Leerzeichen auch direkt auto-füllen
+            while (selectedLetters.length < currentWord.length && currentWord[selectedLetters.length] === ' ') {
+                selectedLetters.push({ letter: ' ', id: -1 });
+            }
+
             updateAnswerArea();
         }
 
         function removeLetterFromSlot(index) {
             if (index >= selectedLetters.length) return;
 
-            const removed = selectedLetters[index];
+            // Wenn auf Auto-Space-Slot geklickt: stattdessen vorhergehenden echten Buchstaben entfernen
+            let realIndex = index;
+            while (realIndex >= 0 && selectedLetters[realIndex] && selectedLetters[realIndex].id === -1) {
+                realIndex--;
+            }
+            if (realIndex < 0) return;
+
+            const removed = selectedLetters[realIndex];
             // For Latin spelling, look in lettersPool specifically
             const poolSelector = (currentLanguage === 'latin' && currentMode === 'spelling') ? '#lettersPool ' : '';
             const tile = document.querySelector(`${poolSelector}[data-id="${removed.id}"]`);
             if (tile) tile.classList.remove('used');
 
-            selectedLetters.splice(index, 1);
+            // Buchstabe + alle nachfolgenden Auto-Leerzeichen wegnehmen
+            selectedLetters.splice(realIndex);
+            while (selectedLetters.length > 0 && selectedLetters[selectedLetters.length - 1].id === -1) {
+                selectedLetters.pop();
+            }
             updateAnswerArea();
         }
 
