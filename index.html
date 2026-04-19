@@ -1235,18 +1235,100 @@
         }
         .snake-target-lat { color: #bf360c; font-size: 1.1em; font-weight: bold; }
         .snake-target-de { color: #555; font-size: 0.95em; margin-top: 4px; }
+
+        /* ============ APRIL DARK MODE TOGGLE ============ */
+        .april-dark-toggle {
+            position: absolute; top: 18px; right: 18px; z-index: 20;
+            width: 54px; height: 54px; border-radius: 50%; border: none; cursor: not-allowed;
+            background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6em; opacity: 0.55; filter: grayscale(60%);
+            transition: all 0.25s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .april-dark-toggle .dark-streak {
+            position: absolute; bottom: -8px; right: -8px;
+            background: #455a64; color: #fff; border-radius: 12px;
+            padding: 2px 7px; font-size: 0.65em; font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .april-dark-toggle.ready {
+            cursor: pointer; opacity: 1; filter: none;
+            background: linear-gradient(135deg, #ffd54f 0%, #ff8f00 100%);
+            box-shadow: 0 0 18px rgba(255, 179, 0, 0.8), 0 2px 6px rgba(0,0,0,0.2);
+            animation: darkPulse 1.6s ease-in-out infinite;
+        }
+        .april-dark-toggle.ready .dark-streak { background: #e65100; }
+        .april-dark-toggle.active {
+            cursor: pointer; opacity: 1; filter: none;
+            background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+            box-shadow: 0 0 16px rgba(63, 81, 181, 0.7);
+            animation: none;
+        }
+        .april-dark-toggle.active .dark-streak { background: #283593; }
+        @keyframes darkPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(255,179,0,0.8), 0 2px 6px rgba(0,0,0,0.2); }
+            50%      { transform: scale(1.08); box-shadow: 0 0 28px rgba(255,179,0,1), 0 2px 10px rgba(0,0,0,0.3); }
+        }
+        .dark-tooltip {
+            position: absolute; top: 62px; right: 0;
+            background: #263238; color: #fff; padding: 10px 14px; border-radius: 10px;
+            font-size: 0.85em; line-height: 1.35; width: 230px; text-align: left;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .dark-tooltip::before {
+            content: ""; position: absolute; top: -6px; right: 18px;
+            border-left: 6px solid transparent; border-right: 6px solid transparent;
+            border-bottom: 6px solid #263238;
+        }
+        .april-dark-toggle:hover .dark-tooltip {
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* Dark mode für das Spielfeld (nur April + aktiv) */
+        body.april-dark .game-container {
+            background: linear-gradient(180deg, #1a1d2e 0%, #0e1018 100%);
+            color: #e8eaf6;
+        }
+        body.april-dark .word-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            color: #e8eaf6; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        body.april-dark .word-german { color: #ffd54f; }
+        body.april-dark .word-hint, body.april-dark .auto-hint { color: #ba68c8; }
+        body.april-dark .current-set { color: #b0bec5; }
+        body.april-dark .score-board {
+            background: linear-gradient(135deg, #311b92 0%, #4527a0 100%);
+            color: #fff;
+        }
+        body.april-dark .letter-slot {
+            background: #263238; color: #fff; border-color: #546e7a;
+        }
+        body.april-dark .letter-slot.filled { background: #37474f; }
+        body.april-dark .letter-tile {
+            background: linear-gradient(135deg, #5e35b1 0%, #3949ab 100%); color: #fff;
+        }
+        body.april-dark .letter-tile:hover { box-shadow: 0 4px 12px rgba(126, 87, 194, 0.6); }
+        body.april-dark .mc-option {
+            background: #2d3142; color: #e8eaf6; border-color: #5e35b1;
+        }
+        body.april-dark .mc-option:hover { background: #3949ab; }
+        body.april-dark .feedback.correct { color: #a5d6a7; }
+        body.april-dark .feedback.wrong   { color: #ef9a9a; }
+        body.april-dark h1, body.april-dark h2 { color: #e8eaf6; }
     </style>
 </head>
 <body>
     <!-- CHANGELOG SPLASH (shown once per version) -->
     <div class="game-container" id="changelogSplash" style="display: none;">
         <div class="header">
-            <h1>🎮 Was ist neu?</h1>
-            <p style="color: #666; margin-top: 10px;">Vokabel-Abenteuer – Updates</p>
+            <h1 style="color: #333;">Was ist neu?</h1>
+            <p style="color: #666; margin-top: 10px;">Änderungen pro Version</p>
         </div>
         <div id="changelogContent" style="text-align: left; padding: 10px 20px; max-height: 55vh; overflow-y: auto;">
         </div>
-        <button class="btn btn-check" onclick="dismissChangelog()" style="margin-top: 18px; font-size: 1.15em;">Los geht's! ➜</button>
+        <button class="btn btn-check" onclick="dismissChangelog()" style="margin-top: 18px; font-size: 1.1em;">Weiter</button>
     </div>
 
     <!-- LANGUAGE SELECTION (Top Level) -->
@@ -1393,8 +1475,13 @@
         </div>
     </div>
 
-    <div class="game-container" id="gameContainer" style="display: none;">
+    <div class="game-container" id="gameContainer" style="display: none; position: relative;">
         <button class="back-btn" id="gameBackBtn" onclick="backFromGame()">← Zurück</button>
+        <button class="april-dark-toggle" id="aprilDarkToggle" style="display: none;" onclick="toggleAprilDark()">
+            <span id="aprilDarkIcon">🌙</span>
+            <span class="dark-streak" id="aprilStreakBadge">0/5</span>
+            <span class="dark-tooltip" id="aprilDarkTooltip">Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück!</span>
+        </button>
         <div class="header">
             <h1 id="gameTitle">🎮 English Spelling Adventure</h1>
             <div class="current-set" id="currentSetName"></div>
@@ -2717,6 +2804,12 @@
         let phraseList = [];
         let phrasesToRepeat = [];
 
+        // April Dark Mode state
+        let aprilStreak = 0;
+        let aprilDarkReady = false;
+        let aprilDarkActive = false;
+        let isAprilChapter = false;
+
         // Latin-specific state
         let currentLanguage = ''; // 'english' or 'latin'
         let currentLatinChapter = null;
@@ -2882,125 +2975,133 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.9.3';
+        const APP_VERSION = '2.9.4';
 
         const changelogEntries = [
+            {
+                version: '2.9.4',
+                date: '19.04.2026',
+                items: [
+                    '<b>Nachtmodus</b> im Kapitel „Vokabeln April": muss durch 5 richtige Antworten in Folge freigeschaltet werden; nach dem Umschalten beginnt die Sammlung von vorn.',
+                    'Changelog-Seite auf nüchternes, emoji-freies Layout umgestellt.',
+                ]
+            },
             {
                 version: '2.9.3',
                 date: '19.04.2026',
                 items: [
-                    '🐛 Fix: Leerzeichen bei mehrwörtigen Antworten (z.B. „of course") werden jetzt automatisch gesetzt',
+                    'Fix: Leerzeichen bei mehrwörtigen Antworten (z. B. „of course") werden beim Tippen automatisch gesetzt.',
                 ]
             },
             {
                 version: '2.9.2',
                 date: '19.04.2026',
                 items: [
-                    '📅 <b>Neues Kapitel „Vokabeln April"</b> – 24 fett gedruckte Grundwortschatz-Vokabeln aus Word list S.55',
-                    '🧹 Theme 3 auf 98 Kernvokabeln gestrafft (31 Zusatzeinträge aus v2.9.0 ausgelagert bzw. entfernt)',
-                    '🌟 „Alle Vokabeln" jetzt 199 Einträge (Theme 2 + Theme 3 + April)',
+                    '<b>Neues Kapitel „Vokabeln April"</b>: 24 fett gedruckte Grundwortschatz-Vokabeln aus der Word list S. 55.',
+                    'Theme 3 auf 98 Kernvokabeln gestrafft (31 Zusatzeinträge aus v2.9.0 ausgelagert oder entfernt).',
+                    '„Alle Vokabeln" umfasst jetzt 199 Einträge (Theme 2 + Theme 3 + April).',
                 ]
             },
             {
                 version: '2.9.1',
                 date: '19.04.2026',
                 items: [
-                    '🎸 Korrektur: <b>go/gehen</b> → <b>guitar/Gitarre</b> (Transkriptionsfehler in Word list S.55)',
+                    'Korrektur: <b>go/gehen</b> → <b>guitar/Gitarre</b> (Transkriptionsfehler in Word list S. 55).',
                 ]
             },
             {
                 version: '2.9.0',
                 date: '12.04.2026',
                 items: [
-                    '🗣️ <b>Say it in English</b> – Neuer Lückentext-Modus für Redewendungen (MC)',
-                    '📝 27 Phrasen: Uhrzeit, Vorschläge, Gefühle, Häufigkeitsadverbien',
-                    '📚 <b>30 neue Vokabeln</b> in Theme 3 (Word lists S.220 + weitere)',
-                    '🔧 9 Inhaltskorrekturen (brillant, Auftritt, was, später, u.a.)',
+                    '<b>Say it in English</b>: neuer Lückentext-Modus für Redewendungen (Multiple Choice).',
+                    '27 Phrasen zu Uhrzeit, Vorschlägen, Gefühlen und Häufigkeitsadverbien.',
+                    '<b>30 neue Vokabeln</b> in Theme 3 (Word lists S. 220 und weitere).',
+                    '9 Inhaltskorrekturen (brillant, Auftritt, was, später u. a.).',
                 ]
             },
             {
                 version: '2.8.0',
                 date: '27.03.2026',
                 items: [
-                    '🏛️ <b>Latein Lektion 5</b> – 49 neue Vokabeln (Prometheus & Minerva)',
-                    '✍️ 16 Verb-Formen + 12 Beispielsätze + 4 Mehrwort-Ausdrücke',
-                    '📋 20 Substantive mit Deklinationstabelle (a- & o-Deklination)',
-                    '🔥 Themen: Schöpfung, Götter, Sprache & Schrift',
+                    '<b>Latein Lektion 5</b>: 49 neue Vokabeln (Prometheus & Minerva).',
+                    '16 Verb-Formen, 12 Beispielsätze, 4 Mehrwort-Ausdrücke.',
+                    '20 Substantive mit Deklinationstabelle (a- und o-Deklination).',
+                    'Themen: Schöpfung, Götter, Sprache und Schrift.',
                 ]
             },
             {
                 version: '2.7.0',
                 date: '27.02.2026',
                 items: [
-                    '🐍 <b>Substantiv-Schlange</b> – Nomen deklinieren durch Kasus×Numerus-Grid',
-                    '🎲 <b>Gemischte Auswahl</b> – Verben und Nomen zufällig gemischt',
-                    '📐 Nomen-Grid: 5×2 (Nom/Gen/Dat/Akk/Abl × Sg/Pl)',
-                    '🇩🇪 Deutsche Kasusformen (der/des/dem/den) bei jedem Schritt',
+                    '<b>Substantiv-Schlange</b>: Nomen deklinieren durch Kasus × Numerus-Grid.',
+                    '<b>Gemischte Auswahl</b>: Verben und Nomen zufällig abwechselnd.',
+                    'Nomen-Grid 5×2 (Nom/Gen/Dat/Akk/Abl × Sg/Pl).',
+                    'Deutsche Kasusformen (der/des/dem/den) bei jedem Schritt.',
                 ]
             },
             {
                 version: '2.6.0',
                 date: '27.02.2026',
                 items: [
-                    '🐍 <b>Neues Modul: Konjugationsschlange</b> – Verb-Endungen spielerisch üben',
-                    '🎯 Schlange wächst durchs Personen×Numerus-Grid – nur Endung tippen!',
-                    '📖 Beispielsätze zeigen Latein + Deutsch bei jedem Schritt',
-                    '🏁 Jede Schlange endet mit dem Imperativ',
+                    '<b>Neues Modul: Konjugationsschlange</b> zum Üben der Verb-Endungen.',
+                    'Schlange wächst durch das Personen × Numerus-Grid; nur die Endung wird getippt.',
+                    'Beispielsätze zeigen Latein und Deutsch bei jedem Schritt.',
+                    'Jede Schlange endet mit dem Imperativ.',
                 ]
             },
             {
                 version: '2.5.0',
                 date: '27.02.2026',
                 items: [
-                    '📖 <b>Deutsche Spalte</b> im Tabellentraining – auch Infinitiv & Deutsch als Lücke',
-                    '🎓 <b>Getrennte Tabellen</b> nach Konjugation (ā/ē/ī/unregelm.) & Deklination (a/o)',
-                    '📈 <b>Progression</b>: Erst einzelne Typen üben, bei 60% Trefferquote → kombinierte Tabelle',
+                    '<b>Deutsche Spalte</b> im Tabellentraining: auch Infinitiv und Deutsch können Lücke sein.',
+                    '<b>Getrennte Tabellen</b> nach Konjugation (ā/ē/ī/unregelmäßig) und Deklination (a/o).',
+                    '<b>Progression</b>: erst einzelne Typen üben, ab 60 % Trefferquote kombinierte Tabelle.',
                 ]
             },
             {
                 version: '2.4.0',
                 date: '27.02.2026',
                 items: [
-                    '💻 <b>Tabellentraining</b> – Konjugations- & Deklinationstabellen im Terminal-Stil',
-                    '📊 Komplette Kapitel-Übersichtstabellen mit zufälligen Lücken',
-                    '🎯 Abwechselnd Verben- und Nomen-Tabellen (3-5 Felder pro Tabelle)',
+                    '<b>Tabellentraining</b>: Konjugations- und Deklinationstabellen im Terminal-Stil.',
+                    'Komplette Kapitel-Übersichtstabellen mit zufälligen Lücken.',
+                    'Abwechselnd Verben- und Nomen-Tabellen (3 bis 5 Felder pro Tabelle).',
                 ]
             },
             {
                 version: '2.3.0',
                 date: '27.02.2026',
                 items: [
-                    '✍️ <b>Verb-Formen erweitert</b> – Präsens Indikativ Aktiv (alle 6 Personen) + Imperativ (Sg/Pl)',
-                    '📐 <b>Neues Modul: Substantive</b> – Nomen deklinieren (Nom/Gen/Dat/Akk/Abl × Sg/Pl)',
-                    '📊 18 Nomen + 32 Verben mit vollständigen Formen',
+                    '<b>Verb-Formen erweitert</b>: Präsens Indikativ Aktiv (alle sechs Personen) und Imperativ (Sg/Pl).',
+                    '<b>Neues Modul: Substantive</b> – Nomen deklinieren (Nom/Gen/Dat/Akk/Abl × Sg/Pl).',
+                    '18 Nomen und 32 Verben mit vollständigen Formen.',
                 ]
             },
             {
                 version: '2.2.0',
                 date: '25.02.2026',
                 items: [
-                    '🧠 <b>Lernhorizont</b> – schwächere Vokabeln kommen häufiger dran',
-                    '🎭 <b>Emoji-Vorhang</b> – bereits gekonnte Wörter werden verhüllt, Vorhang öffnet sich bei Antwort',
-                    '📊 Fortschritt pro Übersetzungsrichtung (DE→EN separat von EN→DE)',
-                    '📈 Lernstatistik pro Kapitel auf der Ergebnis-Seite (3× richtig = gelernt)',
+                    '<b>Lernhorizont</b>: schwächere Vokabeln kommen häufiger dran.',
+                    '<b>Emoji-Vorhang</b>: bereits gekonnte Wörter werden verhüllt, Vorhang öffnet sich mit der Antwort.',
+                    'Fortschritt pro Übersetzungsrichtung (DE→EN separat von EN→DE).',
+                    'Lernstatistik pro Kapitel auf der Ergebnis-Seite (3× richtig = gelernt).',
                 ]
             },
             {
                 version: '2.1.0',
                 date: '25.02.2026',
                 items: [
-                    '🏛️ <b>Latein Lektion 4</b> – 42 neue Vokabeln (Diana & Verwandlung)',
-                    '✍️ 14 Verb-Formen + 9 Beispielsätze für Lektion 4',
-                    '📋 Changelog-Vorschaltseite (wird einmalig pro Version angezeigt)',
+                    '<b>Latein Lektion 4</b>: 42 neue Vokabeln (Diana und Verwandlung).',
+                    '14 Verb-Formen und 9 Beispielsätze für Lektion 4.',
+                    'Changelog-Vorschaltseite (einmalig pro Version angezeigt).',
                 ]
             },
             {
                 version: '2.0.0',
                 date: '25.02.2026',
                 items: [
-                    '🏛️ <b>Latein</b> als zweite Sprache (Lektion 3)',
-                    '🔤 Makron-Support (ā, ē, ī, ō, ū)',
-                    '📝 Vier Module: Vokabeln, Verb-Formen, Beispielsätze, Gemischt',
+                    '<b>Latein</b> als zweite Sprache (Lektion 3).',
+                    'Makron-Support (ā, ē, ī, ō, ū).',
+                    'Vier Module: Vokabeln, Verb-Formen, Beispielsätze, gemischt.',
                 ]
             },
         ];
@@ -3070,6 +3171,9 @@
             phrasesToRepeat = [];
             isRepeatPhase = false;
             isPhraseMode = false;
+            isAprilChapter = false;
+            hideAprilDarkToggle();
+            resetAprilDark();
 
             hideAllScreens();
             if (currentLanguage === 'english') {
@@ -3093,6 +3197,7 @@
         function startGame(setChoice) {
             currentLanguage = 'english';
             isPhraseMode = false;
+            isAprilChapter = (setChoice === 'april');
             if (setChoice === 'theme2') {
                 vocabulary = vocabularyTheme2;
                 currentVocabularySet = 'Theme 2: At School';
@@ -3111,6 +3216,9 @@
             document.getElementById('gameContainer').style.display = 'block';
             document.getElementById('gameTitle').textContent = '🎮 English Spelling Adventure';
             document.getElementById('currentSetName').textContent = currentVocabularySet;
+
+            resetAprilDark();
+            if (isAprilChapter) { showAprilDarkToggle(); } else { hideAprilDarkToggle(); }
 
             initGame();
         }
@@ -5311,6 +5419,7 @@
             if (answer === currentWord && correctLetters === currentWord.length) {
                 stats.totalTime += timeElapsed;
                 recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), true);
+                aprilOnAnswer(true);
                 document.getElementById('emojiCurtain').classList.add('reveal');
 
                 if (attemptCount === 1) {
@@ -5354,6 +5463,7 @@
             } else {
                 stats.mistakes++;
                 recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), false);
+                aprilOnAnswer(false);
                 document.getElementById('emojiCurtain').classList.add('reveal');
 
                 feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
@@ -5407,6 +5517,73 @@
 
             currentWordIndex++;
             loadWord();
+        }
+
+        // ===================================================================
+        // APRIL DARK MODE (nur in "Vokabeln April" verfügbar)
+        // ===================================================================
+
+        function resetAprilDark() {
+            aprilStreak = 0;
+            aprilDarkReady = false;
+            aprilDarkActive = false;
+            document.body.classList.remove('april-dark');
+            updateAprilDarkUI();
+        }
+
+        function showAprilDarkToggle() {
+            document.getElementById('aprilDarkToggle').style.display = 'flex';
+            updateAprilDarkUI();
+        }
+
+        function hideAprilDarkToggle() {
+            document.getElementById('aprilDarkToggle').style.display = 'none';
+            document.body.classList.remove('april-dark');
+        }
+
+        function updateAprilDarkUI() {
+            const btn = document.getElementById('aprilDarkToggle');
+            const icon = document.getElementById('aprilDarkIcon');
+            const badge = document.getElementById('aprilStreakBadge');
+            const tip = document.getElementById('aprilDarkTooltip');
+            if (!btn) return;
+            btn.classList.remove('ready', 'active');
+            badge.textContent = Math.min(aprilStreak, 5) + '/5';
+            if (aprilDarkActive) {
+                btn.classList.add('active');
+                icon.textContent = '☀️';
+                tip.textContent = 'Nachtmodus ist an. Klick mich zum Ausschalten – danach musst du wieder 5 richtige in Folge sammeln.';
+            } else if (aprilDarkReady) {
+                icon.textContent = '🌙';
+                btn.classList.add('ready');
+                tip.textContent = 'Super! 5 in Folge geschafft. Klick, um den Nachtmodus einzuschalten. Danach Zähler wieder auf 0.';
+            } else {
+                icon.textContent = '🌙';
+                tip.textContent = 'Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück! (Aktuell ' + aprilStreak + '/5)';
+            }
+        }
+
+        function toggleAprilDark() {
+            if (!aprilDarkReady) return;
+            aprilDarkActive = !aprilDarkActive;
+            document.body.classList.toggle('april-dark', aprilDarkActive);
+            aprilStreak = 0;
+            aprilDarkReady = false;
+            updateAprilDarkUI();
+        }
+
+        function aprilOnAnswer(isCorrect) {
+            if (!isAprilChapter) return;
+            if (isCorrect) {
+                aprilStreak++;
+                if (aprilStreak >= 5 && !aprilDarkReady) {
+                    aprilDarkReady = true;
+                }
+            } else {
+                aprilStreak = 0;
+                aprilDarkReady = false;
+            }
+            updateAprilDarkUI();
         }
 
         function clearAnswer() {
@@ -5503,6 +5680,7 @@
             if (isCorrect) {
                 stats.totalTime += timeElapsed;
                 recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), true);
+                aprilOnAnswer(true);
                 document.getElementById('emojiCurtain').classList.add('reveal');
 
                 if (attemptCount === 1) {
@@ -5547,6 +5725,7 @@
                 selectedOption.classList.add('mc-wrong');
                 stats.mistakes++;
                 recordAnswer(getWordKey(shuffledVocabulary[currentWordIndex], currentMode), false);
+                aprilOnAnswer(false);
                 document.getElementById('emojiCurtain').classList.add('reveal');
 
                 feedback.textContent = '';
