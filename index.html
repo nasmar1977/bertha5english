@@ -1844,6 +1844,67 @@
             background: #1e2030; color: #fbbf24; border-color: #6366f1;
         }
         body.april-dark .intro-success-btn-secondary:hover { background: #2d3142; }
+        /* Dark-Mode: bisher übersehene Latein-Modul-Karten */
+        body.april-dark .module-card.mixed {
+            background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%);
+            border-color: #f59e0b;
+        }
+        body.april-dark .module-card.mixed .module-title { color: #ffd54f; }
+        body.april-dark .module-card.mixed .module-info  { color: #e1bee7; }
+        body.april-dark .snake-card {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #f57f17 100%) !important;
+        }
+        body.april-dark .snake-card .module-title { color: #c5e1a5 !important; }
+        body.april-dark .snake-card .module-info  { color: #aed581 !important; }
+        body.april-dark .module-card.rocket .module-title { color: #fbbf24; }
+        body.april-dark .module-card.rocket .module-info  { color: #c4b5fd; }
+        /* Tabellentraining: Inline-Hintergrund schon dunkel — Title/Info-Farben passen */
+        /* Sentence-Card (Lückentext) */
+        body.april-dark .sentence-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            border: 1px solid #5e35b1;
+        }
+        body.april-dark .sentence-latin    { color: #c4b5fd; }
+        body.april-dark .sentence-template { color: #fbbf24; }
+
+        /* Schwerkraft-Slider (Rakete) */
+        .gravity-wrap {
+            max-width: 600px; margin: 18px auto 8px;
+            background: #ede9fe;
+            border: 1px solid #c4b5fd;
+            border-radius: 14px; padding: 14px 18px;
+        }
+        .gravity-label {
+            text-align: center; font-size: 0.92em;
+            color: #4c1d95; font-weight: 600; margin-bottom: 8px;
+        }
+        .gravity-row {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .gravity-icon { font-size: 1.5em; line-height: 1; }
+        .gravity-slider {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 8px; border-radius: 4px;
+            background: linear-gradient(90deg, #c7d2fe 0%, #6366f1 50%, #1e1b4b 100%);
+            outline: none; cursor: pointer;
+        }
+        .gravity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #fbbf24; cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            border: 2px solid white;
+        }
+        .gravity-slider::-moz-range-thumb {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #fbbf24; cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        body.april-dark .gravity-wrap {
+            background: #1e2030; border-color: #5e35b1;
+        }
+        body.april-dark .gravity-label { color: #c4b5fd; }
         body.april-dark .score-board {
             background: linear-gradient(135deg, #311b92 0%, #4527a0 100%);
             color: #fff;
@@ -2059,6 +2120,16 @@
                 <div class="block-info">Komplette Wiederholung</div>
             </div>
         </div>
+        <div class="gravity-wrap">
+            <div class="gravity-label" id="gravityLabelRocket">🌙 Schwerkraft: 1.0× (Mond)</div>
+            <div class="gravity-row">
+                <span class="gravity-icon">🌙</span>
+                <input type="range" class="gravity-slider" id="gravitySliderRocket"
+                       min="0.5" max="2.5" step="0.1" value="1.0"
+                       oninput="onGravityChange(this.value)">
+                <span class="gravity-icon">🌍</span>
+            </div>
+        </div>
         <div style="text-align:center; margin-top:18px;">
             <button class="rocket-restart-btn show" style="background: rgba(239, 68, 68, 0.3); color: white;" onclick="resetRocketCoverage()">↻ Fortschritt zurücksetzen</button>
         </div>
@@ -2127,6 +2198,16 @@
         <div id="introSubsectionContainer" style="display: none; margin-top: 20px;">
             <p style="text-align:center; color: #555; font-size: 0.95em;">Welcher Abschnitt aus dem Buch?</p>
             <div id="introSubsectionGrid" class="intro-section-grid"></div>
+        </div>
+        <div class="gravity-wrap">
+            <div class="gravity-label" id="gravityLabelIntro">🌙 Schwerkraft (Stufe 3): 1.0× (Mond)</div>
+            <div class="gravity-row">
+                <span class="gravity-icon">🌙</span>
+                <input type="range" class="gravity-slider" id="gravitySliderIntro"
+                       min="0.5" max="2.5" step="0.1" value="1.0"
+                       oninput="onGravityChange(this.value)">
+                <span class="gravity-icon">🌍</span>
+            </div>
         </div>
     </div>
 
@@ -3686,9 +3767,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.10.1';
+        const APP_VERSION = '2.11.0';
 
         const changelogEntries = [
+            {
+                version: '2.11.0',
+                date: '26.04.2026',
+                items: [
+                    '<b>Schwerkraft-Slider</b> in der Rakete: vor dem Start einstellen, wie schnell die Rakete fällt. Links 🌙 Mondschwerkraft (entspannt), rechts 🌍 Erde oder ☄️ Jupiter für mehr Druck. Der Wert bleibt zwischen Sessions gespeichert und gilt sowohl für die Standalone-Rakete als auch für „0→100" Stufe 3.',
+                ]
+            },
             {
                 version: '2.10.1',
                 date: '26.04.2026',
@@ -3867,6 +3955,10 @@
 
         // Show changelog on page load
         document.addEventListener('DOMContentLoaded', showChangelogIfNew);
+        document.addEventListener('DOMContentLoaded', () => {
+            rocketGravity = loadRocketGravity();
+            syncGravitySliders();
+        });
 
         function hideAllScreens() {
             ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer'].forEach(id => {
@@ -4018,6 +4110,56 @@
         let rocketCurrentBlockMode = 8;     // 8, 20, oder 'all'
         let rocketBlockCorrectIds = [];     // IDs richtig beantwortet im aktuellen Block
         let rocketGameMode = 'standalone';  // 'standalone' | 'introStage3'
+        let rocketGravity = 1.0;            // 0.5 (Asteroid) — 1.0 (Mond, default) — 2.5 (Jupiter)
+
+        function loadRocketGravity() {
+            try {
+                const v = parseFloat(localStorage.getItem('rocketGravity') || '1.0');
+                return isFinite(v) && v >= 0.5 && v <= 2.5 ? v : 1.0;
+            } catch (e) { return 1.0; }
+        }
+
+        function saveRocketGravity(v) {
+            try { localStorage.setItem('rocketGravity', String(v)); } catch (e) {}
+        }
+
+        function gravityLabelText(v, prefix) {
+            const fixed = v.toFixed(1) + '×';
+            const p = prefix ? prefix + ': ' : 'Schwerkraft: ';
+            if (v < 0.85) return '🪨 ' + p + fixed + ' (Asteroid)';
+            if (v < 1.15) return '🌙 ' + p + fixed + ' (Mond)';
+            if (v < 1.5)  return '🪐 ' + p + fixed + ' (stärker)';
+            if (v < 1.9)  return '🌍 ' + p + fixed + ' (Erde)';
+            return '☄️ ' + p + fixed + ' (Jupiter — Hardcore)';
+        }
+
+        function refreshGravityLabels() {
+            const r = document.getElementById('gravityLabelRocket');
+            const i = document.getElementById('gravityLabelIntro');
+            if (r) r.textContent = gravityLabelText(rocketGravity, 'Schwerkraft');
+            if (i) i.textContent = gravityLabelText(rocketGravity, 'Schwerkraft (Stufe 3)');
+        }
+
+        function syncGravitySliders() {
+            ['gravitySliderRocket','gravitySliderIntro'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = rocketGravity;
+            });
+            refreshGravityLabels();
+        }
+
+        function onGravityChange(value) {
+            const v = parseFloat(value);
+            if (!isFinite(v)) return;
+            rocketGravity = v;
+            saveRocketGravity(v);
+            // Spiegel-Slider live mitziehen
+            ['gravitySliderRocket','gravitySliderIntro'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && parseFloat(el.value) !== v) el.value = v;
+            });
+            refreshGravityLabels();
+        }
 
         function rocketCoverageKey(chapterId) { return 'rocketCovered:' + chapterId; }
 
@@ -4055,6 +4197,8 @@
                     ? `🎉 Alle ${total} Vokabeln durch! Du kannst den Fortschritt zurücksetzen oder nochmal alle üben.`
                     : `Bisher abgedeckt: <b>${coveredCount}/${total}</b> · noch ${uncoveredCount} neu`;
             document.getElementById('rocketBlockSelection').style.display = 'block';
+            rocketGravity = loadRocketGravity();
+            syncGravitySliders();
         }
 
         function backToLatinModulesFromRocket() {
@@ -4154,7 +4298,7 @@
             const frac = rocketPositionFrac();
             const speedMult = ROCKET_SINK_SPEED_TOP - frac * (ROCKET_SINK_SPEED_TOP - ROCKET_SINK_SPEED_BOTTOM);
             const baseSinkRate = (ROCKET_CRASH_PCT - ROCKET_TOP_PCT) / ROCKET_SINK_DURATION_MS * ROCKET_SINK_COMPENSATION;
-            rocketY += baseSinkRate * speedMult * dt;
+            rocketY += baseSinkRate * speedMult * dt * rocketGravity;
             if (rocketY >= ROCKET_CRASH_PCT) {
                 rocketY = ROCKET_CRASH_PCT;
                 rocketCrash();
@@ -4387,6 +4531,8 @@
             document.getElementById('introChapterName').textContent = ch.name;
             document.getElementById('introSubsectionContainer').style.display = 'none';
             document.getElementById('introPreStart').style.display = 'block';
+            rocketGravity = loadRocketGravity();
+            syncGravitySliders();
         }
 
         function backToLatinModulesFromIntro() {
