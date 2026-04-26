@@ -1713,7 +1713,7 @@
 
         /* ============ APRIL DARK MODE TOGGLE ============ */
         .april-dark-toggle {
-            position: absolute; top: 18px; right: 18px; z-index: 20;
+            position: fixed; top: 18px; right: 18px; z-index: 20;
             width: 54px; height: 54px; border-radius: 50%; border: none; cursor: not-allowed;
             background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%);
             display: flex; align-items: center; justify-content: center;
@@ -2180,13 +2180,15 @@
         </div>
     </div>
 
+    <!-- Globaler Nachtmodus-Toggle: erscheint je nach Kontext (April-Englisch oder Latein Kap 5) -->
+    <button class="april-dark-toggle" id="aprilDarkToggle" style="display: none;" onclick="toggleAprilDark()">
+        <span id="aprilDarkIcon">🌙</span>
+        <span class="dark-streak" id="aprilStreakBadge">0/5</span>
+        <span class="dark-tooltip" id="aprilDarkTooltip">Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück!</span>
+    </button>
+
     <div class="game-container" id="gameContainer" style="display: none; position: relative;">
         <button class="back-btn" id="gameBackBtn" onclick="backFromGame()">← Zurück</button>
-        <button class="april-dark-toggle" id="aprilDarkToggle" style="display: none;" onclick="toggleAprilDark()">
-            <span id="aprilDarkIcon">🌙</span>
-            <span class="dark-streak" id="aprilStreakBadge">0/5</span>
-            <span class="dark-tooltip" id="aprilDarkTooltip">Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück!</span>
-        </button>
         <div class="header">
             <h1 id="gameTitle">🎮 English Spelling Adventure</h1>
             <div class="current-set" id="currentSetName"></div>
@@ -3619,6 +3621,10 @@
             }
             progress[key].lastSeen = Date.now();
             saveProgress(progress);
+            // Streak für Latein-Kap-5-Nachtmodus mitzählen (April-Englisch wird in eigenen Handlern gezählt)
+            if (typeof isInLatinKap5 === 'function' && isInLatinKap5()) {
+                aprilOnAnswer(isCorrect);
+            }
         }
 
         function weightedSample(pool, n, progressData) {
@@ -3680,9 +3686,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.10.0';
+        const APP_VERSION = '2.10.1';
 
         const changelogEntries = [
+            {
+                version: '2.10.1',
+                date: '26.04.2026',
+                items: [
+                    '<b>Nachtmodus auch in Latein Lektion 5</b>: gleiche Mechanik wie bei „Vokabeln April" — fünf richtige Antworten in Folge schalten den Mond-Knopf frei. Eine falsche Antwort setzt den Zähler zurück. Funktioniert in allen Modulen der Lektion 5 (Vokabeln, Verben, Substantive, Sätze, Mixed, „0→100" und „Rakete").',
+                    'Toggle-Knopf ist jetzt global oben rechts platziert und bleibt beim Wechseln zwischen Modulen sichtbar.',
+                ]
+            },
             {
                 version: '2.10.0',
                 date: '26.04.2026',
@@ -3876,18 +3890,21 @@
         function backToLanguage() {
             hideAllScreens();
             document.getElementById('languageSelection').style.display = 'block';
+            hideAprilDarkToggle();
             applyAprilDarkBody();
         }
 
         function backToLatinChapters() {
             hideAllScreens();
             document.getElementById('latinChapterSelection').style.display = 'block';
+            hideAprilDarkToggle();
             applyAprilDarkBody();
         }
 
         function backToLatinModules() {
             hideAllScreens();
             document.getElementById('latinModuleSelection').style.display = 'block';
+            if (isInLatinKap5()) showAprilDarkToggle();
             applyAprilDarkBody();
         }
 
@@ -3903,10 +3920,16 @@
             isRepeatPhase = false;
             isPhraseMode = false;
             isAprilChapter = false;
-            hideAprilDarkToggle();
-            resetAprilStreak();
 
             hideAllScreens();
+            const goingToLatinKap5Module = currentLanguage === 'latin' && isInLatinKap5();
+            if (goingToLatinKap5Module) {
+                // Toggle bleibt sichtbar, Streak nicht resetten — aktive Antworten zählen weiter
+            } else {
+                hideAprilDarkToggle();
+                resetAprilStreak();
+            }
+
             if (currentLanguage === 'english') {
                 document.getElementById('setSelection').style.display = 'block';
             } else {
@@ -3920,6 +3943,12 @@
             hideAllScreens();
             document.getElementById('latinChapterName').textContent = currentLatinChapter.name;
             document.getElementById('latinModuleSelection').style.display = 'block';
+            if (chapter === 'chapter5') {
+                resetAprilStreak();
+                showAprilDarkToggle();
+            } else {
+                hideAprilDarkToggle();
+            }
             applyAprilDarkBody();
         }
 
@@ -4228,6 +4257,7 @@
                     const frac = rocketAnsweredCount / introState.stage3Total;
                     updateIntroProgress(66 + 34 * frac);
                 }
+                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(true);
                 document.getElementById('rocketFeedback').textContent = '🚀 Superschub!';
                 setTimeout(nextRocketQuestion, 700);
             } else {
@@ -4238,6 +4268,7 @@
                 if (rocketGameMode === 'introStage3' && !introState.stage3FirstTryWrongIds.includes(rocketCurrentItem.id)) {
                     introState.stage3FirstTryWrongIds.push(rocketCurrentItem.id);
                 }
+                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(false);
                 const frac = rocketPositionFrac();
                 const penaltyMult = 1.0 - frac * 0.85;
                 const actualPenalty = ROCKET_WRONG_PENALTY_BASE * penaltyMult;
@@ -4574,6 +4605,7 @@
             if (selected === item.correct) {
                 btn.classList.add('correct');
                 if (typeof playSound === 'function') { try { playSound('correct'); } catch(e){} }
+                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(true);
                 if (!introState.stage2WrongIds.includes(item.id)) {
                     introState.stage2CorrectFirstTry++;
                 }
@@ -4588,6 +4620,7 @@
                     if (b.textContent === item.correct) b.classList.add('correct');
                 });
                 if (typeof playSound === 'function') { try { playSound('wrong'); } catch(e){} }
+                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(false);
                 if (!introState.stage2WrongIds.includes(item.id)) {
                     introState.stage2WrongIds.push(item.id);
                 }
@@ -4667,7 +4700,11 @@
             hideAllScreens();
             document.getElementById('gameContainer').style.display = 'block';
             document.getElementById('gameTitle').textContent = '🏛️ Latein-Abenteuer';
-            hideAprilDarkToggle();
+            if (isInLatinKap5()) {
+                showAprilDarkToggle();
+            } else {
+                hideAprilDarkToggle();
+            }
             applyAprilDarkBody();
 
             const ch = currentLatinChapter;
@@ -6974,8 +7011,13 @@
             document.getElementById('aprilDarkToggle').style.display = 'none';
         }
 
+        function isInLatinKap5() {
+            return currentLanguage === 'latin' && currentLatinChapter === latinData.chapter5;
+        }
+
         // Entscheidet anhand der aktuell sichtbaren Seite, ob der Dark-Body aktiv sein soll.
-        // Dark-Mode erscheint nur in: April-Session, English-Kapitelwahl, Sprachauswahl (Hauptmenü).
+        // Dark-Mode erscheint in: April-Session, English-Kapitelwahl, Sprachauswahl (Hauptmenü)
+        // sowie in allen Latein-Kap-5-Screens (Modul-Auswahl, Spiel, Rakete, 0→100).
         function applyAprilDarkBody() {
             if (!aprilDarkActive) {
                 document.body.classList.remove('april-dark');
@@ -6988,7 +7030,19 @@
             const isAprilSession = visible('gameContainer') && isAprilChapter;
             const isEnglishMenu = visible('setSelection');
             const isMainMenu    = visible('languageSelection');
-            const shouldDark = isAprilSession || isEnglishMenu || isMainMenu;
+            const inLatin5      = isInLatinKap5();
+            const isLatinKap5Screen =
+                inLatin5 && (
+                    visible('latinModuleSelection') ||
+                    visible('latinChapterSelection') ||
+                    (visible('gameContainer') && currentLanguage === 'latin') ||
+                    visible('rocketBlockSelection') ||
+                    visible('rocketGameContainer') ||
+                    visible('introPreStart') ||
+                    visible('introStage1Screen') ||
+                    visible('introStage2Screen')
+                );
+            const shouldDark = isAprilSession || isEnglishMenu || isMainMenu || isLatinKap5Screen;
             document.body.classList.toggle('april-dark', shouldDark);
         }
 
@@ -7023,7 +7077,7 @@
         }
 
         function aprilOnAnswer(isCorrect) {
-            if (!isAprilChapter) return;
+            if (!isAprilChapter && !isInLatinKap5()) return;
             if (isCorrect) {
                 aprilStreak++;
                 if (aprilStreak >= 5 && !aprilDarkReady) {
