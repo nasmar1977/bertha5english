@@ -876,6 +876,481 @@
         .module-icon { font-size: 2.5em; margin-bottom: 8px; }
         .module-title { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 5px; }
         .module-info { font-size: 0.9em; color: #666; }
+        .module-card.rocket {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #4c1d95 100%);
+        }
+        .module-card.rocket .module-title { color: #fbbf24; }
+        .module-card.rocket .module-info { color: #c4b5fd; }
+
+        .module-card.intro-card {
+            position: relative;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #a78bfa 100%);
+            border: 3px solid #fbbf24;
+        }
+        .module-card.intro-card:hover { border-color: #6366f1; }
+        .module-card.intro-card .module-title { color: #4c1d95; font-weight: 800; }
+        .module-card.intro-card .module-info { color: #4b5563; }
+        .intro-badge {
+            position: absolute; top: -8px; right: -6px;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white; font-size: 0.62em; font-weight: 800;
+            padding: 4px 9px; border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+            transform: rotate(8deg);
+            letter-spacing: 0.3px;
+        }
+
+        /* === INTRO 0→100 === */
+        .intro-size-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px; max-width: 600px; margin: 0 auto;
+        }
+        @media (max-width: 480px) {
+            .intro-size-grid { grid-template-columns: 1fr; }
+        }
+        .intro-size-card {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border: 2px solid #a78bfa;
+            border-radius: 16px;
+            padding: 20px 14px; cursor: pointer;
+            transition: all 0.2s; text-align: center;
+        }
+        .intro-size-card:hover {
+            transform: translateY(-3px);
+            border-color: #6366f1;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        .intro-size-card.selected {
+            background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+            border-color: #4c1d95;
+        }
+        .intro-size-num { font-size: 2.4em; font-weight: 800; color: #312e81; }
+        .intro-size-label { font-size: 1em; font-weight: 700; color: #1f2937; margin: 4px 0; }
+        .intro-size-info { font-size: 0.78em; color: #6b7280; }
+
+        .intro-section-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; max-width: 600px; margin: 12px auto 0;
+        }
+        @media (max-width: 480px) {
+            .intro-section-grid { grid-template-columns: 1fr; }
+        }
+        .intro-section-btn {
+            background: white;
+            border: 2px solid #c4b5fd;
+            border-radius: 12px;
+            padding: 14px 12px; cursor: pointer;
+            text-align: left; font-family: inherit;
+            transition: all 0.2s;
+            color: #4c1d95; font-weight: 600;
+        }
+        .intro-section-btn:hover {
+            background: #ede9fe; border-color: #6366f1;
+            transform: translateX(2px);
+        }
+        .intro-section-btn .section-num {
+            color: #f59e0b; font-size: 0.8em; font-weight: 700;
+        }
+        .intro-section-btn-disabled {
+            background: #f3f4f6; border-color: #d1d5db;
+            color: #9ca3af; cursor: not-allowed;
+            padding: 14px 12px; border-radius: 12px;
+            text-align: center; font-style: italic;
+        }
+
+        .intro-progress-wrap {
+            max-width: 600px; margin: 0 auto 16px;
+        }
+        .intro-stage-label {
+            text-align: center; font-size: 0.9em;
+            color: #6366f1; font-weight: 600; margin-bottom: 6px;
+        }
+        .intro-progress-bar {
+            position: relative;
+            height: 12px; background: #ede9fe;
+            border-radius: 6px; overflow: hidden;
+            border: 1px solid #c4b5fd;
+        }
+        .intro-progress-bar::before {
+            content: ''; position: absolute;
+            top: 0; bottom: 0; left: 33.333%;
+            width: 1px; background: rgba(76, 29, 149, 0.35);
+            z-index: 1;
+        }
+        .intro-progress-bar::after {
+            content: ''; position: absolute;
+            top: 0; bottom: 0; left: 66.666%;
+            width: 1px; background: rgba(76, 29, 149, 0.35);
+            z-index: 1;
+        }
+        .intro-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24 0%, #6366f1 50%, #8b5cf6 100%);
+            transition: width 0.4s ease-out;
+            width: 0%;
+        }
+
+        /* Stufe 1 Slideshow */
+        .stage1-card {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border: 2px solid #fdba74;
+            border-radius: 20px;
+            padding: 28px 20px;
+            max-width: 500px; margin: 0 auto;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .stage1-emoji { font-size: 4em; line-height: 1; margin-bottom: 10px; }
+        .stage1-latin {
+            font-size: 2.4em; font-weight: 800;
+            color: #9a3412; margin-bottom: 8px;
+            font-style: italic;
+            overflow-wrap: break-word; word-break: break-word;
+        }
+        .stage1-german {
+            font-size: 1.4em; font-weight: 600;
+            color: #1f2937; margin-bottom: 10px;
+        }
+        .stage1-hint {
+            font-size: 0.95em; color: #78350f;
+            font-style: italic;
+        }
+        .stage1-meta {
+            text-align: center; font-size: 0.85em;
+            color: #9ca3af; margin: 12px 0;
+        }
+        .stage1-nav {
+            display: flex; gap: 12px; justify-content: center;
+            max-width: 500px; margin: 16px auto 0;
+        }
+        .stage1-btn {
+            flex: 1; padding: 14px 16px;
+            border-radius: 12px; cursor: pointer;
+            font-family: inherit; font-size: 1em; font-weight: 700;
+            border: none; transition: all 0.2s;
+        }
+        .stage1-btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        .stage1-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
+        .stage1-btn-secondary {
+            background: #f3f4f6; color: #4b5563;
+            border: 2px solid #d1d5db;
+        }
+        .stage1-btn-secondary:hover:not(:disabled) { background: #e5e7eb; }
+        .stage1-btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Stufe 2 2-Wahl MC */
+        .stage2-card {
+            background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%);
+            border: 2px solid #fbbf24;
+            border-radius: 20px;
+            padding: 24px 20px;
+            max-width: 500px; margin: 0 auto;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .stage2-emoji { font-size: 3em; line-height: 1; margin-bottom: 8px; }
+        .stage2-latin {
+            font-size: 2em; font-weight: 800;
+            color: #92400e; margin-bottom: 6px;
+            font-style: italic;
+            overflow-wrap: break-word; word-break: break-word;
+        }
+        .stage2-hint {
+            font-size: 0.9em; color: #78350f;
+            font-style: italic;
+        }
+        .stage2-prompt {
+            text-align: center; font-size: 0.95em;
+            color: #4b5563; margin: 14px 0 10px;
+        }
+        .stage2-options {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; max-width: 500px; margin: 0 auto;
+        }
+        @media (max-width: 480px) {
+            .stage2-options { grid-template-columns: 1fr; }
+        }
+        .stage2-option {
+            background: white;
+            border: 2px solid #6366f1;
+            border-radius: 14px;
+            padding: 18px 14px;
+            font-family: inherit; font-size: 1em; font-weight: 600;
+            color: #1f2937; cursor: pointer;
+            transition: all 0.15s;
+            min-height: 60px;
+        }
+        .stage2-option:hover:not(:disabled) {
+            background: #ede9fe; transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.25);
+        }
+        .stage2-option:disabled { cursor: default; opacity: 0.7; }
+        .stage2-option.correct {
+            background: #d1fae5; border-color: #10b981; color: #064e3b;
+        }
+        .stage2-option.wrong {
+            background: #fee2e2; border-color: #ef4444; color: #7f1d1d;
+        }
+        .stage2-feedback {
+            text-align: center; font-size: 0.95em;
+            min-height: 24px; margin: 12px 0;
+            color: #6366f1; font-weight: 600;
+        }
+
+        /* Erfolgs-Modal */
+        .intro-success-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1100;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .intro-success-modal {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #a78bfa 100%);
+            border-radius: 24px;
+            padding: 32px 24px; max-width: 420px; width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: popIn 0.5s ease-out;
+        }
+        .intro-success-emoji {
+            font-size: 4.5em; line-height: 1;
+            margin-bottom: 12px;
+            animation: celebrate 1.4s ease-in-out infinite;
+        }
+        .intro-success-title {
+            font-size: 1.8em; font-weight: 800;
+            color: #4c1d95; margin-bottom: 8px;
+        }
+        .intro-success-stats {
+            font-size: 1em; color: #1f2937;
+            margin-bottom: 18px; font-weight: 600;
+        }
+        .intro-success-buttons {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .intro-success-btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white; border: none;
+            padding: 14px 20px; border-radius: 14px;
+            font-family: inherit; font-size: 1.05em; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .intro-success-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99,102,241,0.5);
+        }
+        .intro-success-btn-secondary {
+            background: rgba(255,255,255,0.6); color: #4c1d95;
+            border: 2px solid #6366f1;
+            padding: 12px 20px; border-radius: 14px;
+            font-family: inherit; font-size: 0.95em; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .intro-success-btn-secondary:hover { background: rgba(255,255,255,0.85); }
+
+        /* === ROCKET GAME === */
+        .rocket-block-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px; max-width: 600px; margin: 0 auto;
+        }
+        @media (max-width: 480px) {
+            .rocket-block-grid { grid-template-columns: 1fr; }
+        }
+        .block-card {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 100%);
+            border: 2px solid rgba(167, 139, 250, 0.4);
+            border-radius: 16px;
+            padding: 18px 14px; cursor: pointer;
+            transition: all 0.2s; text-align: center;
+            color: white;
+        }
+        .block-card:hover {
+            transform: translateY(-3px);
+            border-color: #a78bfa;
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.35);
+        }
+        .block-card.recommended { border-color: #fbbf24; }
+        .block-card .block-size { font-size: 2em; font-weight: 700; color: #fbbf24; }
+        .block-card .block-label { font-size: 1em; font-weight: 600; margin: 4px 0; }
+        .block-card .block-info { font-size: 0.78em; opacity: 0.75; }
+        .block-card .block-recommended-tag {
+            display: inline-block; font-size: 0.65em;
+            background: #fbbf24; color: #1a1f4e;
+            padding: 2px 8px; border-radius: 10px;
+            font-weight: 700; margin-top: 6px;
+        }
+        .rocket-coverage-info {
+            text-align: center; font-size: 0.85em;
+            color: #a78bfa; margin: 12px 0 16px;
+        }
+        .rocket-screen-bg {
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1f4e 100%);
+            color: white;
+            padding: 18px 14px;
+            border-radius: 16px;
+        }
+        .rocket-game-grid {
+            display: grid; grid-template-columns: 110px 1fr;
+            gap: 16px; max-width: 600px; margin: 0 auto;
+        }
+        @media (max-width: 480px) {
+            .rocket-game-grid { grid-template-columns: 80px 1fr; gap: 10px; }
+        }
+        .rocket-track {
+            position: relative; height: 480px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border-radius: 12px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .rocket-track::before {
+            content: ''; position: absolute; inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 20% 15%, white, transparent),
+                radial-gradient(1px 1px at 60% 35%, white, transparent),
+                radial-gradient(1px 1px at 80% 55%, white, transparent),
+                radial-gradient(1px 1px at 30% 75%, white, transparent),
+                radial-gradient(2px 2px at 50% 88%, white, transparent),
+                radial-gradient(1px 1px at 10% 65%, white, transparent),
+                radial-gradient(1px 1px at 90% 25%, white, transparent),
+                radial-gradient(1px 1px at 45% 5%, white, transparent),
+                radial-gradient(1px 1px at 75% 80%, white, transparent);
+            opacity: 0.6;
+        }
+        .rocket-track .crash-zone {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 35px;
+            background: linear-gradient(180deg, transparent, rgba(239, 68, 68, 0.35));
+            border-top: 1px dashed rgba(239, 68, 68, 0.5);
+        }
+        .rocket-track .ground-label {
+            position: absolute; bottom: 4px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px; color: rgba(239, 68, 68, 0.8);
+            letter-spacing: 1px;
+        }
+        .rocket-track .track-glow {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(167, 139, 250, 0.55) 0%, rgba(99, 102, 241, 0.25) 35%, transparent 70%),
+                linear-gradient(180deg, rgba(139, 92, 246, 0.35) 0%, rgba(99, 102, 241, 0.18) 50%, rgba(99, 102, 241, 0.08) 100%);
+            box-shadow: inset 0 0 40px rgba(167, 139, 250, 0.5);
+            opacity: 0; pointer-events: none; z-index: 0;
+        }
+        .rocket-track .track-glow.flash { animation: track-glow-flash 0.7s ease-out; }
+        @keyframes track-glow-flash {
+            0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; }
+        }
+        .rocket-sprite {
+            position: absolute; left: 50%;
+            transform: translateX(-50%);
+            font-size: 38px; line-height: 1; z-index: 2;
+            will-change: top;
+        }
+        .rocket-flame {
+            position: absolute; left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px; line-height: 1; z-index: 1;
+            will-change: top, opacity;
+            animation: rocket-flame-flicker 0.18s steps(2) infinite;
+        }
+        @keyframes rocket-flame-flicker {
+            0% { opacity: 0.85; } 100% { opacity: 1; }
+        }
+        .rocket-sprite.boost { animation: rocket-thrust 0.5s ease-out; }
+        @keyframes rocket-thrust {
+            0% { transform: translateX(-50%) scale(1); }
+            25% { transform: translateX(-50%) scale(1.25); filter: brightness(1.4); }
+            100% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+        }
+        .rocket-flame.boost {
+            animation: rocket-flame-boost 0.5s ease-out, rocket-flame-flicker 0.18s steps(2) infinite;
+        }
+        @keyframes rocket-flame-boost {
+            0% { transform: translateX(-50%) scaleY(1); }
+            30% { transform: translateX(-50%) scaleY(2.4); filter: brightness(1.6) hue-rotate(-15deg); }
+            100% { transform: translateX(-50%) scaleY(1); }
+        }
+        .rocket-sprite.crashed { animation: rocket-crash-anim 0.9s ease-in forwards; }
+        @keyframes rocket-crash-anim {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            50% { transform: translateX(-50%) rotate(60deg) scale(1.15); }
+            100% { transform: translateX(-50%) rotate(180deg) scale(0.4); opacity: 0.2; }
+        }
+        .rocket-explosion {
+            position: absolute; left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px; opacity: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .rocket-explosion.show { animation: rocket-explode 0.9s ease-out; }
+        @keyframes rocket-explode {
+            0% { transform: translateX(-50%) scale(0); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.4); opacity: 1; }
+            100% { transform: translateX(-50%) scale(2.6); opacity: 0; }
+        }
+        .rocket-question-area {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .rocket-word-card {
+            text-align: center; padding: 10px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .rocket-word-emoji { font-size: 34px; line-height: 1; margin-bottom: 4px; }
+        .rocket-word-latin { font-size: 22px; font-weight: 700; color: #fbbf24; margin-bottom: 4px; }
+        .rocket-word-hint { font-size: 11px; opacity: 0.7; font-style: italic; }
+        .rocket-question-prompt { font-size: 12px; text-align: center; opacity: 0.85; }
+        .rocket-answer-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .rocket-answer-btn {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: white; padding: 11px 8px;
+            border-radius: 8px; cursor: pointer;
+            font-size: 13px; font-family: inherit;
+            transition: all 0.15s; line-height: 1.3;
+        }
+        .rocket-answer-btn:hover:not(:disabled) {
+            background: rgba(99, 102, 241, 0.3);
+            transform: translateY(-1px);
+        }
+        .rocket-answer-btn:disabled { cursor: default; opacity: 0.5; }
+        .rocket-answer-btn.correct {
+            background: rgba(34, 197, 94, 0.4);
+            border-color: rgb(34, 197, 94);
+        }
+        .rocket-answer-btn.wrong {
+            background: rgba(239, 68, 68, 0.4);
+            border-color: rgb(239, 68, 68);
+        }
+        .rocket-feedback {
+            text-align: center; font-size: 12px;
+            min-height: 18px; color: #fbbf24;
+        }
+        .rocket-progress-info {
+            text-align: center; font-size: 11px;
+            color: #c4b5fd; margin: 8px 0;
+        }
+        .rocket-restart-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white; border: none;
+            padding: 12px 24px; border-radius: 8px;
+            cursor: pointer; font-size: 14px;
+            font-weight: 600; font-family: inherit;
+            display: none;
+        }
+        .rocket-restart-btn.show { display: inline-block; }
 
         /* Sentence fill-in */
         .sentence-card {
@@ -1316,6 +1791,59 @@
         body.april-dark .word-german { color: #ffd54f; }
         body.april-dark .word-hint, body.april-dark .auto-hint { color: #ba68c8; }
         body.april-dark .current-set { color: #b0bec5; }
+        /* Dark-Mode für 0→100 Modul */
+        body.april-dark .module-card.intro-card {
+            background: linear-gradient(135deg, #2d3142 0%, #4c1d95 100%);
+            border-color: #f59e0b;
+        }
+        body.april-dark .module-card.intro-card .module-title { color: #fbbf24; }
+        body.april-dark .module-card.intro-card .module-info  { color: #c4b5fd; }
+        body.april-dark .intro-size-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            border-color: #6366f1; color: #e8eaf6;
+        }
+        body.april-dark .intro-size-num { color: #fbbf24; }
+        body.april-dark .intro-size-label { color: #e8eaf6; }
+        body.april-dark .intro-size-info  { color: #b0bec5; }
+        body.april-dark .intro-section-btn {
+            background: #1e2030; border-color: #5e35b1; color: #e8eaf6;
+        }
+        body.april-dark .intro-section-btn:hover { background: #2d3142; }
+        body.april-dark .intro-section-btn .section-num { color: #fbbf24; }
+        body.april-dark .intro-stage-label { color: #c4b5fd; }
+        body.april-dark .stage1-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            border-color: #f59e0b;
+        }
+        body.april-dark .stage1-latin { color: #fbbf24; }
+        body.april-dark .stage1-german { color: #e8eaf6; }
+        body.april-dark .stage1-hint { color: #c4b5fd; }
+        body.april-dark .stage1-meta { color: #9ca3af; }
+        body.april-dark .stage1-btn-secondary {
+            background: #37474f; color: #e8eaf6; border-color: #5e35b1;
+        }
+        body.april-dark .stage2-card {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
+            border-color: #fbbf24;
+        }
+        body.april-dark .stage2-latin { color: #fbbf24; }
+        body.april-dark .stage2-hint  { color: #c4b5fd; }
+        body.april-dark .stage2-prompt { color: #b0bec5; }
+        body.april-dark .stage2-option {
+            background: #1e2030; color: #e8eaf6; border-color: #6366f1;
+        }
+        body.april-dark .stage2-option:hover:not(:disabled) { background: #2d3142; }
+        body.april-dark .stage2-feedback { color: #c4b5fd; }
+        body.april-dark .intro-progress-bar { background: #1e2030; border-color: #5e35b1; }
+        body.april-dark .intro-success-modal {
+            background: linear-gradient(135deg, #2d3142 0%, #1e2030 50%, #4c1d95 100%);
+        }
+        body.april-dark .intro-success-title { color: #fbbf24; }
+        body.april-dark .intro-success-stats { color: #e8eaf6; }
+        body.april-dark .intro-success-btn-secondary {
+            background: #1e2030; color: #fbbf24; border-color: #6366f1;
+        }
+        body.april-dark .intro-success-btn-secondary:hover { background: #2d3142; }
         body.april-dark .score-board {
             background: linear-gradient(135deg, #311b92 0%, #4527a0 100%);
             color: #fff;
@@ -1455,6 +1983,12 @@
             <p style="color: #666; margin-top: 10px;">Wähle dein Modul:</p>
         </div>
         <div class="set-selection">
+            <div class="module-card intro-card" onclick="startLatinIntro()">
+                <div class="intro-badge">NEU HIER? START!</div>
+                <div class="module-icon">🎯</div>
+                <div class="module-title">0 → 100</div>
+                <div class="module-info">Wörter sehen · wiedererkennen · Rakete<br><small>In drei Stufen ohne Druck zum Vokabel-Profi</small></div>
+            </div>
             <div class="module-card" onclick="startLatinModule('vocab')">
                 <div class="module-icon">📖</div>
                 <div class="module-title">Vokabeln</div>
@@ -1489,6 +2023,159 @@
                 <div class="module-icon">🌟</div>
                 <div class="module-title">Alles gemischt</div>
                 <div class="module-info">Vokabeln + Verben + Substantive + Sätze</div>
+            </div>
+            <div class="module-card rocket" onclick="startLatinRocket()">
+                <div class="module-icon">🚀</div>
+                <div class="module-title">Rakete</div>
+                <div class="module-info">Multiple Choice unter Zeitdruck<br><small>Schnell antworten – die Rakete sinkt!</small></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROCKET BLOCK SELECTION -->
+    <div class="game-container" id="rocketBlockSelection" style="display: none;">
+        <button class="back-btn" onclick="backToLatinModulesFromRocket()">← Zurück</button>
+        <div class="header">
+            <h1>🚀 Rakete</h1>
+            <div class="current-set" id="rocketChapterName"></div>
+            <p style="color: #666; margin-top: 10px;">Wie viele Vokabeln in diesem Block?</p>
+        </div>
+        <div class="rocket-coverage-info" id="rocketCoverageInfo"></div>
+        <div class="rocket-block-grid">
+            <div class="block-card recommended" onclick="startRocketBlock(8)">
+                <div class="block-size">8</div>
+                <div class="block-label">Kurze Runde</div>
+                <div class="block-info">~3 Min · spannend &amp; fokussiert</div>
+                <div class="block-recommended-tag">Empfohlen</div>
+            </div>
+            <div class="block-card" onclick="startRocketBlock(20)">
+                <div class="block-size">20</div>
+                <div class="block-label">Lange Runde</div>
+                <div class="block-info">~7 Min · viele Vokabeln am Stück</div>
+            </div>
+            <div class="block-card" onclick="startRocketBlock('all')">
+                <div class="block-size">∞</div>
+                <div class="block-label">Alle</div>
+                <div class="block-info">Komplette Wiederholung</div>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top:18px;">
+            <button class="rocket-restart-btn show" style="background: rgba(239, 68, 68, 0.3); color: white;" onclick="resetRocketCoverage()">↻ Fortschritt zurücksetzen</button>
+        </div>
+    </div>
+
+    <!-- ROCKET GAME CONTAINER -->
+    <div class="game-container" id="rocketGameContainer" style="display: none; position: relative;">
+        <button class="back-btn" onclick="backFromRocket()">← Zurück</button>
+        <div class="rocket-screen-bg">
+            <div class="header" style="margin-bottom: 12px;">
+                <div style="font-size: 18px; font-weight: 600; color: white; text-align:center;">🚀 Rakete</div>
+                <div style="font-size: 12px; opacity: 0.7; text-align:center;" id="rocketSubtitle"></div>
+            </div>
+            <div class="rocket-progress-info" id="rocketProgressInfo"></div>
+            <div class="rocket-game-grid">
+                <div class="rocket-track" id="rocketTrack">
+                    <div class="track-glow" id="rocketTrackGlow"></div>
+                    <div class="rocket-sprite" id="rocketSprite">🚀</div>
+                    <div class="rocket-flame" id="rocketFlame">🔥</div>
+                    <div class="rocket-explosion" id="rocketExplosion">💥</div>
+                    <div class="crash-zone"></div>
+                    <div class="ground-label">━ CRASH ━</div>
+                </div>
+                <div class="rocket-question-area">
+                    <div class="rocket-word-card">
+                        <div class="rocket-word-emoji" id="rocketWordEmoji">🌱</div>
+                        <div class="rocket-word-latin" id="rocketWordLatin"></div>
+                        <div class="rocket-word-hint" id="rocketWordHint"></div>
+                    </div>
+                    <div class="rocket-question-prompt" id="rocketQuestionPrompt">Was bedeutet das?</div>
+                    <div class="rocket-answer-grid" id="rocketAnswerGrid"></div>
+                    <div class="rocket-feedback" id="rocketFeedback"></div>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 16px;">
+                <button class="rocket-restart-btn" id="rocketRestartBtn" onclick="restartRocket()">🚀 Versuch's nochmal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTRO 0→100: Pre-Start Auswahl -->
+    <div class="game-container" id="introPreStart" style="display: none;">
+        <button class="back-btn" onclick="backToLatinModulesFromIntro()">← Zurück</button>
+        <div class="header">
+            <h1>🎯 0 → 100</h1>
+            <div class="current-set" id="introChapterName"></div>
+            <p style="color: #666; margin-top: 10px;">Wie viele Vokabeln willst du heute lernen?</p>
+        </div>
+        <div class="intro-size-grid">
+            <div class="intro-size-card" onclick="selectIntroSize(8)">
+                <div class="intro-size-num">8</div>
+                <div class="intro-size-label">Häppchen</div>
+                <div class="intro-size-info">Ein Buch-Abschnitt · ~10 Min</div>
+            </div>
+            <div class="intro-size-card" onclick="selectIntroSize(20)">
+                <div class="intro-size-num">20</div>
+                <div class="intro-size-label">Mittel</div>
+                <div class="intro-size-info">Querschnitt · ~20 Min</div>
+            </div>
+            <div class="intro-size-card" onclick="selectIntroSize(40)">
+                <div class="intro-size-num">40</div>
+                <div class="intro-size-label">Marathon</div>
+                <div class="intro-size-info">Fast alle · ~40 Min</div>
+            </div>
+        </div>
+        <div id="introSubsectionContainer" style="display: none; margin-top: 20px;">
+            <p style="text-align:center; color: #555; font-size: 0.95em;">Welcher Abschnitt aus dem Buch?</p>
+            <div id="introSubsectionGrid" class="intro-section-grid"></div>
+        </div>
+    </div>
+
+    <!-- INTRO 0→100: Stufe 1 Slideshow -->
+    <div class="game-container" id="introStage1Screen" style="display: none;">
+        <button class="back-btn" onclick="backToIntroPreStart()">← Zurück</button>
+        <div class="intro-progress-wrap">
+            <div class="intro-stage-label" id="introStageLabel1">Stufe 1 von 3 · Schauen</div>
+            <div class="intro-progress-bar"><div class="intro-progress-fill" id="introProgressFill1"></div></div>
+        </div>
+        <div class="stage1-card" id="stage1Card">
+            <div class="stage1-emoji" id="stage1Emoji">🌱</div>
+            <div class="stage1-latin" id="stage1Latin">vīta</div>
+            <div class="stage1-german" id="stage1German">das Leben</div>
+            <div class="stage1-hint" id="stage1Hint">Vom Anfang bis zum Ende</div>
+        </div>
+        <div class="stage1-meta" id="stage1Meta">Pass 1 von 2 · Wort 1 von 9</div>
+        <div class="stage1-nav">
+            <button class="stage1-btn stage1-btn-secondary" id="stage1PrevBtn" onclick="prevIntroStage1Card()">← Zurück</button>
+            <button class="stage1-btn stage1-btn-primary" onclick="nextIntroStage1Card()">Weiter →</button>
+        </div>
+    </div>
+
+    <!-- INTRO 0→100: Stufe 2 Wiedererkennen -->
+    <div class="game-container" id="introStage2Screen" style="display: none;">
+        <button class="back-btn" onclick="backToIntroPreStart()">← Zurück</button>
+        <div class="intro-progress-wrap">
+            <div class="intro-stage-label" id="introStageLabel2">Stufe 2 von 3 · Wiedererkennen</div>
+            <div class="intro-progress-bar"><div class="intro-progress-fill" id="introProgressFill2"></div></div>
+        </div>
+        <div class="stage2-card">
+            <div class="stage2-emoji" id="stage2Emoji">🌱</div>
+            <div class="stage2-latin" id="stage2Latin">vīta</div>
+            <div class="stage2-hint" id="stage2Hint">Vom Anfang bis zum Ende</div>
+        </div>
+        <div class="stage2-prompt">Was bedeutet das?</div>
+        <div class="stage2-options" id="stage2Options"></div>
+        <div class="stage2-feedback" id="stage2Feedback"></div>
+    </div>
+
+    <!-- INTRO 0→100: Erfolgs-Modal -->
+    <div class="intro-success-overlay" id="introSuccessOverlay" style="display: none;">
+        <div class="intro-success-modal">
+            <div class="intro-success-emoji">🚀</div>
+            <div class="intro-success-title">Du bist bereit!</div>
+            <div class="intro-success-stats" id="introSuccessStats">9 Vokabeln durch · 7 auf Anhieb richtig</div>
+            <div class="intro-success-buttons">
+                <button class="intro-success-btn-primary" onclick="introToVocabModule()">📖 Vokabeln üben</button>
+                <button class="intro-success-btn-secondary" onclick="introBackToModules()">Zurück zur Auswahl</button>
             </div>
         </div>
     </div>
@@ -2993,9 +3680,20 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.9.5';
+        const APP_VERSION = '2.10.0';
 
         const changelogEntries = [
+            {
+                version: '2.10.0',
+                date: '26.04.2026',
+                items: [
+                    '<b>Neues Hauptmodul „0 → 100"</b> für Latein-Kapitel: dreistufiger, druckfreier Aufwärm-Pfad. <b>Stufe 1 Schauen</b> (Slideshow, 2 Pässe), <b>Stufe 2 Wiedererkennen</b> (2-Wahl Multiple Choice mit Queue-Logik), <b>Stufe 3 Rakete</b> (4-Wahl mit Zeitdruck). Vor Start: 8 (Buchabschnitt), 20 (Querschnitt) oder 40 Vokabeln. Bei 8 wählen aus 5 Sub-Sektionen für Lektion 5.',
+                    'Durchgehender 0 → 100 % Fortschrittsbalken über alle drei Stufen, mit Marken bei 33 % und 66 %.',
+                    'Erfolgs-Modal nach Stufe 3: „Du bist bereit!" mit Direkt-Übergang ins Vokabel-Modul.',
+                    '<b>Zweites Modul „Rakete" (Standalone)</b>: Multiple-Choice unter Zeitdruck für fortgeschrittene Kinder. Block-System mit <b>8 / 20 / alle</b> Vokabeln, bevorzugt noch nicht abgedeckte. Fortschritt pro Lektion in localStorage.',
+                    'Rakete-Mechanik: nichtlineares Sinken (~25 s, oben schnell, unten sanfter), positionsabhängige Strafe (oben hart, unten mild), Schub mit Overshoot in die „Himmelversenkung" — die ganze Bahn glüht violet, wenn die Rakete oben durchschießt.',
+                ]
+            },
             {
                 version: '2.9.5',
                 date: '19.04.2026',
@@ -3157,9 +3855,11 @@
         document.addEventListener('DOMContentLoaded', showChangelogIfNew);
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','gameContainer'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
+            const overlay = document.getElementById('introSuccessOverlay');
+            if (overlay) overlay.style.display = 'none';
         }
 
         function selectLanguage(lang) {
@@ -3260,6 +3960,704 @@
         // ===================================================================
         // LATIN MODULE START
         // ===================================================================
+
+        // ===================================================================
+        // ROCKET STANDALONE (Stufe 3 von „0→100" als eigenständige Modul-Karte)
+        // ===================================================================
+
+        // Physics constants — abgestimmt im Prototyp (rocket-prototype.html)
+        const ROCKET_SINK_DURATION_MS = 25000;
+        const ROCKET_TOP_PCT          = 12;
+        const ROCKET_CRASH_PCT        = 85;
+        const ROCKET_OVERSHOOT_TOP    = -18;
+        const ROCKET_BOOST_AMOUNT_PCT = 28;
+        const ROCKET_WRONG_PENALTY_BASE = 14;
+        const ROCKET_SINK_SPEED_TOP    = 1.3;
+        const ROCKET_SINK_SPEED_BOTTOM = 0.5;
+        const ROCKET_SINK_COMPENSATION = 1.25;
+
+        // Game state
+        let rocketQueue = [];
+        let rocketTotalToAnswer = 0;
+        let rocketAnsweredCount = 0;
+        let rocketCurrentItem = null;
+        let rocketY = ROCKET_TOP_PCT;
+        let rocketLastTickTime = 0;
+        let rocketRafId = null;
+        let rocketIsCrashed = false;
+        let rocketIsPaused = false;
+        let rocketCurrentBlockMode = 8;     // 8, 20, oder 'all'
+        let rocketBlockCorrectIds = [];     // IDs richtig beantwortet im aktuellen Block
+        let rocketGameMode = 'standalone';  // 'standalone' | 'introStage3'
+
+        function rocketCoverageKey(chapterId) { return 'rocketCovered:' + chapterId; }
+
+        function loadRocketCoverage(chapterId) {
+            try {
+                const data = localStorage.getItem(rocketCoverageKey(chapterId));
+                return data ? JSON.parse(data) : [];
+            } catch (e) { return []; }
+        }
+
+        function saveRocketCoverage(chapterId, ids) {
+            localStorage.setItem(rocketCoverageKey(chapterId), JSON.stringify(ids));
+        }
+
+        function getCurrentRocketChapterId() {
+            for (const k in latinData) {
+                if (latinData[k] === currentLatinChapter) return k;
+            }
+            return 'unknown';
+        }
+
+        function startLatinRocket() {
+            currentLanguage = 'latin';
+            hideAllScreens();
+            const chapterId = getCurrentRocketChapterId();
+            const ch = currentLatinChapter;
+            const total = ch.vocabulary.length;
+            const covered = loadRocketCoverage(chapterId);
+            const coveredCount = ch.vocabulary.filter(v => covered.includes('v_' + v.latin)).length;
+            const uncoveredCount = total - coveredCount;
+
+            document.getElementById('rocketChapterName').textContent = ch.name;
+            document.getElementById('rocketCoverageInfo').innerHTML =
+                uncoveredCount === 0
+                    ? `🎉 Alle ${total} Vokabeln durch! Du kannst den Fortschritt zurücksetzen oder nochmal alle üben.`
+                    : `Bisher abgedeckt: <b>${coveredCount}/${total}</b> · noch ${uncoveredCount} neu`;
+            document.getElementById('rocketBlockSelection').style.display = 'block';
+        }
+
+        function backToLatinModulesFromRocket() {
+            if (rocketRafId) cancelAnimationFrame(rocketRafId);
+            hideAllScreens();
+            document.getElementById('latinModuleSelection').style.display = 'block';
+        }
+
+        function backFromRocket() {
+            if (rocketRafId) cancelAnimationFrame(rocketRafId);
+            rocketIsPaused = true;
+            rocketIsCrashed = true;
+            rocketRafId = null;
+            if (rocketGameMode === 'introStage3') {
+                backToIntroPreStart();
+            } else {
+                startLatinRocket();
+            }
+        }
+
+        function resetRocketCoverage() {
+            if (!confirm('Wirklich den Rakete-Fortschritt für diese Lektion zurücksetzen?')) return;
+            saveRocketCoverage(getCurrentRocketChapterId(), []);
+            startLatinRocket();
+        }
+
+        function startRocketBlock(size) {
+            rocketGameMode = 'standalone';
+            const ch = currentLatinChapter;
+            const chapterId = getCurrentRocketChapterId();
+            const covered = loadRocketCoverage(chapterId);
+            rocketCurrentBlockMode = size;
+
+            // Pool: nur Einzelwort-Vokabeln (haben Distractors-Liste); Multiword/Verben/Sätze bleiben aussen vor
+            const allItems = ch.vocabulary
+                .filter(v => v.distractors && v.distractors.length >= 3)
+                .map(v => ({
+                    id: 'v_' + v.latin,
+                    latin: v.latin,
+                    emoji: v.image,
+                    hint: v.hint || '',
+                    correct: v.german,
+                    distractors: v.distractors
+                }));
+
+            let blockItems;
+            if (size === 'all') {
+                blockItems = shuffleArray(allItems);
+            } else {
+                const uncovered = allItems.filter(it => !covered.includes(it.id));
+                const coveredItems = allItems.filter(it => covered.includes(it.id));
+                let pool = shuffleArray(uncovered);
+                if (pool.length < size) {
+                    pool = pool.concat(shuffleArray(coveredItems).slice(0, size - pool.length));
+                }
+                blockItems = pool.slice(0, size);
+            }
+
+            rocketBlockCorrectIds = [];
+            rocketQueue = [...blockItems];
+            rocketTotalToAnswer = blockItems.length;
+            rocketAnsweredCount = 0;
+            rocketY = ROCKET_TOP_PCT;
+            rocketIsCrashed = false;
+            rocketIsPaused = false;
+
+            hideAllScreens();
+            document.getElementById('rocketGameContainer').style.display = 'block';
+            const sizeLabel = size === 'all' ? `alle ${blockItems.length}` : `${blockItems.length} Vokabeln`;
+            document.getElementById('rocketSubtitle').textContent = ch.name + ' · ' + sizeLabel;
+
+            document.getElementById('rocketRestartBtn').classList.remove('show');
+            document.getElementById('rocketSprite').classList.remove('crashed');
+            document.getElementById('rocketSprite').style.opacity = '1';
+            document.getElementById('rocketFlame').style.opacity = '1';
+            updateRocketGameProgress();
+            updateRocketPosition();
+            nextRocketQuestion();
+            rocketLastTickTime = performance.now();
+            rocketRafId = requestAnimationFrame(rocketTick);
+        }
+
+        function updateRocketGameProgress() {
+            document.getElementById('rocketProgressInfo').textContent =
+                `${rocketAnsweredCount} / ${rocketTotalToAnswer} richtig`;
+        }
+
+        function rocketPositionFrac() {
+            const range = ROCKET_CRASH_PCT - ROCKET_TOP_PCT;
+            return Math.max(0, Math.min(1, (rocketY - ROCKET_TOP_PCT) / range));
+        }
+
+        function rocketTick(now) {
+            if (rocketIsCrashed || rocketIsPaused) return;
+            const dt = now - rocketLastTickTime;
+            rocketLastTickTime = now;
+            const frac = rocketPositionFrac();
+            const speedMult = ROCKET_SINK_SPEED_TOP - frac * (ROCKET_SINK_SPEED_TOP - ROCKET_SINK_SPEED_BOTTOM);
+            const baseSinkRate = (ROCKET_CRASH_PCT - ROCKET_TOP_PCT) / ROCKET_SINK_DURATION_MS * ROCKET_SINK_COMPENSATION;
+            rocketY += baseSinkRate * speedMult * dt;
+            if (rocketY >= ROCKET_CRASH_PCT) {
+                rocketY = ROCKET_CRASH_PCT;
+                rocketCrash();
+                return;
+            }
+            updateRocketPosition();
+            rocketRafId = requestAnimationFrame(rocketTick);
+        }
+
+        function updateRocketPosition() {
+            document.getElementById('rocketSprite').style.top = rocketY + '%';
+            document.getElementById('rocketFlame').style.top = (rocketY + 6.5) + '%';
+        }
+
+        function nextRocketQuestion() {
+            if (rocketQueue.length === 0) {
+                cancelAnimationFrame(rocketRafId);
+                rocketIsPaused = true;
+                if (rocketGameMode === 'introStage3') {
+                    completeIntro();
+                    return;
+                }
+                // Standalone: Block geschafft → Coverage speichern
+                const chapterId = getCurrentRocketChapterId();
+                const covered = loadRocketCoverage(chapterId);
+                const newCovered = Array.from(new Set([...covered, ...rocketBlockCorrectIds]));
+                saveRocketCoverage(chapterId, newCovered);
+                document.getElementById('rocketFeedback').textContent = '🎉 Block geschafft!';
+                document.getElementById('rocketAnswerGrid').innerHTML = '';
+                const restart = document.getElementById('rocketRestartBtn');
+                restart.textContent = '→ Nächster Block';
+                restart.classList.add('show');
+                return;
+            }
+            rocketCurrentItem = rocketQueue[0];
+            document.getElementById('rocketWordEmoji').textContent = rocketCurrentItem.emoji || '🏛️';
+            document.getElementById('rocketWordLatin').textContent = rocketCurrentItem.latin;
+            document.getElementById('rocketWordHint').textContent = rocketCurrentItem.hint || '';
+            document.getElementById('rocketFeedback').textContent = '';
+
+            const distractorPool = shuffleArray(rocketCurrentItem.distractors).slice(0, 3);
+            const opts = shuffleArray([rocketCurrentItem.correct, ...distractorPool]);
+            const grid = document.getElementById('rocketAnswerGrid');
+            grid.innerHTML = '';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'rocket-answer-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleRocketAnswer(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleRocketAnswer(selected, btn) {
+            if (rocketIsCrashed || rocketIsPaused) return;
+            const grid = document.getElementById('rocketAnswerGrid');
+            [...grid.children].forEach(b => b.disabled = true);
+
+            if (selected === rocketCurrentItem.correct) {
+                btn.classList.add('correct');
+                rocketIsPaused = true;
+                cancelAnimationFrame(rocketRafId);
+                const reachesSky = (rocketY - ROCKET_BOOST_AMOUNT_PCT) < 0;
+                rocketY = Math.max(ROCKET_OVERSHOOT_TOP, rocketY - ROCKET_BOOST_AMOUNT_PCT);
+                const rocketEl = document.getElementById('rocketSprite');
+                const flameEl  = document.getElementById('rocketFlame');
+                const glowEl   = document.getElementById('rocketTrackGlow');
+                const ease = 'cubic-bezier(0.05, 0.95, 0.15, 1)';
+                rocketEl.style.transition = `top 0.5s ${ease}`;
+                flameEl.style.transition  = `top 0.5s ${ease}`;
+                rocketEl.classList.add('boost');
+                flameEl.classList.add('boost');
+                if (reachesSky) {
+                    glowEl.classList.remove('flash');
+                    void glowEl.offsetWidth;
+                    glowEl.classList.add('flash');
+                }
+                updateRocketPosition();
+                setTimeout(() => {
+                    rocketEl.classList.remove('boost');
+                    flameEl.classList.remove('boost');
+                    glowEl.classList.remove('flash');
+                    rocketEl.style.transition = '';
+                    flameEl.style.transition  = '';
+                    rocketIsPaused = false;
+                    rocketLastTickTime = performance.now();
+                    if (!rocketIsCrashed) rocketRafId = requestAnimationFrame(rocketTick);
+                }, 700);
+
+                if (!rocketBlockCorrectIds.includes(rocketCurrentItem.id)) {
+                    rocketBlockCorrectIds.push(rocketCurrentItem.id);
+                }
+                if (rocketGameMode === 'introStage3' && !introState.stage3FirstTryWrongIds.includes(rocketCurrentItem.id)) {
+                    introState.stage3CorrectFirstTry++;
+                }
+                rocketQueue.shift();
+                rocketAnsweredCount++;
+                updateRocketGameProgress();
+                if (rocketGameMode === 'introStage3') {
+                    const frac = rocketAnsweredCount / introState.stage3Total;
+                    updateIntroProgress(66 + 34 * frac);
+                }
+                document.getElementById('rocketFeedback').textContent = '🚀 Superschub!';
+                setTimeout(nextRocketQuestion, 700);
+            } else {
+                btn.classList.add('wrong');
+                [...grid.children].forEach(b => {
+                    if (b.textContent === rocketCurrentItem.correct) b.classList.add('correct');
+                });
+                if (rocketGameMode === 'introStage3' && !introState.stage3FirstTryWrongIds.includes(rocketCurrentItem.id)) {
+                    introState.stage3FirstTryWrongIds.push(rocketCurrentItem.id);
+                }
+                const frac = rocketPositionFrac();
+                const penaltyMult = 1.0 - frac * 0.85;
+                const actualPenalty = ROCKET_WRONG_PENALTY_BASE * penaltyMult;
+                rocketY = Math.min(ROCKET_CRASH_PCT, rocketY + actualPenalty);
+                updateRocketPosition();
+                rocketQueue.push(rocketQueue.shift());
+                document.getElementById('rocketFeedback').textContent =
+                    `Nicht ganz — ${rocketCurrentItem.latin} = ${rocketCurrentItem.correct}`;
+                setTimeout(() => {
+                    if (rocketY < ROCKET_CRASH_PCT) nextRocketQuestion();
+                }, 1500);
+            }
+        }
+
+        function rocketCrash() {
+            if (rocketIsCrashed) return;
+            rocketIsCrashed = true;
+            cancelAnimationFrame(rocketRafId);
+            const rocketEl = document.getElementById('rocketSprite');
+            const flameEl  = document.getElementById('rocketFlame');
+            const explosion = document.getElementById('rocketExplosion');
+            explosion.style.top = (ROCKET_CRASH_PCT - 3) + '%';
+            rocketEl.classList.add('crashed');
+            flameEl.style.opacity = '0';
+            explosion.classList.add('show');
+            document.getElementById('rocketFeedback').textContent = "💥 Crash! Versuch's nochmal.";
+            [...document.getElementById('rocketAnswerGrid').children].forEach(b => b.disabled = true);
+            setTimeout(() => {
+                const restart = document.getElementById('rocketRestartBtn');
+                restart.textContent = "🚀 Versuch's nochmal";
+                restart.classList.add('show');
+                explosion.classList.remove('show');
+            }, 1100);
+        }
+
+        function restartRocket() {
+            if (rocketGameMode === 'introStage3') {
+                // Crash in Stufe 3 → Stufe 3 von vorn mit gleichem Pool
+                startIntroStage3();
+                return;
+            }
+            // Standalone: Block geschafft → Block-Auswahl
+            if (rocketQueue.length === 0 && !rocketIsCrashed) {
+                startLatinRocket();
+                return;
+            }
+            // Standalone: Crash → gleichen Block neu starten
+            startRocketBlock(rocketCurrentBlockMode);
+        }
+
+        // ===================================================================
+        // INTRO 0→100 — dreistufiger Aufwärm-Pfad (Karte A)
+        // Stufe 1 Schauen → Stufe 2 Wiedererkennen → Stufe 3 Rakete
+        // ===================================================================
+
+        const introSectionsByChapter = {
+            chapter5: [
+                { title: 'Götter & Leben',          range: [0, 9] },
+                { title: 'Natur & Erkenntnis',      range: [9, 18] },
+                { title: 'Heiliges & List',         range: [18, 27] },
+                { title: 'Herrschaft & Widerstand', range: [27, 36] },
+                { title: 'Worte & Werke',           range: [36, 45] },
+            ],
+        };
+
+        let introState = {
+            active: false,
+            pool: [],
+            portionSize: 8,
+            sectionIdx: null,
+            chapterId: null,
+            stage: 1,
+            stage1Pass: 1,
+            stage1Order: [],
+            stage1Index: 0,
+            stage2Queue: [],
+            stage2Total: 0,
+            stage2CorrectFirstTry: 0,
+            stage2WrongIds: [],
+            stage3Total: 0,
+            stage3CorrectFirstTry: 0,
+            stage3FirstTryWrongIds: [],
+        };
+
+        function getIntroChapterId() {
+            for (const k in latinData) {
+                if (latinData[k] === currentLatinChapter) return k;
+            }
+            return 'unknown';
+        }
+
+        function resetIntroState() {
+            introState.active = false;
+            introState.pool = [];
+            introState.portionSize = 8;
+            introState.sectionIdx = null;
+            introState.stage = 1;
+            introState.stage1Pass = 1;
+            introState.stage1Order = [];
+            introState.stage1Index = 0;
+            introState.stage2Queue = [];
+            introState.stage2Total = 0;
+            introState.stage2CorrectFirstTry = 0;
+            introState.stage2WrongIds = [];
+            introState.stage3Total = 0;
+            introState.stage3CorrectFirstTry = 0;
+            introState.stage3FirstTryWrongIds = [];
+        }
+
+        function startLatinIntro() {
+            currentLanguage = 'latin';
+            hideAllScreens();
+            resetIntroState();
+            const ch = currentLatinChapter;
+            introState.chapterId = getIntroChapterId();
+            document.getElementById('introChapterName').textContent = ch.name;
+            document.getElementById('introSubsectionContainer').style.display = 'none';
+            document.getElementById('introPreStart').style.display = 'block';
+        }
+
+        function backToLatinModulesFromIntro() {
+            hideAllScreens();
+            document.getElementById('latinModuleSelection').style.display = 'block';
+        }
+
+        function backToIntroPreStart() {
+            if (rocketRafId) cancelAnimationFrame(rocketRafId);
+            rocketIsCrashed = true;
+            rocketIsPaused = true;
+            rocketRafId = null;
+            startLatinIntro();
+        }
+
+        function selectIntroSize(size) {
+            introState.portionSize = size;
+            if (size === 8) {
+                const sections = introSectionsByChapter[introState.chapterId];
+                const grid = document.getElementById('introSubsectionGrid');
+                grid.innerHTML = '';
+                if (sections) {
+                    sections.forEach((s, idx) => {
+                        const ch = currentLatinChapter;
+                        const range = s.range;
+                        const wordCount = Math.min(range[1], ch.vocabulary.length) - range[0];
+                        if (wordCount <= 0) return;
+                        const btn = document.createElement('button');
+                        btn.className = 'intro-section-btn';
+                        btn.innerHTML = `<span class="section-num">Abschnitt ${idx+1}</span><br>${s.title}<br><small style="opacity:0.7">${wordCount} Wörter</small>`;
+                        btn.onclick = () => selectIntroSubsection(idx);
+                        grid.appendChild(btn);
+                    });
+                } else {
+                    const note = document.createElement('div');
+                    note.className = 'intro-section-btn-disabled';
+                    note.innerHTML = `Sub-Sektionen nur für Lektion 5 verfügbar.<br><small>Wähle stattdessen 20 oder 40.</small>`;
+                    grid.appendChild(note);
+                }
+                document.getElementById('introSubsectionContainer').style.display = 'block';
+            } else {
+                introState.sectionIdx = null;
+                buildIntroPool(size, null);
+                startIntroStage1();
+            }
+        }
+
+        function selectIntroSubsection(idx) {
+            introState.sectionIdx = idx;
+            buildIntroPool(8, idx);
+            startIntroStage1();
+        }
+
+        function buildIntroPool(size, sectionIdx) {
+            const ch = currentLatinChapter;
+            const allItems = ch.vocabulary
+                .filter(v => v.distractors && v.distractors.length >= 1)
+                .map((v, idx) => ({
+                    id: 'v_' + v.latin,
+                    bookIdx: idx,
+                    latin: v.latin,
+                    emoji: v.image,
+                    hint: v.hint || '',
+                    correct: v.german,
+                    distractors: v.distractors
+                }));
+
+            if (size === 8 && sectionIdx !== null) {
+                const sections = introSectionsByChapter[introState.chapterId];
+                if (sections && sections[sectionIdx]) {
+                    const [from, to] = sections[sectionIdx].range;
+                    introState.pool = allItems.slice(from, to);
+                    return;
+                }
+            }
+            if (size === 8) {
+                introState.pool = allItems.slice(0, 8);
+            } else if (size === 20) {
+                introState.pool = shuffleArray(allItems).slice(0, Math.min(20, allItems.length));
+            } else {
+                introState.pool = shuffleArray(allItems).slice(0, Math.min(size, allItems.length));
+            }
+        }
+
+        function updateIntroProgress(pct) {
+            const v = Math.max(0, Math.min(100, pct)) + '%';
+            const fill1 = document.getElementById('introProgressFill1');
+            const fill2 = document.getElementById('introProgressFill2');
+            if (fill1) fill1.style.width = v;
+            if (fill2) fill2.style.width = v;
+        }
+
+        function setIntroStageLabel(stage, title) {
+            const text = `Stufe ${stage} von 3 · ${title}`;
+            const l1 = document.getElementById('introStageLabel1');
+            const l2 = document.getElementById('introStageLabel2');
+            if (l1) l1.textContent = text;
+            if (l2) l2.textContent = text;
+        }
+
+        // === STUFE 1: Schauen ===
+        function startIntroStage1() {
+            introState.active = true;
+            introState.stage = 1;
+            introState.stage1Pass = 1;
+            introState.stage1Order = [...introState.pool]; // Pass 1 = Buchreihenfolge
+            introState.stage1Index = 0;
+            hideAllScreens();
+            document.getElementById('introStage1Screen').style.display = 'block';
+            setIntroStageLabel(1, 'Schauen');
+            updateIntroProgress(0);
+            loadIntroStage1Card();
+        }
+
+        function loadIntroStage1Card() {
+            const item = introState.stage1Order[introState.stage1Index];
+            if (!item) return;
+            document.getElementById('stage1Emoji').textContent = item.emoji || '🏛️';
+            document.getElementById('stage1Latin').textContent = item.latin;
+            document.getElementById('stage1German').textContent = item.correct;
+            document.getElementById('stage1Hint').textContent = item.hint || '';
+            const card = document.getElementById('stage1Card');
+            // Re-trigger fadeIn animation explizit
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            card.style.animation = 'fadeIn 0.4s ease-out';
+            const total = introState.stage1Order.length;
+            const passText = `Pass ${introState.stage1Pass} von 2 · Wort ${introState.stage1Index + 1} von ${total}`;
+            document.getElementById('stage1Meta').textContent = passText;
+            // Prev disabled at start of pass 1
+            document.getElementById('stage1PrevBtn').disabled = (introState.stage1Pass === 1 && introState.stage1Index === 0);
+            // Progress: 0..33% across both passes
+            const cardsDone = (introState.stage1Pass - 1) * total + introState.stage1Index;
+            const totalCards = total * 2;
+            updateIntroProgress((cardsDone / totalCards) * 33);
+        }
+
+        function nextIntroStage1Card() {
+            const total = introState.stage1Order.length;
+            introState.stage1Index++;
+            if (introState.stage1Index >= total) {
+                if (introState.stage1Pass === 1) {
+                    introState.stage1Pass = 2;
+                    introState.stage1Order = shuffleArray([...introState.pool]);
+                    introState.stage1Index = 0;
+                    loadIntroStage1Card();
+                } else {
+                    startIntroStage2();
+                }
+                return;
+            }
+            loadIntroStage1Card();
+        }
+
+        function prevIntroStage1Card() {
+            if (introState.stage1Index > 0) {
+                introState.stage1Index--;
+                loadIntroStage1Card();
+            } else if (introState.stage1Pass === 2) {
+                // back to last card of pass 1 — keep pass 2 order (no rebuild)
+                introState.stage1Pass = 1;
+                introState.stage1Order = [...introState.pool];
+                introState.stage1Index = introState.stage1Order.length - 1;
+                loadIntroStage1Card();
+            }
+        }
+
+        // === STUFE 2: Wiedererkennen (2-Wahl MC) ===
+        function startIntroStage2() {
+            introState.stage = 2;
+            introState.stage2Queue = shuffleArray([...introState.pool]);
+            introState.stage2Total = introState.pool.length;
+            introState.stage2CorrectFirstTry = 0;
+            introState.stage2WrongIds = [];
+            hideAllScreens();
+            document.getElementById('introStage2Screen').style.display = 'block';
+            setIntroStageLabel(2, 'Wiedererkennen');
+            updateIntroProgress(33);
+            loadIntroStage2Card();
+        }
+
+        function loadIntroStage2Card() {
+            if (introState.stage2Queue.length === 0) {
+                startIntroStage3();
+                return;
+            }
+            const item = introState.stage2Queue[0];
+            document.getElementById('stage2Emoji').textContent = item.emoji || '🏛️';
+            document.getElementById('stage2Latin').textContent = item.latin;
+            document.getElementById('stage2Hint').textContent = item.hint || '';
+            document.getElementById('stage2Feedback').textContent = '';
+
+            // Distraktor: ein anderes deutsches Wort aus dem aktuellen Pool
+            const otherItems = introState.pool.filter(p => p.id !== item.id);
+            const distractor = otherItems.length > 0
+                ? shuffleArray(otherItems)[0].correct
+                : (item.distractors && item.distractors[0]) || 'andere Bedeutung';
+
+            const opts = shuffleArray([item.correct, distractor]);
+            const grid = document.getElementById('stage2Options');
+            grid.innerHTML = '';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'stage2-option';
+                btn.textContent = opt;
+                btn.onclick = () => handleIntroStage2Answer(opt, btn, item);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleIntroStage2Answer(selected, btn, item) {
+            const grid = document.getElementById('stage2Options');
+            [...grid.children].forEach(b => b.disabled = true);
+            const fb = document.getElementById('stage2Feedback');
+
+            if (selected === item.correct) {
+                btn.classList.add('correct');
+                if (typeof playSound === 'function') { try { playSound('correct'); } catch(e){} }
+                if (!introState.stage2WrongIds.includes(item.id)) {
+                    introState.stage2CorrectFirstTry++;
+                }
+                introState.stage2Queue.shift();
+                const done = introState.stage2Total - introState.stage2Queue.length;
+                fb.textContent = '✓ Richtig!';
+                updateIntroProgress(33 + (done / introState.stage2Total) * 33);
+                setTimeout(loadIntroStage2Card, 600);
+            } else {
+                btn.classList.add('wrong');
+                [...grid.children].forEach(b => {
+                    if (b.textContent === item.correct) b.classList.add('correct');
+                });
+                if (typeof playSound === 'function') { try { playSound('wrong'); } catch(e){} }
+                if (!introState.stage2WrongIds.includes(item.id)) {
+                    introState.stage2WrongIds.push(item.id);
+                }
+                fb.textContent = `Nicht ganz — ${item.latin} = ${item.correct}`;
+                // Wort ans Queue-Ende
+                introState.stage2Queue.push(introState.stage2Queue.shift());
+                setTimeout(loadIntroStage2Card, 1500);
+            }
+        }
+
+        // === STUFE 3: Rakete (Queue-Logik, reuse rocket engine) ===
+        function startIntroStage3() {
+            introState.stage = 3;
+            introState.stage3Total = introState.pool.length;
+            introState.stage3CorrectFirstTry = 0;
+            introState.stage3FirstTryWrongIds = [];
+            rocketGameMode = 'introStage3';
+
+            // Queue ist der gemischte Pool
+            const blockItems = shuffleArray([...introState.pool]);
+            rocketBlockCorrectIds = [];
+            rocketQueue = [...blockItems];
+            rocketTotalToAnswer = blockItems.length;
+            rocketAnsweredCount = 0;
+            rocketY = ROCKET_TOP_PCT;
+            rocketIsCrashed = false;
+            rocketIsPaused = false;
+
+            hideAllScreens();
+            document.getElementById('rocketGameContainer').style.display = 'block';
+            const ch = currentLatinChapter;
+            const stageLabel = setIntroStageLabel(3, 'Rakete');
+            // Subtitle im Rocket-Screen zeigt Kontext
+            document.getElementById('rocketSubtitle').textContent = ch.name + ' · 0→100 · Stufe 3';
+            updateIntroProgress(66);
+
+            document.getElementById('rocketRestartBtn').classList.remove('show');
+            document.getElementById('rocketSprite').classList.remove('crashed');
+            document.getElementById('rocketSprite').style.opacity = '1';
+            document.getElementById('rocketFlame').style.opacity = '1';
+            // Progressanzeige für Rocket: zeigt im Intro-Mode "Stufe 3 von 3"
+            document.getElementById('rocketProgressInfo').textContent =
+                `Stufe 3 · ${rocketTotalToAnswer} Vokabeln`;
+            updateRocketPosition();
+            nextRocketQuestion();
+            rocketLastTickTime = performance.now();
+            rocketRafId = requestAnimationFrame(rocketTick);
+        }
+
+        function completeIntro() {
+            updateIntroProgress(100);
+            const total = introState.stage3Total;
+            const correct = introState.stage3CorrectFirstTry;
+            const stats = `${total} Vokabeln durch · ${correct} auf Anhieb richtig`;
+            document.getElementById('introSuccessStats').textContent = stats;
+            document.getElementById('introSuccessOverlay').style.display = 'flex';
+        }
+
+        function introToVocabModule() {
+            document.getElementById('introSuccessOverlay').style.display = 'none';
+            rocketGameMode = 'standalone';
+            startLatinModule('vocab');
+        }
+
+        function introBackToModules() {
+            document.getElementById('introSuccessOverlay').style.display = 'none';
+            rocketGameMode = 'standalone';
+            hideAllScreens();
+            document.getElementById('latinModuleSelection').style.display = 'block';
+        }
 
         function startLatinModule(module) {
             currentLanguage = 'latin';
