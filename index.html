@@ -2263,10 +2263,10 @@
                 <div class="intro-size-label">Mittel</div>
                 <div class="intro-size-info">Querschnitt · ~20 Min</div>
             </div>
-            <div class="intro-size-card" onclick="selectIntroSize(40)">
-                <div class="intro-size-num">40</div>
+            <div class="intro-size-card" onclick="selectIntroSize('all')">
+                <div class="intro-size-num">∞</div>
                 <div class="intro-size-label">Marathon</div>
-                <div class="intro-size-info">Fast alle · ~40 Min</div>
+                <div class="intro-size-info" id="introMarathonInfo">Alle Vokabeln · komplett</div>
             </div>
         </div>
         <div id="introSubsectionContainer" style="display: none; margin-top: 20px;">
@@ -3929,11 +3929,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.5';
+        const APP_VERSION = '2.11.6';
 
         const changelogEntries = [
             {
-                version: '2.11.5',
+                version: '2.11.6',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3946,6 +3946,7 @@
                     '<b>Anti-Cheat in Lektion 5</b>: bisher waren richtige Antworten oft an mehreren Bedeutungen (Komma) erkennbar, während Distraktoren einzeln waren. 30 Items in Lektion 5 haben jetzt 1–2 Distraktoren mit Komma-Bedeutungen — der Trick funktioniert nicht mehr.',
                     '<b>Neue Lektion 1</b>: 37 Vokabeln aus Davus &amp; Syrus (Schauen, Begrüßen, Stehen, Lachen). Modulauswahl bewusst schlank: nur „Vokabeln" und „🚀 Rakete". Alle Distraktoren mit Komma/ohne Komma gemischt, damit der Komma-Cheat von Anfang an nicht funktioniert.',
                     '<b>Profi-Rakete</b> (zusätzliche Modul-Karte 🚪 in Lektion 1 und Lektion 5): wie die normale Rakete, aber Bild und Erklärsatz sind von Anfang an aus — nur das lateinische Wort ist sichtbar. Für Kinder, die schon sicher sind und mehr Druck wollen.',
+                    'Bug-Fix in „0→100" Marathon: bisher kamen nur 40 zufällige Vokabeln, in Lektion 5 (45 Vokabeln) fehlten 5 Wörter pro Session. Marathon nimmt jetzt <b>wirklich alle</b> Vokabeln des Kapitels (37 in Lektion 1, 42 in Lektion 3, 43 in Lektion 4, 45 in Lektion 5).',
                 ]
             },
             {
@@ -4857,6 +4858,9 @@
             introState.chapterId = getIntroChapterId();
             document.getElementById('introChapterName').textContent = ch.name;
             document.getElementById('introSubsectionContainer').style.display = 'none';
+            const total = ch.vocabulary.filter(v => v.distractors && v.distractors.length >= 1).length;
+            const marathonInfo = document.getElementById('introMarathonInfo');
+            if (marathonInfo) marathonInfo.textContent = `Alle ${total} Vokabeln · komplett`;
             document.getElementById('introPreStart').style.display = 'block';
             rocketGravity = loadRocketGravity();
             syncGravitySliders();
@@ -4936,11 +4940,14 @@
                 }
             }
             if (size === 8) {
-                introState.pool = allItems.slice(0, 8);
+                introState.pool = allItems.slice(0, Math.min(8, allItems.length));
             } else if (size === 20) {
                 introState.pool = shuffleArray(allItems).slice(0, Math.min(20, allItems.length));
+            } else if (size === 'all') {
+                introState.pool = shuffleArray(allItems);
             } else {
-                introState.pool = shuffleArray(allItems).slice(0, Math.min(size, allItems.length));
+                const n = (typeof size === 'number') ? Math.min(size, allItems.length) : allItems.length;
+                introState.pool = shuffleArray(allItems).slice(0, n);
             }
         }
 
