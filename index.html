@@ -1976,6 +1976,40 @@
             background: #2d3142; color: #e8eaf6; border-color: #5e35b1;
         }
         body.april-dark .mc-option:hover { background: #3949ab; }
+        body.april-dark .mc-option.mc-correct {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            border-color: #66bb6a; color: #fff;
+        }
+        body.april-dark .mc-option.mc-correct .mc-key {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: #fff;
+        }
+        body.april-dark .mc-option.mc-wrong {
+            background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
+            border-color: #ef5350; color: #fff;
+        }
+        body.april-dark .mc-option.mc-wrong .mc-key {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); color: #fff;
+        }
+        body.april-dark .letter-slot.correct {
+            background: #1b5e20; border-color: #66bb6a; color: #fff;
+        }
+        body.april-dark .letter-slot.wrong {
+            background: #b71c1c; border-color: #ef5350; color: #fff;
+        }
+        body.april-dark .stage2-option.correct {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            border-color: #66bb6a; color: #fff;
+        }
+        body.april-dark .stage2-option.wrong {
+            background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
+            border-color: #ef5350; color: #fff;
+        }
+        body.april-dark .phrase-gap.correct {
+            background: #1b5e20; border-color: #66bb6a; color: #fff;
+        }
+        body.april-dark .phrase-gap.wrong {
+            background: #b71c1c; border-color: #ef5350; color: #fff;
+        }
         body.april-dark .feedback.correct { color: #a5d6a7; }
         body.april-dark .feedback.wrong   { color: #ef9a9a; }
         body.april-dark h1, body.april-dark h2 { color: #e8eaf6; }
@@ -3929,11 +3963,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.6';
+        const APP_VERSION = '2.11.7';
 
         const changelogEntries = [
             {
-                version: '2.11.6',
+                version: '2.11.7',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3947,6 +3981,7 @@
                     '<b>Neue Lektion 1</b>: 37 Vokabeln aus Davus &amp; Syrus (Schauen, Begrüßen, Stehen, Lachen). Modulauswahl bewusst schlank: nur „Vokabeln" und „🚀 Rakete". Alle Distraktoren mit Komma/ohne Komma gemischt, damit der Komma-Cheat von Anfang an nicht funktioniert.',
                     '<b>Profi-Rakete</b> (zusätzliche Modul-Karte 🚪 in Lektion 1 und Lektion 5): wie die normale Rakete, aber Bild und Erklärsatz sind von Anfang an aus — nur das lateinische Wort ist sichtbar. Für Kinder, die schon sicher sind und mehr Druck wollen.',
                     'Bug-Fix in „0→100" Marathon: bisher kamen nur 40 zufällige Vokabeln, in Lektion 5 (45 Vokabeln) fehlten 5 Wörter pro Session. Marathon nimmt jetzt <b>wirklich alle</b> Vokabeln des Kapitels (37 in Lektion 1, 42 in Lektion 3, 43 in Lektion 4, 45 in Lektion 5).',
+                    'Bug-Fix Nachtmodus: Antwort-Buttons (Multiple Choice, 2-Wahl, Buchstaben-Slots, Phrasen-Lücken) bekommen jetzt auch im Nachtmodus grünes/rotes Feedback bei richtiger/falscher Antwort. Vorher hat das Dark-Mode-Styling die Feedback-Farben überschrieben.',
                 ]
             },
             {
