@@ -2052,6 +2052,12 @@
             <p style="color: #666; margin-top: 10px;">Wähle deine Lektion:</p>
         </div>
         <div class="set-selection">
+            <div class="set-card latin" onclick="selectLatinChapter('chapter1')">
+                <div class="set-icon">🏠</div>
+                <div class="set-title">Lektion 1</div>
+                <div class="set-info">37 Vokabeln</div>
+                <div class="set-topics">Davus &amp; Syrus • nur Vokabeln &amp; Rakete</div>
+            </div>
             <div class="set-card latin" onclick="selectLatinChapter('chapter3')">
                 <div class="set-icon">📜</div>
                 <div class="set-title">Lektion 3</div>
@@ -2434,6 +2440,94 @@
         // ===================================================================
 
         const latinData = {
+            chapter1: {
+                name: 'Lektion 1',
+                vocabulary: [
+                    // Abschnitt A
+                    { latin: 'ecce', german: 'Schau! Schaut!', image: '👀', hint: 'Aufruf, etwas anzuschauen',
+                      distractors: ['Hör! Höret!', 'Komm! Kommt!', 'Geh! Geht!', 'Sprich! Sprecht!'] },
+                    { latin: 'ibi', german: 'dort', image: '📍', hint: 'An jenem Ort, weiter weg',
+                      distractors: ['hier', 'überall', 'nirgends', 'irgendwo'] },
+                    { latin: 'esse', german: 'sein, sich befinden', image: '🌟', hint: 'Existieren, da sein',
+                      distractors: ['werden, entstehen', 'gehen, weggehen', 'kommen, herkommen', 'bleiben'] },
+                    { latin: 'servus', german: 'der Sklave, der Diener', image: '🧑‍🌾', hint: 'Untergebener im alten Rom',
+                      distractors: ['der Herr, der Besitzer', 'der Bürger, der Freie', 'der König', 'der Soldat'] },
+                    { latin: 'etiam', german: 'auch, sogar', image: '➕', hint: 'Hinzufügung, Verstärkung',
+                      distractors: ['nicht, keineswegs', 'nur, ausschließlich', 'jedoch', 'außerdem'] },
+                    { latin: 'et', german: 'und, auch', image: '🔗', hint: 'Verbindendes Wort',
+                      distractors: ['oder, beziehungsweise', 'aber, jedoch', 'denn', 'sondern'] },
+                    { latin: 'domina', german: 'die Herrin, die Dame', image: '👸', hint: 'Frau im Haus, weibliche Hausherrin',
+                      distractors: ['die Sklavin, die Dienerin', 'die Königin', 'die Tochter', 'die Magd'] },
+                    { latin: 'serva', german: 'die Sklavin, die Dienerin', image: '🧹', hint: 'Frau im Dienst, weibliches Pendant zum Sklaven',
+                      distractors: ['die Herrin, die Dame', 'die Königin', 'die Tochter', 'die Schwester'] },
+                    { latin: 'stāre', german: 'stehen', image: '🧍', hint: 'Aufrecht, ohne sich zu bewegen',
+                      distractors: ['sitzen', 'liegen', 'gehen', 'laufen'] },
+                    { latin: 'cōgitāre', german: 'denken, nachdenken, beabsichtigen', image: '🤔', hint: 'Mit dem Kopf arbeiten',
+                      distractors: ['vergessen, übersehen', 'sprechen, reden', 'schweigen', 'träumen'] },
+                    { latin: 'clāmāre', german: 'laut rufen, schreien', image: '📣', hint: 'Mit lauter Stimme sprechen',
+                      distractors: ['flüstern, leise sprechen', 'schweigen, still sein', 'singen', 'lachen'] },
+                    // Abschnitt B
+                    { latin: 'iam', german: 'schon, bereits, nun', image: '⏰', hint: 'Zeitlich: zu diesem Zeitpunkt',
+                      distractors: ['noch nicht, später', 'niemals, nie', 'gestern, früher', 'morgen'] },
+                    { latin: 'adesse', german: 'da sein, helfen', image: '🤝', hint: 'Anwesend sein und unterstützen',
+                      distractors: ['weggehen, fehlen', 'fliehen, weglaufen', 'verstecken', 'schweigen'] },
+                    { latin: 'dominus', german: 'der Herr', image: '👑', hint: 'Hausherr, Besitzer',
+                      distractors: ['der Sklave', 'der Bürger', 'der Bauer', 'der Soldat'] },
+                    { latin: 'tum', german: 'da, dann, damals', image: '🕰️', hint: 'In jenem Moment',
+                      distractors: ['jetzt, gerade eben', 'niemals, nie', 'bald, gleich', 'immer'] },
+                    { latin: 'venīre', german: 'kommen', image: '🚶', hint: 'Sich her bewegen',
+                      distractors: ['gehen, weggehen', 'bleiben, verharren', 'fliehen', 'rennen'] },
+                    { latin: 'rīdēre', german: 'lachen, auslachen', image: '😂', hint: 'Mit Freude oder Spott',
+                      distractors: ['weinen, jammern', 'schreien, brüllen', 'flüstern', 'seufzen'] },
+                    { latin: 'postrēmō', german: 'schließlich', image: '🏁', hint: 'Am Ende',
+                      distractors: ['zuerst, anfangs', 'sofort, gleich', 'plötzlich', 'mittendrin'] },
+                    { latin: 'sed', german: 'aber, sondern', image: '↔️', hint: 'Gegensatz oder Korrektur',
+                      distractors: ['und, sowie', 'oder, beziehungsweise', 'denn', 'auch'] },
+                    { latin: 'nōndum', german: 'noch nicht', image: '⏳', hint: 'Bisher nicht',
+                      distractors: ['schon, bereits', 'niemals, nie', 'immer', 'oft'] },
+                    { latin: 'cūr', german: 'warum?', image: '❓', hint: 'Frage nach dem Grund',
+                      distractors: ['wer?', 'was?', 'wo?', 'wann?'] },
+                    { latin: 'nōn', german: 'nicht', image: '🚫', hint: 'Verneinung',
+                      distractors: ['ja, gewiss', 'auch, ebenso', 'sehr', 'fast'] },
+                    // Abschnitt C
+                    { latin: 'dēbēre', german: 'müssen, sollen, schulden', image: '⚖️', hint: 'Verpflichtung haben',
+                      distractors: ['dürfen, können', 'wollen, mögen', 'wagen', 'brauchen'] },
+                    { latin: 'dubitāre', german: 'zögern, zweifeln', image: '🤷', hint: 'Unsicher sein',
+                      distractors: ['wissen, kennen', 'glauben, vertrauen', 'entscheiden', 'wählen'] },
+                    { latin: 'gaudēre', german: 'sich freuen', image: '😊', hint: 'Glücklich sein',
+                      distractors: ['trauern, klagen', 'fürchten', 'staunen', 'lachen'] },
+                    // Abschnitt T (Texterläuterungen)
+                    { latin: 'equus', german: 'das Pferd', image: '🐴', hint: 'Reittier mit Hufen und Mähne',
+                      distractors: ['der Hund', 'der Esel', 'der Stier', 'der Wolf'] },
+                    { latin: 'spectāre', german: 'betrachten, anschauen, zuschauen', image: '👁️', hint: 'Mit den Augen verfolgen',
+                      distractors: ['hören, vernehmen', 'sprechen, reden', 'riechen', 'schmecken'] },
+                    { latin: 'audēre', german: 'wagen', image: '💪', hint: 'Mut haben, etwas zu tun',
+                      distractors: ['fürchten', 'zögern', 'aufgeben', 'fliehen'] },
+                    { latin: 'ōrāre', german: 'bitten, beten, anbeten', image: '🙏', hint: 'Eine Bitte aussprechen',
+                      distractors: ['befehlen, anweisen', 'verlangen, fordern', 'antworten', 'schweigen'] },
+                    { latin: 'tandem', german: 'endlich, schließlich', image: '🎯', hint: 'Nach langer Zeit',
+                      distractors: ['sofort, gleich', 'niemals, nie', 'manchmal', 'oft'] },
+                    { latin: 'vidēre', german: 'sehen', image: '👀', hint: 'Mit den Augen wahrnehmen',
+                      distractors: ['hören', 'riechen', 'fühlen', 'schmecken'] },
+                    { latin: 'populus', german: 'das Volk', image: '👥', hint: 'Eine größere Gruppe Menschen',
+                      distractors: ['der Einzelne, der Mensch', 'die Familie, die Sippe', 'der Stamm', 'die Armee'] },
+                    { latin: 'victōria', german: 'der Sieg', image: '🏆', hint: 'Erfolg im Kampf',
+                      distractors: ['die Niederlage, das Scheitern', 'die Schlacht, der Kampf', 'der Frieden', 'die Flucht'] },
+                    { latin: 'itaque', german: 'deshalb', image: '➡️', hint: 'Aus diesem Grund',
+                      distractors: ['obwohl, dennoch', 'weil, da', 'aber, jedoch', 'wenn'] },
+                    { latin: 'hūc', german: 'hierher', image: '👉', hint: 'An diesen Ort',
+                      distractors: ['dorthin, dahin', 'irgendwohin', 'überall', 'nirgendwohin'] },
+                    { latin: 'medicus', german: 'der Arzt', image: '👨‍⚕️', hint: 'Heiler, Helfer bei Krankheit',
+                      distractors: ['der Bote, der Diener', 'der Lehrer', 'der Priester', 'der Soldat'] },
+                    { latin: 'sōlum', german: 'nur', image: '☝️', hint: 'Nicht mehr als',
+                      distractors: ['auch, ebenso', 'sehr, ziemlich', 'oft', 'gerne'] },
+                ],
+                multiWord: [],
+                verbForms: [],
+                nouns: [],
+                sentences: [],
+            },
+
             chapter3: {
                 name: 'Lektion 3',
                 vocabulary: [
@@ -3812,11 +3906,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.3';
+        const APP_VERSION = '2.11.4';
 
         const changelogEntries = [
             {
-                version: '2.11.3',
+                version: '2.11.4',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3827,6 +3921,7 @@
                     '<b>Adaptive Hilfen in der Rakete</b>: je öfter ein Wort richtig beantwortet wurde, desto weniger Hilfen. Stufe 1 (default) zeigt Bild + Erklärsatz. Ab 1 richtigen Antwort verschwindet der Erklärsatz. Ab 3 richtigen Antworten zeigt das Bild eine 🚪 statt des Hinweis-Emojis — Profi-Modus. Antworten in der Rakete zählen für den gleichen Wort-Fortschritt wie das Vokabel-Modul.',
                     '<b>Motivationskette in der Rakete</b>: nach einem geschafften Block startet der nächste automatisch nach 3 Sekunden — kein Pflicht-Klick mehr. Während des Spielens zeigen Pills den Block-Streak (🔥) und die Coverage über die ganze Lektion (🎯). Bei 25 / 50 / 75 / 100 % Vokabeln erobert kommt eine Meilenstein-Glückwunsch-Message. Crash oder Zurück-Button setzt den Streak zurück.',
                     '<b>Anti-Cheat in Lektion 5</b>: bisher waren richtige Antworten oft an mehreren Bedeutungen (Komma) erkennbar, während Distraktoren einzeln waren. 30 Items in Lektion 5 haben jetzt 1–2 Distraktoren mit Komma-Bedeutungen — der Trick funktioniert nicht mehr.',
+                    '<b>Neue Lektion 1</b>: 37 Vokabeln aus Davus &amp; Syrus (Schauen, Begrüßen, Stehen, Lachen). Modulauswahl bewusst schlank: nur „Vokabeln" und „🚀 Rakete". Alle Distraktoren mit Komma/ohne Komma gemischt, damit der Komma-Cheat von Anfang an nicht funktioniert.',
                 ]
             },
             {
@@ -4068,6 +4163,7 @@
             hideAllScreens();
             document.getElementById('latinChapterName').textContent = currentLatinChapter.name;
             document.getElementById('latinModuleSelection').style.display = 'block';
+            applyChapterModuleVisibility(chapter);
             if (chapter === 'chapter5') {
                 resetAprilStreak();
                 showAprilDarkToggle();
@@ -4075,6 +4171,32 @@
                 hideAprilDarkToggle();
             }
             applyAprilDarkBody();
+        }
+
+        // Steuert, welche Modul-Karten in der latinModuleSelection sichtbar sind.
+        // Lektion 1 hat nur Vokabeln + Rakete — alle anderen Karten werden ausgeblendet.
+        function applyChapterModuleVisibility(chapter) {
+            const minimal = (chapter === 'chapter1');
+            const cards = {
+                intro:    document.querySelector('.module-card.intro-card'),
+                vocab:    document.querySelector('.module-card[onclick="startLatinModule(\'vocab\')"]'),
+                verbs:    document.querySelector('.module-card[onclick="startLatinModule(\'verbs\')"]'),
+                nouns:    document.querySelector('.module-card[onclick="startLatinModule(\'nouns\')"]'),
+                tables:   document.querySelector('.module-card[onclick="startLatinModule(\'tables\')"]'),
+                snake:    document.querySelector('.module-card.snake-card'),
+                sentences:document.querySelector('.module-card[onclick="startLatinModule(\'sentences\')"]'),
+                mixed:    document.querySelector('.module-card.mixed'),
+                rocket:   document.querySelector('.module-card.rocket'),
+            };
+            if (minimal) {
+                ['intro','verbs','nouns','tables','snake','sentences','mixed'].forEach(k => {
+                    if (cards[k]) cards[k].style.display = 'none';
+                });
+                if (cards.vocab)  cards.vocab.style.display = '';
+                if (cards.rocket) cards.rocket.style.display = '';
+            } else {
+                Object.values(cards).forEach(el => { if (el) el.style.display = ''; });
+            }
         }
 
         // ===================================================================
