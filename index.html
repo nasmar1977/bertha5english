@@ -882,6 +882,23 @@
         .module-card.rocket .module-title { color: #fbbf24; }
         .module-card.rocket .module-info { color: #c4b5fd; }
 
+        .module-card.rocket-hard {
+            position: relative;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #7f1d1d 100%);
+            border: 2px solid #dc2626;
+        }
+        .module-card.rocket-hard .module-title { color: #fbbf24; }
+        .module-card.rocket-hard .module-info { color: #fca5a5; }
+        .rocket-hard-badge {
+            position: absolute; top: -8px; right: -6px;
+            background: linear-gradient(135deg, #dc2626, #f59e0b);
+            color: white; font-size: 0.62em; font-weight: 800;
+            padding: 4px 9px; border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.5);
+            transform: rotate(8deg);
+            letter-spacing: 0.3px;
+        }
+
         .module-card.intro-card {
             position: relative;
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #a78bfa 100%);
@@ -2129,10 +2146,16 @@
                 <div class="module-title">Alles gemischt</div>
                 <div class="module-info">Vokabeln + Verben + Substantive + Sätze</div>
             </div>
-            <div class="module-card rocket" onclick="startLatinRocket()">
+            <div class="module-card rocket" onclick="startLatinRocket(false)">
                 <div class="module-icon">🚀</div>
                 <div class="module-title">Rakete</div>
                 <div class="module-info">Multiple Choice unter Zeitdruck<br><small>Schnell antworten – die Rakete sinkt!</small></div>
+            </div>
+            <div class="module-card rocket-hard" onclick="startLatinRocket(true)">
+                <div class="rocket-hard-badge">PROFI</div>
+                <div class="module-icon">🚪</div>
+                <div class="module-title">Rakete · ohne Bild</div>
+                <div class="module-info">Nur das Latein-Wort — kein Bild, kein Hinweis<br><small>Härter, schneller, fairer</small></div>
             </div>
         </div>
     </div>
@@ -3906,11 +3929,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.4';
+        const APP_VERSION = '2.11.5';
 
         const changelogEntries = [
             {
-                version: '2.11.4',
+                version: '2.11.5',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3922,6 +3945,7 @@
                     '<b>Motivationskette in der Rakete</b>: nach einem geschafften Block startet der nächste automatisch nach 3 Sekunden — kein Pflicht-Klick mehr. Während des Spielens zeigen Pills den Block-Streak (🔥) und die Coverage über die ganze Lektion (🎯). Bei 25 / 50 / 75 / 100 % Vokabeln erobert kommt eine Meilenstein-Glückwunsch-Message. Crash oder Zurück-Button setzt den Streak zurück.',
                     '<b>Anti-Cheat in Lektion 5</b>: bisher waren richtige Antworten oft an mehreren Bedeutungen (Komma) erkennbar, während Distraktoren einzeln waren. 30 Items in Lektion 5 haben jetzt 1–2 Distraktoren mit Komma-Bedeutungen — der Trick funktioniert nicht mehr.',
                     '<b>Neue Lektion 1</b>: 37 Vokabeln aus Davus &amp; Syrus (Schauen, Begrüßen, Stehen, Lachen). Modulauswahl bewusst schlank: nur „Vokabeln" und „🚀 Rakete". Alle Distraktoren mit Komma/ohne Komma gemischt, damit der Komma-Cheat von Anfang an nicht funktioniert.',
+                    '<b>Profi-Rakete</b> (zusätzliche Modul-Karte 🚪 in Lektion 1 und Lektion 5): wie die normale Rakete, aber Bild und Erklärsatz sind von Anfang an aus — nur das lateinische Wort ist sichtbar. Für Kinder, die schon sicher sind und mehr Druck wollen.',
                 ]
             },
             {
@@ -4174,19 +4198,22 @@
         }
 
         // Steuert, welche Modul-Karten in der latinModuleSelection sichtbar sind.
-        // Lektion 1 hat nur Vokabeln + Rakete — alle anderen Karten werden ausgeblendet.
+        // Lektion 1 hat nur Vokabeln + Rakete (+ Rakete-Profi) — alle anderen Karten werden ausgeblendet.
+        // Profi-Rakete erscheint zusätzlich in Lektion 5; in Lektion 3/4 ist sie versteckt.
         function applyChapterModuleVisibility(chapter) {
             const minimal = (chapter === 'chapter1');
+            const showProfi = (chapter === 'chapter1' || chapter === 'chapter5');
             const cards = {
-                intro:    document.querySelector('.module-card.intro-card'),
-                vocab:    document.querySelector('.module-card[onclick="startLatinModule(\'vocab\')"]'),
-                verbs:    document.querySelector('.module-card[onclick="startLatinModule(\'verbs\')"]'),
-                nouns:    document.querySelector('.module-card[onclick="startLatinModule(\'nouns\')"]'),
-                tables:   document.querySelector('.module-card[onclick="startLatinModule(\'tables\')"]'),
-                snake:    document.querySelector('.module-card.snake-card'),
-                sentences:document.querySelector('.module-card[onclick="startLatinModule(\'sentences\')"]'),
-                mixed:    document.querySelector('.module-card.mixed'),
-                rocket:   document.querySelector('.module-card.rocket'),
+                intro:      document.querySelector('.module-card.intro-card'),
+                vocab:      document.querySelector('.module-card[onclick="startLatinModule(\'vocab\')"]'),
+                verbs:      document.querySelector('.module-card[onclick="startLatinModule(\'verbs\')"]'),
+                nouns:      document.querySelector('.module-card[onclick="startLatinModule(\'nouns\')"]'),
+                tables:     document.querySelector('.module-card[onclick="startLatinModule(\'tables\')"]'),
+                snake:      document.querySelector('.module-card.snake-card'),
+                sentences:  document.querySelector('.module-card[onclick="startLatinModule(\'sentences\')"]'),
+                mixed:      document.querySelector('.module-card.mixed'),
+                rocket:     document.querySelector('.module-card.rocket:not(.rocket-hard)'),
+                rocketHard: document.querySelector('.module-card.rocket-hard'),
             };
             if (minimal) {
                 ['intro','verbs','nouns','tables','snake','sentences','mixed'].forEach(k => {
@@ -4195,8 +4222,11 @@
                 if (cards.vocab)  cards.vocab.style.display = '';
                 if (cards.rocket) cards.rocket.style.display = '';
             } else {
-                Object.values(cards).forEach(el => { if (el) el.style.display = ''; });
+                ['intro','vocab','verbs','nouns','tables','snake','sentences','mixed','rocket'].forEach(k => {
+                    if (cards[k]) cards[k].style.display = '';
+                });
             }
+            if (cards.rocketHard) cards.rocketHard.style.display = showProfi ? '' : 'none';
         }
 
         // ===================================================================
@@ -4269,6 +4299,7 @@
         let rocketBlockStreak = 0;
         let rocketAutoChainTimeout = null;
         let rocketAutoChainCountdownInterval = null;
+        let rocketHardMode = false;         // Profi-Modus: erzwingt Hint-Level 2 (kein Bild, kein Hinweis)
 
         function clearAutoChain() {
             if (rocketAutoChainTimeout) {
@@ -4391,7 +4422,7 @@
         function applyRocketHintLevel(item) {
             const emojiEl = document.getElementById('rocketWordEmoji');
             const hintEl  = document.getElementById('rocketWordHint');
-            const level   = getRocketHintLevel(item);
+            const level   = rocketHardMode ? 2 : getRocketHintLevel(item);
             if (level >= 2) {
                 emojiEl.textContent = '🚪';
                 emojiEl.style.opacity = '0.85';
@@ -4433,11 +4464,14 @@
             return 'unknown';
         }
 
-        function startLatinRocket() {
+        function startLatinRocket(hard) {
             currentLanguage = 'latin';
+            rocketHardMode = !!hard;
             clearAutoChain();
             rocketBlockStreak = 0;
             hideAllScreens();
+            const titleEl = document.querySelector('#rocketBlockSelection h1');
+            if (titleEl) titleEl.textContent = rocketHardMode ? '🚀 Rakete · Profi' : '🚀 Rakete';
             const chapterId = getCurrentRocketChapterId();
             const ch = currentLatinChapter;
             const total = ch.vocabulary.length;
@@ -4471,14 +4505,14 @@
             if (rocketGameMode === 'introStage3') {
                 backToIntroPreStart();
             } else {
-                startLatinRocket();
+                startLatinRocket(rocketHardMode);
             }
         }
 
         function resetRocketCoverage() {
             if (!confirm('Wirklich den Rakete-Fortschritt für diese Lektion zurücksetzen?')) return;
             saveRocketCoverage(getCurrentRocketChapterId(), []);
-            startLatinRocket();
+            startLatinRocket(rocketHardMode);
         }
 
         function startRocketBlock(size) {
@@ -4524,7 +4558,8 @@
             hideAllScreens();
             document.getElementById('rocketGameContainer').style.display = 'block';
             const sizeLabel = size === 'all' ? `alle ${blockItems.length}` : `${blockItems.length} Vokabeln`;
-            document.getElementById('rocketSubtitle').textContent = ch.name + ' · ' + sizeLabel;
+            const profiTag = rocketHardMode ? ' · Profi 🚪' : '';
+            document.getElementById('rocketSubtitle').textContent = ch.name + ' · ' + sizeLabel + profiTag;
 
             document.getElementById('rocketRestartBtn').classList.remove('show');
             document.getElementById('rocketSprite').classList.remove('crashed');
@@ -4748,7 +4783,7 @@
             }
             // Standalone: Block geschafft → Block-Auswahl
             if (rocketQueue.length === 0 && !rocketIsCrashed) {
-                startLatinRocket();
+                startLatinRocket(rocketHardMode);
                 return;
             }
             // Standalone: Crash → gleichen Block neu starten
@@ -5076,6 +5111,7 @@
             introState.stage3CorrectFirstTry = 0;
             introState.stage3FirstTryWrongIds = [];
             rocketGameMode = 'introStage3';
+            rocketHardMode = false;
 
             // Queue ist der gemischte Pool
             const blockItems = shuffleArray([...introState.pool]);
