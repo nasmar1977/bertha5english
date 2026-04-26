@@ -1351,6 +1351,44 @@
             display: none;
         }
         .rocket-restart-btn.show { display: inline-block; }
+        .rocket-streak-row {
+            display: flex; gap: 10px; justify-content: center;
+            flex-wrap: wrap; font-size: 0.85em; margin: 6px 0;
+        }
+        .rocket-streak-pill {
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 5px 11px; border-radius: 999px;
+            color: white; font-weight: 600;
+        }
+        .rocket-streak-pill .num { color: #fbbf24; }
+        .rocket-coverage-bar {
+            max-width: 400px; margin: 4px auto 8px;
+            height: 5px; background: rgba(255,255,255,0.08);
+            border-radius: 3px; overflow: hidden;
+        }
+        .rocket-coverage-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #6366f1, #8b5cf6);
+            transition: width 0.5s ease-out;
+        }
+        .rocket-block-celebration {
+            text-align: center; line-height: 1.5;
+            color: #fbbf24; font-weight: 600;
+            min-height: 40px;
+        }
+        .rocket-block-celebration .milestone {
+            color: #c4b5fd; font-size: 1.05em;
+            display: block; margin: 4px 0;
+        }
+        .rocket-block-celebration .countdown {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            display: block;
+        }
+        .rocket-block-celebration .countdown .num {
+            color: #fbbf24; font-weight: 800;
+        }
 
         /* Sentence fill-in */
         .sentence-card {
@@ -2144,6 +2182,13 @@
                 <div style="font-size: 12px; opacity: 0.7; text-align:center;" id="rocketSubtitle"></div>
             </div>
             <div class="rocket-progress-info" id="rocketProgressInfo"></div>
+            <div class="rocket-streak-row" id="rocketStreakRow" style="display: none;">
+                <span class="rocket-streak-pill">🔥 Streak: <span class="num" id="rocketStreakNum">0</span></span>
+                <span class="rocket-streak-pill">🎯 <span class="num" id="rocketCoverageNum">0/0</span></span>
+            </div>
+            <div class="rocket-coverage-bar" id="rocketCoverageBar" style="display: none;">
+                <div class="rocket-coverage-bar-fill" id="rocketCoverageBarFill" style="width: 0%"></div>
+            </div>
             <div class="rocket-game-grid">
                 <div class="rocket-track" id="rocketTrack">
                     <div class="track-glow" id="rocketTrackGlow"></div>
@@ -3767,11 +3812,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.1';
+        const APP_VERSION = '2.11.2';
 
         const changelogEntries = [
             {
-                version: '2.11.1',
+                version: '2.11.2',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3780,6 +3825,7 @@
                     '<b>Schwerkraft-Slider</b> vor Start: 🌙 Mond ↔ 🌍 Erde ↔ ☄️ Jupiter. Wert bleibt zwischen Sessions gespeichert und gilt für beide Rakete-Modi.',
                     '<b>Nachtmodus auch in Latein Lektion 5</b>: fünf richtige Antworten in Folge (in beliebigem Modul) schalten den Mond-Knopf frei; eine falsche Antwort setzt den Zähler zurück. Toggle-Knopf jetzt global oben rechts platziert und bleibt beim Wechseln zwischen Modulen sichtbar.',
                     '<b>Adaptive Hilfen in der Rakete</b>: je öfter ein Wort richtig beantwortet wurde, desto weniger Hilfen. Stufe 1 (default) zeigt Bild + Erklärsatz. Ab 1 richtigen Antwort verschwindet der Erklärsatz. Ab 3 richtigen Antworten zeigt das Bild eine 🚪 statt des Hinweis-Emojis — Profi-Modus. Antworten in der Rakete zählen für den gleichen Wort-Fortschritt wie das Vokabel-Modul.',
+                    '<b>Motivationskette in der Rakete</b>: nach einem geschafften Block startet der nächste automatisch nach 3 Sekunden — kein Pflicht-Klick mehr. Während des Spielens zeigen Pills den Block-Streak (🔥) und die Coverage über die ganze Lektion (🎯). Bei 25 / 50 / 75 / 100 % Vokabeln erobert kommt eine Meilenstein-Glückwunsch-Message. Crash oder Zurück-Button setzt den Streak zurück.',
                 ]
             },
             {
@@ -4097,6 +4143,65 @@
         let rocketBlockCorrectIds = [];     // IDs richtig beantwortet im aktuellen Block
         let rocketGameMode = 'standalone';  // 'standalone' | 'introStage3'
         let rocketGravity = 1.0;            // 0.5 (Asteroid) — 1.0 (Mond, default) — 2.5 (Jupiter)
+        let rocketBlockStreak = 0;
+        let rocketAutoChainTimeout = null;
+        let rocketAutoChainCountdownInterval = null;
+
+        function clearAutoChain() {
+            if (rocketAutoChainTimeout) {
+                clearTimeout(rocketAutoChainTimeout);
+                rocketAutoChainTimeout = null;
+            }
+            if (rocketAutoChainCountdownInterval) {
+                clearInterval(rocketAutoChainCountdownInterval);
+                rocketAutoChainCountdownInterval = null;
+            }
+        }
+
+        function getRocketPoolTotal() {
+            const ch = currentLatinChapter;
+            if (!ch || !ch.vocabulary) return 0;
+            return ch.vocabulary.filter(v => v.distractors && v.distractors.length >= 3).length;
+        }
+
+        function updateRocketStreakUI() {
+            const row = document.getElementById('rocketStreakRow');
+            const bar = document.getElementById('rocketCoverageBar');
+            if (!row || !bar) return;
+            if (rocketGameMode !== 'standalone') {
+                row.style.display = 'none';
+                bar.style.display = 'none';
+                return;
+            }
+            row.style.display = 'flex';
+            bar.style.display = 'block';
+            const num = document.getElementById('rocketStreakNum');
+            if (num) num.textContent = rocketBlockStreak;
+            const total = getRocketPoolTotal();
+            const covered = loadRocketCoverage(getCurrentRocketChapterId()).length;
+            const cov = document.getElementById('rocketCoverageNum');
+            if (cov) cov.textContent = covered + '/' + total;
+            const fill = document.getElementById('rocketCoverageBarFill');
+            if (fill && total > 0) {
+                fill.style.width = Math.min(100, (covered / total) * 100) + '%';
+            }
+        }
+
+        function checkCoverageMilestone(prevCount, newCount, total) {
+            if (total <= 0) return null;
+            const thresholds = [
+                { pct: 0.25, msg: '🌱 Erste Schritte — 25 % erobert!' },
+                { pct: 0.5,  msg: '🌿 Halbzeit — 50 % sind durch!' },
+                { pct: 0.75, msg: '🌳 Fast geschafft — 75 % erobert!' },
+                { pct: 1.0,  msg: '👑 Lektion komplett gemeistert!' },
+            ];
+            const before = prevCount / total;
+            const after  = newCount  / total;
+            for (const t of thresholds) {
+                if (before < t.pct && after >= t.pct) return t.msg;
+            }
+            return null;
+        }
 
         function loadRocketGravity() {
             try {
@@ -4207,6 +4312,8 @@
 
         function startLatinRocket() {
             currentLanguage = 'latin';
+            clearAutoChain();
+            rocketBlockStreak = 0;
             hideAllScreens();
             const chapterId = getCurrentRocketChapterId();
             const ch = currentLatinChapter;
@@ -4236,6 +4343,8 @@
             rocketIsPaused = true;
             rocketIsCrashed = true;
             rocketRafId = null;
+            clearAutoChain();
+            rocketBlockStreak = 0;
             if (rocketGameMode === 'introStage3') {
                 backToIntroPreStart();
             } else {
@@ -4298,7 +4407,11 @@
             document.getElementById('rocketSprite').classList.remove('crashed');
             document.getElementById('rocketSprite').style.opacity = '1';
             document.getElementById('rocketFlame').style.opacity = '1';
+            const fb = document.getElementById('rocketFeedback');
+            fb.classList.remove('rocket-block-celebration');
+            fb.innerHTML = '';
             updateRocketGameProgress();
+            updateRocketStreakUI();
             updateRocketPosition();
             nextRocketQuestion();
             rocketLastTickTime = performance.now();
@@ -4345,16 +4458,42 @@
                     completeIntro();
                     return;
                 }
-                // Standalone: Block geschafft → Coverage speichern
+                // Standalone: Block geschafft → Coverage speichern + Auto-Chain
                 const chapterId = getCurrentRocketChapterId();
                 const covered = loadRocketCoverage(chapterId);
+                const prevCount = covered.length;
                 const newCovered = Array.from(new Set([...covered, ...rocketBlockCorrectIds]));
                 saveRocketCoverage(chapterId, newCovered);
-                document.getElementById('rocketFeedback').textContent = '🎉 Block geschafft!';
+                rocketBlockStreak++;
+                const total = getRocketPoolTotal();
+                const milestone = checkCoverageMilestone(prevCount, newCovered.length, total);
                 document.getElementById('rocketAnswerGrid').innerHTML = '';
                 const restart = document.getElementById('rocketRestartBtn');
-                restart.textContent = '→ Nächster Block';
-                restart.classList.add('show');
+                restart.classList.remove('show');
+                let html = `✨ Block ${rocketBlockStreak} geschafft! 🔥 Streak: ${rocketBlockStreak} · 🎯 ${newCovered.length}/${total}`;
+                if (milestone) html += `<span class="milestone">${milestone}</span>`;
+                html += `<span class="countdown">Weiter in <span class="num" id="autoChainCountdown">3</span>...</span>`;
+                const fb = document.getElementById('rocketFeedback');
+                fb.classList.add('rocket-block-celebration');
+                fb.innerHTML = html;
+                updateRocketStreakUI();
+                clearAutoChain();
+                let secs = 3;
+                rocketAutoChainCountdownInterval = setInterval(() => {
+                    secs--;
+                    const el = document.getElementById('autoChainCountdown');
+                    if (el) el.textContent = String(Math.max(0, secs));
+                    if (secs <= 0) {
+                        clearInterval(rocketAutoChainCountdownInterval);
+                        rocketAutoChainCountdownInterval = null;
+                    }
+                }, 1000);
+                rocketAutoChainTimeout = setTimeout(() => {
+                    rocketAutoChainTimeout = null;
+                    clearAutoChain();
+                    fb.classList.remove('rocket-block-celebration');
+                    startRocketBlock(rocketCurrentBlockMode);
+                }, 3000);
                 return;
             }
             rocketCurrentItem = rocketQueue[0];
@@ -4458,6 +4597,9 @@
             if (rocketIsCrashed) return;
             rocketIsCrashed = true;
             cancelAnimationFrame(rocketRafId);
+            clearAutoChain();
+            rocketBlockStreak = 0;
+            updateRocketStreakUI();
             const rocketEl = document.getElementById('rocketSprite');
             const flameEl  = document.getElementById('rocketFlame');
             const explosion = document.getElementById('rocketExplosion');
