@@ -3767,11 +3767,11 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.11.0';
+        const APP_VERSION = '2.11.1';
 
         const changelogEntries = [
             {
-                version: '2.11.0',
+                version: '2.11.1',
                 date: '26.04.2026',
                 items: [
                     '<b>Neues Latein-Hauptmodul „0 → 100"</b>: dreistufiger Aufwärm-Pfad ohne Druck. <b>Stufe 1 Schauen</b> (Slideshow in Buchreihenfolge, dann gemischt), <b>Stufe 2 Wiedererkennen</b> (2-Wahl, falsche Wörter kommen wieder), <b>Stufe 3 Rakete</b> (4-Wahl unter Zeitdruck). Vor Start 8 / 20 / 40 Vokabeln; bei 8 wählbar aus 5 Sub-Sektionen für Lektion 5. Durchgehender 0 → 100 % Fortschrittsbalken; Erfolgs-Modal mit Direkt-Übergang ins Vokabel-Modul.',
@@ -3779,6 +3779,7 @@
                     'Rakete-Mechanik: nichtlineares Sinken (oben schnell, unten sanfter), positionsabhängige Strafe (oben hart, unten mild), Schub mit Overshoot in die „Himmelversenkung" — die ganze Bahn glüht violet, wenn die Rakete oben durchschießt.',
                     '<b>Schwerkraft-Slider</b> vor Start: 🌙 Mond ↔ 🌍 Erde ↔ ☄️ Jupiter. Wert bleibt zwischen Sessions gespeichert und gilt für beide Rakete-Modi.',
                     '<b>Nachtmodus auch in Latein Lektion 5</b>: fünf richtige Antworten in Folge (in beliebigem Modul) schalten den Mond-Knopf frei; eine falsche Antwort setzt den Zähler zurück. Toggle-Knopf jetzt global oben rechts platziert und bleibt beim Wechseln zwischen Modulen sichtbar.',
+                    '<b>Adaptive Hilfen in der Rakete</b>: je öfter ein Wort richtig beantwortet wurde, desto weniger Hilfen. Stufe 1 (default) zeigt Bild + Erklärsatz. Ab 1 richtigen Antwort verschwindet der Erklärsatz. Ab 3 richtigen Antworten zeigt das Bild eine 🚪 statt des Hinweis-Emojis — Profi-Modus. Antworten in der Rakete zählen für den gleichen Wort-Fortschritt wie das Vokabel-Modul.',
                 ]
             },
             {
@@ -4146,6 +4147,44 @@
             refreshGravityLabels();
         }
 
+        // Hint-Level basiert auf vocabProgress[la:la>de:v_<latin>].correct.
+        // Stufe 0 (default): Emoji + Erklärsatz.  Stufe 1 (≥1 richtig): nur Emoji.
+        // Stufe 2 (≥3 richtig): Emoji wird zur „Tür", kein Erklärsatz mehr.
+        function getRocketHintLevel(item) {
+            if (!item || !item.id) return 0;
+            const key = 'la:la>de:' + item.id;
+            const prog = loadProgress()[key];
+            if (!prog || !prog.correct) return 0;
+            if (prog.correct >= 3) return 2;
+            if (prog.correct >= 1) return 1;
+            return 0;
+        }
+
+        function applyRocketHintLevel(item) {
+            const emojiEl = document.getElementById('rocketWordEmoji');
+            const hintEl  = document.getElementById('rocketWordHint');
+            const level   = getRocketHintLevel(item);
+            if (level >= 2) {
+                emojiEl.textContent = '🚪';
+                emojiEl.style.opacity = '0.85';
+                emojiEl.title = 'Profi-Stufe — kein Bild';
+                hintEl.textContent = '';
+                hintEl.style.display = 'none';
+            } else if (level >= 1) {
+                emojiEl.textContent = item.emoji || '🏛️';
+                emojiEl.style.opacity = '1';
+                emojiEl.title = '';
+                hintEl.textContent = '';
+                hintEl.style.display = 'none';
+            } else {
+                emojiEl.textContent = item.emoji || '🏛️';
+                emojiEl.style.opacity = '1';
+                emojiEl.title = '';
+                hintEl.textContent = item.hint || '';
+                hintEl.style.display = '';
+            }
+        }
+
         function rocketCoverageKey(chapterId) { return 'rocketCovered:' + chapterId; }
 
         function loadRocketCoverage(chapterId) {
@@ -4319,10 +4358,9 @@
                 return;
             }
             rocketCurrentItem = rocketQueue[0];
-            document.getElementById('rocketWordEmoji').textContent = rocketCurrentItem.emoji || '🏛️';
             document.getElementById('rocketWordLatin').textContent = rocketCurrentItem.latin;
-            document.getElementById('rocketWordHint').textContent = rocketCurrentItem.hint || '';
             document.getElementById('rocketFeedback').textContent = '';
+            applyRocketHintLevel(rocketCurrentItem);
 
             const distractorPool = shuffleArray(rocketCurrentItem.distractors).slice(0, 3);
             const opts = shuffleArray([rocketCurrentItem.correct, ...distractorPool]);
@@ -4386,7 +4424,9 @@
                     const frac = rocketAnsweredCount / introState.stage3Total;
                     updateIntroProgress(66 + 34 * frac);
                 }
-                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(true);
+                if (rocketCurrentItem && rocketCurrentItem.id) {
+                    recordAnswer('la:la>de:' + rocketCurrentItem.id, true);
+                }
                 document.getElementById('rocketFeedback').textContent = '🚀 Superschub!';
                 setTimeout(nextRocketQuestion, 700);
             } else {
@@ -4397,7 +4437,9 @@
                 if (rocketGameMode === 'introStage3' && !introState.stage3FirstTryWrongIds.includes(rocketCurrentItem.id)) {
                     introState.stage3FirstTryWrongIds.push(rocketCurrentItem.id);
                 }
-                if (typeof aprilOnAnswer === 'function') aprilOnAnswer(false);
+                if (rocketCurrentItem && rocketCurrentItem.id) {
+                    recordAnswer('la:la>de:' + rocketCurrentItem.id, false);
+                }
                 const frac = rocketPositionFrac();
                 const penaltyMult = 1.0 - frac * 0.85;
                 const actualPenalty = ROCKET_WRONG_PENALTY_BASE * penaltyMult;
