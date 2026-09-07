@@ -14,6 +14,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ Automatische Tipps nach 15 Sekunden (nur Spelling-Modus)
 - ✅ Fortschritt wird sitzungsübergreifend gespeichert (localStorage)
 - ✅ Mobilfreundlich & Tastatur-Steuerung
+- ✅ Emoji-Schalter oben rechts: Bilder über den Vokabeln lassen sich ausblenden (bleibt gespeichert)
 
 ### 🇬🇧 Englisch
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
@@ -37,20 +38,23 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - Große Übersichtstabellen mit allen Verben/Nomen eines Kapitels
   - Zufällige Lücken ausfüllen, 3-5 pro Tabelle, dann Wechsel
 - **Beispielsätze**: 21 Lückentexte – lateinischer Satz + deutsche Übersetzung mit Lücke
+- **Vokabelheft**: alle Vokabeln zum Nachlesen, päckchenweise wählbar, dreispaltig wie im Buch
+  (Wort · Formen/Grammatik · Bedeutung inkl. Beispielsätze) – 255 Einträge über Lektion 1/3/4/5/6/7
+  – eigene Markierung für schwierige Vokabeln per Klick auf die Zeile
 - **Alles gemischt**: Kombination aller Module (ohne Tabellentraining)
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.12.0
-**Datum:** 06.09.2026
+**Version:** 2.13.0
+**Datum:** 07.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
 
 | Lektion | Thema | Vokabeln | Verben | Substantive | Sätze | Module |
 |---|---|---:|---:|---:|---:|---|
-| 1 | Davus & Syrus | 37 | – | – | – | Vokabeln, Rakete, Profi-Rakete |
+| 1 | Davus & Syrus | 37 | – | – | – | Vokabeln, Vokabelheft, Rakete, Profi-Rakete |
 | 3 | Circus Maximus | 35 (+7) | 18 | 9 | 12 | alle |
 | 4 | Diana & Verwandlung | 39 (+4) | 14 | 9 | 9 | alle |
 | 5 | Prometheus & Minerva | 45 (+4) | 16 | 20 | 12 | alle |
@@ -78,6 +82,19 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.13.0 (07.09.2026)
+- **Emojis abschaltbar**: grüner Schalter oben rechts blendet die Bilder über den Vokabeln aus
+  (Vokabel-Runden, „0 → 100", Rakete). Einstellung wird in localStorage gespeichert.
+- **Neues Latein-Modul „Vokabelheft"**: Vokabeln kapitelweise, Auswahl päckchenweise (oder „Alle"),
+  dreispaltig wie im gedruckten Heft – Wort · Formen/Grammatik · Bedeutung, mit Beispielsätzen
+- **Schwierige Vokabeln markieren**: Zeile im Vokabelheft antippen → oranger Punkt davor,
+  Zeile hervorgehoben; nochmal antippen hebt es auf. Wird in localStorage gespeichert
+- Vokabelheft für Lektion 1, 3, 4, 5, 6 und 7 – 255 Einträge, Reihenfolge und Wortlaut wie im Buch;
+  roter Stern = anderer Kasus als im Deutschen
+- **Bug-Fix Modulauswahl**: „Alles gemischt" wurde in Lektion 1 angezeigt, obwohl das Kapitel keine
+  Verben/Substantive/Sätze hat; gleichzeitig verschwand danach im englischen Menü „Alle Vokabeln".
+  Ursache: `.module-card.mixed` traf die englische Kachel – die Suche ist jetzt auf die Latein-Modulauswahl begrenzt.
 
 ### Version 2.12.0 (06.09.2026)
 - **Latein Lektion 6** (Merkur & Apollon): 43 Vokabeln, 7 Verb-Formen, 11 Substantive, 12 Beispielsätze, 8 Mehrwort-Ausdrücke
