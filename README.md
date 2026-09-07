@@ -46,7 +46,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.13.0
+**Version:** 2.13.1
 **Datum:** 07.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -83,6 +83,10 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.13.1 (07.09.2026)
+- Legende im Vokabelheft korrigiert: roter Stern = **grammatikalische Besonderheit**
+  (in 2.13.0 stand dort eine falsche Erklärung; an den Vokabeldaten ändert sich nichts)
+
 ### Version 2.13.0 (07.09.2026)
 - **Emojis abschaltbar**: grüner Schalter oben rechts blendet die Bilder über den Vokabeln aus
   (Vokabel-Runden, „0 → 100", Rakete). Einstellung wird in localStorage gespeichert.
@@ -91,7 +95,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Schwierige Vokabeln markieren**: Zeile im Vokabelheft antippen → oranger Punkt davor,
   Zeile hervorgehoben; nochmal antippen hebt es auf. Wird in localStorage gespeichert
 - Vokabelheft für Lektion 1, 3, 4, 5, 6 und 7 – 255 Einträge, Reihenfolge und Wortlaut wie im Buch;
-  roter Stern = anderer Kasus als im Deutschen
+  roter Stern = grammatikalische Besonderheit
 - **Bug-Fix Modulauswahl**: „Alles gemischt" wurde in Lektion 1 angezeigt, obwohl das Kapitel keine
   Verben/Substantive/Sätze hat; gleichzeitig verschwand danach im englischen Menü „Alle Vokabeln".
   Ursache: `.module-card.mixed` traf die englische Kachel – die Suche ist jetzt auf die Latein-Modulauswahl begrenzt.

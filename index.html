@@ -4904,9 +4904,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.13.0';
+        const APP_VERSION = '2.13.1';
 
         const changelogEntries = [
+            {
+                version: '2.13.1',
+                date: '07.09.2026',
+                items: [
+                    '<b>Legende im Vokabelheft korrigiert</b>: Der rote Stern bedeutet „grammatikalische Besonderheit\u201c — in v2.13.0 stand dort eine falsche Erklärung. An den Vokabeln selbst ändert sich nichts.',
+                ]
+            },
             {
                 version: '2.13.0',
                 date: '07.09.2026',
@@ -4914,7 +4921,7 @@
                     '<b>Emojis abschaltbar</b>: Oben rechts sitzt jetzt ein grüner Schalter. Ein Klick blendet die Bilder über den Vokabeln aus — in den Vokabel-Runden, in „0 → 100\u201c und in der Rakete. Die Einstellung bleibt gespeichert, auch nach dem Schließen der Seite.',
                     '<b>Neues Latein-Modul „Vokabelheft\u201c</b>: Alle Vokabeln einer Lektion zum Nachlesen — päckchenweise auswählbar (oder „Alle\u201c auf einen Blick) und dreispaltig wie im Buch: Wort · Formen/Grammatik · Bedeutung, mit den Beispielsätzen aus dem Vokabelheft.',
                     '<b>Schwierige Vokabeln markieren</b>: Im Vokabelheft eine Zeile antippen — davor erscheint ein oranger Punkt und die Zeile wird hervorgehoben. Nochmal antippen hebt es auf. Die Markierungen bleiben gespeichert und gelten in allen Ansichten des Kapitels (einzelnes Päckchen wie „Alle\u201c).',
-                    'Das Vokabelheft gibt es für <b>Lektion 1, 3, 4, 5, 6 und 7</b> — insgesamt 255 Einträge, in Reihenfolge und Wortlaut wie im gedruckten Vokabelheft. Der rote Stern bedeutet wie dort: anderer Kasus als im Deutschen.',
+                    'Das Vokabelheft gibt es für <b>Lektion 1, 3, 4, 5, 6 und 7</b> — insgesamt 255 Einträge, in Reihenfolge und Wortlaut wie im gedruckten Vokabelheft. Der rote Stern bedeutet wie dort: grammatikalische Besonderheit.',
                     '<b>Bug-Fix Modulauswahl</b>: In Lektion 1 erschien „Alles gemischt\u201c, obwohl es dort keine Verben, Substantive und Sätze gibt — und im Gegenzug verschwand im englischen Menü die Kachel „Alle Vokabeln\u201c. Beide Kacheln heißen intern gleich; jetzt wird nur noch innerhalb der Latein-Modulauswahl gesucht.',
                 ]
             },
@@ -5230,7 +5237,7 @@
             const packets = vhPacketIndex === -1 ? data.packets : [data.packets[vhPacketIndex]];
             const hasStar = packets.some(p => p.rows.some(r => r.s));
             sheet.innerHTML = packets.map(vhRenderPacket).join('') +
-                (hasStar ? '<div class="vh-note">* = anderer Kasus als im Deutschen</div>' : '');
+                (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '');
         }
 
         function vhRenderPacket(p) {
