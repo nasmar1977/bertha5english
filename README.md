@@ -46,7 +46,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.15.0
+**Version:** 2.16.0
 **Datum:** 08.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -60,7 +60,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 | 5 | Prometheus & Minerva | 45 (+4) | 16 | 20 | 12 | alle |
 | 6 | Merkur & Apollon | 42 (+8) | 7 | 11 | 12 | alle |
 | 7 | Forum & Händler | 41 (+8) | 16 | 13 | 12 | alle |
-| 8 | Amphitheater & Gladiatoren | 47 (+8) | 15 | 11 | 12 | alle |
+| 8 | Amphitheater & Gladiatoren | 47 (+8) | 15 | 11 | 12 | alle + Perfekt |
 
 (Zahl in Klammern = Mehrwort-Ausdrücke)
 
@@ -83,6 +83,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.16.0 (08.09.2026)
+- **Neues Modul „Perfekt"** (nur Lektion 8): Infinitiv ↔ Perfekt und Bildungstyp bestimmen
+  (v-Perfekt, u-Perfekt, unregelmäßig) — 12 Verben, 36 Aufgaben
+- **Tabellentraining**: i-Erweiterung als eigene Konjugationsgruppe (capere, incipere, fugere, facere)
+- Keine Aufgaben mehr, deren Antwort im Prompt steht; vier Übungssätze berichtigt;
+  acht Plural-Bedeutungen und sechs doppelte Emojis bereinigt
 
 ### Version 2.15.0 (08.09.2026)
 - **Latein Lektion 8** (Amphitheater & Gladiatoren): 47 Vokabeln in 5 Päckchen, 8 Mehrwort-Ausdrücke,

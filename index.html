@@ -1536,6 +1536,17 @@
         #tableSkipBtn { margin-left: 10px; margin-top: 10px; }
 
         /* Konjugationsschlange */
+        .module-card.perfekt-card {
+            background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+            border-color: #ef6c00;
+        }
+        .module-card.perfekt-card .module-title { color: #e65100; }
+        body.april-dark .module-card.perfekt-card {
+            background: linear-gradient(135deg, #3e2723 0%, #1e2030 100%);
+            border-color: #ef6c00;
+        }
+        body.april-dark .module-card.perfekt-card .module-title { color: #ffb74d; }
+
         .snake-card {
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #f7dc6f 100%) !important;
         }
@@ -2303,6 +2314,11 @@
                 <div class="module-icon">✍️</div>
                 <div class="module-title">Verb-Formen</div>
                 <div class="module-info">Infinitiv, Präsens &amp; Imperativ</div>
+            </div>
+            <div class="module-card perfekt-card" onclick="startLatinModule('perfect')">
+                <div class="module-icon">🕰️</div>
+                <div class="module-title">Perfekt</div>
+                <div class="module-info">Die zweite Stammform<br><small>Bilden, zurückführen, Typ erkennen</small></div>
             </div>
             <div class="module-card" onclick="startLatinModule('nouns')">
                 <div class="module-icon">📐</div>
@@ -3139,7 +3155,7 @@
                       distractors: ['befehlen, anweisen', 'verlangen, fordern', 'antworten', 'schweigen'] },
                     { latin: 'tandem', german: 'endlich, schließlich', image: '🎯', hint: 'Nach langer Zeit',
                       distractors: ['sofort, gleich', 'niemals, nie', 'manchmal', 'oft'] },
-                    { latin: 'vidēre', german: 'sehen', image: '👀', hint: 'Mit den Augen wahrnehmen',
+                    { latin: 'vidēre', german: 'sehen', image: '🔭', hint: 'Mit den Augen wahrnehmen',
                       distractors: ['hören', 'riechen', 'fühlen', 'schmecken'] },
                     { latin: 'populus', german: 'das Volk', image: '👥', hint: 'Eine größere Gruppe Menschen',
                       distractors: ['der Einzelne, der Mensch', 'die Familie, die Sippe', 'der Stamm', 'die Armee'] },
@@ -3221,7 +3237,7 @@
                       distractors: ['missfallen', 'hassen', 'fürchten', 'vergessen'] },
                     { latin: 'pārēre', german: 'gehorchen', image: '🫡', hint: 'Tun, was man soll',
                       distractors: ['widersprechen', 'fliehen', 'kämpfen', 'lügen'] },
-                    { latin: 'paulō', german: '(um) ein wenig', image: '🤏', hint: 'Nur ein kleines bisschen',
+                    { latin: 'paulō', german: '(um) ein wenig', image: '📏', hint: 'Nur ein kleines bisschen',
                       distractors: ['sehr viel', 'immer', 'nichts', 'alles'] },
                     { latin: 'gladius', german: 'das Schwert', image: '⚔️', hint: 'Eine Waffe der Römer',
                       distractors: ['der Schild', 'der Helm', 'der Speer', 'der Bogen'] },
@@ -3232,7 +3248,7 @@
                       distractors: ['da sein', 'kommen', 'bleiben', 'helfen'] },
                     { latin: 'mandāre', german: 'übergeben, einen Auftrag geben', image: '📋', hint: 'Jemandem etwas auftragen',
                       distractors: ['wegnehmen', 'verstecken', 'vergessen', 'zerstören'] },
-                    { latin: 'poena', german: 'die Strafe', image: '⚖️', hint: 'Wenn man etwas Falsches getan hat',
+                    { latin: 'poena', german: 'die Strafe', image: '⛓️', hint: 'Wenn man etwas Falsches getan hat',
                       distractors: ['die Belohnung', 'der Dank', 'das Lob', 'die Freude'] },
                     { latin: 'īnstāre', german: 'bevorstehen, bedrängen, drohen', image: '⏰', hint: 'Etwas kommt bald',
                       distractors: ['verschwinden', 'vergessen', 'weglaufen', 'aufhören'] },
@@ -3354,7 +3370,7 @@
                       german: 'das Unrecht', germanPl: 'Unrechte', image: '⚖️', declension: 'a-Deklination' },
                     { nom_sg: 'culpa', gen_sg: 'culpae', dat_sg: 'culpae', akk_sg: 'culpam', abl_sg: 'culpā',
                       nom_pl: 'culpae', gen_pl: 'culpārum', dat_pl: 'culpīs', akk_pl: 'culpās', abl_pl: 'culpīs',
-                      german: 'die Schuld', germanPl: 'Schulden', image: '😔', declension: 'a-Deklination' },
+                      german: 'die Schuld', germanPl: 'Verfehlungen', image: '😔', declension: 'a-Deklination' },
                     { nom_sg: 'sententia', gen_sg: 'sententiae', dat_sg: 'sententiae', akk_sg: 'sententiam', abl_sg: 'sententiā',
                       nom_pl: 'sententiae', gen_pl: 'sententiārum', dat_pl: 'sententiīs', akk_pl: 'sententiās', abl_pl: 'sententiīs',
                       german: 'die Meinung', germanPl: 'Meinungen', image: '💭', declension: 'a-Deklination' },
@@ -3461,7 +3477,7 @@
                       distractors: ['befreien', 'fliehen', 'verlassen', 'öffnen'] },
                     { latin: 'prope', german: 'nahe, in der Nähe; beinahe', image: '📌', hint: 'Nicht weit entfernt',
                       distractors: ['fern', 'weit weg', 'niemals', 'selten'] },
-                    { latin: '-que', german: 'und (angehängt)', image: '🔗', hint: 'Wird ans Wort angehängt',
+                    { latin: '-que', german: 'und (angehängt)', image: '🪡', hint: 'Wird ans Wort angehängt',
                       distractors: ['oder', 'aber', 'nicht', 'auch'] },
                 ],
                 multiWord: [
@@ -3582,7 +3598,7 @@
                     // Abschnitt 1
                     { latin: 'Minerva', german: 'Minerva (die Göttin der Weisheit)', image: '🦉', hint: 'Römische Göttin der Weisheit',
                       distractors: ['Diana (Göttin der Jagd)', 'Venus (Göttin der Liebe)', 'Juno (Götterkönigin)', 'Ceres (Göttin der Ernte)'] },
-                    { latin: 'Promētheus', german: 'Prometheus (Göttersohn, Schöpfer der Menschen)', image: '🔥', hint: 'Er brachte den Menschen das Feuer',
+                    { latin: 'Promētheus', german: 'Prometheus (Göttersohn, Schöpfer der Menschen)', image: '🗿', hint: 'Er brachte den Menschen das Feuer',
                       distractors: ['Herkules (Held)', 'Iuppiter (höchster Gott)', 'Vulcanus (Gott des Feuers)', 'Merkur (Götterbote)'] },
                     { latin: 'vīta', german: 'das Leben', image: '🌱', hint: 'Vom Anfang bis zum Ende',
                       distractors: ['der Tod', 'der Traum', 'die Seele', 'die Zeit'] },
@@ -3605,7 +3621,7 @@
                       distractors: ['die Kunst, die Fertigkeit', 'die Arbeit, das Werk', 'die Meinung', 'die Strafe'] },
                     { latin: 'cōgnōscere', german: 'erkennen, kennenlernen', image: '🔎', hint: 'Etwas herausfinden',
                       distractors: ['vergessen, übersehen', 'verlieren, einbüßen', 'verstecken', 'verwechseln'] },
-                    { latin: 'deus', german: 'der Gott, die Gottheit', image: '⚡', hint: 'Ein höheres Wesen',
+                    { latin: 'deus', german: 'der Gott, die Gottheit', image: '🛐', hint: 'Ein höheres Wesen',
                       distractors: ['der Mensch, das Wesen', 'der König, der Herrscher', 'der Held', 'der Priester'] },
                     { latin: 'neque', german: 'und nicht, auch nicht', image: '🚫', hint: 'Verneinung + Verbindung',
                       distractors: ['und auch, ebenfalls', 'oder, beziehungsweise', 'aber', 'sondern'] },
@@ -3626,7 +3642,7 @@
                       distractors: ['nach', 'zu', 'in', 'auf'] },
                     { latin: 'dolus', german: 'die List, die Täuschung', image: '🦊', hint: 'Eine schlaue Falle',
                       distractors: ['die Wahrheit, die Echtheit', 'die Ehrlichkeit, die Aufrichtigkeit', 'der Mut', 'die Treue'] },
-                    { latin: 'superbia', german: 'der Stolz, die Überheblichkeit', image: '👑', hint: 'Sich für besser halten',
+                    { latin: 'superbia', german: 'der Stolz, die Überheblichkeit', image: '🦚', hint: 'Sich für besser halten',
                       distractors: ['die Bescheidenheit, die Demut', 'die Angst, die Furcht', 'die Trauer', 'die Freude'] },
                     { latin: 'flamma', german: 'die Flamme, das Feuer', image: '🔥', hint: 'Es brennt!',
                       distractors: ['das Wasser, das Nass', 'der Wind, die Brise', 'das Eis', 'der Regen'] },
@@ -3717,7 +3733,7 @@
                     { infinitive: 'resistere', firstPerson: 'resistō', german: 'Widerstand leisten',
                       present: { sg2: 'resistis', sg3: 'resistit', pl1: 'resistimus', pl2: 'resistitis', pl3: 'resistunt' },
                       imperative: { sg: 'resiste', pl: 'resistite' } },
-                    { infinitive: 'petere', firstPerson: 'petō', german: 'bitten, angreifen',
+                    { infinitive: 'petere', firstPerson: 'petō', german: 'bitten',
                       present: { sg2: 'petis', sg3: 'petit', pl1: 'petimus', pl2: 'petitis', pl3: 'petunt' },
                       imperative: { sg: 'pete', pl: 'petite' } },
                     { infinitive: 'tangere', firstPerson: 'tangō', german: 'berühren',
@@ -3775,7 +3791,7 @@
                       german: 'das Geschöpf', germanPl: 'Geschöpfe', image: '🐾', declension: 'a-Deklination' },
                     { nom_sg: 'terra', gen_sg: 'terrae', dat_sg: 'terrae', akk_sg: 'terram', abl_sg: 'terrā',
                       nom_pl: 'terrae', gen_pl: 'terrārum', dat_pl: 'terrīs', akk_pl: 'terrās', abl_pl: 'terrīs',
-                      german: 'die Erde', germanPl: 'Länder', image: '🌍', declension: 'a-Deklination' },
+                      german: 'das Land', germanPl: 'Länder', image: '🌍', declension: 'a-Deklination' },
                     { nom_sg: 'nātūra', gen_sg: 'nātūrae', dat_sg: 'nātūrae', akk_sg: 'nātūram', abl_sg: 'nātūrā',
                       nom_pl: 'nātūrae', gen_pl: 'nātūrārum', dat_pl: 'nātūrīs', akk_pl: 'nātūrās', abl_pl: 'nātūrīs',
                       german: 'die Natur', germanPl: 'Naturen', image: '🌿', declension: 'a-Deklination' },
@@ -3790,7 +3806,7 @@
                       german: 'die Sprache', germanPl: 'Sprachen', image: '👅', declension: 'a-Deklination' },
                     { nom_sg: 'cōpia', gen_sg: 'cōpiae', dat_sg: 'cōpiae', akk_sg: 'cōpiam', abl_sg: 'cōpiā',
                       nom_pl: 'cōpiae', gen_pl: 'cōpiārum', dat_pl: 'cōpiīs', akk_pl: 'cōpiās', abl_pl: 'cōpiīs',
-                      german: 'die Menge', germanPl: 'Vorräte', image: '📦', declension: 'a-Deklination' },
+                      german: 'der Vorrat', germanPl: 'Vorräte', image: '📦', declension: 'a-Deklination' },
                     { nom_sg: 'opera', gen_sg: 'operae', dat_sg: 'operae', akk_sg: 'operam', abl_sg: 'operā',
                       nom_pl: 'operae', gen_pl: 'operārum', dat_pl: 'operīs', akk_pl: 'operās', abl_pl: 'operīs',
                       german: 'die Arbeit', germanPl: 'Arbeiten', image: '⚒️', declension: 'a-Deklination' },
@@ -4007,7 +4023,7 @@
                     // a-Deklination
                     { nom_sg: 'fāma', gen_sg: 'fāmae', dat_sg: 'fāmae', akk_sg: 'fāmam', abl_sg: 'fāmā',
                       nom_pl: 'fāmae', gen_pl: 'fāmārum', dat_pl: 'fāmīs', akk_pl: 'fāmās', abl_pl: 'fāmīs',
-                      german: 'der Ruf', germanPl: 'Gerüchte', image: '📢', declension: 'a-Deklination' },
+                      german: 'das Gerücht', germanPl: 'Gerüchte', image: '📢', declension: 'a-Deklination' },
                     { nom_sg: 'glōria', gen_sg: 'glōriae', dat_sg: 'glōriae', akk_sg: 'glōriam', abl_sg: 'glōriā',
                       nom_pl: 'glōriae', gen_pl: 'glōriārum', dat_pl: 'glōriīs', akk_pl: 'glōriās', abl_pl: 'glōriīs',
                       german: 'der Ruhm', germanPl: 'Ruhmestaten', image: '🏅', declension: 'a-Deklination' },
@@ -4019,7 +4035,7 @@
                       german: 'die Frau', germanPl: 'Frauen', image: '👩', declension: 'a-Deklination' },
                     { nom_sg: 'fortūna', gen_sg: 'fortūnae', dat_sg: 'fortūnae', akk_sg: 'fortūnam', abl_sg: 'fortūnā',
                       nom_pl: 'fortūnae', gen_pl: 'fortūnārum', dat_pl: 'fortūnīs', akk_pl: 'fortūnās', abl_pl: 'fortūnīs',
-                      german: 'das Glück', germanPl: 'Schicksale', image: '🍀', declension: 'a-Deklination' },
+                      german: 'das Schicksal', germanPl: 'Schicksale', image: '🍀', declension: 'a-Deklination' },
                     // o-Deklination
                     { nom_sg: 'puer', gen_sg: 'puerī', dat_sg: 'puerō', akk_sg: 'puerum', abl_sg: 'puerō',
                       nom_pl: 'puerī', gen_pl: 'puerōrum', dat_pl: 'puerīs', akk_pl: 'puerōs', abl_pl: 'puerīs',
@@ -4250,7 +4266,7 @@
                       german: 'die Hilfe', germanPl: 'Hilfsmittel', image: '🆘', declension: 'o-Deklination' },
                     { nom_sg: 'studium', gen_sg: 'studiī', dat_sg: 'studiō', akk_sg: 'studium', abl_sg: 'studiō',
                       nom_pl: 'studia', gen_pl: 'studiōrum', dat_pl: 'studiīs', akk_pl: 'studia', abl_pl: 'studiīs',
-                      german: 'die Beschäftigung', germanPl: 'Interessen', image: '📚', declension: 'o-Deklination' },
+                      german: 'das Interesse', germanPl: 'Interessen', image: '📚', declension: 'o-Deklination' },
                     { nom_sg: 'perīculum', gen_sg: 'perīculī', dat_sg: 'perīculō', akk_sg: 'perīculum', abl_sg: 'perīculō',
                       nom_pl: 'perīcula', gen_pl: 'perīculōrum', dat_pl: 'perīculīs', akk_pl: 'perīcula', abl_pl: 'perīculīs',
                       german: 'die Gefahr', germanPl: 'Gefahren', image: '⚠️', declension: 'o-Deklination' },
@@ -4260,10 +4276,10 @@
                       german: 'der Händler', germanPl: 'Händler', image: '🧑‍💼', declension: 'kons. Deklination' },
                     { nom_sg: 'clāmor', gen_sg: 'clāmōris', dat_sg: 'clāmōrī', akk_sg: 'clāmōrem', abl_sg: 'clāmōre',
                       nom_pl: 'clāmōrēs', gen_pl: 'clāmōrum', dat_pl: 'clāmōribus', akk_pl: 'clāmōrēs', abl_pl: 'clāmōribus',
-                      german: 'der Lärm', germanPl: 'Schreie', image: '📣', declension: 'kons. Deklination' },
+                      german: 'der Schrei', germanPl: 'Schreie', image: '📣', declension: 'kons. Deklination' },
                     { nom_sg: 'labor', gen_sg: 'labōris', dat_sg: 'labōrī', akk_sg: 'labōrem', abl_sg: 'labōre',
                       nom_pl: 'labōrēs', gen_pl: 'labōrum', dat_pl: 'labōribus', akk_pl: 'labōrēs', abl_pl: 'labōribus',
-                      german: 'die Arbeit', germanPl: 'Mühen', image: '⚒️', declension: 'kons. Deklination' },
+                      german: 'die Mühe', germanPl: 'Mühen', image: '⚒️', declension: 'kons. Deklination' },
                     { nom_sg: 'amor', gen_sg: 'amōris', dat_sg: 'amōrī', akk_sg: 'amōrem', abl_sg: 'amōre',
                       nom_pl: 'amōrēs', gen_pl: 'amōrum', dat_pl: 'amōribus', akk_pl: 'amōrēs', abl_pl: 'amōribus',
                       german: 'die Liebe', germanPl: 'Lieben', image: '❤️', declension: 'kons. Deklination' },
@@ -4409,16 +4425,16 @@
                       latinDistractors: ['Adeste nōbīs!', 'Parce mihi!', 'Audīte nōs!', 'Parcite eīs!'] },
                 ],
                 verbForms: [
-                    { infinitive: 'putāre', firstPerson: 'putō', perfect: 'putāvī', german: 'glauben',
+                    { infinitive: 'putāre', firstPerson: 'putō', perfect: 'putāvī', perfectType: 'v', german: 'glauben',
                       present: { sg2: 'putās', sg3: 'putat', pl1: 'putāmus', pl2: 'putātis', pl3: 'putant' },
                       imperative: { sg: 'putā', pl: 'putāte' } },
-                    { infinitive: 'pūgnāre', firstPerson: 'pūgnō', perfect: 'pūgnāvī', german: 'kämpfen',
+                    { infinitive: 'pūgnāre', firstPerson: 'pūgnō', perfect: 'pūgnāvī', perfectType: 'v', german: 'kämpfen',
                       present: { sg2: 'pūgnās', sg3: 'pūgnat', pl1: 'pūgnāmus', pl2: 'pūgnātis', pl3: 'pūgnant' },
                       imperative: { sg: 'pūgnā', pl: 'pūgnāte' } },
-                    { infinitive: 'studēre', firstPerson: 'studeō', perfect: 'studuī', german: 'streben',
+                    { infinitive: 'studēre', firstPerson: 'studeō', perfect: 'studuī', perfectType: 'u', german: 'streben',
                       present: { sg2: 'studēs', sg3: 'studet', pl1: 'studēmus', pl2: 'studētis', pl3: 'student' },
                       imperative: { sg: 'studē', pl: 'studēte' } },
-                    { infinitive: 'iacēre', firstPerson: 'iaceō', perfect: 'iacuī', german: 'liegen',
+                    { infinitive: 'iacēre', firstPerson: 'iaceō', perfect: 'iacuī', perfectType: 'u', german: 'liegen',
                       present: { sg2: 'iacēs', sg3: 'iacet', pl1: 'iacēmus', pl2: 'iacētis', pl3: 'iacent' },
                       imperative: { sg: 'iacē', pl: 'iacēte' } },
                     { infinitive: 'dēsinere', firstPerson: 'dēsinō', german: 'aufhören',
@@ -4427,27 +4443,27 @@
                     { infinitive: 'parcere', firstPerson: 'parcō', german: 'schonen',
                       present: { sg2: 'parcis', sg3: 'parcit', pl1: 'parcimus', pl2: 'parcitis', pl3: 'parcunt' },
                       imperative: { sg: 'parce', pl: 'parcite' } },
-                    { infinitive: 'ēripere', firstPerson: 'ēripiō', perfect: 'ēripuī', german: 'entreißen',
+                    { infinitive: 'ēripere', firstPerson: 'ēripiō', perfect: 'ēripuī', perfectType: 'u', german: 'entreißen',
                       present: { sg2: 'ēripis', sg3: 'ēripit', pl1: 'ēripimus', pl2: 'ēripitis', pl3: 'ēripiunt' },
                       imperative: { sg: 'ēripe', pl: 'ēripite' } },
-                    { infinitive: 'petere', firstPerson: 'petō', perfect: 'petīvī', german: 'bitten',
+                    { infinitive: 'petere', firstPerson: 'petō', perfect: 'petīvī', perfectType: 'v', german: 'bitten',
                       present: { sg2: 'petis', sg3: 'petit', pl1: 'petimus', pl2: 'petitis', pl3: 'petunt' },
                       imperative: { sg: 'pete', pl: 'petite' } },
                     { infinitive: 'facere', firstPerson: 'faciō', german: 'machen',
                       present: { sg2: 'facis', sg3: 'facit', pl1: 'facimus', pl2: 'facitis', pl3: 'faciunt' },
                       imperative: { sg: 'fac', pl: 'facite' } },
                     // Unregelmäßig: kein Imperativ, deshalb nicht in der Schlange
-                    { infinitive: 'esse', firstPerson: 'sum', perfect: 'fuī', german: 'sein',
+                    { infinitive: 'esse', firstPerson: 'sum', perfect: 'fuī', perfectType: 'irr', german: 'sein',
                       present: { sg2: 'es', sg3: 'est', pl1: 'sumus', pl2: 'estis', pl3: 'sunt' } },
-                    { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', german: 'da sein',
+                    { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', perfectType: 'irr', german: 'da sein',
                       present: { sg2: 'ades', sg3: 'adest', pl1: 'adsumus', pl2: 'adestis', pl3: 'adsunt' } },
-                    { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', german: 'fehlen',
+                    { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', perfectType: 'irr', german: 'fehlen',
                       present: { sg2: 'dēes', sg3: 'dēest', pl1: 'dēsumus', pl2: 'dēestis', pl3: 'dēsunt' } },
-                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', german: 'können',
+                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'irr', german: 'können',
                       present: { sg2: 'potes', sg3: 'potest', pl1: 'possumus', pl2: 'potestis', pl3: 'possunt' } },
-                    { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', german: 'wollen',
+                    { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', german: 'wollen',
                       present: { sg2: 'vīs', sg3: 'vult', pl1: 'volumus', pl2: 'vultis', pl3: 'volunt' } },
-                    { infinitive: 'nōlle', firstPerson: 'nōlō', perfect: 'nōluī', german: 'nicht wollen',
+                    { infinitive: 'nōlle', firstPerson: 'nōlō', perfect: 'nōluī', perfectType: 'u', german: 'nicht wollen',
                       present: { sg2: 'nōn vīs', sg3: 'nōn vult', pl1: 'nōlumus', pl2: 'nōn vultis', pl3: 'nōlunt' } },
                 ],
                 sentences: [
@@ -5222,9 +5238,20 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.15.0';
+        const APP_VERSION = '2.16.0';
 
         const changelogEntries = [
+            {
+                version: '2.16.0',
+                date: '08.09.2026',
+                items: [
+                    '<b>Neues Modul „🕰️ Perfekt"</b> in Lektion 8: Infinitiv → Perfekt, Perfekt → Infinitiv, und die Frage nach dem Bildungstyp (v-Perfekt, u-Perfekt, unregelmäßig). Die Kachel erscheint nur dort, wo das Vokabelheft eine zweite Stammform führt.',
+                    '<b>Tabellentraining</b>: Verben wie capere und incipere stehen jetzt unter „kons. Konjugation (i-Erweiterung)". Vorher füllten sie in Lektion 6 die Tabelle „kons. Konjugation" komplett — die Überschrift lehrte eine Regel, die keine einzige Zeile erfüllte.',
+                    'Keine Aufgaben mehr, deren Antwort in der Frage steht (Minerva, Diāna, Apollō, forum, gladiātor …) — sie gehen jetzt in die Auswahl statt in die Buchstaben-Aufgabe.',
+                    'Vier holprige Übungssätze berichtigt: „Ich fliehe vor der Gefahr" statt „Ich fliehe die Gefahr", dazu cōnstituere, dōnāre und petere.',
+                    'Acht Plural-Bedeutungen passen wieder zum Singular (culpa hieß im Plural „Schulden"), und sechs doppelt vergebene Merk-Emojis sind aufgelöst.',
+                ]
+            },
             {
                 version: '2.15.0',
                 date: '08.09.2026',
@@ -5707,6 +5734,7 @@
                 intro:      q('.module-card.intro-card'),
                 vocab:      q('.module-card[onclick="startLatinModule(\'vocab\')"]'),
                 vokabelheft: q('.module-card.vokabelheft-card'),
+                perfect:    q('.module-card.perfekt-card'),
                 verbs:      q('.module-card[onclick="startLatinModule(\'verbs\')"]'),
                 nouns:      q('.module-card[onclick="startLatinModule(\'nouns\')"]'),
                 tables:     q('.module-card[onclick="startLatinModule(\'tables\')"]'),
@@ -5717,7 +5745,7 @@
                 rocketHard: q('.module-card.rocket-hard'),
             };
             if (minimal) {
-                ['intro','verbs','nouns','tables','snake','sentences','mixed'].forEach(k => {
+                ['intro','verbs','nouns','tables','snake','sentences','mixed','perfect'].forEach(k => {
                     if (cards[k]) cards[k].style.display = 'none';
                 });
                 if (cards.vocab)  cards.vocab.style.display = '';
@@ -5727,6 +5755,9 @@
                 ['intro','vocab','vokabelheft','verbs','nouns','tables','snake','sentences','mixed','rocket'].forEach(k => {
                     if (cards[k]) cards[k].style.display = '';
                 });
+                // Perfekt gibt es nur, wo das Vokabelheft die zweite Stammform führt
+                const hatPerfekt = ((latinData[chapter] || {}).verbForms || []).some(v => v.perfect);
+                if (cards.perfect) cards.perfect.style.display = hatPerfekt ? '' : 'none';
             }
             if (cards.rocketHard) cards.rocketHard.style.display = showProfi ? '' : 'none';
         }
@@ -6721,6 +6752,7 @@
             if (module === 'vocab') moduleName = 'Vokabeln';
             else if (module === 'verbs') moduleName = 'Verb-Formen';
             else if (module === 'nouns') moduleName = 'Substantive';
+            else if (module === 'perfect') moduleName = 'Perfekt';
             else if (module === 'tables') moduleName = 'Tabellentraining';
             else if (module === 'snake') moduleName = 'Konjug.- & Deklinationsssschlange';
             else if (module === 'sentences') moduleName = 'Beispielsätze';
@@ -6763,7 +6795,11 @@
                         // DE→LA. Lösungen mit Leerzeichen, Schrägstrich oder Fragezeichen
                         // ergäben leere, unbeschriftete Buchstabenkacheln — nicht lösbar,
                         // also bleiben sie bei Multiple Choice.
-                        const legbar = !/[ \/?]/.test(v.latin);
+                        // Bei „Minerva (die Göttin der Weisheit)" steht die Lösung wörtlich
+                        // in der Aufgabe — als Buchstabenaufgabe ist das Leerlauf.
+                        const loesungImPrompt = stripMacrons(v.german.toLowerCase())
+                            .includes(stripMacrons(v.latin.toLowerCase()));
+                        const legbar = !/[ \/?]/.test(v.latin) && !loesungImPrompt;
                         items.push({
                             type: 'vocab', mode: legbar ? 'spelling' : 'mc',
                             prompt: v.german, answer: v.latin.toLowerCase(),
@@ -6919,11 +6955,18 @@
                 const progress = loadProgress();
 
                 // Helper: Konjugationsklasse aus Infinitiv ableiten
-                function getConjugation(inf) {
+                function getConjugation(inf, vf) {
                     if (inf.endsWith('āre')) return 'ā-Konjugation';
                     if (inf.endsWith('ēre')) return 'ē-Konjugation';
                     if (inf.endsWith('īre')) return 'ī-Konjugation';
-                    if (inf.endsWith('ere')) return 'kons. Konjugation';
+                    if (inf.endsWith('ere')) {
+                        // capere/capiunt gehört nicht in dieselbe Tabelle wie legere/legunt.
+                        // In Lektion 6 bestand die Tabelle „kons. Konjugation" sonst aus
+                        // lauter i-Stämmen — die Überschrift lehrte eine Regel, die keine
+                        // einzige Zeile erfüllt (3. Pl. -iunt statt -unt).
+                        return (vf && vf.firstPerson && vf.firstPerson.endsWith('iō'))
+                            ? 'kons. Konjugation (i-Erweiterung)' : 'kons. Konjugation';
+                    }
                     return 'unregelmäßig';
                 }
 
@@ -6946,7 +6989,7 @@
                 const conjGroups = {};
                 ch.verbForms.forEach(vf => {
                     if (!vf.present) return;
-                    const conj = getConjugation(vf.infinitive);
+                    const conj = getConjugation(vf.infinitive, vf);
                     if (!conjGroups[conj]) conjGroups[conj] = [];
                     const row = {
                         label: vf.infinitive, german: vf.german,
@@ -7056,6 +7099,53 @@
                         });
                     });
                 }
+            }
+
+            if (module === 'perfect') {
+                // --- PERFEKT: die zweite Stammform ---
+                // Nur Verben, für die das Vokabelheft eine Perfektform führt.
+                const TYP = {
+                    v:   'v-Perfekt (‑vī)',
+                    u:   'u-Perfekt (‑uī)',
+                    irr: 'unregelmäßig'
+                };
+                const perfVerbs = (ch.verbForms || []).filter(v => v.perfect);
+                perfVerbs.forEach(vf => {
+                    // 1) Infinitiv → Perfekt
+                    items.push({
+                        type: 'perfect', mode: 'spelling',
+                        prompt: vf.infinitive + ' (' + vf.german + ')',
+                        answer: vf.perfect.toLowerCase(), displayAnswer: vf.perfect,
+                        image: '🕰️', hint: 'Die 1. Person Perfekt',
+                        question: '1. Person Perfekt?',
+                        id: 'perf_i2p_' + vf.infinitive
+                    });
+                    // 2) Perfekt → Infinitiv
+                    items.push({
+                        type: 'perfect', mode: 'spelling',
+                        prompt: vf.perfect + ' (' + vf.german + ')',
+                        answer: vf.infinitive.toLowerCase(), displayAnswer: vf.infinitive,
+                        image: '🕰️', hint: 'Zurück zum Infinitiv',
+                        question: 'Wie heißt der Infinitiv?',
+                        id: 'perf_p2i_' + vf.infinitive
+                    });
+                    // 3) Welcher Bildungstyp?
+                    if (vf.perfectType && TYP[vf.perfectType]) {
+                        items.push({
+                            type: 'perfect', mode: 'mc',
+                            prompt: vf.perfect, answer: TYP[vf.perfectType].toLowerCase(),
+                            displayAnswer: TYP[vf.perfectType],
+                            image: '🕰️', hint: vf.infinitive + ' = ' + vf.german,
+                            question: 'Welcher Bildungstyp?',
+                            distractors: Object.keys(TYP).filter(k => k !== vf.perfectType).map(k => TYP[k]),
+                            mcCorrect: TYP[vf.perfectType],
+                            mcPrompt: vf.perfect,
+                            mcQuestion: 'Wie wird dieses Perfekt gebildet?',
+                            id: 'perf_typ_' + vf.infinitive
+                        });
+                    }
+                });
+                items = shuffleArray(items);
             }
 
             if (module === 'snake') {
@@ -7559,7 +7649,7 @@
                 'mūtāre': { latObj: 'Cōnsilium', deObj: 'den Plan' },
                 'circumvenīre': { latObj: 'Hostēs', deObj: 'die Feinde' },
                 // Lektion 5
-                'dōnāre': { latObj: 'Dōnum', deObj: 'ein Geschenk' },
+                'dōnāre': { latObj: 'Equum', deObj: 'ein Pferd' },
                 'dūcere': { latObj: 'Exercitum', deObj: 'das Heer', deExplicit: {
                     sg1:'Ich führe das Heer.', sg2:'Du führst das Heer.',
                     sg3:'Er/Sie führt das Heer.', pl1:'Wir führen das Heer.',
@@ -7597,7 +7687,7 @@
                     imp_sg:'Lies ein Buch!', imp_pl:'Lest ein Buch!'} },
                 'scrībere': { latObj: 'Epistulam', deObj: 'einen Brief' },
                 'invenīre': { latObj: 'Thēsaurum', deObj: 'den Schatz' },
-                'cōnstituere': { latObj: 'Oppidum', deObj: 'eine Stadt' },
+                'cōnstituere': { latObj: 'Cōnsilium', deObj: 'den Plan' },
                 // Lektion 6
                 'accipere': { latObj: 'Dōnum', deObj: 'ein Geschenk', deExplicit: {
                     sg1:'Ich erhalte ein Geschenk.', sg2:'Du erhältst ein Geschenk.',
@@ -7646,7 +7736,12 @@
                     sg3:'Er/Sie nähert sich dem Forum.', pl1:'Wir nähern uns dem Forum.',
                     pl2:'Ihr nähert euch dem Forum.', pl3:'Sie nähern sich dem Forum.',
                     imp_sg:'Nähere dich dem Forum!', imp_pl:'Nähert euch dem Forum!'} },
-                'fugere': { latObj: 'Perīculum', deObj: 'die Gefahr' },
+                // fugere steht im Latein mit Akkusativ, im Deutschen mit „vor"
+                'fugere': { latObj: 'Perīculum', deObj: '', deExplicit: {
+                    sg1:'Ich fliehe vor der Gefahr.', sg2:'Du fliehst vor der Gefahr.',
+                    sg3:'Er/Sie flieht vor der Gefahr.', pl1:'Wir fliehen vor der Gefahr.',
+                    pl2:'Ihr flieht vor der Gefahr.', pl3:'Sie fliehen vor der Gefahr.',
+                    imp_sg:'Fliehe vor der Gefahr!', imp_pl:'Flieht vor der Gefahr!'} },
                 'quaerere': { latObj: 'Cibum', deObj: 'Essen' },
                 'vēndere': { latObj: 'Multa', deObj: 'vieles' },
                 'convenīre': { latObj: 'Amīcum', deObj: 'den Freund' },
