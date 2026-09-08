@@ -1764,6 +1764,11 @@
             background: #fff8e1; border-radius: 12px; border-left: 4px solid #ff9800;
         }
         .snake-target-lat { color: #bf360c; font-size: 1.1em; font-weight: bold; }
+        .snake-noending-note {
+            text-align: center; color: #999; font-size: 0.7em;
+            margin-top: 8px; line-height: 1.35;
+        }
+        body.april-dark .snake-noending-note { color: #9ca3af; }
         .snake-target-de { color: #555; font-size: 0.95em; margin-top: 4px; }
 
         /* ============ EMOJI-SCHALTER (Bilder über den Vokabeln) ============ */
@@ -2620,6 +2625,7 @@
                 <button class="snake-check-btn" id="snakeCheckBtn" style="display: none;" onclick="checkSnakeAnswer()">✓ Prüfen</button>
                 <button class="btn btn-continue" id="snakeContinueBtn" style="display: none;" onclick="snakeContinue()">▶️ Weiter</button>
             </div>
+            <div class="snake-noending-note" id="snakeNoEndingNote">Manche Formen haben keine Endung — dann das Feld leer lassen und auf „Prüfen" drücken.</div>
             <div class="snake-praise" id="snakePraise" style="display: none;"></div>
             <div class="snake-grid-container">
                 <div class="snake-grid" id="snakeGrid"></div>
@@ -2853,7 +2859,7 @@
                     { w:'superbia',  f:'superbiae _f_', d:'der Stolz, die Überheblichkeit' },
                     { w:'flamma',    f:'flammae _f_',   d:'die Flamme, das Feuer' },
                     { w:'adhūc',     f:'_Adv._',        d:'bis jetzt, (immer) noch' },
-                    { w:'sine',      f:'_Präp. m. Abl._', d:'ohne', ex:[['Āfra sine amīcō venit.','Afra kommt ohne ihren Freund.']] },
+                    { w:'sine',      f:'_Präp. m. Abl._', d:'ohne', ex:[['Āfra sine amīcō venit.','Āfra kommt ohne ihren Freund.']] },
                     { w:'vīvere',    f:'vīvō',          d:'leben' },
                     { w:'cōgere',    f:'cōgō _(m. Inf.)_', d:'zwingen (etw. zu tun), (ver)sammeln' },
                 ]},
@@ -2925,7 +2931,7 @@
                     { w:'inter',     f:'_Präp. m. Akk._', d:'unter, während, zwischen', ex:[['Inter amīcōs dolus deesse dēbet.','Unter Freunden darf es keine Täuschung geben.']] },
                 ]},
                 { label: '5', rows: [
-                    { w:'apud',      f:'_Präp. m. Akk._', d:'bei', ex:[['Āfra apud amīcum esse cupit.','Afra möchte bei ihrem Freund sein.']] },
+                    { w:'apud',      f:'_Präp. m. Akk._', d:'bei', ex:[['Āfra apud amīcum esse cupit.','Āfra möchte bei ihrem Freund sein.']] },
                     { w:'superī',    f:'superōrum _m Pl._', d:'die Götter' },
                     { w:'nōn sōlum … sed etiam', f:'',  d:'nicht nur … sondern auch' },
                     { w:'līberī',    f:'līberōrum _m Pl._', d:'die Kinder' },
@@ -3037,7 +3043,7 @@
                       distractors: ['und, sowie', 'oder, beziehungsweise', 'denn', 'auch'] },
                     { latin: 'nōndum', german: 'noch nicht', image: '⏳', hint: 'Bisher nicht',
                       distractors: ['schon, bereits', 'niemals, nie', 'immer', 'oft'] },
-                    { latin: 'cūr', german: 'warum?', image: '❓', hint: 'Frage nach dem Grund',
+                    { latin: 'cūr?', german: 'warum?', image: '❓', hint: 'Frage nach dem Grund',
                       distractors: ['wer?', 'was?', 'wo?', 'wann?'] },
                     { latin: 'nōn', german: 'nicht', image: '🚫', hint: 'Verneinung',
                       distractors: ['ja, gewiss', 'auch, ebenso', 'sehr', 'fast'] },
@@ -3084,7 +3090,7 @@
                 name: 'Lektion 3',
                 vocabulary: [
                     // Section 1
-                    { latin: 'narrāre', german: 'erzählen', image: '📖', hint: 'Eine Geschichte ...',
+                    { latin: 'narrāre', german: 'erzählen', image: '📖', hint: 'Eine Geschichte …',
                       distractors: ['antworten', 'rufen', 'melden', 'prüfen'] },
                     { latin: 'puella', german: 'das Mädchen', image: '👧', hint: 'Ein junges Kind (weiblich)',
                       distractors: ['der Junge', 'die Frau', 'die Schwester', 'die Freundin'] },
@@ -3162,7 +3168,7 @@
                 multiWord: [
                     { latin: 'Salvē! Salvēte!', german: 'Sei gegrüßt! Seid gegrüßt!',
                       germanDistractors: ['Auf Wiedersehen!', 'Guten Morgen!', 'Gute Nacht!', 'Tschüss!'],
-                      latinDistractors: ['Valē!', 'Avē!', 'Abī!', 'Venī!'] },
+                      latinDistractors: ['Valē!', 'Tacē!', 'Abī!', 'Venī!'] },
                     { latin: 'quemadmodum', german: 'wie, auf welche Weise',
                       germanDistractors: ['warum', 'wann', 'wohin', 'wer'],
                       latinDistractors: ['cūr', 'quandō', 'ubi', 'quis'] },
@@ -3172,9 +3178,9 @@
                     { latin: 'nōn dēbēre', german: 'nicht dürfen, nicht müssen',
                       germanDistractors: ['müssen', 'können', 'wollen', 'sollen'],
                       latinDistractors: ['dēbēre', 'posse', 'velle', 'audēre'] },
-                    { latin: 'et ... et', german: 'sowohl ... als auch',
+                    { latin: 'et … et', german: 'sowohl … als auch',
                       germanDistractors: ['weder ... noch', 'entweder ... oder', 'nicht nur ... sondern', 'zwar ... aber'],
-                      latinDistractors: ['neque ... neque', 'aut ... aut', 'nōn sōlum ... sed', 'cum ... tum'] },
+                      latinDistractors: ['neque ... neque', 'aut ... aut', 'nōn sōlum … sed', 'neque … et'] },
                     { latin: 'paulō post', german: 'wenig später, kurz darauf',
                       germanDistractors: ['viel früher', 'gleichzeitig', 'am nächsten Tag', 'lange vorher'],
                       latinDistractors: ['multō ante', 'simul', 'postrīdiē', 'ōlim'] },
@@ -3301,19 +3307,19 @@
                 name: 'Lektion 4',
                 vocabulary: [
                     // Section 1
-                    { latin: 'dē', german: 'über; von, von ... her', image: '⬇️', hint: 'Präposition mit Ablativ – Richtung weg',
+                    { latin: 'dē', german: 'über; von, von … her, von … weg, von … herab', image: '⬇️', hint: 'Präposition mit Ablativ – Richtung weg',
                       distractors: ['unter', 'neben', 'mit', 'ohne'] },
                     { latin: 'atque', german: 'und, und auch', image: '➕', hint: 'Verbindet zwei Dinge',
                       distractors: ['oder', 'aber', 'weder', 'sondern'] },
                     { latin: 'movēre', german: 'bewegen, beeindrucken', image: '💫', hint: 'Etwas in Bewegung bringen',
                       distractors: ['stoppen', 'zerstören', 'vergessen', 'schlafen'] },
-                    { latin: 'memoria', german: 'die Erinnerung, das Gedächtnis', image: '🧠', hint: 'Was man sich merkt',
+                    { latin: 'memoria', german: 'die Erinnerung, das Gedächtnis; die Zeit', image: '🧠', hint: 'Was man sich merkt',
                       distractors: ['der Traum', 'die Meinung', 'die Hoffnung', 'die Angst'] },
                     { latin: 'nōlle', german: 'nicht wollen', image: '🙅', hint: 'Das Gegenteil von wollen',
                       distractors: ['wollen', 'können', 'müssen', 'dürfen'] },
                     { latin: 'procul', german: 'von fern, weit weg', image: '🌄', hint: 'Nicht in der Nähe',
                       distractors: ['nahe', 'hier', 'sofort', 'innen'] },
-                    { latin: 'Diāna', german: 'Diana (Göttin der Jagd)', image: '🏹', hint: 'Römische Göttin mit Bogen',
+                    { latin: 'Diāna', german: 'Diana (Göttin der Jagd und Schützerin der Tiere)', image: '🏹', hint: 'Römische Göttin mit Bogen',
                       distractors: ['Venus', 'Minerva', 'Juno', 'Ceres'] },
                     { latin: 'dea', german: 'die Göttin', image: '👑', hint: 'Weibliche Gottheit',
                       distractors: ['der Gott', 'die Königin', 'die Priesterin', 'die Heldin'] },
@@ -3322,13 +3328,13 @@
                       distractors: ['ohne', 'gegen', 'neben', 'vor'] },
                     { latin: 'amīca', german: 'die Freundin', image: '👩', hint: 'Eine weibliche Vertraute',
                       distractors: ['der Freund', 'die Feindin', 'die Schwester', 'die Herrin'] },
-                    { latin: 'nēscīre', german: 'nicht wissen, nicht kennen', image: '❓', hint: 'Keine Ahnung haben',
+                    { latin: 'nēscīre', german: 'nicht wissen, nicht kennen, nicht verstehen', image: '❓', hint: 'Keine Ahnung haben',
                       distractors: ['wissen', 'kennen', 'verstehen', 'erkennen'] },
                     { latin: 'amāre', german: 'lieben', image: '❤️', hint: 'Ein starkes Gefühl',
                       distractors: ['hassen', 'fürchten', 'vergessen', 'verlieren'] },
                     { latin: 'timēre', german: 'fürchten, Angst haben (vor)', image: '😨', hint: 'Wenn man Angst hat',
                       distractors: ['lieben', 'hoffen', 'wollen', 'freuen'] },
-                    { latin: 'in', german: 'in, an, auf, bei (wo?)', image: '📍', hint: 'Präp. m. Abl. – Wo? Ortsangabe',
+                    { latin: 'in', vid: 'in_abl', german: 'in, an, auf, bei (wo?)', image: '📍', hint: 'Präp. m. Abl. – Wo? Ortsangabe',
                       distractors: ['wohin?', 'woher?', 'wann?', 'warum?'] },
                     // Section 3
                     { latin: 'campus', german: 'das Feld, der freie Platz', image: '🏟️', hint: 'Eine offene Fläche',
@@ -3356,7 +3362,7 @@
                       distractors: ['beruhigen', 'trösten', 'helfen', 'loben'] },
                     { latin: 'fuga', german: 'die Flucht', image: '🏃‍♂️', hint: 'Schnell weglaufen',
                       distractors: ['der Kampf', 'der Sieg', 'die Ankunft', 'die Ruhe'] },
-                    { latin: 'in', german: 'in (... hinein), nach (wohin?); gegen', image: '➡️', hint: 'Präp. m. Akk. – Wohin? Richtungsangabe',
+                    { latin: 'in', vid: 'in_akk', german: 'in (… hinein), nach (wohin?); gegen', image: '➡️', hint: 'Präp. m. Akk. – Wohin? Richtungsangabe',
                       distractors: ['wo?', 'woher?', 'wann?', 'warum?'] },
                     { latin: 'silva', german: 'der Wald', image: '🌲', hint: 'Viele Bäume',
                       distractors: ['das Feld', 'der Fluss', 'der Berg', 'die Wiese'] },
@@ -3373,7 +3379,7 @@
                       distractors: ['vielleicht', 'niemals', 'selten', 'kaum'] },
                     { latin: 'mūtāre', german: 'ändern, verändern, verwandeln', image: '🔄', hint: 'Etwas anders machen',
                       distractors: ['behalten', 'bewahren', 'schützen', 'festhalten'] },
-                    { latin: 'ē/ex', german: 'aus, von ... her', image: '🚪', hint: 'Heraus aus etwas',
+                    { latin: 'ē / ex', german: 'aus, von … her', image: '🚪', hint: 'Heraus aus etwas',
                       distractors: ['in', 'auf', 'neben', 'unter'] },
                     { latin: 'at', german: 'aber, jedoch', image: '⚡', hint: 'Gegensatz',
                       distractors: ['und', 'auch', 'denn', 'also'] },
@@ -3446,7 +3452,7 @@
                     { latin: 'Dea Symmachum in equum mūtat.', germanTemplate: 'Die Göttin ___ Symmachus in ein Pferd.', answer: 'verwandelt', image: '🐴',
                       hint: 'mūtāre = ändern, verwandeln' },
                     { latin: 'Symmachus ē tabernā venit.', germanTemplate: 'Symmachus kommt ___ dem Gasthaus.', answer: 'aus', image: '🚪',
-                      hint: 'ē/ex = aus, von ... her' },
+                      hint: 'ē/ex = aus, von … her' },
                     { latin: 'Dāvus cum Āfrā venit.', germanTemplate: 'Davus kommt zusammen ___ Afra.', answer: 'mit', image: '🤝',
                       hint: 'cum = mit, zusammen mit' },
                     { latin: 'Diāna īrā ārdet.', germanTemplate: 'Diana ___ vor Wut.', answer: 'brennt', image: '🔥',
@@ -3458,7 +3464,7 @@
                     { latin: 'Dāvus in viā stat.', germanTemplate: 'Davus steht ___ der Straße.', answer: 'auf', image: '🛤️',
                       hint: 'in m. Abl. = auf (wo?)' },
                     { latin: 'Symmachus in tabernam properat.', germanTemplate: 'Symmachus eilt ___ das Gasthaus.', answer: 'in', image: '🏃',
-                      hint: 'in m. Akk. = in ... hinein (wohin?)' },
+                      hint: 'in m. Akk. = in … hinein (wohin?)' },
                     { latin: 'Dāvus Syrusque adsunt.', germanTemplate: 'Davus ___ Syrus sind da.', answer: 'und', image: '👥',
                       hint: '-que = und (angehängt)' },
                 ],
@@ -3502,7 +3508,7 @@
                     // Abschnitt 1
                     { latin: 'Minerva', german: 'Minerva (die Göttin der Weisheit)', image: '🦉', hint: 'Römische Göttin der Weisheit',
                       distractors: ['Diana (Göttin der Jagd)', 'Venus (Göttin der Liebe)', 'Juno (Götterkönigin)', 'Ceres (Göttin der Ernte)'] },
-                    { latin: 'Prōmetheus', german: 'Prometheus (Göttersohn, Schöpfer der Menschen)', image: '🔥', hint: 'Er brachte den Menschen das Feuer',
+                    { latin: 'Promētheus', german: 'Prometheus (Göttersohn, Schöpfer der Menschen)', image: '🔥', hint: 'Er brachte den Menschen das Feuer',
                       distractors: ['Herkules (Held)', 'Iuppiter (höchster Gott)', 'Vulcanus (Gott des Feuers)', 'Merkur (Götterbote)'] },
                     { latin: 'vīta', german: 'das Leben', image: '🌱', hint: 'Vom Anfang bis zum Ende',
                       distractors: ['der Tod', 'der Traum', 'die Seele', 'die Zeit'] },
@@ -3521,15 +3527,15 @@
                     { latin: 'ostendere', german: 'zeigen, erklären', image: '👉', hint: 'Mit dem Finger darauf deuten',
                       distractors: ['verstecken, verbergen', 'vergessen, übersehen', 'verschweigen', 'verdunkeln'] },
                     // Abschnitt 2
-                    { latin: 'nātūra', german: 'die Art, das Wesen, die Beschaffenheit', image: '🌿', hint: 'Wie etwas von Natur aus ist',
+                    { latin: 'nātūra', german: 'die Natur, das Wesen, die Beschaffenheit', image: '🌿', hint: 'Wie etwas von Natur aus ist',
                       distractors: ['die Kunst, die Fertigkeit', 'die Arbeit, das Werk', 'die Meinung', 'die Strafe'] },
-                    { latin: 'cognōscere', german: 'erkennen, kennenlernen', image: '🔎', hint: 'Etwas herausfinden',
+                    { latin: 'cōgnōscere', german: 'erkennen, kennenlernen', image: '🔎', hint: 'Etwas herausfinden',
                       distractors: ['vergessen, übersehen', 'verlieren, einbüßen', 'verstecken', 'verwechseln'] },
                     { latin: 'deus', german: 'der Gott, die Gottheit', image: '⚡', hint: 'Ein höheres Wesen',
                       distractors: ['der Mensch, das Wesen', 'der König, der Herrscher', 'der Held', 'der Priester'] },
                     { latin: 'neque', german: 'und nicht, auch nicht', image: '🚫', hint: 'Verneinung + Verbindung',
                       distractors: ['und auch, ebenfalls', 'oder, beziehungsweise', 'aber', 'sondern'] },
-                    { latin: 'Iuppiter', german: 'Iuppiter (der höchste Gott der Römer)', image: '⚡', hint: 'Göttervater mit Blitz',
+                    { latin: 'Iuppiter', german: 'Jupiter (der höchste Gott der Römer)', image: '⚡', hint: 'Göttervater mit Blitz',
                       distractors: ['Mars (Kriegsgott)', 'Neptun (Meeresgott)', 'Pluto (Unterweltgott)', 'Apollo (Sonnengott)'] },
                     { latin: 'dīcere', german: 'sagen, sprechen', image: '🗣️', hint: 'Worte aus dem Mund',
                       distractors: ['schweigen, still sein', 'hören, vernehmen', 'schreiben', 'lesen'] },
@@ -3537,7 +3543,7 @@
                       distractors: ['und, sowie', 'auch, ebenso', 'denn', 'also'] },
                     { latin: 'quasi', german: 'gleichsam, wie', image: '🔄', hint: 'So als ob',
                       distractors: ['weil', 'obwohl', 'damit', 'nachdem'] },
-                    { latin: 'colere', german: 'verehren, bewirtschaften', image: '🙏', hint: 'Die Götter ehren / das Land bebauen',
+                    { latin: 'colere', german: 'verehren, bewirtschaften, pflegen', image: '🙏', hint: 'Die Götter ehren / das Land bebauen',
                       distractors: ['zerstören, vernichten', 'vergessen, übersehen', 'hassen', 'fliehen'] },
                     // Abschnitt 3
                     { latin: 'sacrum', german: 'das Opfer, das Heiligtum', image: '🏛️', hint: 'Etwas Heiliges',
@@ -3556,14 +3562,14 @@
                       distractors: ['mit', 'wegen', 'durch', 'für'] },
                     { latin: 'vīvere', german: 'leben', image: '💓', hint: 'Das Gegenteil von sterben',
                       distractors: ['sterben', 'schlafen', 'träumen', 'vergessen'] },
-                    { latin: 'cōgere', german: 'zwingen, (ver)sammeln', image: '💪', hint: 'Jemanden zu etwas nötigen',
+                    { latin: 'cōgere', german: 'zwingen (etw. zu tun), (ver)sammeln', image: '💪', hint: 'Jemanden zu etwas nötigen',
                       distractors: ['bitten, ersuchen', 'erlauben, gestatten', 'befreien', 'helfen'] },
                     // Abschnitt 4
                     { latin: 'imperium', german: 'der Befehl, die Herrschaft, das Reich', image: '👑', hint: 'Macht und Kontrolle',
                       distractors: ['die Bitte, das Ersuchen', 'der Wunsch, das Verlangen', 'die Freiheit', 'der Frieden'] },
                     { latin: 'resistere', german: 'stehen bleiben, Widerstand leisten', image: '🛡️', hint: 'Sich nicht unterkriegen lassen',
                       distractors: ['fliehen, weglaufen', 'aufgeben, nachgeben', 'gehorchen', 'folgen'] },
-                    { latin: 'petere', german: 'bitten, verlangen, aufsuchen, angreifen', image: '🎯', hint: 'Nach etwas streben',
+                    { latin: 'petere', german: 'bitten, verlangen, streben (nach), aufsuchen, angreifen', image: '🎯', hint: 'Nach etwas streben',
                       distractors: ['geben, übergeben', 'schenken, gewähren', 'verlieren', 'vergessen'] },
                     { latin: 'tangere', german: 'berühren', image: '✋', hint: 'Mit der Hand anfassen',
                       distractors: ['sehen', 'hören', 'riechen', 'schmecken'] },
@@ -3580,7 +3586,7 @@
                       distractors: ['der Satz, die Aussage', 'der Buchstabe, das Zeichen', 'die Seite', 'das Buch'] },
                     { latin: 'opera', german: 'die Arbeit, die Mühe', image: '⚒️', hint: 'Anstrengung und Fleiß',
                       distractors: ['die Ruhe, die Erholung', 'die Pause, die Unterbrechung', 'der Schlaf', 'das Spiel'] },
-                    { latin: 'littera', german: 'der Buchstabe', image: '🔤', hint: 'A, B, C, D ...',
+                    { latin: 'littera', german: 'der Buchstabe', image: '🔤', hint: 'A, B, C, D …',
                       distractors: ['das Wort', 'der Satz', 'die Seite', 'das Buch'] },
                     { latin: 'legere', german: 'lesen, auswählen', image: '📖', hint: 'Ein Buch aufschlagen',
                       distractors: ['schreiben, verfassen', 'sprechen, reden', 'hören', 'vergessen'] },
@@ -3599,13 +3605,13 @@
                     { latin: 'Populus deōs colit.', german: 'Das Volk verehrt die Götter.',
                       germanDistractors: ['Das Volk fürchtet die Götter.', 'Das Volk vergisst die Götter.', 'Das Volk ruft die Götter.', 'Das Volk hasst die Götter.'],
                       latinDistractors: ['Populus deōs timet.', 'Populus deōs vocat.', 'Populus deōs videt.', 'Populus deōs audit.'] },
-                    { latin: 'Afra sine amīcō venit.', german: 'Afra kommt ohne ihren Freund.',
-                      germanDistractors: ['Afra kommt mit ihrem Freund.', 'Afra geht zu ihrem Freund.', 'Afra ruft ihren Freund.', 'Afra sucht ihren Freund.'],
-                      latinDistractors: ['Afra cum amīcō venit.', 'Afra ad amīcum it.', 'Afra amīcum vocat.', 'Afra amīcum petit.'] },
-                    { latin: 'Symmachus ab amīcō pecūniam postulat.', german: 'Symmachus fordert von seinem Freund Geld.',
+                    { latin: 'Āfra sine amīcō venit.', german: 'Āfra kommt ohne ihren Freund.',
+                      germanDistractors: ['Āfra kommt mit ihrem Freund.', 'Āfra geht zu ihrem Freund.', 'Āfra ruft ihren Freund.', 'Āfra sucht ihren Freund.'],
+                      latinDistractors: ['Āfra cum amīcō venit.', 'Āfra ad amīcum it.', 'Āfra amīcum vocat.', 'Āfra amīcum petit.'] },
+                    { latin: 'Symmachus ab amīcō pecūniam pōstulat.', german: 'Symmachus fordert von seinem Freund Geld.',
                       germanDistractors: ['Symmachus gibt seinem Freund Geld.', 'Symmachus schenkt seinem Freund Geld.', 'Symmachus stiehlt seinem Freund Geld.', 'Symmachus leiht seinem Freund Geld.'],
                       latinDistractors: ['Symmachus amīcō pecūniam dat.', 'Symmachus amīcō pecūniam dōnat.', 'Symmachus amīcī pecūniam capit.', 'Symmachus amīcō pecūniam reddit.'] },
-                    { latin: 'Diāna Symmachō resistit.', german: 'Diana leistet Symmachus Widerstand.',
+                    { latin: 'Dāvus Symmachō resistit.', german: 'Davus leistet Symmachus Widerstand.',
                       germanDistractors: ['Diana gehorcht Symmachus.', 'Diana hilft Symmachus.', 'Diana folgt Symmachus.', 'Diana fürchtet Symmachus.'],
                       latinDistractors: ['Diāna Symmachō pāret.', 'Diāna Symmachum adiuvat.', 'Diāna Symmachum sequitur.', 'Diāna Symmachum timet.'] },
                 ],
@@ -3619,9 +3625,9 @@
                     { infinitive: 'ostendere', firstPerson: 'ostendō', german: 'zeigen',
                       present: { sg2: 'ostendis', sg3: 'ostendit', pl1: 'ostendimus', pl2: 'ostenditis', pl3: 'ostendunt' },
                       imperative: { sg: 'ostende', pl: 'ostendite' } },
-                    { infinitive: 'cognōscere', firstPerson: 'cognōscō', german: 'erkennen',
-                      present: { sg2: 'cognōscis', sg3: 'cognōscit', pl1: 'cognōscimus', pl2: 'cognōscitis', pl3: 'cognōscunt' },
-                      imperative: { sg: 'cognōsce', pl: 'cognōscite' } },
+                    { infinitive: 'cōgnōscere', firstPerson: 'cōgnōscō', german: 'erkennen',
+                      present: { sg2: 'cōgnōscis', sg3: 'cōgnōscit', pl1: 'cōgnōscimus', pl2: 'cōgnōscitis', pl3: 'cōgnōscunt' },
+                      imperative: { sg: 'cōgnōsce', pl: 'cōgnōscite' } },
                     { infinitive: 'dīcere', firstPerson: 'dīcō', german: 'sagen',
                       present: { sg2: 'dīcis', sg3: 'dīcit', pl1: 'dīcimus', pl2: 'dīcitis', pl3: 'dīcunt' },
                       imperative: { sg: 'dīc', pl: 'dīcite' } },
@@ -3660,29 +3666,29 @@
                       imperative: { sg: 'cōnstitue', pl: 'cōnstituite' } },
                 ],
                 sentences: [
-                    { latin: 'Prōmetheus creātūrīs vītam dōnat.', germanTemplate: 'Prometheus ___ den Geschöpfen das Leben.', answer: 'schenkt', image: '🎁',
+                    { latin: 'Promētheus creātūrīs vītam dōnat.', germanTemplate: 'Prometheus ___ den Geschöpfen das Leben.', answer: 'schenkt', image: '🎁',
                       hint: 'dōnāre = schenken' },
-                    { latin: 'Prōmetheus creātūrās per terram dūcit.', germanTemplate: 'Prometheus ___ die Geschöpfe durch das Land.', answer: 'führt', image: '🧭',
+                    { latin: 'Promētheus creātūrās per terram dūcit.', germanTemplate: 'Prometheus ___ die Geschöpfe durch das Land.', answer: 'führt', image: '🧭',
                       hint: 'dūcere = führen' },
                     { latin: 'Minerva nātūram ostendit.', germanTemplate: 'Minerva ___ die Natur.', answer: 'zeigt', image: '👉',
                       hint: 'ostendere = zeigen' },
-                    { latin: 'Prōmetheus deōs cognōscit.', germanTemplate: 'Prometheus ___ die Götter.', answer: 'erkennt', image: '🔎',
-                      hint: 'cognōscere = erkennen' },
+                    { latin: 'Promētheus deōs cōgnōscit.', germanTemplate: 'Prometheus ___ die Götter.', answer: 'erkennt', image: '🔎',
+                      hint: 'cōgnōscere = erkennen' },
                     { latin: 'Iuppiter dīcit: "Superbia!"', germanTemplate: 'Iuppiter ___: „Überheblichkeit!"', answer: 'sagt', image: '🗣️',
                       hint: 'dīcere = sagen' },
-                    { latin: 'Prōmetheus sine timōre vīvit.', germanTemplate: 'Prometheus ___ ohne Furcht.', answer: 'lebt', image: '💓',
+                    { latin: 'Promētheus sine timōre vīvit.', germanTemplate: 'Prometheus ___ ohne Furcht.', answer: 'lebt', image: '💓',
                       hint: 'vīvere = leben' },
-                    { latin: 'Iuppiter Prōmetheum resistere cōgit.', germanTemplate: 'Iuppiter ___ Prometheus, Widerstand zu leisten.', answer: 'zwingt', image: '💪',
+                    { latin: 'Iuppiter Promētheum resistere cōgit.', germanTemplate: 'Iuppiter ___ Prometheus, Widerstand zu leisten.', answer: 'zwingt', image: '💪',
                       hint: 'cōgere = zwingen' },
-                    { latin: 'Prōmetheus ignem accendit.', germanTemplate: 'Prometheus ___ das Feuer an.', answer: 'zündet', image: '🕯️',
+                    { latin: 'Promētheus ignem accendit.', germanTemplate: 'Prometheus ___ das Feuer an.', answer: 'zündet', image: '🕯️',
                       hint: 'accendere = anzünden' },
                     { latin: 'Minerva litterās legit.', germanTemplate: 'Minerva ___ die Buchstaben.', answer: 'liest', image: '📖',
                       hint: 'legere = lesen' },
-                    { latin: 'Prōmetheus verba scrībit.', germanTemplate: 'Prometheus ___ Worte.', answer: 'schreibt', image: '✍️',
+                    { latin: 'Promētheus verba scrībit.', germanTemplate: 'Prometheus ___ Worte.', answer: 'schreibt', image: '✍️',
                       hint: 'scrībere = schreiben' },
-                    { latin: 'Prōmetheus oppidum cōnstituit.', germanTemplate: 'Prometheus ___ eine Stadt.', answer: 'gründet', image: '🏗️',
+                    { latin: 'Promētheus oppidum cōnstituit.', germanTemplate: 'Prometheus ___ eine Stadt.', answer: 'gründet', image: '🏗️',
                       hint: 'cōnstituere = gründen' },
-                    { latin: 'Prōmetheus cōnsilium capit.', germanTemplate: 'Prometheus fasst einen ___.', answer: 'Plan', image: '📋',
+                    { latin: 'Promētheus cōnsilium capit.', germanTemplate: 'Prometheus fasst einen ___.', answer: 'Plan', image: '📋',
                       hint: 'cōnsilium = der Plan, der Beschluss' },
                 ],
                 nouns: [
@@ -3780,11 +3786,11 @@
                     // Abschnitt 2
                     { latin: 'puer', german: 'der Junge', image: '👦', hint: 'Ein junges Kind (männlich)',
                       distractors: ['das Mädchen', 'der Mann', 'der Sklave, der Diener', 'der Vater'] },
-                    { latin: 'quis', german: 'wer?', image: '🕵️', hint: 'Frage nach einer Person',
+                    { latin: 'quis?', german: 'wer?', image: '🕵️', hint: 'Frage nach einer Person',
                       distractors: ['was?', 'warum?', 'wo?', 'wann?'] },
                     { latin: 'mē', german: 'mich', image: '🙋', hint: 'Erste Person, Akkusativ',
                       distractors: ['dich', 'mir, für mich', 'ihn, sie', 'uns'] },
-                    { latin: 'num', german: 'etwa?', image: '🤨', hint: 'Frage, die ein „Nein“ erwartet',
+                    { latin: 'num?', german: 'etwa?', image: '🤨', hint: 'Frage, die ein „Nein“ erwartet',
                       distractors: ['warum?', 'wer?', 'wie oft?', 'wohin?'] },
                     { latin: 'mihi', german: 'mir, für mich', image: '🎁', hint: 'Erste Person, Dativ',
                       distractors: ['mich', 'dir, für dich', 'uns, für uns', 'ihm'] },
@@ -3870,8 +3876,8 @@
                     { latin: 'Inter amīcōs dolus deesse dēbet.', german: 'Unter Freunden darf es keine Täuschung geben.',
                       germanDistractors: ['Unter Freunden muss es Täuschung geben.', 'Freunde täuschen einander oft.', 'Unter Freunden darf es keinen Streit geben.', 'Freunde müssen einander helfen.'],
                       latinDistractors: ['Inter amīcōs dolus esse dēbet.', 'Amīcī saepe dolum parant.', 'Inter amīcōs īra deesse dēbet.', 'Amīcī inter sē adesse dēbent.'] },
-                    { latin: 'Āfra apud amīcum esse cupit.', german: 'Afra möchte bei ihrem Freund sein.',
-                      germanDistractors: ['Afra möchte ohne ihren Freund sein.', 'Afra muss bei ihrem Freund sein.', 'Afra ruft ihren Freund.', 'Afra kommt zu ihrem Freund.'],
+                    { latin: 'Āfra apud amīcum esse cupit.', german: 'Āfra möchte bei ihrem Freund sein.',
+                      germanDistractors: ['Āfra möchte ohne ihren Freund sein.', 'Āfra muss bei ihrem Freund sein.', 'Āfra ruft ihren Freund.', 'Āfra kommt zu ihrem Freund.'],
                       latinDistractors: ['Āfra sine amīcō esse cupit.', 'Āfra apud amīcum esse dēbet.', 'Āfra amīcum vocat.', 'Āfra ad amīcum venit.'] },
                 ],
                 verbForms: [
@@ -3956,10 +3962,10 @@
                     // nur Plural
                     { nom_sg: null, gen_sg: null, dat_sg: null, akk_sg: null, abl_sg: null,
                       nom_pl: 'līberī', gen_pl: 'līberōrum', dat_pl: 'līberīs', akk_pl: 'līberōs', abl_pl: 'līberīs',
-                      german: 'die Kinder', germanPl: 'Kinder', image: '🧒', declension: 'o-Deklination (nur Plural)' },
+                      label: 'līberī', german: 'die Kinder', germanPl: 'Kinder', image: '🧒', declension: 'o-Deklination (nur Plural)' },
                     { nom_sg: null, gen_sg: null, dat_sg: null, akk_sg: null, abl_sg: null,
                       nom_pl: 'superī', gen_pl: 'superōrum', dat_pl: 'superīs', akk_pl: 'superōs', abl_pl: 'superīs',
-                      german: 'die Götter', germanPl: 'Götter', image: '⚡', declension: 'o-Deklination (nur Plural)' },
+                      label: 'superī', german: 'die Götter', germanPl: 'Götter', image: '⚡', declension: 'o-Deklination (nur Plural)' },
                 ]
             },
 
@@ -3986,7 +3992,7 @@
                     // Abschnitt 2
                     { latin: 'saepe', german: 'oft', image: '🔁', hint: 'Viele Male',
                       distractors: ['selten, kaum', 'niemals, nie', 'immer', 'sofort, gleich'] },
-                    { latin: 'fugere', german: 'fliehen, entfliehen, meiden', image: '🏃', hint: 'Vor etwas davonlaufen',
+                    { latin: 'fugere', german: 'fliehen (vor), entfliehen, meiden', image: '🏃', hint: 'Vor etwas davonlaufen',
                       distractors: ['verfolgen, nachjagen', 'herbeikommen, sich nähern', 'stehen bleiben', 'angreifen'] },
                     { latin: 'lībertās', german: 'die Freiheit', image: '🕊️', hint: 'Nicht Sklave sein',
                       distractors: ['die Knechtschaft, die Sklaverei', 'die Herrschaft, die Macht', 'die Hilfe', 'das Glück, das Schicksal'] },
@@ -4145,7 +4151,7 @@
                       hint: 'clāmor = der Lärm, das Geschrei' },
                     { latin: 'Perīculum fugere possumus.', germanTemplate: 'Wir ___ die Gefahr meiden.', answer: 'können', image: '💪',
                       hint: 'posse = können' },
-                    { latin: 'Puella in arbore cōnsīdit.', germanTemplate: 'Das Mädchen ___ sich auf den Baum.', answer: 'setzt', image: '🪑',
+                    { latin: 'Puella in arbore cōnsīdit.', germanTemplate: 'Das Mädchen ___ sich auf dem Baum nieder.', answer: 'lässt', image: '🪑',
                       hint: 'cōnsīdere = sich setzen' },
                     { latin: 'Mercātor clāmōrem animadvertit.', germanTemplate: 'Der Händler ___ den Lärm.', answer: 'bemerkt', image: '💡',
                       hint: 'animadvertere = bemerken' },
@@ -4250,7 +4256,7 @@
               distractors: ['Buchhandlung', 'Labor', 'Freiheit', 'Büro'] },
             { english: 'science', german: 'Naturwissenschaft', image: '🔬', hint: 'Biologie, Chemie, Physik',
               distractors: ['Stille', 'Kunst', 'Sozialkunde', 'Informatik'] },
-            { english: 'number', german: 'Zahl, Ziffer, Nummer', image: '🔢', hint: '1, 2, 3...',
+            { english: 'number', german: 'Zahl, Ziffer, Nummer', image: '🔢', hint: '1, 2, 3…',
               distractors: ['Buchstabe', 'Name', 'taub', 'Menge'] },
             { english: 'drama', german: 'Drama, Theater', image: '🎭', hint: 'Schauspiel',
               distractors: ['Traum', 'Musik', 'Film', 'Kino'] },
@@ -4330,7 +4336,7 @@
               distractors: ['Suppe', 'Soße', 'Salz', 'Gemüse'] },
             { english: 'other', german: 'andere(r, s)', image: '↔️', hint: 'Nicht dieser',
               distractors: ['oder', 'äußere(r)', 'über', 'jede(r)'] },
-            { english: 'language', german: 'Sprache', image: '💬', hint: 'Deutsch, Englisch...',
+            { english: 'language', german: 'Sprache', image: '💬', hint: 'Deutsch, Englisch…',
               distractors: ['Land', 'Buchstabe', 'Rede', 'Lied'] },
             { english: 'vegetarian', german: 'Vegetarier/in, vegetarisch', image: '🥕', hint: 'Ohne Fleisch',
               distractors: ['vegan', 'Gemüse', 'Tierarzt', 'gesund'] },
@@ -4338,7 +4344,7 @@
               distractors: ['Wüste', 'Kuchen', 'Vorspeise', 'Süßigkeit'] },
             { english: 'fresh', german: 'neu, ungebraucht, frisch', image: '✨', hint: 'Nicht alt',
               distractors: ['Französisch', 'frei', 'Fleisch', 'kühl'] },
-            { english: 'fruit', german: 'Frucht, Obst', image: '🍎', hint: 'Apfel, Banane...',
+            { english: 'fruit', german: 'Frucht, Obst', image: '🍎', hint: 'Apfel, Banane…',
               distractors: ['Gemüse', 'Essen', 'Wurzel', 'Frühstück'] },
             { english: 'chicken', german: 'Huhn, Hähnchen', image: '🍗', hint: 'Geflügel',
               distractors: ['Küche', 'Küken', 'Schinken', 'Truthahn'] },
@@ -4587,7 +4593,7 @@
               distractors: ['Platz nehmen', 'mitnehmen', 'teilnehmen', 'einnehmen'] },
             { english: 'at', german: 'auf, an, in, bei, um (Uhrzeit)', image: '📌', hint: 'Kleine Präposition',
               distractors: ['und', 'aber', 'oder', 'von'] },
-            { english: 'too', german: 'zu (übermäßig)', image: '⚠️', hint: 'Zu viel, zu groß...',
+            { english: 'too', german: 'zu (übermäßig)', image: '⚠️', hint: 'Zu viel, zu groß…',
               distractors: ['auch', 'zwei', 'nach', 'bis'] },
             { english: 'her', german: 'ihr, sie (Objekt)', image: '👩', hint: 'Pronomen weiblich',
               distractors: ['sein', 'er', 'hier', 'hören'] },
@@ -4904,9 +4910,22 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.13.1';
+        const APP_VERSION = '2.14.0';
 
         const changelogEntries = [
+            {
+                version: '2.14.0',
+                date: '08.09.2026',
+                items: [
+                    '<b>Schlange: Wortstämme richtiggestellt.</b> Bei Verben der 3. Konjugation stand ein Buchstabe zu viel im Stamm („animadverte" statt „animadvert"), dadurch ließ sich die Form nicht bilden. Bei der konsonantischen Deklination erscheinen jetzt die Schulendungen (mercātōr + is statt mercāt + ōris). Insgesamt waren 239 von 1100 Formen betroffen.',
+                    '<b>Formen ohne Endung sind jetzt lösbar.</b> Bei arbor, puer und vir ist der Nominativ Singular der blanke Stamm — das Feld bleibt leer, „Prüfen" zählt. Unregelmäßige Nominative (mercātor, lībertās …) werden gar nicht mehr abgefragt.',
+                    '<b>Der Hinweis bei falscher Antwort stimmt wieder.</b> Vorher nannte er teils eine andere Endung, als die Prüfung akzeptierte („tis" statt „itis") — das betraf 204 Verbformen.',
+                    '<b>Deutsche Hilfssätze berichtigt</b>: „wir beginen" → „wir beginnen", „Ich anzeige den Weg" → „Ich zeige den Weg an", „Ich bitten, angreife Hilfe" → „Ich bitte um Hilfe", „du ertragst" → „du erträgst", „des Stolzs" → „des Stolzes".',
+                    '<b>„null (die Kinder)" verschwindet.</b> Nur im Plural vorkommende Wörter (līberī, superī) zeigen jetzt ihren richtigen Namen — und teilen sich nicht länger einen Lernstand.',
+                    '<b>Vokabeln gegen das gedruckte Heft abgeglichen</b> (Lektion 1–7, neue Fotos): Promētheus, cōgnōscere, pōstulat, Āfra, nātūra „die Natur", dazu ergänzte Bedeutungen bei dē, memoria, nēscīre, Diāna, colere, petere, cōgere und fugere.',
+                    'In „0 → 100" kann der falsche Knopf nicht mehr ebenfalls richtig sein; die Päckchen von Lektion 5 stimmen wieder mit dem Heft überein; Vokabeln mit Leerzeichen oder Schrägstrich landen nicht mehr in der Buchstaben-Aufgabe.',
+                ]
+            },
             {
                 version: '2.13.1',
                 date: '07.09.2026',
@@ -5684,7 +5703,7 @@
             const allItems = ch.vocabulary
                 .filter(v => v.distractors && v.distractors.length >= 3)
                 .map(v => ({
-                    id: 'v_' + v.latin,
+                    id: 'v_' + (v.vid || v.latin),
                     latin: v.latin,
                     emoji: v.image,
                     hint: v.hint || '',
@@ -5955,10 +5974,10 @@
 
         const introSectionsByChapter = {
             chapter5: [
-                { title: 'Götter & Leben',          range: [0, 9] },
-                { title: 'Natur & Erkenntnis',      range: [9, 18] },
-                { title: 'Heiliges & List',         range: [18, 27] },
-                { title: 'Herrschaft & Widerstand', range: [27, 36] },
+                { title: 'Götter & Leben',          range: [0, 10] },
+                { title: 'Natur & Erkenntnis',      range: [10, 19] },
+                { title: 'Heiliges & List',         range: [19, 28] },
+                { title: 'Herrschaft & Widerstand', range: [28, 36] },
                 { title: 'Worte & Werke',           range: [36, 45] },
             ],
             chapter6: [
@@ -6093,7 +6112,7 @@
             const allItems = ch.vocabulary
                 .filter(v => v.distractors && v.distractors.length >= 1)
                 .map((v, idx) => ({
-                    id: 'v_' + v.latin,
+                    id: 'v_' + (v.vid || v.latin),
                     bookIdx: idx,
                     latin: v.latin,
                     emoji: v.image,
@@ -6230,8 +6249,14 @@
             document.getElementById('stage2Hint').textContent = item.hint || '';
             document.getElementById('stage2Feedback').textContent = '';
 
-            // Distraktor: ein anderes deutsches Wort aus dem aktuellen Pool
-            const otherItems = introState.pool.filter(p => p.id !== item.id);
+            // Distraktor: ein anderes deutsches Wort aus dem Pool — aber keines,
+            // das dieselbe Bedeutung trägt. Sonst waren beide Knöpfe richtig
+            // (paulum „ein wenig" gegen paulō „(um) ein wenig").
+            const teile = t => String(t).toLowerCase().replace(/[()]/g, '')
+                .split(/[,;/]/).map(x => x.trim()).filter(x => x.length > 2);
+            const eigen = new Set(teile(item.correct));
+            const otherItems = introState.pool.filter(p =>
+                p.id !== item.id && !teile(p.correct).some(x => eigen.has(x)));
             const distractor = otherItems.length > 0
                 ? shuffleArray(otherItems)[0].correct
                 : (item.distractors && item.distractors[0]) || 'andere Bedeutung';
@@ -6400,12 +6425,15 @@
                             mcCorrect: v.german,
                             mcPrompt: v.latin,
                             mcQuestion: 'Was bedeutet dieses Wort auf Deutsch?',
-                            id: 'v_' + v.latin
+                            id: 'v_' + (v.vid || v.latin)
                         });
                     } else {
-                        // DE→LA: Spelling (deutsches Wort sehen, Latein tippen)
+                        // DE→LA. Lösungen mit Leerzeichen, Schrägstrich oder Fragezeichen
+                        // ergäben leere, unbeschriftete Buchstabenkacheln — nicht lösbar,
+                        // also bleiben sie bei Multiple Choice.
+                        const legbar = !/[ \/?]/.test(v.latin);
                         items.push({
-                            type: 'vocab', mode: 'spelling',
+                            type: 'vocab', mode: legbar ? 'spelling' : 'mc',
                             prompt: v.german, answer: v.latin.toLowerCase(),
                             displayAnswer: v.latin,
                             image: v.image, hint: v.hint,
@@ -6414,7 +6442,7 @@
                             mcCorrect: v.german,
                             mcPrompt: v.latin,
                             mcQuestion: 'Was bedeutet dieses Wort auf Deutsch?',
-                            id: 'v_' + v.latin
+                            id: 'v_' + (v.vid || v.latin)
                         });
                     }
                 });
@@ -6529,12 +6557,12 @@
                         const c = available[Math.floor(Math.random() * available.length)];
                         items.push({
                             type: 'noun', mode: 'spelling',
-                            prompt: n.nom_sg + ' (' + n.german + ')',
+                            prompt: nounLabel(n) + ' (' + n.german + ')',
                             answer: n[c.key].toLowerCase(),
                             displayAnswer: n[c.key],
                             image: n.image, hint: 'Bilde den ' + c.label,
                             question: c.label + '?',
-                            id: 'noun_' + c.key + '_' + n.nom_sg
+                            id: 'noun_' + c.key + '_' + nounLabel(n)
                         });
                     });
                 }
@@ -6611,7 +6639,7 @@
                     ch.nouns.forEach(n => {
                         const decl = n.declension.replace(/\s*\(.*\)/, '');
                         if (!declGroups[decl]) declGroups[decl] = [];
-                        const row = { label: n.nom_sg, german: n.german };
+                        const row = { label: nounLabel(n), german: n.german };
                         ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg',
                          'nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'].forEach(k => {
                             row[k] = n[k] || null;
@@ -6739,7 +6767,7 @@
                     if (entry.ptype === 'verb') {
                         const verb = entry.data;
                         const path = generateSnakePath(verb);
-                        const stem = getLatinStem(verb.infinitive);
+                        const stem = getVerbStem(verb);
                         const ctx = getSnakeContext(verb.infinitive);
                         const previousSteps = [];
 
@@ -6786,8 +6814,8 @@
                     } else {
                         // Noun snake
                         const noun = entry.data;
-                        const path = generateNounSnakePath();
                         const stem = getNounStem(noun);
+                        const path = generateNounSnakePath(noun, stem);
                         const previousSteps = [];
 
                         path.forEach((step, stepIdx) => {
@@ -6807,15 +6835,15 @@
                                 snakeType: 'noun',
                                 snakeId: snakeId, stepIndex: stepIdx, totalSteps: path.length,
                                 noun: noun, stem: stem,
-                                headLabel: noun.nom_sg, headDe: noun.german,
+                                headLabel: nounLabel(noun), headDe: noun.german,
                                 currentKey: step.key, fullForm: form,
                                 previousSteps: JSON.parse(JSON.stringify(previousSteps)),
                                 targetLat: target.lat, targetDe: target.de,
-                                prevLat: prevSentence ? prevSentence.lat : (noun.nom_sg + ' = ' + noun.german),
+                                prevLat: prevSentence ? prevSentence.lat : (nounLabel(noun) + ' = ' + noun.german),
                                 prevDe: prevSentence ? prevSentence.de : '',
                                 answer: ending.toLowerCase(), displayAnswer: form,
                                 image: '🐍', hint: '',
-                                id: 'snake_noun_' + noun.nom_sg + '_' + step.key
+                                id: 'snake_noun_' + nounLabel(noun) + '_' + step.key
                             };
 
                             if (stepIdx === 0) {
@@ -6891,7 +6919,7 @@
             // resulting in an empty ending. Always use imp_pl in that case.
             let impKey = Math.random() < 0.5 ? 'imp_sg' : 'imp_pl';
             if (impKey === 'imp_sg' && currentVerb && currentVerb.imperative && currentVerb.imperative.sg) {
-                const stem = getLatinStem(currentVerb.infinitive);
+                const stem = getVerbStem(currentVerb);
                 const ending = getEnding(currentVerb.imperative.sg, stem);
                 if (!ending) impKey = 'imp_pl';
             }
@@ -6899,12 +6927,19 @@
             return steps;
         }
 
-        function generateNounSnakePath() {
+        function generateNounSnakePath(noun, stem) {
             const cases = ['nom', 'gen', 'dat', 'akk', 'abl'];
             const numeri = ['sg', 'pl'];
-            let currentCase = cases[Math.floor(Math.random() * cases.length)];
-            let currentNum = numeri[Math.floor(Math.random() * numeri.length)];
-            let currentKey = currentCase + '_' + currentNum;
+            const allowed = [];
+            cases.forEach(c => numeri.forEach(nu => {
+                if (nounKeyFitsStem(noun, c + '_' + nu, stem)) allowed.push(c + '_' + nu);
+            }));
+            if (allowed.length === 0) return [];
+            if (allowed.length < 3) return allowed.map(k => ({ key: k, type: 'decline' }));
+
+            let currentKey = allowed[Math.floor(Math.random() * allowed.length)];
+            let currentCase = currentKey.split('_')[0];
+            let currentNum = currentKey.split('_')[1];
             const steps = [{ key: currentKey, type: 'decline' }];
             let prevKey = null;
             const numSteps = 4 + Math.floor(Math.random() * 2); // 5-6 total
@@ -6914,14 +6949,18 @@
                 do {
                     if (Math.random() < 0.5) {
                         const otherCases = cases.filter(c => c !== currentCase);
-                        const newCase = otherCases[Math.floor(Math.random() * otherCases.length)];
-                        newKey = newCase + '_' + currentNum;
+                        newKey = otherCases[Math.floor(Math.random() * otherCases.length)] + '_' + currentNum;
                     } else {
-                        const newNum = currentNum === 'sg' ? 'pl' : 'sg';
-                        newKey = currentCase + '_' + newNum;
+                        newKey = currentCase + '_' + (currentNum === 'sg' ? 'pl' : 'sg');
                     }
                     attempts++;
-                } while ((newKey === currentKey || newKey === prevKey) && attempts < 20);
+                } while ((!allowed.includes(newKey) || newKey === currentKey || newKey === prevKey) && attempts < 40);
+                // Notausgang, falls der Zufallslauf keinen erlaubten Nachbarn findet
+                if (!allowed.includes(newKey) || newKey === currentKey) {
+                    const rest = allowed.filter(k => k !== currentKey && k !== prevKey);
+                    if (!rest.length) break;
+                    newKey = rest[Math.floor(Math.random() * rest.length)];
+                }
                 prevKey = currentKey;
                 currentKey = newKey;
                 currentCase = newKey.split('_')[0];
@@ -6931,21 +6970,60 @@
             return steps;
         }
 
-        function getNounStem(noun) {
-            const keys = ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg','nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'];
-            const forms = keys.map(k => noun[k]).filter(f => f);
-            if (forms.length === 0) return '';
-            const stripped = forms.map(f => stripMacrons(f.toLowerCase()));
-            let prefixLen = stripped[0].length;
-            for (let i = 1; i < stripped.length; i++) {
+        // Stamm = längster gemeinsamer Anfang aller Formen.
+        // Makronen bleiben absichtlich erhalten: bei dea/deā ist das ā die ganze Endung,
+        // mit stripMacrons hätte der Stamm sie verschluckt (Stamm „dea", Endung leer).
+        function commonStem(forms) {
+            const list = forms.filter(f => f);
+            if (list.length === 0) return '';
+            const lower = list.map(f => f.toLowerCase());
+            let prefixLen = lower[0].length;
+            for (let i = 1; i < lower.length; i++) {
                 let match = 0;
-                for (let j = 0; j < prefixLen && j < stripped[i].length; j++) {
-                    if (stripped[0][j] === stripped[i][j]) match = j + 1;
+                for (let j = 0; j < prefixLen && j < lower[i].length; j++) {
+                    if (lower[0][j] === lower[i][j]) match = j + 1;
                     else break;
                 }
                 prefixLen = match;
             }
-            return forms[0].slice(0, prefixLen);
+            return list[0].slice(0, prefixLen);
+        }
+
+        // Pluralia tantum (līberī, superī, arma) haben kein nom_sg. Ohne diesen
+        // Umweg stand in der Aufgabe „null (die Kinder)", und beide Wörter teilten
+        // sich den Fortschritts-Schlüssel „…_null".
+        function nounLabel(n) { return n.label || n.nom_sg || n.nom_pl || '?'; }
+
+        function getNounStem(noun) {
+            if (noun.stem) return noun.stem;
+            // Konsonantische Deklination: der Stamm steckt im Genitiv, nicht im
+            // gemeinsamen Anfang. mercātor/mercātōris hat den Stamm mercātōr- —
+            // der Präfixvergleich lieferte „mercāt" und damit die erfundenen
+            // Endungen -ōris/-ōrem statt der Schulendungen -is/-em.
+            if (/^kons/i.test(noun.declension || '')) {
+                if (noun.gen_sg) return noun.gen_sg.replace(/is$/, '');
+                if (noun.gen_pl) return noun.gen_pl.replace(/um$/, '');
+            }
+            const keys = ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg','nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'];
+            return commonStem(keys.map(k => noun[k]));
+        }
+
+        // Formen, die sich nicht als Stamm + Endung schreiben lassen, dürfen in der
+        // Schlange nicht abgefragt werden — bei mercātor, clāmor, labor, amor,
+        // lībertās, celeritās ist das der Nominativ Singular (unregelmäßig gebildet).
+        function nounKeyFitsStem(noun, key, stem) {
+            const f = noun[key];
+            return !!f && f.toLowerCase().startsWith(String(stem).toLowerCase());
+        }
+
+        // Verbstamm aus den tatsächlichen Formen, nicht aus dem Infinitiv:
+        // getLatinStem schneidet bei der 3. Konjugation nur '-re' ab und lässt den
+        // Themavokal stehen (animadvertere → „animadverte" statt „animadvert").
+        function getVerbStem(verb) {
+            const p = verb.present || {};
+            const i = verb.imperative || {};
+            const stem = commonStem([verb.firstPerson, p.sg2, p.sg3, p.pl1, p.pl2, p.pl3, i.sg, i.pl]);
+            return stem || getLatinStem(verb.infinitive);
         }
 
         function getGermanCaseForm(noun, key) {
@@ -6971,8 +7049,12 @@
             if (caseName === 'gen' && num === 'sg' && (genus === 'm' || genus === 'n')) {
                 if (genus === 'm' && nounSg.endsWith('e')) {
                     nounForm = nounSg + 'n'; // weak masculine: der Gefährte → des Gefährten
-                } else if (!nounSg.endsWith('s') && !nounSg.endsWith('ß')) {
-                    nounForm = nounSg + 's';
+                } else {
+                    // Nach Zischlaut ist -es Pflicht (des Stolzes), bei Einsilbern
+                    // ist es die saubere Form (des Waldes, des Gottes). Sonst -s.
+                    const silben = (nounSg.match(/[aeiouäöüy]+/g) || []).length;
+                    if (/(s|ß|x|z)$/.test(nounSg) || silben <= 1) nounForm = nounSg + 'es';
+                    else nounForm = nounSg + 's';
                 }
             }
             // Dative/ablative plural: add -n if not already ending in -n/-s
@@ -7080,15 +7162,32 @@
                 // Lektion 3
                 'narrāre': { latObj: 'Fābulam', deObj: 'eine Geschichte' },
                 'parāre': { latObj: 'Cēnam', deObj: 'das Essen' },
-                'sustinēre': { latObj: 'Labōrem', deObj: 'die Mühe' },
+                // „ertragen" ist stark: du erträgst, er erträgt
+                'sustinēre': { latObj: 'Labōrem', deObj: 'die Mühe', deExplicit: {
+                    sg1:'Ich ertrage die Mühe.', sg2:'Du erträgst die Mühe.',
+                    sg3:'Er/Sie erträgt die Mühe.', pl1:'Wir ertragen die Mühe.',
+                    pl2:'Ihr ertragt die Mühe.', pl3:'Sie ertragen die Mühe.',
+                    imp_sg:'Ertrage die Mühe!', imp_pl:'Ertragt die Mühe!'} },
                 'prohibēre': { latObj: 'Servum', deObj: 'den Sklaven', deExplicit: {
                     sg1:'Ich halte den Sklaven ab.', sg2:'Du hältst den Sklaven ab.',
                     sg3:'Er/Sie hält den Sklaven ab.', pl1:'Wir halten den Sklaven ab.',
                     pl2:'Ihr haltet den Sklaven ab.', pl3:'Sie halten den Sklaven ab.',
                     imp_sg:'Halte den Sklaven ab!', imp_pl:'Haltet den Sklaven ab!'} },
                 'respondēre': { latObj: 'Magistrō', deObj: 'dem Lehrer' },
-                'indicāre': { latObj: 'Viam', deObj: 'den Weg' },
-                'negāre': { latObj: 'Culpam', deObj: 'die Schuld' },
+                // „anzeigen" ist trennbar: Ich zeige … an
+                'indicāre': { latObj: 'Viam', deObj: 'den Weg', deExplicit: {
+                    sg1:'Ich zeige den Weg an.', sg2:'Du zeigst den Weg an.',
+                    sg3:'Er/Sie zeigt den Weg an.', pl1:'Wir zeigen den Weg an.',
+                    pl2:'Ihr zeigt den Weg an.', pl3:'Sie zeigen den Weg an.',
+                    imp_sg:'Zeige den Weg an!', imp_pl:'Zeigt den Weg an!'} },
+                // „leugnen" braucht das Binde-e (du leugnest, ihr leugnet). Eine allgemeine
+                // Regel dafür ist heikel (wohnen → du wohnst, aber rechnen → du rechnest),
+                // deshalb hier fest hinterlegt.
+                'negāre': { latObj: 'Culpam', deObj: 'die Schuld', deExplicit: {
+                    sg1:'Ich leugne die Schuld.', sg2:'Du leugnest die Schuld.',
+                    sg3:'Er/Sie leugnet die Schuld.', pl1:'Wir leugnen die Schuld.',
+                    pl2:'Ihr leugnet die Schuld.', pl3:'Sie leugnen die Schuld.',
+                    imp_sg:'Leugne die Schuld!', imp_pl:'Leugnet die Schuld!'} },
                 'probāre': { latObj: 'Cōnsilium', deObj: 'den Plan' },
                 'prōvidēre': { latObj: 'Prō familiā', deObj: 'für die Familie' },
                 'vocāre': { latObj: 'Amīcum', deObj: 'den Freund' },
@@ -7135,19 +7234,30 @@
                     pl2:'Ihr führt das Heer.', pl3:'Sie führen das Heer.',
                     imp_sg:'Führe das Heer!', imp_pl:'Führt das Heer!'} },
                 'ostendere': { latObj: 'Viam', deObj: 'den Weg' },
-                'cognōscere': { latObj: 'Verītātem', deObj: 'die Wahrheit' },
+                'cōgnōscere': { latObj: 'Vēritātem', deObj: 'die Wahrheit' },
                 'dīcere': { latObj: 'Verba', deObj: 'Worte' },
                 'colere': { latObj: 'Deōs', deObj: 'die Götter' },
-                'vīvere': { latObj: 'In pace', deObj: 'in Frieden' },
+                'vīvere': { latObj: 'In pāce', deObj: 'in Frieden' },
                 'cōgere': { latObj: 'Servum', deObj: 'den Sklaven' },
                 'resistere': { latObj: 'Hostibus', deObj: 'den Feinden', deExplicit: {
                     sg1:'Ich leiste den Feinden Widerstand.', sg2:'Du leistest den Feinden Widerstand.',
                     sg3:'Er/Sie leistet den Feinden Widerstand.', pl1:'Wir leisten den Feinden Widerstand.',
                     pl2:'Ihr leistet den Feinden Widerstand.', pl3:'Sie leisten den Feinden Widerstand.',
                     imp_sg:'Leiste Widerstand!', imp_pl:'Leistet Widerstand!'} },
-                'petere': { latObj: 'Auxilium', deObj: 'Hilfe' },
+                // german ist eine Kommaliste ('bitten, angreifen') — ohne feste Tabelle
+                // würde daraus „Ich bitten, angreife Hilfe."
+                'petere': { latObj: 'Auxilium', deObj: 'Hilfe', deExplicit: {
+                    sg1:'Ich bitte um Hilfe.', sg2:'Du bittest um Hilfe.',
+                    sg3:'Er/Sie bittet um Hilfe.', pl1:'Wir bitten um Hilfe.',
+                    pl2:'Ihr bittet um Hilfe.', pl3:'Sie bitten um Hilfe.',
+                    imp_sg:'Bitte um Hilfe!', imp_pl:'Bittet um Hilfe!'} },
                 'tangere': { latObj: 'Statuam', deObj: 'die Statue' },
-                'accendere': { latObj: 'Ignem', deObj: 'das Feuer' },
+                // „anzünden" ist trennbar: Ich zünde … an
+                'accendere': { latObj: 'Ignem', deObj: 'das Feuer', deExplicit: {
+                    sg1:'Ich zünde das Feuer an.', sg2:'Du zündest das Feuer an.',
+                    sg3:'Er/Sie zündet das Feuer an.', pl1:'Wir zünden das Feuer an.',
+                    pl2:'Ihr zündet das Feuer an.', pl3:'Sie zünden das Feuer an.',
+                    imp_sg:'Zünde das Feuer an!', imp_pl:'Zündet das Feuer an!'} },
                 'legere': { latObj: 'Librum', deObj: 'ein Buch', deExplicit: {
                     sg1:'Ich lese ein Buch.', sg2:'Du liest ein Buch.',
                     sg3:'Er/Sie liest ein Buch.', pl1:'Wir lesen ein Buch.',
@@ -7195,9 +7305,9 @@
                     pl2:'Ihr entreißt den Käse.', pl3:'Sie entreißen den Käse.',
                     imp_sg:'Entreiße den Käse!', imp_pl:'Entreißt den Käse!'} },
                 'cōnsīdere': { latObj: 'In arbore', deObj: '', deExplicit: {
-                    sg1:'Ich setze mich auf den Baum.', sg2:'Du setzt dich auf den Baum.',
-                    sg3:'Er/Sie setzt sich auf den Baum.', pl1:'Wir setzen uns auf den Baum.',
-                    pl2:'Ihr setzt euch auf den Baum.', pl3:'Sie setzen sich auf den Baum.',
+                    sg1:'Ich lasse mich auf dem Baum nieder.', sg2:'Du lässt dich auf dem Baum nieder.',
+                    sg3:'Er/Sie lässt sich auf dem Baum nieder.', pl1:'Wir lassen uns auf dem Baum nieder.',
+                    pl2:'Ihr lasst euch auf dem Baum nieder.', pl3:'Sie lassen sich auf dem Baum nieder.',
                     imp_sg:'Setz dich auf den Baum!', imp_pl:'Setzt euch auf den Baum!'} },
                 'attingere': { latObj: 'Umerum', deObj: 'die Schulter' },
                 'iactāre': { latObj: 'Saxum', deObj: 'den Stein', deExplicit: {
@@ -7213,7 +7323,9 @@
 
         function conjugateGermanSimple(germanInf, key) {
             const clean = germanInf.replace(/\s*\(.*?\)/g, '').replace(/^sich\s+/, '').replace(/\s+für$/, '').trim();
-            const stem = clean.replace(/en$/, '').replace(/n$/, '');
+            // Nur EINMAL abstreifen: '.replace(/en$/).replace(/n$/)' hat nacheinander
+            // gegriffen und Stämmen auf -n das n geklaut (beginnen → „begin" → „wir beginen").
+            const stem = /en$/.test(clean) ? clean.replace(/en$/, '') : clean.replace(/n$/, '');
             const needsE = stem.endsWith('t') || stem.endsWith('d');
             const endings = {
                 sg1: 'e', sg2: needsE ? 'est' : 'st', sg3: needsE ? 'et' : 't',
@@ -8144,12 +8256,23 @@
             setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 5000);
         }
 
+        // Manche Formen haben gar keine Endung — der Nominativ Singular ist dann der
+        // blanke Stamm (arbor, mercātor, puer, vir). Richtige Antwort ist die leere
+        // Eingabe; ein Strich wird als „keine Endung" mitgezählt.
+        function snakeNoEnding(v) {
+            return v === '' || /^[-–—/0]+$/.test(v);
+        }
+
         function checkSnakeAnswer() {
             const input = document.getElementById('snakeEndingInput');
-            if (!input || !input.value.trim()) return;
+            if (!input) return;
             const item = currentLatinItem;
-            const userAnswer = stripMacrons(input.value.trim().toLowerCase());
+            const raw = input.value.trim();
             const expected = stripMacrons(item.answer);
+            // Leeres Feld nur werten, wenn „keine Endung" auch die richtige Antwort ist —
+            // sonst bliebe ein versehentliches Prüfen als Fehler hängen.
+            if (!raw && expected !== '') return;
+            const userAnswer = snakeNoEnding(raw) ? '' : stripMacrons(raw.toLowerCase());
             const stats = wordStats[item.id];
             const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
 
@@ -8174,7 +8297,9 @@
                     input.className = 'snake-ending-input wrong';
                     document.getElementById('snakeCheckBtn').style.display = 'none';
                     document.getElementById('snakeInstruction').textContent =
-                        'Falsch! Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length);
+                        'Falsch! ' + (item.answer === ''
+                        ? 'Diese Form hat keine Endung — sie ist der blanke Stamm.'
+                        : 'Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length));
                     document.getElementById('snakeInstruction').style.color = '#f44336';
                     playSound('wrong');
                     setTimeout(() => {
@@ -8227,7 +8352,9 @@
 
                 document.getElementById('snakeCheckBtn').style.display = 'none';
                 document.getElementById('snakeInstruction').textContent =
-                    'Falsch! Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length);
+                    'Falsch! ' + (item.answer === ''
+                        ? 'Diese Form hat keine Endung — sie ist der blanke Stamm.'
+                        : 'Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length));
                 document.getElementById('snakeInstruction').style.color = '#f44336';
 
                 snakeRetrying = true;
@@ -9293,9 +9420,9 @@
                     if (vf.present) chapterKeys.add('la:vf_pres_' + vf.infinitive);
                     if (vf.imperative) chapterKeys.add('la:vf_imp_' + vf.infinitive);
                 });
-                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:noun_' + n.nom_sg));
+                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:noun_' + nounLabel(n)));
                 if (ch.verbForms) ch.verbForms.forEach(vf => chapterKeys.add('la:tbl_v_' + vf.infinitive));
-                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:tbl_n_' + n.nom_sg));
+                if (ch.nouns) ch.nouns.forEach(n => chapterKeys.add('la:tbl_n_' + nounLabel(n)));
                 if (ch.sentences) ch.sentences.forEach(s => chapterKeys.add('la:sent_' + s.answer));
                 chapterLabel = ch.name;
             }

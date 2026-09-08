@@ -46,8 +46,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.13.1
-**Datum:** 07.09.2026
+**Version:** 2.14.0
+**Datum:** 08.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
@@ -82,6 +82,15 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.14.0 (08.09.2026)
+- **Schlange**: Wortstämme aus den echten Formen abgeleitet (3. Konjugation, konsonantische
+  Deklination); endungslose Formen (arbor, puer, vir) mit leerem Feld lösbar; unregelmäßige
+  Nominative werden übersprungen; Hinweistext stimmt mit der akzeptierten Antwort überein
+- **Deutsche Hilfssätze**: Doppel-n, trennbare Präfixe, Kommalisten, starke Verben, Genitiv auf -es
+- **Pluralia tantum** (līberī, superī) mit eigenem Anzeigenamen statt „null"
+- **Vokabelabgleich gegen das gedruckte Heft** für Lektion 1–7 anhand neuer Fotos
+- Neu: `tools/latein-check.mjs` — Fehlerfinder für die Latein-Daten, siehe `tools/README.md`
 
 ### Version 2.13.1 (07.09.2026)
 - Legende im Vokabelheft korrigiert: roter Stern = **grammatikalische Besonderheit**
