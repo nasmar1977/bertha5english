@@ -41,13 +41,18 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **Vokabelheft**: alle Vokabeln zum Nachlesen, päckchenweise wählbar, dreispaltig wie im Buch
   (Wort · Formen/Grammatik · Bedeutung inkl. Beispielsätze) – 255 Einträge über Lektion 1/3/4/5/6/7
   – eigene Markierung für schwierige Vokabeln per Klick auf die Zeile
+  - **Abdeckblatt**: ein liniertes Blatt fährt über Spalte 2 und 3, die Lücken (`___`) füllt das Kind
+    selbst aus – mit Tab/Enter von Lücke zu Lücke
+  - **Danebenziehen**: das Blatt gleitet zur Seite (auf schmalen Geräten nach unten), eigenes Blatt
+    und Heft stehen nebeneinander; grün = getroffen, orange = nur vertippt, fehlende Bedeutungen
+    sind im Heft gelb markiert
 - **Alles gemischt**: Kombination aller Module (ohne Tabellentraining)
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.16.0
-**Datum:** 08.09.2026
+**Version:** 2.17.0
+**Datum:** 15.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
@@ -83,6 +88,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.17.0 (15.09.2026)
+- **Abdeckblatt im Vokabelheft**: ein liniertes Blatt fährt über die mittlere und die rechte Spalte;
+  Formen und Bedeutung füllt das Kind selbst in Lücken (`___`) aus, Tab/Enter springt weiter
+- **Blatt danebenziehen**: zum Vergleichen gleitet das Blatt zur Seite (≤600 px: nach unten),
+  eigenes Blatt und Heft stehen nebeneinander
+- **Rückmeldung ohne Rotstift**: grün = getroffen, orange = nur vertippt (inhaltlich richtig),
+  Nichtgetipptes bleibt unkommentiert. Nicht genannte Bedeutungen werden im **Heft** gelb markiert,
+  nicht auf dem Blatt des Kindes angestrichen. Zusammenfassung in ermutigendem Ton.
+- Auswertung ist absichtlich nachsichtig: Artikel dürfen fehlen („der Sklave" = „Sklave"),
+  Klammerzusätze sind optional, Makronen egal, ein Tippfehler zählt als gewusst
 
 ### Version 2.16.0 (08.09.2026)
 - **Neues Modul „Perfekt"** (nur Lektion 8): Infinitiv ↔ Perfekt und Bildungstyp bestimmen

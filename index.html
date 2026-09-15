@@ -1903,6 +1903,143 @@
         body.april-dark .vh-row.marked .vh-mark { color: #fbbf24; }
         body.april-dark .vh-hint { color: #9ca3af; }
 
+        /* ---- Abdeckblatt: mittlere + rechte Spalte verdecken und selbst ausfüllen ---- */
+        .vh-mode-bar {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; margin: 0 0 12px;
+        }
+        .vh-mode-btn {
+            font-family: inherit; font-size: 0.78em; font-weight: bold;
+            padding: 8px 16px; border-radius: 16px; cursor: pointer;
+            border: 2px solid #80cbc4; background: #e0f2f1; color: #00695c;
+            transition: all 0.2s ease;
+        }
+        .vh-mode-btn:hover { background: #b2dfdb; transform: translateY(-1px); }
+        .vh-mode-btn.primary {
+            background: linear-gradient(135deg, #26a69a 0%, #00796b 100%);
+            border-color: #00695c; color: #fff;
+        }
+        .vh-mode-btn.ghost { border-color: #cfd8dc; background: #f5f7f7; color: #607d8b; }
+
+        /* Im Übungsmodus bleibt nur das Wort stehen; der Rest wird zur Gleitfläche. */
+        .vh-row.vh-prow {
+            grid-template-columns: 15px 14px minmax(94px, 1.1fr) 2.8fr;
+        }
+        .vh-practice.cover .vh-row { cursor: default; }
+        .vh-practice.cover .vh-row:not(.marked):hover { background: transparent; }
+        .vh-practice .vh-ex { display: none; }
+
+        .vh-slide { position: relative; min-height: 2.2em; }
+        .vh-book {
+            display: grid; grid-template-columns: minmax(86px, 1fr) 1.8fr;
+            gap: 0 10px; align-items: start; width: 100%;
+            transition: width 0.55s cubic-bezier(.4, 0, .2, 1);
+        }
+        .vh-book > div { min-width: 0; overflow-wrap: break-word; }
+        /* Solange das Blatt darüber liegt, hat das Heft keine Höhe — sonst würde
+           die Zeilenhöhe verraten, wie lang die Antwort ist. */
+        .vh-practice.cover .vh-book { visibility: hidden; height: 0; overflow: hidden; }
+        .vh-practice.compare .vh-book {
+            width: 50%; padding-right: 10px;
+            grid-template-columns: minmax(52px, 1fr) 1.7fr; gap: 0 6px;
+        }
+
+        /* Das linierte Blatt: cremefarben, roter Rand links, blaue Linie unten. */
+        .vh-paper {
+            position: absolute; top: -3px; bottom: -3px; left: 0; width: 100%;
+            box-sizing: border-box; overflow: hidden;
+            padding: 3px 8px 3px 11px;
+            background: #fffdf3;
+            border-left: 2px solid rgba(198, 91, 91, 0.45);
+            border-bottom: 1px solid #cfdcef;
+            display: flex; flex-wrap: wrap; gap: 3px 10px; align-items: flex-start;
+            transition: left 0.55s cubic-bezier(.4, 0, .2, 1),
+                        width 0.55s cubic-bezier(.4, 0, .2, 1),
+                        top 0.55s cubic-bezier(.4, 0, .2, 1);
+        }
+        /* Einfahren von rechts: das Blatt rollt über die beiden Spalten. */
+        .vh-practice.vh-enter .vh-paper { left: 100%; width: 0; }
+        /* Danebenziehen: linke Kante wandert nach rechts, das Heft kommt hervor. */
+        .vh-practice.compare .vh-paper { left: 50%; width: 50%; }
+
+        .vh-cell-f { flex: 1 1 62px; min-width: 0; }
+        .vh-cell-d { flex: 3 1 96px; min-width: 0; }
+        .vh-blank {
+            font-family: inherit; font-size: 1em; color: #1a237e;
+            width: 100%; box-sizing: border-box;
+            border: none; border-bottom: 1.5px solid #9fb3d0;
+            background: transparent; padding: 1px 2px; outline: none;
+        }
+        .vh-blank::placeholder { color: #c2ccd6; letter-spacing: 1px; }
+        .vh-blank:focus { border-bottom-color: #26a69a; background: rgba(38, 166, 154, 0.12); }
+        .vh-written {
+            border-bottom: 1.5px solid #e2e8ef; padding: 1px 2px; color: #455a64;
+            word-break: break-word;
+        }
+        .vh-blank-empty { color: #c2ccd6; letter-spacing: 1px; }
+        .vh-sep { color: #b0bec5; }
+
+        /* Rückmeldung: grün getroffen, orange nur vertippt, grau „steht so nicht im Heft". */
+        .vh-got { color: #1b7f4b; font-weight: bold; }
+        .vh-typo { color: #c46a00; font-weight: bold; }
+        .vh-extra { color: #78909c; }
+        .vh-hit { color: #1b7f4b; }
+        .vh-hit-typo { color: #c46a00; }
+        /* Was noch gefehlt hat, leuchtet im Heft — nicht auf dem Blatt des Kindes. */
+        .vh-missed {
+            background: rgba(255, 213, 79, 0.6); border-radius: 3px; padding: 0 3px;
+            box-shadow: inset 0 -2px 0 rgba(245, 158, 11, 0.55);
+        }
+        .vh-feedback {
+            max-width: 640px; margin: 0 auto 14px; padding: 11px 16px;
+            border: 2px solid #80cbc4; border-left-width: 6px; border-radius: 12px;
+            background: #f1f8f6; color: #2f4f52;
+            font-size: 0.84em; line-height: 1.5; text-align: left;
+        }
+        .vh-feedback .vh-fb-head { display: block; font-weight: bold; font-size: 1.15em; margin-bottom: 3px; }
+        .vh-feedback ul { margin: 6px 0 0; padding-left: 18px; }
+        .vh-feedback li { margin: 2px 0; }
+        @media (max-width: 600px) {
+            .vh-row.vh-prow { grid-template-columns: 12px 10px minmax(58px, 1.05fr) 2.45fr; }
+            .vh-slide { min-height: 2.1em; }
+            .vh-paper { padding: 3px 4px 3px 7px; gap: 2px 6px; }
+            .vh-cell-f { flex: 1 1 46px; }
+            .vh-cell-d { flex: 3 1 72px; }
+            .vh-book { grid-template-columns: minmax(48px, 0.85fr) 1.6fr; gap: 0 5px; }
+            /* Nebeneinander wären es auf dem Handy zwei 98-px-Spalten — nicht
+               mehr lesbar. Also wird das Blatt hier nach unten gezogen; wie weit,
+               rechnet vhSyncHeights je Zeile aus. */
+            .vh-practice.compare .vh-book {
+                width: 100%; padding-right: 0;
+                grid-template-columns: minmax(48px, 0.85fr) 1.6fr; gap: 0 5px;
+            }
+            .vh-practice.compare .vh-paper { left: 0; width: 100%; }
+            .vh-mode-btn { font-size: 0.7em; padding: 7px 12px; }
+            .vh-feedback { font-size: 0.78em; padding: 9px 12px; }
+        }
+        /* Abdeckblatt im Nachtmodus */
+        body.april-dark .vh-mode-btn { background: #1e2030; border-color: #00796b; color: #b2dfdb; }
+        body.april-dark .vh-mode-btn:hover { background: #24283a; }
+        body.april-dark .vh-mode-btn.primary { background: linear-gradient(135deg, #00796b 0%, #004d40 100%); color: #e0f2f1; }
+        body.april-dark .vh-mode-btn.ghost { background: #1e2030; border-color: #3a3f55; color: #90a4ae; }
+        body.april-dark .vh-paper {
+            background: #151824; border-left-color: rgba(239, 154, 154, 0.45);
+            border-bottom-color: #2d3a52;
+        }
+        body.april-dark .vh-blank { color: #e8eaf6; border-bottom-color: #4a5878; }
+        body.april-dark .vh-blank::placeholder { color: #55607a; }
+        body.april-dark .vh-blank:focus { border-bottom-color: #4db6ac; background: rgba(77, 182, 172, 0.14); }
+        body.april-dark .vh-written { color: #cfd8dc; border-bottom-color: #2d3142; }
+        body.april-dark .vh-blank-empty { color: #55607a; }
+        body.april-dark .vh-got, body.april-dark .vh-hit { color: #81c784; }
+        body.april-dark .vh-typo, body.april-dark .vh-hit-typo { color: #ffb74d; }
+        body.april-dark .vh-extra { color: #90a4ae; }
+        body.april-dark .vh-missed {
+            background: rgba(251, 191, 36, 0.3); color: #fff8e1;
+            box-shadow: inset 0 -2px 0 rgba(251, 191, 36, 0.6);
+        }
+        body.april-dark .vh-feedback { background: #1e2030; border-color: #00796b; color: #e8eaf6; }
+
         /* ============ APRIL DARK MODE TOGGLE ============ */
         .april-dark-toggle {
             position: fixed; top: 18px; right: 18px; z-index: 20;
@@ -2308,7 +2445,7 @@
             <div class="module-card vokabelheft-card" onclick="openVokabelheft()">
                 <div class="module-icon">📓</div>
                 <div class="module-title">Vokabelheft</div>
-                <div class="module-info">Zum Nachlesen: päckchenweise wie im Buch<br><small>Wort · Formen · Bedeutung</small></div>
+                <div class="module-info">Nachlesen oder abdecken und selbst ausfüllen<br><small>Wort · Formen · Bedeutung</small></div>
             </div>
             <div class="module-card" onclick="startLatinModule('verbs')">
                 <div class="module-icon">✍️</div>
@@ -2368,7 +2505,9 @@
             <p style="color: #666; margin-top: 10px;">Wähle ein Päckchen:</p>
         </div>
         <div class="vh-packets" id="vhPackets"></div>
-        <div class="vh-hint">Tipp: Zeile antippen = schwierige Vokabel markieren (Punkt davor). Nochmal antippen hebt es auf.</div>
+        <div class="vh-mode-bar" id="vhModeBar"></div>
+        <div class="vh-feedback" id="vhFeedback" style="display: none;"></div>
+        <div class="vh-hint" id="vhHint">Tipp: Zeile antippen = schwierige Vokabel markieren (Punkt davor). Nochmal antippen hebt es auf.</div>
         <div class="vh-scroll"><div id="vhSheet"></div></div>
     </div>
 
@@ -5238,9 +5377,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.16.0';
+        const APP_VERSION = '2.17.0';
 
         const changelogEntries = [
+            {
+                version: '2.17.0',
+                date: '15.09.2026',
+                items: [
+                    '<b>Das Vokabelheft kann jetzt abgedeckt werden.</b> Ein liniertes Blatt fährt über die mittlere und die rechte Spalte — Formen und Bedeutung füllst du selbst aus. Mit <b>Tab</b> oder <b>Enter</b> springst du von Lücke zu Lücke.',
+                    '<b>Blatt danebenziehen</b>: Zum Schluss gleitet das Blatt zur Seite (auf dem Handy nach unten), und dein Blatt steht neben dem Heft. <span style="color:#1b7f4b;font-weight:bold">Grün</span> heißt getroffen, <span style="color:#c46a00;font-weight:bold">Orange</span> heißt nur vertippt — inhaltlich richtig.',
+                    'Was noch gefehlt hat — etwa die zweite oder dritte Bedeutung —, ist im Heft <b>gelb markiert</b> statt auf deinem Blatt angestrichen. Mehrere Bedeutungen trennst du mit Komma; „der Sklave" und „Sklave" gelten beide.',
+                ]
+            },
             {
                 version: '2.16.0',
                 date: '08.09.2026',
@@ -5549,6 +5697,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadVhMarks);
+        window.addEventListener('resize', () => { if (vhMode !== 'read') vhSyncHeights(); });
 
         // Escaped HTML und setzt _kursiv_-Abschnitte kursiv (wie im Buch).
         function vhText(s) {
@@ -5565,12 +5714,321 @@
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        // -------------------------------------------------------------------
+        // ABDECKBLATT — Spalte 2 und 3 verdecken, selbst ausfüllen, vergleichen
+        // 'read'    = Heft lesen (wie bisher)
+        // 'cover'   = liniertes Blatt liegt über Formen + Bedeutung, Lücken offen
+        // 'compare' = Blatt danebengezogen, beides nebeneinander mit Rückmeldung
+        // -------------------------------------------------------------------
+        let vhMode = 'read';
+        let vhInput = {};   // kapitel|päckchen|wort -> { f: '…', d: '…' }
+        let vhStats = null;
+
+        const VH_ARTICLE_RE = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines)\s+/;
+
+        // Zerlegt „a, b (x, y); c" in die einzelnen Bedeutungen — Kommas in
+        // Klammern trennen nicht. Die Trennzeichen bleiben erhalten, damit sich
+        // die Heftspalte zeichengetreu wieder zusammensetzen lässt.
+        function vhSplitParts(str) {
+            const s = String(str == null ? '' : str);
+            const parts = [], seps = [];
+            let depth = 0, cur = '';
+            for (let i = 0; i < s.length; i++) {
+                const ch = s[i];
+                if (ch === '(') depth++;
+                else if (ch === ')') depth = Math.max(0, depth - 1);
+                if (depth === 0 && (ch === ',' || ch === ';')) {
+                    parts.push(cur.trim());
+                    let sep = ch;
+                    while (i + 1 < s.length && s[i + 1] === ' ') { sep += ' '; i++; }
+                    seps.push(sep);
+                    cur = '';
+                } else cur += ch;
+            }
+            parts.push(cur.trim());
+            return { parts: parts, seps: seps };
+        }
+
+        function vhParts(str) {
+            return vhSplitParts(str).parts.filter(t => t !== '');
+        }
+
+        function vhNorm(s) {
+            return stripMacrons(String(s == null ? '' : s))
+                .toLowerCase()
+                .replace(/[_„“”"'`´]/g, '')
+                .replace(/[.!?…]+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // Zwei Lesarten je Eintrag: ohne Klammerzusatz und mit — jeweils auch
+        // ohne Artikel. „der Sklave" und „Sklave" gelten damit beide.
+        function vhVariants(s) {
+            const out = [];
+            const add = v => {
+                if (!v) return;
+                if (out.indexOf(v) < 0) out.push(v);
+                const noArt = v.replace(VH_ARTICLE_RE, '');
+                if (noArt && out.indexOf(noArt) < 0) out.push(noArt);
+            };
+            const raw = String(s == null ? '' : s);
+            // Ein vorangestellter Grammatik-Hinweis (_m. dopp. Akk._ halten für)
+            // darf fehlen — geübt wird die Bedeutung dahinter.
+            [raw, raw.replace(/^_[^_]*_\s*/, '')].forEach(variant => {
+                const base = vhNorm(variant);
+                add(base.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim());
+                add(base.replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim());
+            });
+            return out;
+        }
+
+        function vhLev(a, b) {
+            if (a === b) return 0;
+            const m = a.length, n = b.length;
+            if (!m) return n;
+            if (!n) return m;
+            if (Math.abs(m - n) > 3) return 99;
+            let prev = [];
+            for (let j = 0; j <= n; j++) prev[j] = j;
+            for (let i = 1; i <= m; i++) {
+                const cur = [i];
+                for (let j = 1; j <= n; j++) {
+                    cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+                                      prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+                }
+                prev = cur;
+            }
+            return prev[n];
+        }
+
+        // Bewertet eine Lücke: erst exakte Treffer vergeben, dann die übrigen
+        // noch einmal mit Tippfehler-Toleranz durchgehen.
+        function vhGrade(expected, typed) {
+            // Auch die Eingabe klammerbewusst trennen — sonst zerfiele
+            // „er (sie, es) ist" in „er (sie" und „es) ist".
+            const stu = vhParts(typed).map(t => ({ text: t, state: 'extra' }));
+            const exp = expected.map(() => 'missed');
+            const expVar = expected.map(vhVariants);
+            const stuVar = stu.map(s => vhVariants(s.text));
+
+            expected.forEach((e, i) => {
+                for (let k = 0; k < stu.length; k++) {
+                    if (stu[k].state !== 'extra') continue;
+                    if (expVar[i].some(x => stuVar[k].indexOf(x) >= 0)) {
+                        exp[i] = 'got'; stu[k].state = 'got'; return;
+                    }
+                }
+            });
+            expected.forEach((e, i) => {
+                if (exp[i] !== 'missed') return;
+                let best = -1, bestD = 99;
+                for (let k = 0; k < stu.length; k++) {
+                    if (stu[k].state !== 'extra') continue;
+                    expVar[i].forEach(x => stuVar[k].forEach(y => {
+                        const longest = Math.max(x.length, y.length);
+                        if (longest < 3) return;
+                        const d = vhLev(x, y);
+                        if (d <= (longest > 6 ? 2 : 1) && d < bestD) { bestD = d; best = k; }
+                    }));
+                }
+                if (best >= 0) { exp[i] = 'typo'; stu[best].state = 'typo'; }
+            });
+            return { exp: exp, stu: stu };
+        }
+
+        // Heftspalte mit Markierung dessen, was noch gefehlt hat.
+        function vhBookCellHtml(str, grades) {
+            const sp = vhSplitParts(str);
+            let out = '', g = 0;
+            sp.parts.forEach((t, i) => {
+                if (i > 0) out += vhText(sp.seps[i - 1]);
+                if (!t) return;
+                const st = grades ? grades[g++] : null;
+                const cls = st === 'got' ? 'vh-hit' : st === 'typo' ? 'vh-hit-typo'
+                          : st === 'missed' ? 'vh-missed' : '';
+                out += cls ? '<span class="' + cls + '">' + vhText(t) + '</span>' : vhText(t);
+            });
+            return out;
+        }
+
+        // Was das Kind geschrieben hat — eingefärbt, aber nie rot.
+        function vhWrittenHtml(states) {
+            if (!states.length) return '<span class="vh-blank-empty">___</span>';
+            return states.map(s => {
+                const cls = s.state === 'got' ? 'vh-got' : s.state === 'typo' ? 'vh-typo' : 'vh-extra';
+                return '<span class="' + cls + '">' + vhAttr(s.text) + '</span>';
+            }).join('<span class="vh-sep">, </span>');
+        }
+
+        function vhStoreBlank(el) {
+            const key = el.dataset.vhkey;
+            if (!key) return;
+            if (!vhInput[key]) vhInput[key] = {};
+            vhInput[key][el.dataset.field] = el.value;
+        }
+
+        function vhCollectAnswers() {
+            document.querySelectorAll('#vhSheet .vh-blank').forEach(vhStoreBlank);
+        }
+
+        // Tab macht der Browser selbst; Enter springt weiter und am Ende zum Vergleich.
+        function vhBlankKey(ev, el) {
+            if (ev.key !== 'Enter') return;
+            ev.preventDefault();
+            const all = Array.prototype.slice.call(document.querySelectorAll('#vhSheet .vh-blank'));
+            const i = all.indexOf(el);
+            if (i >= 0 && i + 1 < all.length) all[i + 1].focus();
+            else vhCompare();
+        }
+
+        // Das Blatt ist absolut positioniert; damit nichts abgeschnitten wird,
+        // bekommt die Zeile nach dem Gleiten die Höhe, die das Blatt braucht.
+        function vhSyncHeights() {
+            // Schmale Geräte: das Blatt liegt beim Vergleich unter dem Heft, nicht daneben.
+            const stacked = vhMode === 'compare' && window.innerWidth <= 600;
+            document.querySelectorAll('#vhSheet .vh-slide').forEach(slide => {
+                const paper = slide.querySelector('.vh-paper');
+                if (!paper) return;
+                slide.style.minHeight = '';
+                const book = slide.querySelector('.vh-book');
+                paper.style.top = (stacked && book) ? (book.offsetHeight + 3) + 'px' : '';
+                // Nicht die Blatthöhe messen — die hängt an der Zeilenhöhe und
+                // würde sich bei jedem Aufruf selbst hochschaukeln. Gemessen wird,
+                // wie weit die Felder auf dem Blatt tatsächlich nach unten reichen.
+                const top = slide.getBoundingClientRect().top;
+                let bottom = top;
+                Array.prototype.forEach.call(paper.children, child => {
+                    bottom = Math.max(bottom, child.getBoundingClientRect().bottom);
+                });
+                const needed = Math.ceil(bottom - top) + 4;
+                if (needed > slide.offsetHeight) slide.style.minHeight = needed + 'px';
+            });
+        }
+
+        function vhStartPractice() {
+            vhMode = 'cover';
+            renderVokabelheft();
+            const sheet = document.getElementById('vhSheet');
+            sheet.classList.add('vh-enter');
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                sheet.classList.remove('vh-enter');
+            }));
+            setTimeout(vhSyncHeights, 620);
+            const first = sheet.querySelector('.vh-blank');
+            if (first) { try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); } }
+        }
+
+        function vhStopPractice() {
+            vhMode = 'read';
+            renderVokabelheft();
+        }
+
+        function vhClearBlanks() {
+            document.querySelectorAll('#vhSheet .vh-blank').forEach(el => {
+                const key = el.dataset.vhkey;
+                if (key && vhInput[key]) delete vhInput[key][el.dataset.field];
+                el.value = '';
+            });
+            const first = document.querySelector('#vhSheet .vh-blank');
+            if (first) first.focus();
+        }
+
+        function vhCompare() {
+            vhCollectAnswers();
+            vhMode = 'compare';
+            renderVokabelheft();
+            const sheet = document.getElementById('vhSheet');
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                sheet.classList.remove('cover');
+                sheet.classList.add('compare');
+                vhSyncHeights();   // auf dem Handy startet damit das Gleiten nach unten
+            }));
+            // Erst das Blatt gleiten lassen, dann zur Rückmeldung nach oben.
+            setTimeout(() => {
+                vhSyncHeights();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 620);
+        }
+
+        function vhFeedbackHtml(st) {
+            const total = st.meanTotal;
+            const hit = st.meanGot + st.meanTypo;
+            if (st.filled === 0) {
+                return '<span class="vh-fb-head">🌱 Das Blatt ist noch leer — das ist völlig in Ordnung.</span>' +
+                       'Links steht jetzt alles, was in diesem Päckchen drinsteckt. Lies es einmal in Ruhe durch ' +
+                       'und zieh das Blatt gleich nochmal drüber — beim zweiten Mal bleibt erstaunlich viel hängen.';
+            }
+            const ratio = total ? hit / total : 0;
+            let head;
+            if (total && hit === total && st.meanTypo === 0) head = '🌟 Alles getroffen — jede einzelne Bedeutung!';
+            else if (ratio >= 0.8) head = '🎉 Das sitzt fast komplett!';
+            else if (ratio >= 0.5) head = '👍 Mehr als die Hälfte — guter Lauf!';
+            else if (ratio >= 0.2) head = '🌱 Ein Anfang ist gemacht.';
+            else head = '🧭 Jetzt weißt du, was in diesem Päckchen steckt.';
+
+            const li = [];
+            li.push('<b>' + hit + ' von ' + total + '</b> Bedeutungen hattest du auf dem Blatt.');
+            if (st.meanTypo > 0) {
+                li.push((st.meanTypo === 1 ? 'Eine davon war' : st.meanTypo + ' davon waren') +
+                        ' nur vertippt (<span class="vh-typo">orange</span>) — gewusst hast du sie.');
+            }
+            const missed = total - hit;
+            if (missed > 0) {
+                li.push((missed === 1 ? 'Eine Bedeutung stand' : missed + ' Bedeutungen standen') +
+                        ' noch nicht drauf — im Heft links <span class="vh-missed">gelb markiert</span>. ' +
+                        'Die nimmst du jetzt einfach mit.');
+            }
+            if (st.formTotal > 0) {
+                li.push('Formen &amp; Grammatik (mittlere Spalte): <b>' +
+                        (st.formGot + st.formTypo) + ' von ' + st.formTotal + '</b>.');
+            }
+            return '<span class="vh-fb-head">' + head + '</span><ul><li>' + li.join('</li><li>') + '</li></ul>';
+        }
+
+        function renderVhModeBar() {
+            const bar = document.getElementById('vhModeBar');
+            if (!bar) return;
+            if (vhMode === 'read') {
+                bar.innerHTML = '<button class="vh-mode-btn primary" onclick="vhStartPractice()">' +
+                                '✏️ Abdecken &amp; selbst ausfüllen</button>';
+            } else if (vhMode === 'cover') {
+                bar.innerHTML = '<button class="vh-mode-btn primary" onclick="vhCompare()">' +
+                                '📄 Blatt danebenziehen</button>' +
+                                '<button class="vh-mode-btn ghost" onclick="vhClearBlanks()">🧹 Lücken leeren</button>' +
+                                '<button class="vh-mode-btn ghost" onclick="vhStopPractice()">📖 Zurück zum Lesen</button>';
+            } else {
+                bar.innerHTML = '<button class="vh-mode-btn primary" onclick="vhStartPractice()">' +
+                                '✏️ Nochmal üben</button>' +
+                                '<button class="vh-mode-btn ghost" onclick="vhStopPractice()">📖 Zurück zum Lesen</button>';
+            }
+        }
+
+        function renderVhHint() {
+            const hint = document.getElementById('vhHint');
+            if (!hint) return;
+            if (vhMode === 'cover') {
+                hint.innerHTML = 'Das Blatt liegt über den beiden rechten Spalten. Mit <b>Tab</b> oder <b>Enter</b> ' +
+                                 'springst du von Lücke zu Lücke. Mehrere Bedeutungen mit Komma trennen — ' +
+                                 'und was dir nicht einfällt, lässt du einfach frei.';
+            } else if (vhMode === 'compare') {
+                hint.innerHTML = '<span class="vh-got">Grün</span> = getroffen · ' +
+                                 '<span class="vh-typo">Orange</span> = nur vertippt · ' +
+                                 '<span class="vh-missed">Gelb im Heft</span> = das kommt noch dazu. ' +
+                                 'Zeile antippen markiert sie wie immer als schwierig.';
+            } else {
+                hint.innerHTML = 'Tipp: Zeile antippen = schwierige Vokabel markieren (Punkt davor). Nochmal antippen hebt es auf.';
+            }
+        }
+
         function openVokabelheft() {
             hideAllScreens();
             const data = vokabelheftData[currentLatinChapterKey];
             document.getElementById('vhChapterName').textContent = data ? data.name : '';
             document.getElementById('vokabelheftScreen').style.display = 'block';
             vhPacketIndex = 0;
+            vhMode = 'read';
+            vhInput = {};
             renderVokabelheft();
             hideAprilDarkToggle();
             applyAprilDarkBody();
@@ -5583,6 +6041,8 @@
 
         function selectVhPacket(i) {
             vhPacketIndex = i;
+            // Nach dem Vergleich zurück aufs leere Blatt — die Eingaben je Wort bleiben.
+            if (vhMode === 'compare') vhMode = 'cover';
             renderVokabelheft();
         }
 
@@ -5590,11 +6050,17 @@
             const data = vokabelheftData[currentLatinChapterKey];
             const bar = document.getElementById('vhPackets');
             const sheet = document.getElementById('vhSheet');
+            const feedback = document.getElementById('vhFeedback');
             if (!data) {
                 bar.innerHTML = '';
+                sheet.className = '';
                 sheet.innerHTML = '<div class="vh-empty">Für diese Lektion gibt es noch kein Vokabelheft.</div>';
+                document.getElementById('vhModeBar').innerHTML = '';
+                feedback.style.display = 'none';
+                document.getElementById('vhHint').style.display = 'none';
                 return;
             }
+            document.getElementById('vhHint').style.display = '';
 
             bar.innerHTML = data.packets.map((p, i) =>
                 '<button class="vh-packet-btn' + (i === vhPacketIndex ? ' active' : '') +
@@ -5605,27 +6071,100 @@
 
             const packets = vhPacketIndex === -1 ? data.packets : [data.packets[vhPacketIndex]];
             const hasStar = packets.some(p => p.rows.some(r => r.s));
+            vhStats = { meanTotal: 0, meanGot: 0, meanTypo: 0, formTotal: 0, formGot: 0, formTypo: 0, filled: 0 };
+            // Beim Vergleich wird zuerst im Abdeck-Layout gerendert; erst der
+            // Klassenwechsel danach lässt das Blatt zur Seite gleiten.
+            sheet.className = vhMode === 'read' ? '' : 'vh-practice cover';
             sheet.innerHTML = packets.map(vhRenderPacket).join('') +
                 (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '');
+
+            renderVhModeBar();
+            renderVhHint();
+            if (vhMode === 'compare') {
+                feedback.innerHTML = vhFeedbackHtml(vhStats);
+                feedback.style.display = '';
+            } else {
+                feedback.style.display = 'none';
+            }
+            // Höhe erst messen, wenn das Blatt ausgerollt ist — während der
+            // Animation ist es 0 px breit und der Text bräche auf zehn Zeilen um.
+            if (vhMode !== 'read') requestAnimationFrame(() => {
+                if (!sheet.classList.contains('vh-enter')) vhSyncHeights();
+            });
         }
 
         function vhRenderPacket(p) {
+            const practice = vhMode !== 'read';
             const rows = p.rows.map(r => {
-                let mean = '<div class="vh-mean">' + vhText(r.d);
-                (r.ex || []).forEach(pair => {
-                    mean += '<div class="vh-ex"><span class="vh-ex-la">' + vhText(pair[0]) + '</span>' +
-                            '<br><span class="vh-ex-de">' + vhText(pair[1]) + '</span></div>';
-                });
-                mean += '</div>';
                 const key = currentLatinChapterKey + '|' + p.label + '|' + r.w;
-                return '<div class="vh-row' + (vhMarks[key] ? ' marked' : '') + '"' +
-                       ' data-vhkey="' + vhAttr(key) + '" onclick="toggleVhMark(this)"' +
-                       ' title="Antippen: als schwierige Vokabel markieren">' +
-                       '<div class="vh-mark">\u25CF</div>' +
-                       '<div class="vh-star">' + (r.s ? '*' : '') + '</div>' +
-                       '<div class="vh-word">' + vhText(r.w) + '</div>' +
-                       '<div class="vh-forms">' + vhText(r.f) + '</div>' +
-                       mean + '</div>';
+                const head = '<div class="vh-mark">●</div>' +
+                             '<div class="vh-star">' + (r.s ? '*' : '') + '</div>' +
+                             '<div class="vh-word">' + vhText(r.w) + '</div>';
+                const marked = vhMarks[key] ? ' marked' : '';
+
+                if (!practice) {
+                    let mean = '<div class="vh-mean">' + vhText(r.d);
+                    (r.ex || []).forEach(pair => {
+                        mean += '<div class="vh-ex"><span class="vh-ex-la">' + vhText(pair[0]) + '</span>' +
+                                '<br><span class="vh-ex-de">' + vhText(pair[1]) + '</span></div>';
+                    });
+                    mean += '</div>';
+                    return '<div class="vh-row' + marked + '"' +
+                           ' data-vhkey="' + vhAttr(key) + '" onclick="toggleVhMark(this)"' +
+                           ' title="Antippen: als schwierige Vokabel markieren">' +
+                           head + '<div class="vh-forms">' + vhText(r.f) + '</div>' + mean + '</div>';
+                }
+
+                const answers = vhInput[key] || {};
+                const expForms = vhParts(r.f);
+                const expMeans = vhParts(r.d);
+                let formGrade = null, meanGrade = null;
+
+                if (vhMode === 'compare') {
+                    formGrade = vhGrade(expForms, answers.f);
+                    meanGrade = vhGrade(expMeans, answers.d);
+                    vhStats.formTotal += expForms.length;
+                    vhStats.meanTotal += expMeans.length;
+                    formGrade.exp.forEach(s => { if (s === 'got') vhStats.formGot++; else if (s === 'typo') vhStats.formTypo++; });
+                    meanGrade.exp.forEach(s => { if (s === 'got') vhStats.meanGot++; else if (s === 'typo') vhStats.meanTypo++; });
+                    if ((answers.f || '').trim()) vhStats.filled++;
+                    if ((answers.d || '').trim()) vhStats.filled++;
+                }
+
+                const book = '<div class="vh-book">' +
+                    '<div class="vh-forms">' + vhBookCellHtml(r.f, formGrade && formGrade.exp) + '</div>' +
+                    '<div class="vh-mean">' + vhBookCellHtml(r.d, meanGrade && meanGrade.exp) + '</div>' +
+                    '</div>';
+
+                let paper;
+                if (vhMode === 'compare') {
+                    paper = '<div class="vh-paper">' +
+                        '<div class="vh-written vh-cell-f">' +
+                            (expForms.length ? vhWrittenHtml(formGrade.stu) : '') + '</div>' +
+                        '<div class="vh-written vh-cell-d">' + vhWrittenHtml(meanGrade.stu) + '</div>' +
+                        '</div>';
+                } else {
+                    const blank = (field, cls, value) =>
+                        '<input type="text" class="vh-blank ' + cls + '" placeholder="___"' +
+                        ' aria-label="' + vhAttr(r.w) + ' — ' + (field === 'f' ? 'Formen' : 'Bedeutung') + '"' +
+                        ' data-vhkey="' + vhAttr(key) + '" data-field="' + field + '"' +
+                        ' value="' + vhAttr(value || '') + '"' +
+                        ' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"' +
+                        ' oninput="vhStoreBlank(this)" onkeydown="vhBlankKey(event, this)">';
+                    paper = '<div class="vh-paper">' +
+                        (expForms.length
+                            ? blank('f', 'vh-cell-f', answers.f)
+                            : '<div class="vh-cell-f"></div>') +
+                        blank('d', 'vh-cell-d', answers.d) +
+                        '</div>';
+                }
+
+                const clickable = vhMode === 'compare'
+                    ? ' onclick="toggleVhMark(this)" title="Antippen: als schwierige Vokabel markieren"'
+                    : '';
+                return '<div class="vh-row vh-prow' + marked + '" data-vhkey="' + vhAttr(key) + '"' +
+                       clickable + '>' + head +
+                       '<div class="vh-slide">' + book + paper + '</div></div>';
             }).join('');
             return '<div class="vh-group"><div class="vh-group-label">' + vhText(p.label) + '</div>' +
                    '<div class="vh-table">' + rows + '</div></div>';
@@ -9962,6 +10501,11 @@
         // ===================================================================
 
         document.addEventListener('keydown', (event) => {
+            // Vokabelheft: dort gehört die Tastatur den Lücken auf dem Abdeckblatt
+            // (Tab, Enter, Buchstaben) — kein Spielmodus darf dazwischenfunken.
+            const vhScreenEl = document.getElementById('vokabelheftScreen');
+            if (vhScreenEl && vhScreenEl.style.display !== 'none') return;
+
             // Table mode: only intercept Enter, let browser handle rest
             if (currentMode === 'table') {
                 if (event.key === 'Enter') {
