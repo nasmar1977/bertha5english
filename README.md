@@ -51,7 +51,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.17.0
+**Version:** 2.17.1
 **Datum:** 15.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -88,6 +88,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.17.1 (15.09.2026)
+- Abdeckblatt: **fehlende Trennzeichen** werden verkraftet — „das Forum der Marktplatz die
+  Öffentlichkeit" zählt wie die Kommaschreibweise, ebenso „und" oder „/"
+- Abdeckblatt: **Zeilenumbruch und nachgestellte Kursivangabe trennen** ebenfalls. `cibī _m_`
+  und `fugiō\n_m. Akk._` sind je zwei Angaben, einzeln bewertet und einzeln markiert
+- Abdeckblatt: ein **falsches Geschlecht** (n statt m) ist kein Tippfehler mehr; ein
+  **fehlendes** bleibt nachsichtig behandelt
+- Auswertungsreihenfolge: wörtlicher Fund schlägt Tippfehler-Distanz (sonst wurde „vītae f"
+  als Tippfehler statt als Treffer gewertet)
 
 ### Version 2.17.0 (15.09.2026)
 - **Abdeckblatt im Vokabelheft**: ein liniertes Blatt fährt über die mittlere und die rechte Spalte;

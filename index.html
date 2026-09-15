@@ -5377,9 +5377,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.17.0';
+        const APP_VERSION = '2.17.1';
 
         const changelogEntries = [
+            {
+                version: '2.17.1',
+                date: '15.09.2026',
+                items: [
+                    '<b>Komma vergessen zählt nicht als Fehler.</b> „das Forum der Marktplatz die Öffentlichkeit" wird jetzt genauso erkannt wie mit Kommas dazwischen — auch mit „und" oder Schrägstrich.',
+                    '<b>Genitiv und Geschlecht sind zwei Angaben.</b> Wer <i>cibī</i> richtig hat und das <i>m</i> vergisst, bekommt den Genitiv grün und nur das <i>m</i> gelb. Genauso bei Angaben wie <i>fugiō</i> und <i>m. Akk.</i>, die im Vokabelheft untereinander stehen.',
+                    'Ein <b>falsches</b> Geschlecht (<i>n</i> statt <i>m</i>) gilt dagegen nicht mehr als Tippfehler — da lohnt das Nachlesen.',
+                ]
+            },
             {
                 version: '2.17.0',
                 date: '15.09.2026',
@@ -5727,8 +5736,10 @@
         const VH_ARTICLE_RE = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines)\s+/;
 
         // Zerlegt „a, b (x, y); c" in die einzelnen Bedeutungen — Kommas in
-        // Klammern trennen nicht. Die Trennzeichen bleiben erhalten, damit sich
-        // die Heftspalte zeichengetreu wieder zusammensetzen lässt.
+        // Klammern trennen nicht. Ein Zeilenumbruch trennt ebenfalls: in der
+        // Formenspalte stehen „fugiō" und „m. Akk." untereinander, das sind zwei
+        // Angaben. Die Trennzeichen bleiben erhalten, damit sich die Heftspalte
+        // zeichengetreu wieder zusammensetzen lässt.
         function vhSplitParts(str) {
             const s = String(str == null ? '' : str);
             const parts = [], seps = [];
@@ -5737,7 +5748,7 @@
                 const ch = s[i];
                 if (ch === '(') depth++;
                 else if (ch === ')') depth = Math.max(0, depth - 1);
-                if (depth === 0 && (ch === ',' || ch === ';')) {
+                if (depth === 0 && (ch === ',' || ch === ';' || ch === '\n')) {
                     parts.push(cur.trim());
                     let sep = ch;
                     while (i + 1 < s.length && s[i + 1] === ' ') { sep += ' '; i++; }
@@ -5746,7 +5757,19 @@
                 } else cur += ch;
             }
             parts.push(cur.trim());
-            return { parts: parts, seps: seps };
+            // Eine nachgestellte Kursivangabe ist eine eigene Angabe: „cibī _m_"
+            // fragt den Genitiv UND das Geschlecht. Wer nur „cibi" schreibt, soll
+            // den Genitiv gutgeschrieben bekommen und nur beim m nachlesen.
+            // Kursives mitten im Text („_m. dopp. Akk._ halten für") und in
+            // Klammern („(_wo?_)") bleibt unangetastet.
+            const outParts = [], outSeps = [];
+            parts.forEach((t, i) => {
+                if (i > 0) outSeps.push(seps[i - 1]);
+                const m = /^(.*\S)(\s+)(_[^_]+_)$/.exec(t);
+                if (m) { outParts.push(m[1]); outSeps.push(m[2]); outParts.push(m[3]); }
+                else outParts.push(t);
+            });
+            return { parts: outParts, seps: outSeps };
         }
 
         function vhParts(str) {
@@ -5781,6 +5804,31 @@
                 add(base.replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim());
             });
             return out;
+        }
+
+        // „cibi n" statt „cibi m" ist kein Tippfehler, sondern ein anderes
+        // Geschlecht — das darf nicht als „gewusst" durchgehen. Ein ganz
+        // fehlendes Geschlecht dagegen schon: das ist unvollständig, nicht falsch.
+        function vhGenderMismatch(a, b) {
+            const genders = t => (t.match(/(?:^|\s)[mfn](?=\s|$)/g) || []).map(x => x.trim()).join('');
+            const ga = genders(a), gb = genders(b);
+            if (!ga || !gb || ga === gb) return false;
+            const strip = t => t.replace(/(?:^|\s)[mfn](?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+            return strip(a) === strip(b);
+        }
+
+        // Steckt die Bedeutung als ganzes Wort in dem, was getippt wurde?
+        // Nur als ganzes Wort, sonst fände „gehen" sich in „weggehen" wieder.
+        // Auch einzelne Buchstaben zählen — das Geschlecht in „cibi m" ist einer.
+        function vhContainsPhrase(hay, needle) {
+            if (!hay || !needle) return false;
+            const isWordChar = c => /[a-zäöüß0-9]/.test(c);
+            for (let i = hay.indexOf(needle); i >= 0; i = hay.indexOf(needle, i + 1)) {
+                const before = i === 0 ? ' ' : hay[i - 1];
+                const after = i + needle.length >= hay.length ? ' ' : hay[i + needle.length];
+                if (!isWordChar(before) && !isWordChar(after)) return true;
+            }
+            return false;
         }
 
         function vhLev(a, b) {
@@ -5820,6 +5868,21 @@
                     }
                 }
             });
+            // Zweite Runde: mehrere Angaben in einem Zug, ohne Trennzeichen
+            // dazwischen — „Das Forum der Marktplatz" statt „Das Forum, der
+            // Marktplatz", oder „cibi m" für Genitiv und Geschlecht. Das Komma
+            // zu vergessen ist keine Wissenslücke. Muss vor der Tippfehlerrunde
+            // laufen: ein wörtlicher Fund wiegt schwerer als eine kleine Distanz.
+            expected.forEach((e, i) => {
+                if (exp[i] !== 'missed') return;
+                for (let k = 0; k < stu.length; k++) {
+                    if (!expVar[i].some(x => stuVar[k].some(y => vhContainsPhrase(y, x)))) continue;
+                    exp[i] = 'got';
+                    if (stu[k].state === 'extra') stu[k].state = 'got';
+                    return;
+                }
+            });
+            // Dritte Runde: Tippfehler.
             expected.forEach((e, i) => {
                 if (exp[i] !== 'missed') return;
                 let best = -1, bestD = 99;
@@ -5828,6 +5891,7 @@
                     expVar[i].forEach(x => stuVar[k].forEach(y => {
                         const longest = Math.max(x.length, y.length);
                         if (longest < 3) return;
+                        if (vhGenderMismatch(x, y)) return;
                         const d = vhLev(x, y);
                         if (d <= (longest > 6 ? 2 : 1) && d < bestD) { bestD = d; best = k; }
                     }));
