@@ -39,7 +39,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - Zufällige Lücken ausfüllen, 3-5 pro Tabelle, dann Wechsel
 - **Beispielsätze**: 21 Lückentexte – lateinischer Satz + deutsche Übersetzung mit Lücke
 - **Vokabelheft**: alle Vokabeln zum Nachlesen, päckchenweise wählbar, dreispaltig wie im Buch
-  (Wort · Formen/Grammatik · Bedeutung inkl. Beispielsätze) – 255 Einträge über Lektion 1/3/4/5/6/7
+  (Wort · Formen/Grammatik · Bedeutung inkl. Beispielsätze) – 304 Einträge über Lektion 1/3/4/5/6/7/8
   – eigene Markierung für schwierige Vokabeln per Klick auf die Zeile
   - **Abdeckblatt**: ein liniertes Blatt fährt über Spalte 2 und 3, die Lücken (`___`) füllt das Kind
     selbst aus – mit Tab/Enter von Lücke zu Lücke
