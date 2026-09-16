@@ -15,6 +15,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ Fortschritt wird sitzungsübergreifend gespeichert (localStorage)
 - ✅ Mobilfreundlich & Tastatur-Steuerung
 - ✅ Emoji-Schalter oben rechts: Bilder über den Vokabeln lassen sich ausblenden (bleibt gespeichert)
+- ✅ 🎯 **Knackpunkte-Schalter** (Latein): übt ausschließlich die im Vokabelheft markierten Vokabeln
 
 ### 🇬🇧 Englisch
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
@@ -46,13 +47,20 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - **Danebenziehen**: das Blatt gleitet zur Seite (auf schmalen Geräten nach unten), eigenes Blatt
     und Heft stehen nebeneinander; grün = getroffen, orange = nur vertippt, fehlende Bedeutungen
     sind im Heft gelb markiert
+- **🎯 Knackpunkte** (Schalter oben rechts, nur Latein): übt ausschließlich die im Vokabelheft
+  markierten Vokabeln — Vokabeln, Verb-Formen, Substantive, Perfekt, Schlange, Rakete,
+  Profi-Rakete und „Alles gemischt"
+  - unter 10 markierten Vokabeln füllt die Runde mit anderen auf; die markierten sind alle dabei
+  - 3× richtig legt eine Vokabel für den Tag schlafen (Punkt im Heft verblasst), nach 3 solchen
+    Tagen verschwindet die Markierung; gezählt wird über alle Module, auch bei ausgeschaltetem Schalter
+  - unberührt bleiben Beispielsätze, Tabellentraining und „0 → 100"
 - **Alles gemischt**: Kombination aller Module (ohne Tabellentraining)
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.17.1
-**Datum:** 15.09.2026
+**Version:** 2.18.0
+**Datum:** 16.09.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
@@ -88,6 +96,19 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.18.0 (16.09.2026)
+- **Neues Modul-übergreifendes Feature „🎯 Knackpunkte"**: Schalter oben rechts (links neben dem
+  Emoji-Schalter), sichtbar sobald eine Latein-Lektion gewählt ist. Die Zahl am Schalter nennt
+  die Zahl der gerade fälligen markierten Vokabeln.
+- Gefiltert werden Vokabeln, Verb-Formen, Substantive, Perfekt, Schlange, Rakete, Profi-Rakete
+  und „Alles gemischt"; ab 10 markierten Vokabeln ausschließlich diese, darunter vollständig
+  plus Auffüllung. Die Überschrift der Runde sagt, was gerade gilt.
+- **Markierungen tragen jetzt Fortschritt**: 3× richtig → Vokabel ruht bis zum nächsten Tag
+  (Punkt im Vokabelheft verblasst); 3 solche Tage → Markierung wird entfernt. Gezählt wird in
+  `recordAnswer`, also über alle Module hinweg und unabhängig vom Schalter.
+- Datenformat von `vokabelheftSchwierig` erweitert (`1` → `{h, d, r}`); alte Markierungen werden
+  beim Lesen übernommen, manuelles Setzen/Löschen im Vokabelheft bleibt unverändert.
 
 ### Version 2.17.1 (15.09.2026)
 - Abdeckblatt: **fehlende Trennzeichen** werden verkraftet — „das Forum der Marktplatz die

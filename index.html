@@ -2040,6 +2040,64 @@
         }
         body.april-dark .vh-feedback { background: #1e2030; border-color: #00796b; color: #e8eaf6; }
 
+        /* ============ KNACKPUNKTE-SCHALTER ============ */
+        /* Übt ausschließlich die im Vokabelheft markierten Vokabeln. */
+        .dv-toggle {
+            position: fixed; top: 18px; right: 146px; z-index: 20;
+            width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #b0bec5 0%, #546e7a 100%);
+            display: none; align-items: center; justify-content: center;
+            font-size: 1.35em; color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .dv-toggle.visible { display: flex; }
+        .dv-toggle:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0,0,0,0.28); }
+        .dv-toggle.on { background: linear-gradient(135deg, #ffa726 0%, #ef6c00 100%); }
+        .dv-badge {
+            position: absolute; bottom: -6px; right: -6px;
+            background: #ef6c00; color: #fff; border-radius: 11px;
+            min-width: 20px; padding: 1px 6px;
+            font-size: 0.5em; font-weight: bold; line-height: 1.5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .dv-toggle.on .dv-badge { display: block; }
+        .dv-toggle .emoji-tooltip {
+            position: absolute; top: 54px; right: 0;
+            background: #263238; color: #fff; padding: 9px 13px; border-radius: 10px;
+            font-size: 0.62em; line-height: 1.35; width: 220px; text-align: left;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .dv-toggle .emoji-tooltip::before {
+            content: ""; position: absolute; top: -6px; right: 16px;
+            border-left: 6px solid transparent; border-right: 6px solid transparent;
+            border-bottom: 6px solid #263238;
+        }
+        .dv-toggle:hover .emoji-tooltip { opacity: 1; transform: translateY(0); }
+        @media (max-width: 520px) {
+            .dv-toggle { top: 10px; right: 122px; width: 40px; height: 40px; font-size: 1.15em; }
+            .dv-toggle .emoji-tooltip { top: 48px; right: -40px; width: 190px; }
+        }
+        /* Kurze Meldung, wenn eine Vokabel eine Stufe geschafft hat */
+        .dv-toast {
+            position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 16px);
+            z-index: 60; max-width: 330px;
+            background: #2e7d32; color: #fff; border-radius: 14px;
+            padding: 11px 18px; font-size: 0.82em; line-height: 1.4; text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .dv-toast.show { opacity: 1; transform: translate(-50%, 0); }
+        .dv-toast.gone { background: linear-gradient(135deg, #ffa726 0%, #ef6c00 100%); }
+        /* Heute schon dreimal richtig: der Punkt im Vokabelheft ruht sich aus. */
+        .vh-row.marked.dv-rest .vh-mark { opacity: 0.3; }
+        body.april-dark .dv-toast { background: #1b5e20; }
+        body.april-dark .dv-toast.gone { background: linear-gradient(135deg, #ef6c00 0%, #e65100 100%); }
+
         /* ============ APRIL DARK MODE TOGGLE ============ */
         .april-dark-toggle {
             position: fixed; top: 18px; right: 18px; z-index: 20;
@@ -2687,6 +2745,13 @@
     </div>
 
     <!-- Globaler Emoji-Schalter: blendet die Bilder über den Vokabeln aus/ein -->
+    <button class="dv-toggle" id="dvToggle" onclick="dvToggleMode()">
+        <span id="dvToggleIcon">🎯</span>
+        <span class="dv-badge" id="dvBadge">0</span>
+        <span class="emoji-tooltip" id="dvToggleTip">Knackpunkte sind aus.</span>
+    </button>
+    <div class="dv-toast" id="dvToast"></div>
+
     <button class="emoji-toggle" id="emojiToggle" onclick="toggleEmojis()">
         <span id="emojiToggleIcon">😀</span>
         <span class="emoji-tooltip" id="emojiToggleTip">Bilder über den Vokabeln sind an. Klick, um sie auszuschalten.</span>
@@ -5312,6 +5377,7 @@
             }
             progress[key].lastSeen = Date.now();
             saveProgress(progress);
+            if (isCorrect) dvOnCorrect(key);
             // Streak für Latein-Kap-5-Nachtmodus mitzählen (April-Englisch wird in eigenen Handlern gezählt)
             if (typeof isInLatinKap5 === 'function' && isInLatinKap5()) {
                 aprilOnAnswer(isCorrect);
@@ -5377,9 +5443,19 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.17.1';
+        const APP_VERSION = '2.18.0';
 
         const changelogEntries = [
+            {
+                version: '2.18.0',
+                date: '16.09.2026',
+                items: [
+                    '<b>Neuer Schalter oben rechts: 🎯 Knackpunkte.</b> Ist er an, kommen nur noch die Vokabeln dran, die du im Vokabelheft markiert hast — in Vokabeln, Verb-Formen, Substantiven, Perfekt, Schlange, Rakete und „Alles gemischt". Gemischt wird wie immer. Die Zahl am Schalter sagt dir, wie viele gerade dran sind.',
+                    '<b>Weniger als 10 markiert?</b> Dann füllt die Runde mit anderen Vokabeln auf — deine markierten sind aber alle dabei.',
+                    '<b>Dreimal richtig, und die Vokabel macht für heute Pause</b> — im Vokabelheft verblasst ihr Punkt. Nach drei solchen Tagen verschwindet die Markierung ganz. Gezählt wird über alle Übungen hinweg, auch wenn der Schalter aus ist.',
+                    'Antippen im Vokabelheft setzt und löscht die Markierung wie bisher. <i>Beispielsätze</i>, <i>Tabellentraining</i> und <i>0 → 100</i> bleiben unverändert: Sätze und Tabellen hängen an keinem einzelnen Wort, und 0 → 100 führt absichtlich durch neue Vokabeln.',
+                ]
+            },
             {
                 version: '2.17.1',
                 date: '15.09.2026',
@@ -5700,13 +5776,213 @@
         function toggleVhMark(rowEl) {
             const key = rowEl.dataset.vhkey;
             if (!key) return;
-            if (vhMarks[key]) { delete vhMarks[key]; } else { vhMarks[key] = 1; }
+            if (vhMarks[key]) { delete vhMarks[key]; } else { vhMarks[key] = { h: 0, d: 0, r: null }; }
             rowEl.classList.toggle('marked', !!vhMarks[key]);
+            rowEl.classList.toggle('dv-rest', dvIsResting(key));
             saveVhMarks();
+            dvUpdateToggle();
         }
 
         document.addEventListener('DOMContentLoaded', loadVhMarks);
         window.addEventListener('resize', () => { if (vhMode !== 'read') vhSyncHeights(); });
+
+        // ===================================================================
+        // KNACKPUNKTE — übt ausschließlich die im Vokabelheft markierten Vokabeln
+        // ===================================================================
+        // Jede Markierung trägt ihren eigenen Fortschritt:
+        //   h = wie oft schon richtig (0–2), d = geschaffte Tage (0–2),
+        //   r = Tag, an dem sie zuletzt durch war.
+        // Dreimal richtig legt die Vokabel für den Rest des Tages schlafen; beim
+        // dritten solchen Tag verschwindet die Markierung ganz. Gezählt wird in
+        // allen Modulen, auch bei ausgeschaltetem Schalter — wer eine markierte
+        // Vokabel nebenbei sicher kann, soll sie nicht ewig mitschleppen.
+        const DV_PREF_KEY = 'knackpunkteAn';
+        const DV_HITS_PER_DAY = 3;
+        const DV_DAYS_TO_CLEAR = 3;
+        const DV_MIN_WORDS = 10;   // darunter wird mit anderen Vokabeln aufgefüllt
+        let dvOn = false;
+        let dvKeyWord = {};        // Fortschritts-Schlüssel -> Vokabel im Vokabelheft
+        let dvToastTimer = null;
+
+        function dvToday() {
+            const d = new Date();
+            const p = n => (n < 10 ? '0' : '') + n;
+            return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+        }
+
+        // Altbestand: bis v2.17 stand in vhMarks nur eine 1.
+        function dvNormalizeMark(v) {
+            if (v && typeof v === 'object') return { h: v.h || 0, d: v.d || 0, r: v.r || null };
+            return v ? { h: 0, d: 0, r: null } : null;
+        }
+
+        function dvWordOfKey(key) { return key.split('|').slice(2).join('|'); }
+
+        function dvIsResting(key) {
+            const m = dvNormalizeMark(vhMarks[key]);
+            return !!(m && m.r === dvToday());
+        }
+
+        // Markierte Vokabeln des aktuellen Kapitels, die heute noch dran sind.
+        function dvActiveWords() {
+            const out = new Set();
+            if (!currentLatinChapterKey) return out;
+            const prefix = currentLatinChapterKey + '|';
+            const today = dvToday();
+            Object.keys(vhMarks).forEach(key => {
+                if (key.indexOf(prefix) !== 0) return;
+                const m = dvNormalizeMark(vhMarks[key]);
+                if (!m || m.r === today) return;
+                out.add(dvWordOfKey(key));
+            });
+            return out;
+        }
+
+        // Dasselbe Wort kann in zwei Päckchen stehen (in, Lektion 4) — dann
+        // zählen beide Markierungen gemeinsam.
+        function dvMarkKeysForWord(word) {
+            const prefix = currentLatinChapterKey + '|';
+            return Object.keys(vhMarks).filter(key =>
+                key.indexOf(prefix) === 0 && dvWordOfKey(key) === word);
+        }
+
+        // Der Fortschritt kennt nur Schlüssel wie „la:la>de:v_servus". Beim Bauen
+        // der Runde wird hier hinterlegt, zu welcher Heftvokabel sie gehören.
+        function dvIndexKey(key, word) { if (key && word) dvKeyWord[key] = word; }
+
+        function dvIndexItems(items) {
+            items.forEach(it => {
+                if (!it || !it.dvWord) return;
+                getAllWordKeys(it).forEach(k => dvIndexKey(k, it.dvWord));
+            });
+        }
+
+        function dvOnCorrect(key) {
+            const word = dvKeyWord[key];
+            if (!word) return;
+            const today = dvToday();
+            let changed = false, clearedDays = null, removed = null;
+            dvMarkKeysForWord(word).forEach(mk => {
+                const m = dvNormalizeMark(vhMarks[mk]);
+                if (!m || m.r === today) return;   // heute schon geschafft
+                m.h++;
+                if (m.h >= DV_HITS_PER_DAY) {
+                    m.h = 0;
+                    m.d++;
+                    if (m.d >= DV_DAYS_TO_CLEAR) {
+                        delete vhMarks[mk];
+                        removed = word; changed = true;
+                        return;
+                    }
+                    m.r = today;
+                    clearedDays = m.d;
+                }
+                vhMarks[mk] = m;
+                changed = true;
+            });
+            if (!changed) return;
+            saveVhMarks();
+            dvUpdateToggle();
+            if (removed) {
+                dvToast('🎉 <b>' + vhAttr(removed) + '</b> ist kein Knackpunkt mehr — die Markierung ist weg.', true);
+            } else if (clearedDays !== null) {
+                const offen = DV_DAYS_TO_CLEAR - clearedDays;
+                dvToast('✓ <b>' + vhAttr(word) + '</b> sitzt heute. Noch ' + offen +
+                        (offen === 1 ? ' Tag' : ' Tage') + ', dann ist die Markierung weg.');
+            }
+        }
+
+        function dvToast(html, isGone) {
+            const el = document.getElementById('dvToast');
+            if (!el) return;
+            el.innerHTML = html;
+            el.classList.toggle('gone', !!isGone);
+            el.classList.add('show');
+            if (dvToastTimer) clearTimeout(dvToastTimer);
+            dvToastTimer = setTimeout(() => el.classList.remove('show'), 4500);
+        }
+
+        function dvToggleMode() {
+            dvOn = !dvOn;
+            try { localStorage.setItem(DV_PREF_KEY, dvOn ? '1' : '0'); } catch (e) {}
+            dvUpdateToggle();
+            const n = dvActiveWords().size;
+            if (!dvOn) {
+                dvToast('Knackpunkte aus — es kommen wieder alle Vokabeln dran.');
+            } else if (n) {
+                dvToast('🎯 Knackpunkte an — geübt werden jetzt deine ' + n +
+                        (n === 1 ? ' markierte Vokabel.' : ' markierten Vokabeln.'));
+            } else {
+                dvToast('🎯 Knackpunkte an — in dieser Lektion ist noch nichts markiert. ' +
+                        'Tippe im Vokabelheft die Zeilen an, die dir schwerfallen.');
+            }
+        }
+
+        function dvUpdateToggle() {
+            const btn = document.getElementById('dvToggle');
+            if (!btn) return;
+            const show = currentLanguage === 'latin' && !!currentLatinChapterKey;
+            btn.classList.toggle('visible', show);
+            if (!show) return;
+            const n = dvActiveWords().size;
+            btn.classList.toggle('on', dvOn);
+            document.getElementById('dvBadge').textContent = n;
+            const tip = document.getElementById('dvToggleTip');
+            if (!dvOn) {
+                tip.textContent = n
+                    ? 'Knackpunkte sind aus. Klick, um nur deine ' + n + ' markierten Vokabeln zu üben.'
+                    : 'Knackpunkte sind aus. Markiere im Vokabelheft die Zeilen, die dir schwerfallen — dann kannst du hier gezielt üben.';
+            } else {
+                tip.textContent = n
+                    ? 'Knackpunkte sind an. Geübt werden nur deine markierten Vokabeln (' + n + ' Stück).'
+                    : 'Knackpunkte sind an, aber in dieser Lektion ist nichts markiert — es kommen alle Vokabeln dran.';
+            }
+        }
+
+        // Runde zusammenstellen: ab DV_MIN_WORDS markierten Vokabeln ausschließlich
+        // diese; darunter kommen sie vollständig hinein und der Rest füllt auf.
+        function dvSampleRound(pool, n, progress) {
+            const plain = () => weightedSample(pool, Math.min(n, pool.length), progress);
+            if (!dvOn || !pool.length) return plain();
+            const active = dvActiveWords();
+            if (!active.size) return plain();
+            const hits = pool.filter(it => it.dvWord && active.has(it.dvWord));
+            const words = new Set(hits.map(it => it.dvWord));
+            if (!words.size) return plain();
+            if (words.size >= DV_MIN_WORDS) return weightedSample(hits, Math.min(n, hits.length), progress);
+            const take = weightedSample(hits, Math.min(n, hits.length), progress);
+            if (take.length >= n) return take;
+            const rest = pool.filter(it => take.indexOf(it) < 0);
+            const fill = weightedSample(rest, Math.min(n - take.length, rest.length), progress);
+            return shuffleArray(take.concat(fill));
+        }
+
+        // Wie viele markierte Vokabeln deckt dieses Modul ab? Für die Überschrift —
+        // „Beispielsätze" und „Tabellentraining" hängen an keinem einzelnen Wort.
+        function dvCoverage(pool) {
+            if (!dvOn) return null;
+            const active = dvActiveWords();
+            if (!active.size) return { active: 0, covered: 0 };
+            const words = new Set(pool.filter(it => it.dvWord && active.has(it.dvWord)).map(it => it.dvWord));
+            return { active: active.size, covered: words.size };
+        }
+
+        // fuellt = false für Module, die ihre Aufgaben selbst zusammenstellen
+        // (die Schlange sucht sich drei Wörter und legt eine Kette darüber).
+        function dvModuleSuffix(pool, fuellt) {
+            const cov = dvCoverage(pool);
+            if (!cov) return '';
+            if (!cov.active) return ' · 🎯 nichts markiert';
+            if (!cov.covered) return ' · 🎯 hier kommt nichts Markiertes vor';
+            const auf = fuellt !== false && cov.covered < DV_MIN_WORDS ? ' + Auffüllung' : '';
+            return ' · 🎯 ' + cov.covered + ' Knackpunkte' + auf;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try { dvOn = localStorage.getItem(DV_PREF_KEY) === '1'; } catch (e) { dvOn = false; }
+            dvUpdateToggle();
+        });
+
 
         // Escaped HTML und setzt _kursiv_-Abschnitte kursiv (wie im Buch).
         function vhText(s) {
@@ -6081,7 +6357,9 @@
                                  '<span class="vh-missed">Gelb im Heft</span> = das kommt noch dazu. ' +
                                  'Zeile antippen markiert sie wie immer als schwierig.';
             } else {
-                hint.innerHTML = 'Tipp: Zeile antippen = schwierige Vokabel markieren (Punkt davor). Nochmal antippen hebt es auf.';
+                hint.innerHTML = 'Tipp: Zeile antippen = schwierige Vokabel markieren (Punkt davor). Nochmal antippen hebt es auf.<br>' +
+                                 'Mit dem 🎯-Schalter oben rechts übst du dann nur noch diese Vokabeln. Dreimal richtig lässt den Punkt ' +
+                                 'für heute verblassen — nach drei solchen Tagen verschwindet er ganz.';
             }
         }
 
@@ -6164,7 +6442,19 @@
                 const head = '<div class="vh-mark">●</div>' +
                              '<div class="vh-star">' + (r.s ? '*' : '') + '</div>' +
                              '<div class="vh-word">' + vhText(r.w) + '</div>';
-                const marked = vhMarks[key] ? ' marked' : '';
+                // Der Punkt verblasst, wenn die Vokabel heute schon dreimal
+                // richtig war — sie ruht dann bis morgen.
+                const mark = dvNormalizeMark(vhMarks[key]);
+                const resting = !!(mark && mark.r === dvToday());
+                const marked = mark ? (' marked' + (resting ? ' dv-rest' : '')) : '';
+                const offen = mark ? DV_DAYS_TO_CLEAR - mark.d : 0;
+                const markTitle = !mark
+                    ? 'Antippen: als schwierige Vokabel markieren'
+                    : resting
+                        ? 'Heute geschafft — ruht bis morgen. Noch ' + offen + (offen === 1 ? ' Tag' : ' Tage') +
+                          ', dann ist die Markierung weg. Antippen hebt sie sofort auf.'
+                        : 'Als schwierig markiert' + (mark.d ? ' · ' + mark.d + ' von ' + DV_DAYS_TO_CLEAR + ' Tagen geschafft' : '') +
+                          '. Antippen hebt es auf.';
 
                 if (!practice) {
                     let mean = '<div class="vh-mean">' + vhText(r.d);
@@ -6175,7 +6465,7 @@
                     mean += '</div>';
                     return '<div class="vh-row' + marked + '"' +
                            ' data-vhkey="' + vhAttr(key) + '" onclick="toggleVhMark(this)"' +
-                           ' title="Antippen: als schwierige Vokabel markieren">' +
+                           ' title="' + vhAttr(markTitle) + '">' +
                            head + '<div class="vh-forms">' + vhText(r.f) + '</div>' + mean + '</div>';
                 }
 
@@ -6224,7 +6514,7 @@
                 }
 
                 const clickable = vhMode === 'compare'
-                    ? ' onclick="toggleVhMark(this)" title="Antippen: als schwierige Vokabel markieren"'
+                    ? ' onclick="toggleVhMark(this)" title="' + vhAttr(markTitle) + '"'
                     : '';
                 return '<div class="vh-row vh-prow' + marked + '" data-vhkey="' + vhAttr(key) + '"' +
                        clickable + '>' + head +
@@ -6659,7 +6949,7 @@
             rocketCurrentBlockMode = size;
 
             // Pool: nur Einzelwort-Vokabeln (haben Distractors-Liste); Multiword/Verben/Sätze bleiben aussen vor
-            const allItems = ch.vocabulary
+            let allItems = ch.vocabulary
                 .filter(v => v.distractors && v.distractors.length >= 3)
                 .map(v => ({
                     id: 'v_' + (v.vid || v.latin),
@@ -6669,6 +6959,21 @@
                     correct: v.german,
                     distractors: v.distractors
                 }));
+
+            // Knackpunkte: nur die markierten Vokabeln; darunter mit anderen auffüllen.
+            let dvRocketHits = 0;
+            if (dvOn) {
+                const dvActive = dvActiveWords();
+                const hits = allItems.filter(it => dvActive.has(it.latin));
+                dvRocketHits = hits.length;
+                if (hits.length) {
+                    allItems = hits.length >= DV_MIN_WORDS ? hits
+                        : hits.concat(shuffleArray(allItems.filter(it => !dvActive.has(it.latin)))
+                                      .slice(0, DV_MIN_WORDS - hits.length));
+                }
+            }
+            // Die Rakete bucht ihre Treffer unter „la:la>de:…" — Zuordnung hinterlegen.
+            allItems.forEach(it => dvIndexKey('la:la>de:' + it.id, it.latin));
 
             let blockItems;
             if (size === 'all') {
@@ -6695,7 +7000,10 @@
             document.getElementById('rocketGameContainer').style.display = 'block';
             const sizeLabel = size === 'all' ? `alle ${blockItems.length}` : `${blockItems.length} Vokabeln`;
             const profiTag = rocketHardMode ? ' · Profi 🚪' : '';
-            document.getElementById('rocketSubtitle').textContent = ch.name + ' · ' + sizeLabel + profiTag;
+            const dvTag = !dvOn ? ''
+                : dvRocketHits ? ' · 🎯 ' + dvRocketHits + ' Knackpunkte' + (dvRocketHits >= DV_MIN_WORDS ? '' : ' + Auffüllung')
+                : ' · 🎯 hier gibt es nichts Markiertes';
+            document.getElementById('rocketSubtitle').textContent = ch.name + ' · ' + sizeLabel + profiTag + dvTag;
 
             document.getElementById('rocketRestartBtn').classList.remove('show');
             document.getElementById('rocketSprite').classList.remove('crashed');
@@ -7087,6 +7395,12 @@
                     distractors: v.distractors
                 }));
 
+            // „0 → 100" führt bewusst durch neue Wörter in Buchreihenfolge und
+            // wird nicht gefiltert. Richtige Antworten sollen aber trotzdem auf
+            // die Knackpunkte anrechnen — die Rakete in Stufe 3 bucht unter
+            // „la:la>de:…".
+            allItems.forEach(it => dvIndexKey('la:la>de:' + it.id, it.latin));
+
             if (size === 8 && sectionIdx !== null) {
                 const sections = introSectionsByChapter[introState.chapterId];
                 if (sections && sections[sectionIdx]) {
@@ -7360,14 +7674,19 @@
             else if (module === 'snake') moduleName = 'Konjug.- & Deklinationsssschlange';
             else if (module === 'sentences') moduleName = 'Beispielsätze';
             else moduleName = 'Alles gemischt';
-            document.getElementById('currentSetName').textContent = ch.name + ' – ' + moduleName;
-
             // Build round items for Latin
             latinRoundItems = buildLatinRoundItems(ch, module);
+            const dvPool = latinRoundItems;
             if (module !== 'tables' && module !== 'snake') {
                 const progress = loadProgress();
-                latinRoundItems = weightedSample(latinRoundItems, Math.min(15, latinRoundItems.length), progress);
+                latinRoundItems = dvSampleRound(latinRoundItems, 15, progress);
             }
+            // Tabellentraining wählt ganze Tabellen, keine einzelnen Wörter —
+            // dort bleibt der Schalter wirkungslos, und die Überschrift sagt es.
+            const dvSuffix = module === 'tables'
+                ? (dvOn ? ' · 🎯 hier ohne Wirkung' : '')
+                : dvModuleSuffix(dvPool, module !== 'snake');
+            document.getElementById('currentSetName').textContent = ch.name + ' – ' + moduleName + dvSuffix;
 
             initLatinGame();
         }
@@ -7378,6 +7697,7 @@
             if (module === 'vocab' || module === 'mixed') {
                 // Single-word vocab: 70% LA→DE, 30% DE→LA
                 ch.vocabulary.forEach(v => {
+                    const dvFrom = items.length;
                     if (Math.random() < 0.7) {
                         // LA→DE: MC (oder Spelling für einfache deutsche Wörter)
                         const isSimpleGerman = !v.german.includes(';') && !v.german.includes(',') && !v.german.includes('(') && v.german.length <= 12;
@@ -7416,6 +7736,7 @@
                             id: 'v_' + (v.vid || v.latin)
                         });
                     }
+                    for (let q = dvFrom; q < items.length; q++) items[q].dvWord = v.latin;
                 });
 
                 // Multi-word: 70% LA→DE, 30% DE→LA (MC)
@@ -7444,6 +7765,7 @@
 
             if (module === 'verbs' || module === 'mixed') {
                 ch.verbForms.forEach(vf => {
+                    const dvFrom = items.length;
                     // Random direction: infinitive→1st person or vice versa
                     const dir = Math.random() < 0.5;
                     if (dir) {
@@ -7506,6 +7828,7 @@
                             id: 'vf_imp_' + (isPlural ? 'pl' : 'sg') + '_' + vf.infinitive
                         });
                     }
+                    for (let q = dvFrom; q < items.length; q++) items[q].dvWord = vf.infinitive;
                 });
             }
 
@@ -7533,7 +7856,8 @@
                             displayAnswer: n[c.key],
                             image: n.image, hint: 'Bilde den ' + c.label,
                             question: c.label + '?',
-                            id: 'noun_' + c.key + '_' + nounLabel(n)
+                            id: 'noun_' + c.key + '_' + nounLabel(n),
+                            dvWord: nounLabel(n)
                         });
                     });
                 }
@@ -7721,7 +8045,8 @@
                         answer: vf.perfect.toLowerCase(), displayAnswer: vf.perfect,
                         image: '🕰️', hint: 'Die 1. Person Perfekt',
                         question: '1. Person Perfekt?',
-                        id: 'perf_i2p_' + vf.infinitive
+                        id: 'perf_i2p_' + vf.infinitive,
+                        dvWord: vf.infinitive
                     });
                     // 2) Perfekt → Infinitiv
                     items.push({
@@ -7730,7 +8055,8 @@
                         answer: vf.infinitive.toLowerCase(), displayAnswer: vf.infinitive,
                         image: '🕰️', hint: 'Zurück zum Infinitiv',
                         question: 'Wie heißt der Infinitiv?',
-                        id: 'perf_p2i_' + vf.infinitive
+                        id: 'perf_p2i_' + vf.infinitive,
+                        dvWord: vf.infinitive
                     });
                     // 3) Welcher Bildungstyp?
                     if (vf.perfectType && TYP[vf.perfectType]) {
@@ -7744,7 +8070,8 @@
                             mcCorrect: TYP[vf.perfectType],
                             mcPrompt: vf.perfect,
                             mcQuestion: 'Wie wird dieses Perfekt gebildet?',
-                            id: 'perf_typ_' + vf.infinitive
+                            id: 'perf_typ_' + vf.infinitive,
+                            dvWord: vf.infinitive
                         });
                     }
                 });
@@ -7754,16 +8081,27 @@
             if (module === 'snake') {
                 // --- KONJUGATIONS- & DEKLINATIONSSCHLANGE ---
                 // Eligible verbs: present + imperative, no spaces
-                const snakeVerbs = ch.verbForms.filter(vf => {
+                let snakeVerbs = ch.verbForms.filter(vf => {
                     if (!vf.present || !vf.imperative) return false;
                     const forms = [vf.firstPerson, vf.present.sg2, vf.present.sg3, vf.present.pl1, vf.present.pl2, vf.present.pl3, vf.imperative.sg, vf.imperative.pl];
                     return forms.every(f => f && !f.includes(' '));
                 });
                 // Eligible nouns: all 10 case forms non-null (filters Diāna)
-                const snakeNouns = (ch.nouns || []).filter(n => {
+                let snakeNouns = (ch.nouns || []).filter(n => {
                     const nounKeys = ['nom_sg','gen_sg','dat_sg','akk_sg','abl_sg','nom_pl','gen_pl','dat_pl','akk_pl','abl_pl'];
                     return nounKeys.every(k => n[k]);
                 });
+                // Knackpunkte: die Schlange kriecht nur noch über markierte Wörter,
+                // solange überhaupt eines dabei ist.
+                if (dvOn) {
+                    const dvActive = dvActiveWords();
+                    if (dvActive.size) {
+                        const fv = snakeVerbs.filter(vf => dvActive.has(vf.infinitive));
+                        const fn = snakeNouns.filter(n => dvActive.has(nounLabel(n)));
+                        if (fv.length + fn.length > 0) { snakeVerbs = fv; snakeNouns = fn; }
+                    }
+                }
+
                 // Mixed pool – guarantee at least 1 verb + 1 noun, shuffle order
                 let selected;
                 if (snakeVerbs.length > 0 && snakeNouns.length > 0) {
@@ -7788,6 +8126,7 @@
 
                 selected.forEach((entry, snakeIdx) => {
                     const snakeId = 'snake_' + snakeIdx;
+                    const dvFrom = items.length;
 
                     if (entry.ptype === 'verb') {
                         const verb = entry.data;
@@ -7881,9 +8220,12 @@
                             items.push(item);
                         });
                     }
+                    const dvW = entry.ptype === 'verb' ? entry.data.infinitive : nounLabel(entry.data);
+                    for (let q = dvFrom; q < items.length; q++) items[q].dvWord = dvW;
                 });
             }
 
+            dvIndexItems(items);
             return items;
         }
 
@@ -9907,6 +10249,7 @@
         // Dark-Mode erscheint in: April-Session, English-Kapitelwahl, Sprachauswahl (Hauptmenü)
         // sowie in allen Latein-Kap-5-Screens (Modul-Auswahl, Spiel, Rakete, 0→100).
         function applyAprilDarkBody() {
+            dvUpdateToggle();   // läuft bei jedem Bildschirmwechsel mit
             if (!aprilDarkActive) {
                 document.body.classList.remove('april-dark');
                 return;
