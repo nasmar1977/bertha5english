@@ -2,7 +2,7 @@
 
 Der kleine Server hinter der Liste „Gerade da" im Vokabeltrainer. Er läuft als
 **Cloudflare Worker** mit einer **D1**-Datenbank und tut genau zwei Dinge: den
-eigenen Zeitstempel eintragen und die Liste der letzten Stunde zurückgeben.
+eigenen Zeitstempel eintragen und die Liste der letzten sieben Tage zurückgeben.
 
 Drei Dateien, mehr ist es nicht:
 
@@ -48,13 +48,21 @@ CREATE TABLE IF NOT EXISTS presence (id TEXT PRIMARY KEY, name TEXT NOT NULL, se
 CREATE INDEX IF NOT EXISTS presence_seen ON presence (seen);
 ```
 
+```sql
+CREATE TABLE IF NOT EXISTS nutzung (tag TEXT NOT NULL, id TEXT NOT NULL, name TEXT NOT NULL, takte INTEGER NOT NULL DEFAULT 0, aktive INTEGER NOT NULL DEFAULT 0, erste INTEGER NOT NULL, letzte INTEGER NOT NULL, PRIMARY KEY (tag, id));
+```
+
+```sql
+CREATE INDEX IF NOT EXISTS nutzung_tag ON nutzung (tag);
+```
+
 > Die Konsole macht aus allem, was man hineinkopiert, **eine einzige Zeile**.
 > Ein SQL-Kommentar (`--`) würde deshalb den gesamten Rest verschlucken, und die
 > Antwort wäre `incomplete input: SQLITE_ERROR`. Darum steht in `schema.sql` kein
 > Kommentar: `id` ist die Geräte-ID aus der App, `name` der Vorname (höchstens 16
 > Zeichen), `seen` das letzte Lebenszeichen in Millisekunden seit 1970.
 
-Danach `/tables` eingeben — `presence` muss in der Liste stehen.
+Danach `/tables` eingeben — `presence` und `nutzung` müssen in der Liste stehen.
 
 ## A3 — Worker anlegen
 
@@ -153,8 +161,8 @@ const PRESENCE_API = "https://bertha-presence.marcator.workers.dev/";
 Seit 2026-10-04 steht dort die laufende Adresse. Leert man die Konstante, fällt
 die Liste auf Beispielnamen zurück — die App läuft also auch ohne Server.
 
-**Nach dem Testen aufräumen:** Probeläufe stehen bis zu einer Stunde in der
-Liste der Kinder. In der D1-Konsole wegräumen:
+**Nach dem Testen aufräumen:** Probeläufe stehen **bis zu einer Woche** in der
+Liste der Kinder — die Liste reicht so weit zurück. In der D1-Konsole wegräumen:
 
 ```sql
 DELETE FROM presence;
@@ -198,6 +206,68 @@ Danach `PRESENCE_API` wieder auf `''` setzen — die App fällt auf die
 Beispielnamen zurück, sonst ändert sich nichts.
 
 ---
+
+## Auswertung — Übezeit und Kinderzahl
+
+Jeder Herzschlag erhöht in `nutzung` eine Zeile pro **Gerät und Tag**:
+
+| Spalte | bedeutet |
+|---|---|
+| `takte` | alle Herzschläge — **App war offen** |
+| `aktive` | nur Herzschläge mit frischer Antwort — **es wurde geübt** |
+| `erste` / `letzte` | erster und letzter Kontakt des Tages |
+
+Ein Takt sind 20 Sekunden. **Übezeit = `aktive` × 20 s.** Alle Abfragen in der
+D1-Konsole, jeweils einzeilig eingeben:
+
+**Kumulativ, alles zusammen**
+
+```sql
+SELECT ROUND(SUM(aktive)*20/3600.0, 1) AS stunden_geuebt, ROUND(SUM(takte)*20/3600.0, 1) AS stunden_offen, COUNT(DISTINCT id) AS kinder, MIN(tag) AS seit FROM nutzung;
+```
+
+**Pro Tag**
+
+```sql
+SELECT tag, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY tag ORDER BY tag DESC LIMIT 30;
+```
+
+**Pro Woche**
+
+```sql
+SELECT strftime('%Y-KW%W', tag) AS woche, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY woche ORDER BY woche DESC;
+```
+
+**Pro Monat** — hier steht auch die Zahl der Kinder, die den Trainer in dem Monat genutzt haben
+
+```sql
+SELECT substr(tag,1,7) AS monat, ROUND(SUM(aktive)*20/3600.0, 1) AS stunden, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY monat ORDER BY monat DESC;
+```
+
+**Pro Kind, gesamt**
+
+```sql
+SELECT (SELECT name FROM nutzung n2 WHERE n2.id = n.id ORDER BY letzte DESC LIMIT 1) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage, MAX(tag) AS zuletzt FROM nutzung n GROUP BY id ORDER BY minuten DESC;
+```
+
+**Pro Kind und Monat**
+
+```sql
+SELECT substr(tag,1,7) AS monat, (SELECT name FROM nutzung n2 WHERE n2.id = n.id ORDER BY letzte DESC LIMIT 1) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage FROM nutzung n GROUP BY monat, id ORDER BY monat DESC, minuten DESC;
+```
+
+### Was die Zahlen nicht sagen
+
+- **Nur Kinder mit eingeschalteter Liste werden gezählt.** Wer den Schalter 👥
+  ausgeschaltet oder „Lieber nicht anzeigen" geklickt hat, meldet sich nie beim
+  Worker — und soll das auch nicht, sonst wäre der Schalter eine Attrappe.
+- **Gezählt wird pro Gerät, nicht pro Kind.** Wer auf Tablet und Laptop übt,
+  erscheint als zwei. Umgekehrt zählt ein geteiltes Gerät als eines.
+- **Die Übezeit ist auf 20 Sekunden genau** und immer eine Schätzung nach oben:
+  der letzte Takt vor dem Schließen zählt voll.
+- **`takte` minus `aktive`** ist die Zeit, in der die App offen stand, ohne dass
+  jemand antwortete — Nachschlagen im Vokabelheft gehört dazu, Vergessen auch.
+- Der Tag wechselt um Mitternacht **deutscher** Zeit.
 
 ## Was bewusst fehlt
 

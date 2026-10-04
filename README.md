@@ -62,7 +62,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.19.0
+**Version:** 2.20.0
 **Datum:** 04.10.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -107,6 +107,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.20.0 (04.10.2026)
+- **Nutzungszählung im Worker**: zweite D1-Tabelle `nutzung`, eine Zeile pro Gerät und Tag.
+  `takte` zählt alle Herzschläge (App offen), `aktive` nur die mit einer Antwort in den
+  letzten 90 Sekunden (tatsächlich geübt). Übezeit = `aktive` × 20 s.
+- Die App schickt dafür ein zusätzliches Feld `aktiv` im Herzschlag; gespeist wird es aus
+  `recordAnswer`, gilt also modulübergreifend. Keine zusätzlichen Anfragen, kein Fremdskript —
+  die Seite bleibt eine Datei und offline benutzbar.
+- Die Zählung ist im Worker in `try/catch` gekapselt: fehlt die Tabelle oder scheitert der
+  Schreibvorgang, liefert die Anwesenheitsliste trotzdem. Zeilen verfallen nach 400 Tagen.
+- Fertige Auswertungen (kumulativ, pro Tag/Woche/Monat, pro Kind) in
+  [`worker/README.md`](worker/README.md) — samt dem, was die Zahlen *nicht* sagen.
+- **Die Liste reicht sieben Tage zurück** statt einer Stunde (`FENSTER_MS` im Worker =
+  `VERFALL_MS`); wie weit tatsächlich angezeigt wird, entscheidet `PRESENCE_FENSTER_MS` in
+  der App. Grün bleibt die Anzeige für die letzten zwei Minuten. Die Liste scrollt ab 60 vh.
+- Gezählt wird nur bei eingeschalteter Liste. Wer 👥 ausschaltet, taucht nirgends auf.
 
 ### Version 2.19.0 (04.10.2026)
 - **Anwesenheitsliste „Gerade da"** als fixierte Spalte links neben dem App-Container

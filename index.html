@@ -2372,6 +2372,11 @@
             margin-bottom: 10px;
         }
 
+        #presenceList {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
         .presence-row {
             display: flex;
             align-items: center;
@@ -5542,6 +5547,7 @@
 
         function recordAnswer(key, isCorrect) {
             if (!key) return;
+            letzteAntwortMs = Date.now();   // für die Übezeit-Zählung im Worker
             const progress = loadProgress();
             if (!progress[key]) {
                 progress[key] = { correct: 0, wrong: 0, lastSeen: Date.now() };
@@ -5619,9 +5625,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.19.0';
+        const APP_VERSION = '2.20.0';
 
         const changelogEntries = [
+            {
+                version: '2.20.0',
+                date: '04.10.2026',
+                items: [
+                    '<b>Die App zählt mit, wie lange du übst.</b> Nur die Zeit — nicht, <i>was</i> du übst, und nicht, wie gut. Gezählt wird nur, solange du auch wirklich antwortest: ein Fenster, das offen stehenbleibt, zählt nicht mit.',
+                    'Gezählt wird nur, wenn die Liste &#8222;Gerade da&#8220; eingeschaltet ist. Mit dem Schalter &#128101; oben rechts sind beide zusammen aus.',
+                    '<b>Die Liste reicht jetzt eine Woche zurück.</b> Vorher verschwand jemand nach einer Stunde — jetzt siehst du auch, wer gestern oder vorgestern geübt hat (<i>1d</i>, <i>3d</i>). Der grüne Punkt bedeutet weiterhin: ist gerade wirklich da.',
+                ]
+            },
             {
                 version: '2.19.0',
                 date: '04.10.2026',
@@ -5934,10 +5949,16 @@
         const PRESENCE_OFF_KEY = 'vokabelAnwesenheitAus';
         const PRESENCE_REFRESH_MS = 20000;   // Takt der Liste
         const PRESENCE_ONLINE_MS = 120000;   // bis hierher gilt jemand als „online"
+        const PRESENCE_FENSTER_MS = 7 * 24 * 60 * 60 * 1000;   // so weit zurück zeigt die Liste
 
         // Adresse des Anwesenheits-Workers (Quelltext in worker/). Leer = kein
         // Server: dann zeigt die Liste Beispielnamen. Siehe worker/README.md.
         const PRESENCE_API = "https://bertha-presence.marcator.workers.dev/";
+
+        // Als „geübt" zählt ein Herzschlag nur, wenn in den letzten 90 Sekunden
+        // eine Antwort gegeben wurde. Ein offen stehengelassener Tab zählt nicht.
+        const AKTIV_FENSTER_MS = 90000;
+        let letzteAntwortMs = 0;
         const PRESENCE_NOTE = PRESENCE_API ? '' : 'Beispiel\u00ADdaten \u2013 noch kein Server';
 
         let myName = '';
@@ -5983,6 +6004,7 @@
                     { name: 'Anton', lastSeen: now - 60 * 1000,      self: false },
                     { name: 'Lina',  lastSeen: now - 4 * 60 * 1000,  self: false },
                     { name: 'Jonas', lastSeen: now - 23 * 60 * 1000, self: false },
+                    { name: 'Mia',   lastSeen: now - 2 * 24 * 60 * 60 * 1000, self: false },
                 ];
                 if (myName) liste.push({ name: myName, lastSeen: now, self: true });
                 return liste;
@@ -5992,7 +6014,11 @@
             const antwort = await fetch(PRESENCE_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id, name: myName }),
+                body: JSON.stringify({
+                    id: id,
+                    name: myName,
+                    aktiv: (Date.now() - letzteAntwortMs) < AKTIV_FENSTER_MS,
+                }),
                 signal: (window.AbortSignal && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined,
             });
             if (!antwort.ok) throw new Error('Server antwortet ' + antwort.status);
@@ -6000,11 +6026,13 @@
 
             // Falsch gestellte Uhr auf dem Gerät ausgleichen
             const versatz = Date.now() - (daten.now || Date.now());
-            return (daten.liste || []).map(e => ({
-                name: e.name,
-                lastSeen: e.lastSeen + versatz,
-                self: e.id === id,
-            }));
+            return (daten.liste || [])
+                .map(e => ({
+                    name: e.name,
+                    lastSeen: e.lastSeen + versatz,
+                    self: e.id === id,
+                }))
+                .filter(e => (Date.now() - e.lastSeen) < PRESENCE_FENSTER_MS);
         }
 
         function formatSeen(lastSeen) {
