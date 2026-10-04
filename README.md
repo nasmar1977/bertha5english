@@ -16,6 +16,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ Mobilfreundlich & Tastatur-Steuerung
 - ✅ Emoji-Schalter oben rechts: Bilder über den Vokabeln lassen sich ausblenden (bleibt gespeichert)
 - ✅ 🎯 **Knackpunkte-Schalter** (Latein): übt ausschließlich die im Vokabelheft markierten Vokabeln
+- ✅ 👥 **Anwesenheitsliste** links neben der App: Vorname + „zuletzt gesehen" der anderen
+  — Vorname wird beim ersten Start abgefragt, Schalter oben rechts blendet die Liste aus/ein.
+  **Noch Platzhalterdaten, es gibt keine Gegenstelle.**
 
 ### 🇬🇧 Englisch
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
@@ -59,8 +62,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.18.0
-**Datum:** 16.09.2026
+**Version:** 2.19.0
+**Datum:** 04.10.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
@@ -76,6 +79,14 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 | 8 | Amphitheater & Gladiatoren | 47 (+8) | 15 | 11 | 12 | alle + Perfekt |
 
 (Zahl in Klammern = Mehrwort-Ausdrücke)
+
+## 🗂️ Aufbau
+
+| Pfad | Inhalt |
+|---|---|
+| `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
+| `worker/` | Anwesenheits-Dienst (Cloudflare Worker + D1) hinter der Liste „Gerade da“ |
+| `tools/` | Hilfsskripte rund um die Vokabeldaten |
 
 ## 🚀 Wie benutzen?
 
@@ -96,6 +107,38 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.19.0 (04.10.2026)
+- **Anwesenheitsliste „Gerade da"** als fixierte Spalte links neben dem App-Container
+  (`.presence-panel`): Vorname, grüner Punkt bei Aktivität in den letzten 2 Minuten, Zeit seit
+  dem letzten Lebenszeichen (`jetzt` / `4m` / `2h` / `3d`). Unter 1180 px Fensterbreite
+  ausgeblendet — dort ist neben der App kein Platz.
+- **Vornamen-Abfrage** als eigene Vorschaltseite nach dem Changelog, einmalig beim ersten Start
+  (`vokabelVorname`). „Lieber nicht anzeigen" schaltet die Liste ab (`vokabelAnwesenheitAus`).
+- **Schalter 👥 oben rechts** (`.presence-toggle`, rechts neben dem Emoji-Schalter) blendet die
+  Liste jederzeit aus und wieder ein; ist noch kein Vorname hinterlegt, fragt das Einschalten
+  danach. Klick auf die eigene Zeile der Liste öffnet dieselbe Frage zum Ändern. Die Vorschaltseite
+  merkt sich dabei den gerade sichtbaren Bildschirm und stellt ihn danach wieder her — die Frage
+  darf also auch mitten in einer Übung kommen. Der Knackpunkte-Schalter rückt dafür von
+  `right: 146px` auf `210px`, damit die immer sichtbaren Schalter beieinanderstehen.
+- **Offline unverändert benutzbar**: Die App lädt weiterhin nichts aus dem Netz. Scheitert
+  `fetchPresence()`, steht unter der Liste `keine Verbindung`, alles andere läuft weiter —
+  deshalb fiel die Wahl auf einen `fetch()`-Endpunkt statt eines CDN-SDK.
+- **Gegenstelle** (`worker/`): Cloudflare Worker + D1, ~90 Zeilen, eine Route `POST /` mit
+  `{id, name}` — Herzschlag und Abfrage in einem Aufruf, Takt 20 s. Läuft unter
+  `https://bertha-presence.marcator.workers.dev/`, eingetragen in `PRESENCE_API`. Ist die
+  Konstante leer, zeigt die Liste stattdessen Beispielnamen. Einrichtung Schritt für Schritt in
+  [`worker/README.md`](worker/README.md).
+- **Übertragen werden nur Vorname, eine im Browser erzeugte Geräte-ID und ein Zeitstempel** —
+  kein Lernfortschritt, keine Taler, keine IP. Zeilen ohne Lebenszeichen verfallen nach 7 Tagen.
+- **Nur die Oberfläche — es gibt keinen Server.** `fetchPresence()` liefert drei feste
+  Beispielnamen; die Kinder sehen sich noch nicht gegenseitig. Das steht als Hinweis unter der
+  Liste. `fetchPresence()` ist bewusst die einzige Stelle, die eine spätere Gegenstelle ersetzt —
+  Rückgabeform `[{ name, lastSeen, self }]`, der Rest der Oberfläche bleibt unberührt.
+- Namen werden per `textContent` gesetzt, nicht per `innerHTML` — fremde Eingaben landen später
+  ungeprüft in dieser Liste.
+- Ein **Klassencode** ist bewusst noch nicht eingebaut; er kommt, sobald die Kinder
+  miteinander kommunizieren können.
 
 ### Version 2.18.0 (16.09.2026)
 - **Neues Modul-übergreifendes Feature „🎯 Knackpunkte"**: Schalter oben rechts (links neben dem

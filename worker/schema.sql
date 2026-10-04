@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS presence (id TEXT PRIMARY KEY, name TEXT NOT NULL, seen INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS presence_seen ON presence (seen);

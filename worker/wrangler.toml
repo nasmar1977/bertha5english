@@ -1,0 +1,10 @@
+name = "bertha-presence"
+main = "src/worker.js"
+compatibility_date = "2026-10-04"
+
+# Die database_id kommt aus `npx wrangler d1 create bertha-presence`
+# und wird hier eingetragen. Sie ist kein Geheimnis.
+[[d1_databases]]
+binding       = "DB"
+database_name = "bertha-presence"
+database_id   = "HIER_DIE_ID_EINSETZEN"
