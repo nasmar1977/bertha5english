@@ -6127,9 +6127,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.23.2';
+        const APP_VERSION = '2.23.3';
 
         const changelogEntries = [
+            {
+                version: '2.23.3',
+                date: '10.10.2026',
+                items: [
+                    'Beim Hör-Detektiv stehen nur noch die zwei besten Stimmen zur Wahl.',
+                ]
+            },
             {
                 version: '2.23.2',
                 date: '10.10.2026',
@@ -12446,6 +12453,7 @@
         const HD_VOICE_KEY = 'hoerDetektivStimme';
         const HD_ROBOT_VOICES = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
         let hdVoices = [];
+        const HD_VOICE_MAX = 2;
 
         // Safari meldet die Premium-Fassung oft unter demselben Namen („Daniel“);
         // verraten wird sie nur von der voiceURI (com.apple.voice.premium.…).
@@ -12475,9 +12483,15 @@
 
         function hdPickVoice() {
             if (!hdHasTTS) return;
+            // Nur die zwei besten, und zwar zwei verschiedene Sprecher (nicht
+            // „Daniel“ einmal als Premium und einmal einfach) — sonst wird aus der
+            // Auswahl ein Stimmen-Zoo zum Herumprobieren.
+            const names = new Set();
             hdVoices = speechSynthesis.getVoices()
                 .filter(v => v.localService && /^en/i.test(v.lang))
-                .sort((a, b) => hdVoiceScore(b) - hdVoiceScore(a) || a.name.localeCompare(b.name));
+                .sort((a, b) => hdVoiceScore(b) - hdVoiceScore(a) || a.name.localeCompare(b.name))
+                .filter(v => { const n = v.name.replace(/\s*\(.*\)\s*$/, ''); if (names.has(n)) return false; names.add(n); return true; })
+                .slice(0, HD_VOICE_MAX);
             let saved = '';
             try { saved = localStorage.getItem(HD_VOICE_KEY) || ''; } catch (e) {}
             hdVoice = hdVoices.find(v => v.voiceURI === saved) || hdVoices[0] || null;

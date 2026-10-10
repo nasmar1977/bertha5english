@@ -40,6 +40,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     Chromes „Google UK English“ geht über Google-Server und bleibt draußen. Ohne eine solche Stimme
     bleibt der Start gesperrt, mit Hinweis, wo man auf dem iPad eine lädt
   - **Stimmenwahl** auf dem Startbildschirm mit Hörprobe, gemerkt in `hoerDetektivStimme`.
+    Zur Wahl stehen nur die **zwei besten**, zwei verschiedene Sprecher (`HD_VOICE_MAX`).
     Vorausgewählt wird nach Rang: Premium vor Erweitert vor einfach, Britisch vor anderem Englisch,
     Spaß- und Eloquence-Stimmen von macOS (Bubbles, Grandpa, Rocko …) ganz unten.
     Siri-Stimmen gibt Apple nicht an Webseiten heraus
@@ -86,7 +87,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.23.2
+**Version:** 2.23.3
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -132,6 +133,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.23.3 (10.10.2026)
+- **Hör-Detektiv: nur noch die zwei besten Stimmen in der Auswahl** — macOS meldet Dutzende, und
+  Kinder verlieren sich im lustigen Ausprobieren. Pro Sprecher zählt nur die beste Fassung, damit
+  nicht zweimal „Daniel“ dasteht. Eine gemerkte Wahl außerhalb der zwei fällt auf die beste zurück.
 
 ### Version 2.23.2 (10.10.2026)
 - **Hör-Detektiv: deutlicher Kasten statt Fußnote**, wenn das Gerät nur einfache Stimmen hat. Er
