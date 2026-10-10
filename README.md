@@ -26,10 +26,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - Zufällige Modus-Zuweisung pro Wort in jeder Runde — außer bei Einträgen mit Klammern,
   Punkten oder Apostroph (`What a/an ...!`), die taugen nicht als Buchstaben-Puzzle und
   kommen nur im Multiple-Choice (`mcOnly`)
-- **Vokabelheft (Theme 1)**: neun Päckchen A–I mit allen 96 Einträgen der Buchseite, dreispaltig —
+- **Vokabelheft (Theme 1)**: acht Päckchen A–H mit den 66 aktiven Vokabeln, dreispaltig —
   Wort · Formen (`simple past: sent`) · Bedeutung mit Beispielsatz. Abdeckblatt und Markieren wie
-  in Latein. Geübt wird nur der **aktive Wortschatz** (im Buch fett, 66 Einträge); die übrigen
-  stehen blass im Heft und kommen in keiner Runde vor
+  in Latein. Heft und Übungsset enthalten dasselbe
 - Beim Spelling steht bei Verben das `to ` fest in den Feldern — gelegt wird nur das Verb dahinter
 - **🎯 Knackpunkte** gilt auch für Englisch, solange Theme 1 der Bezug ist (Übung oder Heft);
   Theme 2/3 und April haben kein Heft und blenden den Schalter aus
@@ -71,7 +70,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.22.0
+**Version:** 2.22.1
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -118,6 +117,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.22.1 (10.10.2026)
+- **Die nicht fetten Einträge sind aus dem Vokabelheft entfernt** — es enthält jetzt genau die
+  66 Vokabeln, die auch geübt werden. Damit entfallen `nb: true`, die Klasse `.vh-passive` und
+  die Legende unter dem Blatt. Zum Nachschlagen beim Lesen eines Textes fehlen sie nun; das war
+  der ursprüngliche Grund, sie mitzuführen.
+- **Päckchen neu geschnitten**: acht statt neun, Größen 10/9/10/7/6/6/9/9 statt bis hinunter zu 3.
+  Die Reihenfolge des Buchs bleibt, die Buchstaben verschieben sich. Weil der Schlüssel einer
+  Markierung den Buchstaben enthält (`en-theme1|B|rock`), hängt `vhMigriereEnglischeMarken()` sie
+  beim Laden einmalig um und wirft Marken zu entfernten Wörtern weg.
+- **Zwei Robustheitslöcher nebenbei geschlossen**, beide vom Prüflauf gefunden:
+  `renderVokabelheft` stürzte bei einem Päckchen-Index jenseits der Liste ab (möglich nach einem
+  Neuschnitt oder zwischen Heften unterschiedlicher Länge) — der Index wird jetzt geklemmt.
+  Und die Antwortfelder einer Multiple-Choice-Frage blieben beim Wechsel in den Spelling-Modus
+  unsichtbar im DOM stehen; `loadSpellingMode` räumt `#mcOptions` jetzt leer, und
+  `selectMCOption` steigt aus, wenn es zum Wort keinen Zustand gibt.
+
 ### Version 2.22.0 (10.10.2026)
 - **Englisch-Menü zweistufig wie Latein**: `setSelection` zeigt nur noch die Themen,
   die neue `englishModuleSelection` darunter die Lernkacheln des gewählten Themas
@@ -144,8 +159,8 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
   weiter, damit man für die anderen sichtbar bleibt. Im Fenster steht ein „Liste ausschalten".
   `presenceGeradeAuf` verhindert, dass der öffnende Klick beim Weiterlaufen zum Dokument das
   Fenster sofort wieder schließt — genau das passierte nach der Namenseingabe.
-- Heftzeilen außerhalb des aktiven Wortschatzes tragen `nb: true`, stehen in normaler Schrift und
-  bekommen eine Legende unter dem Blatt.
+- Die 30 nicht fetten Einträge der Buchseite waren zunächst blass im Heft mitgeführt; seit
+  v2.22.1 sind sie ganz draußen (siehe dort).
 - **8 Einträge sind `mcOnly`** — Klammern oder Punkte machen sie als Buchstaben-Puzzle unzumutbar
   (`didn't (= did not)`, `(Great) Britain`, `present (sth to sb)` …). `roundModes` erzwingt dort
   Multiple-Choice, in beiden Rundenaufbauten.

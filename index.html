@@ -1837,10 +1837,6 @@
         }
         /* Lautschrift steht klein unter dem Wort, nicht daneben — sonst
            sprengt sie die schmale Wortspalte des Hefts. */
-        /* Einträge, die im Buch nicht fett stehen: nur zum Nachlesen, nicht im Übungsset */
-        .vh-row.vh-passive .vh-word { font-weight: normal; color: #6b6b7b; }
-        body.april-dark .vh-row.vh-passive .vh-word { color: #9ca3af; }
-
         /* „to " beim Buchstabenlegen: steht fest, wird nicht angeklickt */
         .letter-slot.fixed {
             background: #ece9f6;
@@ -2809,7 +2805,7 @@
             <div class="module-card vokabelheft-card" id="enVokabelheftCard" onclick="openVokabelheftEnglish()">
                 <div class="module-icon">📓</div>
                 <div class="module-title">Vokabelheft</div>
-                <div class="module-info">Alle 96 Einträge, Abdeckblatt &amp; Markieren</div>
+                <div class="module-info">66 Vokabeln nachlesen, Abdeckblatt &amp; Markieren</div>
             </div>
         </div>
     </div>
@@ -5177,56 +5173,34 @@
                 { w:'hurt', f:'', d:'verletzt, verwundet', ex:[['Four people were hurt in an accident on Saturday.','']] },
                 { w:'accident', f:'', d:'Unfall' },
                 { w:'to fall', f:'_simple past:_ fell', d:'(um)fallen, stürzen' },
-                { w:'to break one\'s arm', f:'_simple past:_ broke', d:'sich den Arm brechen', nb:true },
-            ]},
-            { label: 'B', rows: [
-                { w:'coasteering', f:'_no pl_', d:'Mischung aus verschiedenen Outdooraktivitäten wie Klettern, Springen, Schwimmen usw.', nb:true },
-                { w:'helmet', f:'', d:'Helm', nb:true },
-                { w:'wetsuit', f:'', d:'Taucheranzug', nb:true },
-                { w:'life jacket', f:'', d:'Schwimmweste', nb:true },
                 { w:'to jump', f:'', d:'springen', ex:[['Lara is jumping into the pool.','']] },
                 { w:'rock', f:'', d:'Stein, Fels(en)', ex:[['Don\'t jump from the rocks, it\'s dangerous.','']] },
-                { w:'cliff', f:'', d:'Klippe, Kliff', nb:true },
                 { w:'to climb (up)', f:'', d:'(hinauf)steigen, klettern (auf), besteigen', ex:[['Mike likes to climb trees.','']] },
-                { w:'sport', f:'', d:'Sport, Sportart', nb:true },
-                { w:'to be called', f:'', d:'genannt werden, heißen', nb:true },
-                { w:'scary', f:'', d:'furchterregend', nb:true },
             ]},
-            { label: 'C', rows: [
+            { label: 'B', rows: [
                 { w:'leader', f:'', d:'Leiter/in, Führer/in' },
                 { w:'group', f:'', d:'Gruppe(n-)', ex:[['The whole group had to work together.','']] },
                 { w:'didn\'t (= did not)', f:'', d:'Vergangenheitsform von „don\'t/doesn\'t“', ex:[['I didn\'t know it was your birthday today.','']] },
                 { w:'high', f:'', d:'hoch', ex:[['This house is 12 metres high.','']] },
                 { w:'at first', f:'', d:'zuerst', ex:[['At first I didn\'t like Jo but now we\'re friends.','']] },
-                { w:'jump', f:'', d:'Sprung, Satz', nb:true, ex:[['Lara wanted to do a last big jump.','']] },
-                { w:'quite', f:'', d:'ziemlich, ganz', nb:true },
-                { w:'wet', f:'', d:'nass', nb:true, ex:[['I got wet because of the rain.','']] },
                 { w:'down', f:'', d:'hinunter, herunter', ex:[['Don\'t fall down!','']] },
                 { w:'to show', f:'', d:'zeigen', ex:[['Charlie didn\'t want to show that he was scared.','']] },
                 { w:'that', f:'', d:'dass', ex:[['I know that Paul is 14 years old.','']] },
-                { w:'What a/an ...!', f:'', d:'Was für ein(e) ...!', nb:true },
-                { w:'to cheer', f:'', d:'jubeln', nb:true },
                 { w:'both', f:'', d:'beide', ex:[['John and Anna both wanted to go swimming.','']] },
-                { w:'to get out of sth', f:'', d:'aus etw herauskommen', nb:true },
             ]},
-            { label: 'D', rows: [
+            { label: 'C', rows: [
                 { w:'everything', f:'', d:'alles', ex:[['Everything was fine but then something went wrong.','']] },
                 { w:'to go wrong', f:'', d:'schiefgehen' },
                 { w:'suddenly', f:'', d:'plötzlich', ex:[['Suddenly Lara lost her balance.','']] },
-                { w:'to lose one\'s balance', f:'', d:'das Gleichgewicht verlieren', nb:true },
-                { w:'how to ...', f:'', d:'wie man ...', nb:true },
-                { w:'wave', f:'', d:'Welle', nb:true },
                 { w:'strong', f:'', d:'stark, kräftig, fest', ex:[['Rachel is very strong.','']] },
                 { w:'to push', f:'', d:'stoßen, schieben, drücken', ex:[['Fiona pushed Olivia. When Olivia fell, she hurt her legs.','']] },
                 { w:'to hurt (sb)', f:'_simple past:_ hurt', d:'(jdm) wehtun, (jdn) verletzen' },
                 { w:'dark', f:'', d:'dunkel' },
                 { w:'to pull', f:'', d:'ziehen', ex:[['to push ↔ to pull','']] },
-                { w:'out of', f:'', d:'aus', nb:true },
                 { w:'to remember', f:'', d:'sich erinnern; daran denken', ex:[['to remember ↔ to forget','']] },
-                { w:'not ... anything', f:'', d:'gar nichts', nb:true },
                 { w:'to choose', f:'_simple past:_ chose', d:'(aus)wählen', ex:[['He is choosing a book to read.','']] },
             ]},
-            { label: 'E', rows: [
+            { label: 'D', rows: [
                 { w:'wasn\'t (= was not)', f:'', d:'Vergangenheitsform von „isn\'t“', ex:[['Zoe wasn\'t in London last year.','']] },
                 { w:'weren\'t (= were not)', f:'', d:'Vergangenheitsform von „aren\'t“', ex:[['Kim and Jo weren\'t happy.','']] },
                 { w:'to plan', f:'', d:'planen', ex:[['We planned our trip last year.','']] },
@@ -5235,14 +5209,15 @@
                 { w:'interesting', f:'', d:'interessant', ex:[['interesting ↔ boring','']] },
                 { w:'annoying', f:'', d:'ärgerlich', ex:[['It\'s so annoying that our bus is late.','']] },
             ]},
-            { label: 'F', rows: [
+            { label: 'E', rows: [
                 { w:'trouble', f:'_no pl_', d:'Schwierigkeiten, Ärger' },
-                { w:'to make sb do sth', f:'_simple past:_ made', d:'jdn zu etwas bringen, jdn etwas tun lassen', nb:true },
                 { w:'may', f:'', d:'können, dürfen', ex:[['You may bring your tablet to school, but you must not use it during the lesson.','']] },
                 { w:'to switch off', f:'', d:'ausschalten, abschalten' },
                 { w:'if', f:'', d:'wenn, falls, ob', ex:[['We can have pizza if you like.','']] },
                 { w:'break', f:'', d:'Pause', ex:[['Let\'s meet in our lunch break.','']] },
                 { w:'to record', f:'', d:'aufzeichnen, aufnehmen', ex:[['Jack wants to record his first song.','']] },
+            ]},
+            { label: 'F', rows: [
                 { w:'unfriendly', f:'', d:'unfreundlich', ex:[['friendly ↔ unfriendly','']] },
                 { w:'to call', f:'', d:'(an)rufen, nennen', ex:[['to call = to phone','']] },
                 { w:'ill', f:'', d:'krank' },
@@ -5260,25 +5235,14 @@
                 { w:'to ask (for sth)', f:'', d:'(um etw) bitten', ex:[['Can I ask you for some help?','']] },
                 { w:'around', f:'', d:'umher, um, rund um, um ... herum', ex:[['Pia played around with her phone in class.','']] },
                 { w:'to go online', f:'', d:'online gehen', ex:[['I can use my phone to go online.','']] },
-                { w:'recording', f:'', d:'Aufnahme, Aufzeichnen', nb:true },
             ]},
             { label: 'H', rows: [
                 { w:'bored', f:'', d:'gelangweilt', ex:[['When are we leaving? I\'m bored.','']] },
-                { w:'fault', f:'', d:'Schuld, Fehler', nb:true },
                 { w:'to agree', f:'', d:'zustimmen, _hier:_ sich einig sein', ex:[['Charlie and George agree that football is great.','']] },
                 { w:'to prepare', f:'', d:'vorbereiten, erstellen', ex:[['My dad is preparing dinner.','']] },
                 { w:'presentation', f:'', d:'Präsentation', ex:[['Mark is nervous about the presentation.','']] },
-                { w:'topic', f:'', d:'Thema', nb:true },
                 { w:'(Great) Britain', f:'', d:'Großbritannien', ex:[['Britain is England, Scotland and Wales.','']] },
-                { w:'another', f:'', d:'noch eine(r, s), ein(e) andere(r)', nb:true },
-                { w:'work', f:'', d:'Arbeit', nb:true },
-                { w:'to admit', f:'', d:'zugeben', nb:true },
-            ]},
-            { label: 'I', rows: [
                 { w:'to punish', f:'', d:'(be)strafen', ex:[['The head teacher punished the pupils.','']] },
-                { w:'to highlight', f:'', d:'hervorheben, markieren', nb:true },
-                { w:'note', f:'', d:'Notiz, Mitteilung', nb:true },
-                { w:'You\'re right.', f:'', d:'Du hast recht., Ihr habt recht., Sie haben recht.', nb:true },
                 { w:'to disagree', f:'', d:'nicht übereinstimmen, nicht einverstanden sein', ex:[['to agree ↔ to disagree','']] },
                 { w:'to present (sth to sb)', f:'', d:'(jdm etw) präsentieren', ex:[['Would you like to present your ideas in class?','']] },
                 { w:'serious', f:'', d:'ernst', ex:[['We forgot our tickets. – That\'s a serious problem.','']] },
@@ -5989,9 +5953,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.22.0';
+        const APP_VERSION = '2.22.1';
 
         const changelogEntries = [
+            {
+                version: '2.22.1',
+                date: '10.10.2026',
+                items: [
+                    'Im Vokabelheft stehen jetzt nur noch die Vokabeln, die auch geübt werden — die blassen Einträge sind raus.',
+                    'Die Päckchen sind dafür neu geschnitten: acht statt neun, und keines ist mehr so klein wie vorher. Deine Markierungen wandern von selbst mit.',
+                ]
+            },
             {
                 version: '2.22.0',
                 date: '10.10.2026',
@@ -6784,7 +6756,35 @@
             dvUpdateToggle();
         }
 
-        document.addEventListener('DOMContentLoaded', loadVhMarks);
+        // Beim Neuschnitt der Päckchen wandert ein Wort in ein anderes Päckchen;
+        // der Schlüssel einer Markierung enthält aber den Buchstaben. Einmal beim
+        // Laden umhängen, damit Berthas Markierungen nicht ins Leere zeigen.
+        // Wörter, die es gar nicht mehr gibt, fallen dabei weg.
+        function vhMigriereEnglischeMarken() {
+            const data = vokabelheftData['en-theme1'];
+            if (!data) return;
+            const sollLabel = {};
+            data.packets.forEach(p => p.rows.forEach(r => { sollLabel[r.w] = p.label; }));
+            let geaendert = false;
+            Object.keys(vhMarks).forEach(key => {
+                if (key.indexOf('en-theme1|') !== 0) return;
+                const teile = key.split('|');
+                const wort = teile.slice(2).join('|');
+                const soll = sollLabel[wort];
+                if (soll === undefined) { delete vhMarks[key]; geaendert = true; return; }
+                if (teile[1] === soll) return;
+                const neuerKey = 'en-theme1|' + soll + '|' + wort;
+                if (!vhMarks[neuerKey]) vhMarks[neuerKey] = vhMarks[key];
+                delete vhMarks[key];
+                geaendert = true;
+            });
+            if (geaendert) saveVhMarks();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVhMarks();
+            vhMigriereEnglischeMarken();
+        });
         window.addEventListener('resize', () => { if (vhMode !== 'read') vhSyncHeights(); });
 
         // ===================================================================
@@ -7429,16 +7429,17 @@
             '<button class="vh-packet-btn' + (vhPacketIndex === -1 ? ' active' : '') +
             '" onclick="selectVhPacket(-1)">Alle</button>';
 
+            // Nach einem Neuschnitt kann ein gemerkter Index ins Leere zeigen —
+            // und die Hefte haben unterschiedlich viele Päckchen.
+            if (vhPacketIndex >= data.packets.length) vhPacketIndex = 0;
             const packets = vhPacketIndex === -1 ? data.packets : [data.packets[vhPacketIndex]];
             const hasStar = packets.some(p => p.rows.some(r => r.s));
-            const hasPassive = packets.some(p => p.rows.some(r => r.nb));
             vhStats = { meanTotal: 0, meanGot: 0, meanTypo: 0, formTotal: 0, formGot: 0, formTypo: 0, filled: 0 };
             // Beim Vergleich wird zuerst im Abdeck-Layout gerendert; erst der
             // Klassenwechsel danach lässt das Blatt zur Seite gleiten.
             sheet.className = vhMode === 'read' ? '' : 'vh-practice cover';
             sheet.innerHTML = packets.map(vhRenderPacket).join('') +
-                (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '') +
-                (hasPassive ? '<div class="vh-note">Fett = wird geübt. Die blassen Einträge stehen nur zum Nachlesen.</div>' : '');
+                (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '');
 
             renderVhModeBar();
             renderVhHint();
@@ -7466,8 +7467,7 @@
                 // richtig war — sie ruht dann bis morgen.
                 const mark = dvNormalizeMark(vhMarks[key]);
                 const resting = !!(mark && mark.r === dvToday());
-                const marked = (mark ? (' marked' + (resting ? ' dv-rest' : '')) : '') +
-                               (r.nb ? ' vh-passive' : '');
+                const marked = mark ? (' marked' + (resting ? ' dv-rest' : '')) : '';
                 const offen = mark ? DV_DAYS_TO_CLEAR - mark.d : 0;
                 const markTitle = !mark
                     ? 'Antippen: als schwierige Vokabel markieren'
@@ -11003,6 +11003,9 @@
             // Show spelling UI, hide MC UI
             document.getElementById('spellingArea').style.display = 'block';
             document.getElementById('mcArea').style.display = 'none';
+            // Die Antwortfelder der Vorrunde bleiben sonst im DOM stehen —
+            // unsichtbar, aber per Skript noch anklickbar.
+            document.getElementById('mcOptions').innerHTML = '';
             document.getElementById('spellingButtons').style.display = 'flex';
             document.getElementById('tipText').style.display = 'block';
 
@@ -11455,6 +11458,8 @@
 
         function selectMCOption(index) {
             if (mcAnswered) return;
+            const stats0 = wordStats[currentWord];
+            if (!stats0) return;      // kein Zustand zu diesem Wort: Klick ignorieren
             mcAnswered = true;
 
             if (hintTimeout) {
