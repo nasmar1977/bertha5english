@@ -2567,6 +2567,12 @@
         .hd-device .ok { color: #2e9d5b; }
         .hd-device .no { color: #b26a00; }
         .hd-voice-sel { font: inherit; font-size: 1em; padding: 4px 8px; border-radius: 10px; border: 2px solid #cfc8ff; background: #fff; max-width: 100%; }
+        .hd-voice-tip { margin: 16px auto 0; max-width: 560px; background: #fff6d6; border: 2px solid #f6b93b; border-radius: 18px;
+            padding: 14px 18px; line-height: 1.5; color: #4a3b10; }
+        .hd-voice-tip .hd-tip-title { font-weight: bold; font-size: 1.1em; margin-bottom: 6px; }
+        .hd-voice-tip p { margin: 6px 0; }
+        .hd-voice-tip ol { margin: 6px 0 10px; padding-left: 1.4em; }
+        .hd-voice-tip li { margin: 3px 0; }
         .hd-btn.hd-try { padding: 5px 12px; font-size: 0.95em; margin: 4px 0; }
         .hd-go { display: block; margin: 0 auto; border: none; border-radius: 18px; padding: 14px 36px; font-size: 1.15em; font-weight: bold;
             color: #fff; background: linear-gradient(135deg, #43e97b 0%, #38b26b 100%); cursor: pointer; box-shadow: 0 6px 18px rgba(56,178,107,.35); }
@@ -2917,6 +2923,7 @@
             </div>
             <button class="hd-go" id="hdGoBtn" onclick="hdStartRound()">Los geht's · 6 Sätze</button>
             <div class="hd-device" id="hdDevice"></div>
+            <div class="hd-voice-tip" id="hdVoiceTip" style="display: none;"></div>
         </section>
 
         <section id="hdGame" style="display: none;">
@@ -6120,9 +6127,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.23.1';
+        const APP_VERSION = '2.23.2';
 
         const changelogEntries = [
+            {
+                version: '2.23.2',
+                date: '10.10.2026',
+                items: [
+                    'Hat dein Gerät nur die einfache Stimme, zeigt dir der Hör-Detektiv jetzt in einem gelben Kasten, wie du eine bessere bekommst – Schritt für Schritt für genau dein Gerät. Am besten zusammen mit deinen Eltern.',
+                ]
+            },
             {
                 version: '2.23.1',
                 date: '10.10.2026',
@@ -12498,16 +12512,66 @@
                     hdVoices.map(v => '<option value="' + vhAttr(v.voiceURI) + '"' + (v === hdVoice ? ' selected' : '') + '>' +
                                       vhAttr(hdVoiceLabel(v)) + '</option>').join('') +
                     '</select> <button class="hd-btn ghost hd-try" onclick="hdTryVoice()">Probe hören</button>';
-                if (!hdVoiceQuality(hdVoice))
-                    t += '<br><span class="no">Klingt blechern? Bessere Stimmen gibt es kostenlos: ' +
-                         'Mac → Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → Systemstimme → Stimmen verwalten → Englisch, ' +
-                         'z. B. „Daniel (Premium)“ oder „Serena (Premium)“. iPad → Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen. ' +
-                         'Danach die Seite neu laden.</span>';
+                const besser = hdVoices.find(v => hdVoiceQuality(v));
+                if (!hdVoiceQuality(hdVoice) && besser)
+                    t += '<br><span class="no">Tipp: „' + vhAttr(hdVoiceLabel(besser)) + '“ klingt besser – oben auswählen.</span>';
             }
             const m = hdHasRec ? '<span class="ok">🎙️ Deine Aufnahme bleibt auf dem Gerät</span>'
                                : '<span class="no">🎙️ Aufnehmen geht hier nicht – dann sprichst du einfach laut mit</span>';
             box.innerHTML = t + '<br>' + m;
+            hdRenderVoiceTip();
             hdEl('hdGoBtn').disabled = !hdVoice;
+        }
+
+        // Gibt es auf dem Gerät gar keine gute Stimme, ein deutlicher Kasten:
+        // warum es sich lohnt, und die Schritte nur für dieses Gerät. Laden
+        // müssen die Eltern — es geht an die Systemeinstellungen. Verschwindet von
+        // selbst, sobald eine Premium-/Erweitert-Stimme da ist; „Später“ blendet
+        // ihn für eine Woche aus.
+        const HD_TIP_KEY = 'hoerDetektivStimmeSpaeter';
+        const HD_TIP_PAUSE_MS = 7 * 24 * 3600 * 1000;
+
+        function hdDeviceKind() {
+            const ua = navigator.userAgent || '';
+            if (/iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+            if (/Macintosh/.test(ua)) return 'mac';
+            return 'other';
+        }
+
+        function hdRenderVoiceTip() {
+            const box = hdEl('hdVoiceTip');
+            if (!box) return;
+            let later = 0;
+            try { later = parseInt(localStorage.getItem(HD_TIP_KEY) || '0', 10) || 0; } catch (e) {}
+            const show = hdHasTTS && !hdVoices.some(v => hdVoiceQuality(v)) && Date.now() - later > HD_TIP_PAUSE_MS;
+            box.style.display = show ? 'block' : 'none';
+            if (!show) return;
+            const steps = {
+                mac: ['Apple-Menü → <b>Systemeinstellungen</b>',
+                      '<b>Bedienungshilfen</b> → <b>Gesprochene Inhalte</b>',
+                      'Beim Menü <b>Systemstimme</b> auf <b>Stimmen verwalten …</b>',
+                      '<b>Englisch (Vereinigtes Königreich)</b> → <b>Daniel (Premium)</b> oder <b>Serena (Premium)</b> laden',
+                      'Download abwarten, dann diese Seite neu laden'],
+                ios: ['<b>Einstellungen</b> öffnen',
+                      '<b>Bedienungshilfen</b> → <b>Gesprochene Inhalte</b> → <b>Stimmen</b>',
+                      '<b>Englisch</b> → <b>Daniel</b> oder <b>Serena</b> → die Fassung <b>Premium</b> (oder <b>Erweitert</b>) laden',
+                      'Download abwarten, dann diese Seite neu laden'],
+                other: ['In den Systemeinstellungen nach <b>Sprachausgabe</b> oder <b>Stimmen</b> suchen',
+                        'Eine <b>englische</b> Stimme laden, am besten britisches Englisch',
+                        'Danach diese Seite neu laden'],
+            }[hdDeviceKind()];
+            box.innerHTML =
+                '<div class="hd-tip-title">🎧 Mit einer besseren Stimme hörst du mehr</div>' +
+                '<p>Die Stimme hier ist die einfache. Mit einer guten hörst du die Ohr-Fallen viel deutlicher: ' +
+                'das <b>-ed</b> in <i>planned</i>, das <b>n</b> in <i>didn\'t</i>, das <b>t</b> in <i>sent</i>.</p>' +
+                '<p><b>Frag deine Eltern</b>, ob sie eine laden. Das kostet nichts und geht einmal für immer:</p>' +
+                '<ol>' + steps.map(s => '<li>' + s + '</li>').join('') + '</ol>' +
+                '<div class="hd-row"><button class="hd-btn ghost hd-try" onclick="hdVoiceTipLater()">Später</button></div>';
+        }
+
+        function hdVoiceTipLater() {
+            try { localStorage.setItem(HD_TIP_KEY, String(Date.now())); } catch (e) {}
+            hdRenderVoiceTip();
         }
 
         function hdShowTaler() {

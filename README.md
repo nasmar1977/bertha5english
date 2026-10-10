@@ -43,6 +43,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     Vorausgewählt wird nach Rang: Premium vor Erweitert vor einfach, Britisch vor anderem Englisch,
     Spaß- und Eloquence-Stimmen von macOS (Bubbles, Grandpa, Rocko …) ganz unten.
     Siri-Stimmen gibt Apple nicht an Webseiten heraus
+  - Fehlt auf dem Gerät jede Premium-/Erweitert-Stimme, erklärt ein gelber Kasten, warum sich eine
+    bessere lohnt, schickt das Kind zu den Eltern und zeigt die Schritte nur für dieses Gerät
+    (Mac, iPad/iPhone, sonst allgemein). „Später“ blendet ihn eine Woche aus (`hoerDetektivStimmeSpaeter`)
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
@@ -83,7 +86,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.23.1
+**Version:** 2.23.2
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -129,6 +132,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.23.2 (10.10.2026)
+- **Hör-Detektiv: deutlicher Kasten statt Fußnote**, wenn das Gerät nur einfache Stimmen hat. Er
+  sagt, warum es sich lohnt (das -ed in *planned*, das n in *didn't*), richtet sich mit „Frag deine
+  Eltern“ an die Richtigen und listet die Schritte nummeriert für genau das Gerät. Das iPad meldet
+  sich in Safari als „Macintosh“; erkannt wird es an `maxTouchPoints > 1`.
+- Ist eine gute Stimme vorhanden, aber nicht gewählt, steht nur ein kurzer Tipp unter der Auswahl.
 
 ### Version 2.23.1 (10.10.2026)
 - **Hör-Detektiv: Stimme wählbar.** Auf dem MacBook klang die automatisch gewählte Stimme schlimm —
