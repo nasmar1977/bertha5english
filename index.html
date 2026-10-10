@@ -5625,28 +5625,30 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.20.0';
+        const APP_VERSION = '2.20.1';
 
         const changelogEntries = [
+            {
+                version: '2.20.1',
+                date: '10.10.2026',
+                items: [
+                    'Wer auf mehreren Geräten übt, steht nur noch einmal in der Liste.',
+                ]
+            },
             {
                 version: '2.20.0',
                 date: '04.10.2026',
                 items: [
-                    '<b>Die App zählt mit, wie lange du übst.</b> Nur die Zeit — nicht, <i>was</i> du übst, und nicht, wie gut. Gezählt wird nur, solange du auch wirklich antwortest: ein Fenster, das offen stehenbleibt, zählt nicht mit.',
-                    'Gezählt wird nur, wenn die Liste &#8222;Gerade da&#8220; eingeschaltet ist. Mit dem Schalter &#128101; oben rechts sind beide zusammen aus.',
-                    '<b>Die Liste reicht jetzt eine Woche zurück.</b> Vorher verschwand jemand nach einer Stunde — jetzt siehst du auch, wer gestern oder vorgestern geübt hat (<i>1d</i>, <i>3d</i>). Der grüne Punkt bedeutet weiterhin: ist gerade wirklich da.',
+                    'Die Liste &#8222;Gerade da&#8220; reicht jetzt eine Woche zurück — du siehst also auch, wer gestern geübt hat.',
+                    'Die App merkt sich, wie lange geübt wurde. Nur die Zeit, sonst nichts.',
                 ]
             },
             {
                 version: '2.19.0',
                 date: '04.10.2026',
                 items: [
-                    '<b>Beim ersten Start fragt die App nach deinem Vornamen.</b> Er steht danach links neben der App in der Liste &#8222;Gerade da&#8220;. Wer nicht möchte, klickt <i>Lieber nicht anzeigen</i> — dann bleibt die Liste weg.',
-                    '<b>Die Liste zeigt, wer gerade übt</b> — Vorname, grüner Punkt für &#8222;ist jetzt da&#8220; und die Zeit seit dem letzten Mal (<i>jetzt</i>, <i>4m</i>, <i>2h</i>).',
-                    '<b>Ihr seht euch wirklich gegenseitig.</b> Sobald jemand anderes übt, erscheint sein Vorname in der Liste. Übertragen werden nur der Vorname und die Uhrzeit — keine Taler, kein Lernfortschritt, nichts davon, was du geübt hast.',
-                    '<b>Oben rechts ein neuer Schalter &#128101;</b> — damit blendest du die Liste jederzeit aus und wieder ein. Ein Klick auf deinen eigenen Namen in der Liste trägt einen anderen Vornamen ein.',
-                    'Auf dem Handy und auf schmalen Bildschirmen bleiben Liste und Schalter ausgeblendet — neben der App ist dort kein Platz dafür.',
-                    'Ohne Internet läuft die App weiter wie immer — nur unter der Liste steht dann <i>keine Verbindung</i>. Geübt und gespeichert wird weiterhin auf deinem Gerät.',
+                    '<b>Neu: die Liste &#8222;Gerade da&#8220;</b> links neben der App. Trag deinen Vornamen ein, dann siehst du, wer sonst gerade übt — und die anderen sehen dich.',
+                    'Mit dem Schalter &#128101; oben rechts blendest du die Liste aus und wieder ein. Ein Klick auf deinen Namen ändert ihn.',
                 ]
             },
             {
@@ -6007,7 +6009,7 @@
                     { name: 'Mia',   lastSeen: now - 2 * 24 * 60 * 60 * 1000, self: false },
                 ];
                 if (myName) liste.push({ name: myName, lastSeen: now, self: true });
-                return liste;
+                return buendleNachName(liste);
             }
 
             const id = myDeviceId();
@@ -6026,13 +6028,36 @@
 
             // Falsch gestellte Uhr auf dem Gerät ausgleichen
             const versatz = Date.now() - (daten.now || Date.now());
-            return (daten.liste || [])
-                .map(e => ({
-                    name: e.name,
-                    lastSeen: e.lastSeen + versatz,
-                    self: e.id === id,
-                }))
-                .filter(e => (Date.now() - e.lastSeen) < PRESENCE_FENSTER_MS);
+            return buendleNachName(
+                (daten.liste || [])
+                    .map(e => ({
+                        name: e.name,
+                        lastSeen: e.lastSeen + versatz,
+                        self: e.id === id,
+                    }))
+                    .filter(e => (Date.now() - e.lastSeen) < PRESENCE_FENSTER_MS)
+            );
+        }
+
+        // Wer auf Tablet und Laptop übt, soll nicht zweimal dastehen: gleiche
+        // Vornamen werden zu einer Zeile zusammengezogen, es gilt der jüngste
+        // Zeitstempel. Großschreibung spielt dabei keine Rolle.
+        function buendleNachName(liste) {
+            const nach = new Map();
+            liste.forEach(e => {
+                const schluessel = (e.name || '').toLocaleLowerCase('de-DE');
+                const da = nach.get(schluessel);
+                if (!da) {
+                    nach.set(schluessel, { name: e.name, lastSeen: e.lastSeen, self: !!e.self });
+                    return;
+                }
+                if (e.self) da.self = true;
+                if (e.lastSeen > da.lastSeen) {
+                    da.lastSeen = e.lastSeen;
+                    da.name = e.name;          // jüngste Schreibweise gewinnt
+                }
+            });
+            return [...nach.values()];
         }
 
         function formatSeen(lastSeen) {

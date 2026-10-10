@@ -62,7 +62,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.20.0
+**Version:** 2.20.1
 **Datum:** 04.10.2026
 **Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -107,6 +107,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.20.1 (10.10.2026)
+- **Gleiche Vornamen werden in der Liste gebündelt** (`buendleNachName` in `index.html`):
+  wer auf mehreren Geräten übt, steht einmal da, mit dem jüngsten Zeitstempel und der
+  jüngsten Schreibweise. Groß-/Kleinschreibung spielt keine Rolle; ist eines der Geräte
+  das eigene, gilt die Zeile als eigene. Rein clientseitig — der Worker bleibt unberührt.
+- Die Auswertungen in [`worker/README.md`](worker/README.md) gruppieren entsprechend nach
+  `lower(name)` statt nach `id`, sonst zählte der Monatsbericht weiter Geräte statt Kinder.
+- **Changelog der Versionen 2.19.0 und 2.20.0 eingedampft.** Die ausführliche Beschreibung
+  der Anwesenheitsfunktion las sich beim ersten Mal wie eine Überwachungsankündigung. Dass
+  die Übezeit mitgezählt wird, steht weiterhin drin — in einem Satz.
 
 ### Version 2.20.0 (04.10.2026)
 - **Nutzungszählung im Worker**: zweite D1-Tabelle `nutzung`, eine Zeile pro Gerät und Tag.

@@ -223,37 +223,37 @@ D1-Konsole, jeweils einzeilig eingeben:
 **Kumulativ, alles zusammen**
 
 ```sql
-SELECT ROUND(SUM(aktive)*20/3600.0, 1) AS stunden_geuebt, ROUND(SUM(takte)*20/3600.0, 1) AS stunden_offen, COUNT(DISTINCT id) AS kinder, MIN(tag) AS seit FROM nutzung;
+SELECT ROUND(SUM(aktive)*20/3600.0, 1) AS stunden_geuebt, ROUND(SUM(takte)*20/3600.0, 1) AS stunden_offen, COUNT(DISTINCT lower(name)) AS kinder, MIN(tag) AS seit FROM nutzung;
 ```
 
 **Pro Tag**
 
 ```sql
-SELECT tag, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY tag ORDER BY tag DESC LIMIT 30;
+SELECT tag, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT lower(name)) AS kinder FROM nutzung GROUP BY tag ORDER BY tag DESC LIMIT 30;
 ```
 
 **Pro Woche**
 
 ```sql
-SELECT strftime('%Y-KW%W', tag) AS woche, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY woche ORDER BY woche DESC;
+SELECT strftime('%Y-KW%W', tag) AS woche, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT lower(name)) AS kinder FROM nutzung GROUP BY woche ORDER BY woche DESC;
 ```
 
 **Pro Monat** — hier steht auch die Zahl der Kinder, die den Trainer in dem Monat genutzt haben
 
 ```sql
-SELECT substr(tag,1,7) AS monat, ROUND(SUM(aktive)*20/3600.0, 1) AS stunden, COUNT(DISTINCT id) AS kinder FROM nutzung GROUP BY monat ORDER BY monat DESC;
+SELECT substr(tag,1,7) AS monat, ROUND(SUM(aktive)*20/3600.0, 1) AS stunden, COUNT(DISTINCT lower(name)) AS kinder FROM nutzung GROUP BY monat ORDER BY monat DESC;
 ```
 
 **Pro Kind, gesamt**
 
 ```sql
-SELECT (SELECT name FROM nutzung n2 WHERE n2.id = n.id ORDER BY letzte DESC LIMIT 1) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage, MAX(tag) AS zuletzt FROM nutzung n GROUP BY id ORDER BY minuten DESC;
+SELECT MAX(name) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage, MAX(tag) AS zuletzt FROM nutzung GROUP BY lower(name) ORDER BY minuten DESC;
 ```
 
 **Pro Kind und Monat**
 
 ```sql
-SELECT substr(tag,1,7) AS monat, (SELECT name FROM nutzung n2 WHERE n2.id = n.id ORDER BY letzte DESC LIMIT 1) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage FROM nutzung n GROUP BY monat, id ORDER BY monat DESC, minuten DESC;
+SELECT substr(tag,1,7) AS monat, MAX(name) AS kind, ROUND(SUM(aktive)*20/60.0) AS minuten, COUNT(DISTINCT tag) AS tage FROM nutzung GROUP BY monat, lower(name) ORDER BY monat DESC, minuten DESC;
 ```
 
 ### Was die Zahlen nicht sagen
@@ -261,8 +261,10 @@ SELECT substr(tag,1,7) AS monat, (SELECT name FROM nutzung n2 WHERE n2.id = n.id
 - **Nur Kinder mit eingeschalteter Liste werden gezählt.** Wer den Schalter 👥
   ausgeschaltet oder „Lieber nicht anzeigen" geklickt hat, meldet sich nie beim
   Worker — und soll das auch nicht, sonst wäre der Schalter eine Attrappe.
-- **Gezählt wird pro Gerät, nicht pro Kind.** Wer auf Tablet und Laptop übt,
-  erscheint als zwei. Umgekehrt zählt ein geteiltes Gerät als eines.
+- **Gezählt wird nach Vorname.** Wer auf Tablet und Laptop übt, erscheint
+  einmal — die Übezeiten beider Geräte werden addiert. Zwei Kinder mit
+  demselben Vornamen wären dagegen eins; für `pro Gerät` statt `pro Kind`
+  in den Abfragen `lower(name)` durch `id` ersetzen.
 - **Die Übezeit ist auf 20 Sekunden genau** und immer eine Schätzung nach oben:
   der letzte Takt vor dem Schließen zählt voll.
 - **`takte` minus `aktive`** ist die Zeit, in der die App offen stand, ohne dass
