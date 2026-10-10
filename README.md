@@ -46,9 +46,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     Vorausgewählt wird nach Rang: Premium vor Erweitert vor einfach, Britisch vor anderem Englisch,
     Spaß- und Eloquence-Stimmen von macOS (Bubbles, Grandpa, Rocko …) ganz unten.
     Siri-Stimmen gibt Apple nicht an Webseiten heraus
-  - Fehlt auf dem Gerät jede Premium-/Erweitert-Stimme, erklärt ein gelber Kasten, warum sich eine
-    bessere lohnt, schickt das Kind zu den Eltern und zeigt die Schritte nur für dieses Gerät
-    (Mac, iPad/iPhone, sonst allgemein). „Später“ blendet ihn eine Woche aus (`hoerDetektivStimmeSpaeter`)
+  - **Premium-Stimmen kommen im Browser nicht an:** Safari auf dem Mac meldet trotz geladener
+    „Serena (Premium)“ nur `compact`-, `super-compact`-, Eloquence- und Spaßstimmen (geprüft am
+    10.10.2026 mit der echten Liste). Eine Anleitung zum Herunterladen bringt also nichts
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - **📻 Funkzentrale Camden (Theme 1)**: 18 Notrufe von der Klassenfahrt, auf Englisch aus dem
@@ -102,7 +102,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.25.1
+**Version:** 2.25.2
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -148,6 +148,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.25.2 (10.10.2026)
+- **Gelben Stimmen-Kasten aus v2.23.2 wieder entfernt.** Er riet, eine Premium-Stimme zu laden.
+  Am Mac ist „Serena (Premium)“ geladen, Safari gibt sie der Seite aber nicht heraus —
+  `getVoices()` liefert nur `compact`, `super-compact`, Eloquence und Spaßstimmen. Die Anleitung
+  versprach also etwas, das nicht eintritt.
+- `super-compact` rangiert jetzt hinter `compact` derselben Stimme. Mit der echten Liste des Macs
+  ergibt die Auswahl Daniel (en-GB) und Karen (en-AU).
 
 ### Version 2.25.1 (10.10.2026)
 - **„Flüstern“ stand als zweitbeste Stimme zur Wahl.** Die Spaßstimmen-Liste kannte nur englische
