@@ -6315,9 +6315,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.25.0';
+        const APP_VERSION = '2.25.1';
 
         const changelogEntries = [
+            {
+                version: '2.25.1',
+                date: '10.10.2026',
+                items: [
+                    'Spaßstimmen wie „Flüstern“ stehen nicht mehr zur Wahl – nur noch richtige Sprecherinnen und Sprecher.',
+                ]
+            },
             {
                 version: '2.25.0',
                 date: '10.10.2026',
@@ -13064,7 +13071,20 @@
         // Eloquence-Stimmen (Bubbles, Grandpa, Rocko …), die blechern klingen —
         // die rutschen ans Ende der Liste.
         const HD_VOICE_KEY = 'hoerDetektivStimme';
-        const HD_ROBOT_VOICES = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
+        // macOS übersetzt die Namen der Spaßstimmen („Whisper“ heißt auf einem
+        // deutschen Mac „Flüstern“) — deshalb beide Sprachen, und zusätzlich die
+        // voiceURI: Spaß- und Altstimmen liegen unter
+        // com.apple.speech.synthesis.voice.*, Eloquence unter com.apple.eloquence.*.
+        // Alex ist die eine gute Altstimme dort.
+        const HD_ROBOT_VOICES = /^(Albert|Bad News|Schlechte Nachrichten|Bahh|Bells|Glocken|Boing|Bubbles|Blubbern|Cellos|Good News|Gute Nachrichten|Jester|Narr|Organ|Orgel|Superstar|Trinoids|Whisper|Flüstern|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Oma|Grandpa|Opa|Reed|Rocko|Sandy|Shelley|Hysterical|Hysterisch|Deranged|Pipe Organ|Princess|Agnes|Vicki|Victoria|Bruce)\b/i;
+        // Bekannte gute Sprecher kommen vor alles Unbekannte.
+        const HD_GOOD_VOICES = /^(Daniel|Kate|Serena|Oliver|Jamie|Stephanie|Arthur|Martha|Moira|Karen|Tessa|Fiona|Samantha|Alex|Ava|Allison|Susan|Tom|Evan|Nathan|Joelle|Noelle|Zoe|Lee|Catherine|Gordon)\b/i;
+
+        function hdIsRobot(v) {
+            const uri = v.voiceURI || '';
+            return HD_ROBOT_VOICES.test(v.name) || /\.eloquence\./i.test(uri) ||
+                   (/com\.apple\.speech\.synthesis\.voice\./i.test(uri) && !/\.alex\b/i.test(uri));
+        }
         let hdVoices = [];
         const HD_VOICE_MAX = 2;
 
@@ -13084,14 +13104,15 @@
             const q = hdVoiceQuality(v);
             if (q === 'Premium') s += 40;
             else if (q === 'Erweitert') s += 30;
-            if (HD_ROBOT_VOICES.test(v.name)) s -= 100;
+            if (HD_GOOD_VOICES.test(v.name)) s += 15;
+            if (hdIsRobot(v)) s -= 100;
             return s;
         }
 
         function hdVoiceLabel(v) {
             const q = hdVoiceQuality(v);
             return v.name + (q && v.name.indexOf(q) < 0 ? ' · ' + q : '') + ' (' + v.lang + ')' +
-                   (HD_ROBOT_VOICES.test(v.name) ? ' – Roboter' : '');
+                   (hdIsRobot(v) ? ' – Roboter' : '');
         }
 
         function hdPickVoice() {
@@ -13100,8 +13121,9 @@
             // „Daniel“ einmal als Premium und einmal einfach) — sonst wird aus der
             // Auswahl ein Stimmen-Zoo zum Herumprobieren.
             const names = new Set();
-            hdVoices = speechSynthesis.getVoices()
-                .filter(v => v.localService && /^en/i.test(v.lang))
+            let all = speechSynthesis.getVoices().filter(v => v.localService && /^en/i.test(v.lang));
+            if (all.some(v => !hdIsRobot(v))) all = all.filter(v => !hdIsRobot(v));   // Roboter nur, wenn sonst nichts da ist
+            hdVoices = all
                 .sort((a, b) => hdVoiceScore(b) - hdVoiceScore(a) || a.name.localeCompare(b.name))
                 .filter(v => { const n = v.name.replace(/\s*\(.*\)\s*$/, ''); if (names.has(n)) return false; names.add(n); return true; })
                 .slice(0, HD_VOICE_MAX);

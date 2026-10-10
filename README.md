@@ -102,7 +102,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.25.0
+**Version:** 2.25.1
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -148,6 +148,15 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.25.1 (10.10.2026)
+- **„Flüstern“ stand als zweitbeste Stimme zur Wahl.** Die Spaßstimmen-Liste kannte nur englische
+  Namen; macOS übersetzt sie aber („Whisper“ → „Flüstern“). Bei Gleichstand entschied dann das
+  Alphabet — „Flüstern“ vor „Samantha“.
+- Erkennung jetzt doppelt: deutsche und englische Namen, dazu die `voiceURI`
+  (`com.apple.speech.synthesis.voice.*` außer Alex, `com.apple.eloquence.*`). Roboterstimmen fliegen
+  ganz raus, solange es irgendeine andere gibt. Bekannte gute Sprecher (Daniel, Serena, Karen,
+  Samantha …) bekommen einen Bonus vor Unbekannten.
 
 ### Version 2.25.0 (10.10.2026)
 - **Stimmenwechsel als runder Schalter oben rechts** (`#voiceToggle`, 🗣️), in der Reihe mit 🎯 👥 😀
