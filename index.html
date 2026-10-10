@@ -2566,6 +2566,8 @@
         .hd-device { margin: 14px auto 0; max-width: 560px; font-size: 0.85em; color: #666; text-align: center; line-height: 1.5; }
         .hd-device .ok { color: #2e9d5b; }
         .hd-device .no { color: #b26a00; }
+        .hd-voice-sel { font: inherit; font-size: 1em; padding: 4px 8px; border-radius: 10px; border: 2px solid #cfc8ff; background: #fff; max-width: 100%; }
+        .hd-btn.hd-try { padding: 5px 12px; font-size: 0.95em; margin: 4px 0; }
         .hd-go { display: block; margin: 0 auto; border: none; border-radius: 18px; padding: 14px 36px; font-size: 1.15em; font-weight: bold;
             color: #fff; background: linear-gradient(135deg, #43e97b 0%, #38b26b 100%); cursor: pointer; box-shadow: 0 6px 18px rgba(56,178,107,.35); }
         .hd-go:disabled { opacity: .45; cursor: default; box-shadow: none; }
@@ -6118,9 +6120,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.23.0';
+        const APP_VERSION = '2.23.1';
 
         const changelogEntries = [
+            {
+                version: '2.23.1',
+                date: '10.10.2026',
+                items: [
+                    'Beim Hör-Detektiv kannst du jetzt die Stimme aussuchen und vorher reinhören. Die beste Stimme steht automatisch oben, und deine Wahl merkt sich die App.',
+                    'Klingt die Stimme blechern, steht direkt darunter, wo du am Mac oder iPad eine bessere herunterlädst.',
+                ]
+            },
             {
                 version: '2.23.0',
                 date: '10.10.2026',
@@ -12414,11 +12424,65 @@
 
         // Nur Stimmen, die auf dem Gerät rechnen. Chromes „Google UK English“
         // läuft über Google-Server und bleibt deshalb draußen.
+        // Siri-Stimmen gibt Apple nicht an Webseiten heraus. Die nächstbesten
+        // sind die Premium-/Erweitert-Fassungen (Daniel, Serena, Jamie …), die man
+        // in den Systemeinstellungen lädt. macOS meldet daneben Spaß- und
+        // Eloquence-Stimmen (Bubbles, Grandpa, Rocko …), die blechern klingen —
+        // die rutschen ans Ende der Liste.
+        const HD_VOICE_KEY = 'hoerDetektivStimme';
+        const HD_ROBOT_VOICES = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley)\b/i;
+        let hdVoices = [];
+
+        // Safari meldet die Premium-Fassung oft unter demselben Namen („Daniel“);
+        // verraten wird sie nur von der voiceURI (com.apple.voice.premium.…).
+        function hdVoiceQuality(v) {
+            const id = v.name + ' ' + (v.voiceURI || '');
+            if (/premium/i.test(id)) return 'Premium';
+            if (/enhanced|erweitert|verbessert/i.test(id)) return 'Erweitert';
+            return '';
+        }
+
+        function hdVoiceScore(v) {
+            let s = 0;
+            if (/^en[-_]GB/i.test(v.lang)) s += 20;
+            else if (/^en[-_](IE|AU|US)/i.test(v.lang)) s += 10;
+            const q = hdVoiceQuality(v);
+            if (q === 'Premium') s += 40;
+            else if (q === 'Erweitert') s += 30;
+            if (HD_ROBOT_VOICES.test(v.name)) s -= 100;
+            return s;
+        }
+
+        function hdVoiceLabel(v) {
+            const q = hdVoiceQuality(v);
+            return v.name + (q && v.name.indexOf(q) < 0 ? ' · ' + q : '') + ' (' + v.lang + ')' +
+                   (HD_ROBOT_VOICES.test(v.name) ? ' – Roboter' : '');
+        }
+
         function hdPickVoice() {
             if (!hdHasTTS) return;
-            const local = speechSynthesis.getVoices().filter(v => v.localService && /^en/i.test(v.lang));
-            hdVoice = local.find(v => /^en[-_]GB/i.test(v.lang)) || local[0] || null;
+            hdVoices = speechSynthesis.getVoices()
+                .filter(v => v.localService && /^en/i.test(v.lang))
+                .sort((a, b) => hdVoiceScore(b) - hdVoiceScore(a) || a.name.localeCompare(b.name));
+            let saved = '';
+            try { saved = localStorage.getItem(HD_VOICE_KEY) || ''; } catch (e) {}
+            hdVoice = hdVoices.find(v => v.voiceURI === saved) || hdVoices[0] || null;
             hdRenderDevice();
+        }
+
+        function hdChooseVoice(uri) {
+            hdVoice = hdVoices.find(v => v.voiceURI === uri) || hdVoice;
+            try { localStorage.setItem(HD_VOICE_KEY, hdVoice ? hdVoice.voiceURI : ''); } catch (e) {}
+            hdTryVoice();
+        }
+
+        function hdTryVoice() {
+            if (!hdVoice) return;
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('Welcome to Radio Dorset. Suddenly Lara lost her balance.');
+            u.voice = hdVoice;
+            u.lang = hdVoice.lang;
+            speechSynthesis.speak(u);
         }
         if (hdHasTTS) speechSynthesis.addEventListener('voiceschanged', hdPickVoice);
 
@@ -12429,7 +12493,17 @@
             if (!hdHasTTS) t = '<span class="no">🔇 Dieser Browser kann nicht vorlesen – der Hör-Detektiv braucht Ton.</span>';
             else if (!hdVoice) t = '<span class="no">🔇 Keine englische Stimme gefunden, die ohne Internet spricht.<br>' +
                 'Auf dem iPad: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Englisch.</span>';
-            else t = '<span class="ok">🔊 Stimme: ' + vhAttr(hdVoice.name) + ' (' + vhAttr(hdVoice.lang) + ')</span>';
+            else {
+                t = '<label for="hdVoiceSel">🔊 Stimme:</label> <select id="hdVoiceSel" class="hd-voice-sel" onchange="hdChooseVoice(this.value)">' +
+                    hdVoices.map(v => '<option value="' + vhAttr(v.voiceURI) + '"' + (v === hdVoice ? ' selected' : '') + '>' +
+                                      vhAttr(hdVoiceLabel(v)) + '</option>').join('') +
+                    '</select> <button class="hd-btn ghost hd-try" onclick="hdTryVoice()">Probe hören</button>';
+                if (!hdVoiceQuality(hdVoice))
+                    t += '<br><span class="no">Klingt blechern? Bessere Stimmen gibt es kostenlos: ' +
+                         'Mac → Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → Systemstimme → Stimmen verwalten → Englisch, ' +
+                         'z. B. „Daniel (Premium)“ oder „Serena (Premium)“. iPad → Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen. ' +
+                         'Danach die Seite neu laden.</span>';
+            }
             const m = hdHasRec ? '<span class="ok">🎙️ Deine Aufnahme bleibt auf dem Gerät</span>'
                                : '<span class="no">🎙️ Aufnehmen geht hier nicht – dann sprichst du einfach laut mit</span>';
             box.innerHTML = t + '<br>' + m;

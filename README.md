@@ -39,6 +39,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - **ohne Cloud**: vorgelesen wird nur mit Stimmen, die auf dem Gerät rechnen (`localService`) —
     Chromes „Google UK English“ geht über Google-Server und bleibt draußen. Ohne eine solche Stimme
     bleibt der Start gesperrt, mit Hinweis, wo man auf dem iPad eine lädt
+  - **Stimmenwahl** auf dem Startbildschirm mit Hörprobe, gemerkt in `hoerDetektivStimme`.
+    Vorausgewählt wird nach Rang: Premium vor Erweitert vor einfach, Britisch vor anderem Englisch,
+    Spaß- und Eloquence-Stimmen von macOS (Bubbles, Grandpa, Rocko …) ganz unten.
+    Siri-Stimmen gibt Apple nicht an Webseiten heraus
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
@@ -79,7 +83,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.23.0
+**Version:** 2.23.1
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -125,6 +129,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.23.1 (10.10.2026)
+- **Hör-Detektiv: Stimme wählbar.** Auf dem MacBook klang die automatisch gewählte Stimme schlimm —
+  genommen wurde einfach die erste britische, die das System meldet. Jetzt gibt es eine Rangfolge
+  (`hdVoiceScore`), eine Auswahlliste mit „Probe hören“ und, solange keine Premium-/Erweitert-Stimme
+  gewählt ist, den Weg zum Herunterladen einer besseren.
+- Safari meldet die Premium-Fassung unter demselben Namen wie die einfache („Daniel“); unterscheiden
+  lässt sie sich nur an der `voiceURI` (`com.apple.voice.premium.…`). `hdVoiceQuality` prüft beides.
 
 ### Version 2.23.0 (10.10.2026)
 - **Neues Modul „Hör-Detektiv“ für Theme 1** — Sieger einer Pitch-Runde mit vier Ideen
