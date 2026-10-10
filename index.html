@@ -2549,6 +2549,68 @@
         /* Eigene Zeile in der Liste: Klick ändert den Vornamen */
         .presence-row.self { cursor: pointer; }
         .presence-row.self:hover .presence-name { text-decoration: underline; }
+        /* ===== Funkzentrale Camden (Englisch, Theme 1) ===== */
+        .module-card.funk-card { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
+        .fz-hero { font-size: 3em; text-align: center; margin: 4px 0; }
+        .fz-rules { display: grid; gap: 10px; margin: 16px auto; max-width: 560px; }
+        .fz-rule { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 16px; padding: 10px 14px;
+            display: flex; gap: 12px; align-items: center; line-height: 1.4; }
+        .fz-rule span { font-size: 1.6em; }
+        .fz-bar { display: flex; gap: 8px; align-items: center; justify-content: flex-start; margin: 4px 0 10px; flex-wrap: wrap; }
+        .fz-pill { background: #f2f0ff; border-radius: 999px; padding: 5px 12px; font-weight: bold; font-size: 0.9em; white-space: nowrap; color: #333; }
+        .fz-timer { height: 8px; border-radius: 99px; background: #eee; overflow: hidden; margin-bottom: 12px; }
+        .fz-timer > div { height: 100%; background: linear-gradient(90deg, #43e97b, #38f9d7); transition: width .25s linear; }
+        .fz-timer.low > div { background: linear-gradient(90deg, #f6d365, #fda085); }
+        .fz-layout { display: grid; gap: 14px; }
+        @media (min-width: 860px) { .fz-layout { grid-template-columns: 1fr 1.05fr; align-items: start; } }
+        .fz-phone { background: #1f2033; border-radius: 24px; padding: 14px; color: #fff; }
+        .fz-phone-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .fz-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            display: grid; place-items: center; font-size: 1.4em; flex: none; }
+        .fz-caller { font-weight: bold; }
+        .fz-caller small { display: block; font-weight: normal; opacity: .7; font-size: .8em; }
+        .fz-ring { margin-left: auto; font-size: 1.4em; animation: fzRing 1.2s infinite; }
+        @keyframes fzRing { 0%,60%,100% { transform: rotate(0); } 10%,30% { transform: rotate(-14deg); } 20%,40% { transform: rotate(14deg); } }
+        .fz-bubble { background: #fff; color: #2d2d3a; border-radius: 18px 18px 18px 4px; padding: 14px 16px; font-size: 1.12em; line-height: 1.6; }
+        .fz-w { border-bottom: 2px dotted #667eea; cursor: pointer; }
+        .fz-w.peek { background: #fff3c4; border-radius: 4px; }
+        .fz-w.key { background: #ffe08a; border-bottom-color: #f5a623; border-radius: 4px; }
+        .fz-gloss { margin-top: 10px; background: #764ba2; color: #fff; border-radius: 12px; padding: 8px 12px; font-size: .95em; line-height: 1.4; }
+        .fz-gloss b { color: #ffe08a; }
+        .fz-tools { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; font-size: .82em; opacity: .9; align-items: center; }
+        .fz-tool { background: rgba(255,255,255,.14); border: none; color: #fff; border-radius: 10px; padding: 6px 10px; font: inherit; cursor: pointer; }
+        .fz-q { font-weight: bold; margin: 2px 0 8px; color: #764ba2; }
+        .fz-helpers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+        .fz-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+        .fz-opt { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: 3px solid transparent; border-radius: 16px;
+            padding: 8px 4px; text-align: center; cursor: pointer; font: inherit; color: #333; transition: transform .15s, border-color .15s; }
+        .fz-opt:hover { transform: translateY(-3px); }
+        .fz-opt .e { font-size: 1.7em; display: block; line-height: 1.2; }
+        .fz-opt .l { font-size: .8em; font-weight: bold; display: block; }
+        .fz-opt.sel { border-color: #667eea; box-shadow: 0 6px 18px rgba(102,126,234,.35); background: #fff; }
+        .fz-opt.wrong { border-color: #d9534f; background: #fdecea; }
+        .fz-opt.right { border-color: #2e9d5b; background: #e6f7ec; }
+        .fz-send { width: 100%; border: none; border-radius: 18px; padding: 14px; font: inherit; font-size: 1.1em; font-weight: bold; color: #fff;
+            cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 8px 20px rgba(245,87,108,.35); }
+        .fz-send:disabled { opacity: .45; box-shadow: none; cursor: default; }
+        .fz-send.fz-auto { width: auto; display: block; margin: 8px auto 0; padding: 14px 28px; }
+        .fz-fb { border-radius: 18px; padding: 14px 16px; margin-top: 12px; line-height: 1.45; color: #2d2d3a; }
+        .fz-fb.ok { background: #e6f7ec; border: 2px solid #2e9d5b; }
+        .fz-fb.bad { background: #fdecea; border: 2px solid #d9534f; }
+        .fz-fb b.t { display: block; font-size: 1.05em; margin-bottom: 4px; }
+        .fz-fb .fz-send { margin-top: 10px; }
+        .fz-report { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; text-align: center; }
+        .fz-stat { background: #f2f0ff; border-radius: 16px; padding: 10px 4px; }
+        .fz-stat b { display: block; font-size: 1.5em; color: #764ba2; }
+        .fz-stat small { color: #666; }
+        .fz-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 8px 0 4px; }
+        .fz-chip { background: #fff3c4; border: 2px solid #f5a623; border-radius: 999px; padding: 3px 10px; font-size: .9em; color: #333; }
+        .fz-note { color: #666; font-size: .88em; margin-top: 6px; text-align: center; }
+        @media (max-width: 420px) {
+            .fz-opt .l { font-size: .72em; }
+            .fz-bubble { font-size: 1.04em; }
+        }
+
         /* ===== Hör-Detektiv (Englisch, Theme 1) ===== */
         .module-card.hoer-card { background: linear-gradient(135deg, #c2e9fb 0%, #e0c3fc 100%); }
         .hd-topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -2901,7 +2963,90 @@
                 <div class="module-title">Hör-Detektiv</div>
                 <div class="module-info">Sätze aus dem Heft hören, legen &amp; nachsprechen</div>
             </div>
+
+            <div class="module-card funk-card" id="enFunkCard" onclick="fzOpen()">
+                <div class="module-icon">📻</div>
+                <div class="module-title">Funkzentrale Camden</div>
+                <div class="module-info">Notrufe auf Englisch verstehen &amp; die richtige Hilfe schicken</div>
+            </div>
         </div>
+    </div>
+
+    <!-- FUNKZENTRALE CAMDEN (Englisch, Theme 1) -->
+    <div class="game-container" id="funkzentraleScreen" style="display: none;">
+        <section id="fzStart">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="fzBack()">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="fz-tal">0</span>/50</span>
+            </div>
+            <div class="fz-hero">📻</div>
+            <div class="header">
+                <h1>Funkzentrale Camden</h1>
+                <div class="current-set">6. Klasse · Theme 1: Back to Camden Town</div>
+                <p style="color: #666; margin-top: 10px;">Klassenfahrt nach Dorset – du hast heute Dienst am Funkgerät.</p>
+            </div>
+            <div class="fz-rules">
+                <div class="fz-rule"><span>📱</span><div>Nachrichten kommen <b>auf Englisch</b>. Lies genau, was passiert ist.</div></div>
+                <div class="fz-rule"><span>🚑</span><div>Schick <b>die richtige Hilfe</b> an <b>den richtigen Ort</b>. Achtung bei <i>wasn't, weren't, didn't</i>!</div></div>
+                <div class="fz-rule"><span>📖</span><div>Unterstrichenes Wort antippen = Wörterbuch. Kostet <b>5 Sekunden</b>.</div></div>
+                <div class="fz-rule"><span>⚠️</span><div>Falsch geschickt gibt Ärger – aber du darfst nochmal. Für je 2 Notrufe auf Anhieb gibt es 1 Taler.</div></div>
+            </div>
+            <button class="fz-send fz-auto" onclick="fzStartShift()">Dienst beginnen 🚨</button>
+        </section>
+
+        <section id="fzPlay" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="fzShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="fz-tal">0</span>/50</span>
+            </div>
+            <div class="fz-bar">
+                <span class="fz-pill" id="fzCallNo">📞 Notruf 1 / 6</span>
+                <span class="fz-pill" id="fzTrouble" title="Ärger">⚠️ –</span>
+            </div>
+            <div class="fz-timer" id="fzTimer"><div id="fzTimerFill" style="width: 100%;"></div></div>
+            <div class="fz-layout">
+                <div>
+                    <div class="fz-phone">
+                        <div class="fz-phone-top">
+                            <div class="fz-avatar" id="fzAvatar">🧒</div>
+                            <div class="fz-caller" id="fzCaller"></div>
+                            <div class="fz-ring" id="fzRing">📳</div>
+                        </div>
+                        <div class="fz-bubble" id="fzText"></div>
+                        <div class="fz-gloss" id="fzGloss" style="display: none;"></div>
+                        <div class="fz-tools">
+                            <button class="fz-tool" id="fzSpeakBtn" onclick="fzSpeak()">🔊 Vorlesen</button>
+                            <span>📖 Wort antippen = Wörterbuch (−5 s)</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="fz-q">1 · Wen schickst du?</div>
+                    <div class="fz-helpers" id="fzHelpers"></div>
+                    <div class="fz-q">2 · Wohin?</div>
+                    <div class="fz-places" id="fzPlaces"></div>
+                    <button class="fz-send" id="fzSendBtn" onclick="fzSend()" disabled>Losschicken 🚨</button>
+                    <div id="fzFeedback"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fzEnd" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="fzShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="fz-tal">0</span>/50</span>
+            </div>
+            <div class="fz-hero">🏁</div>
+            <div class="header"><h1>Schicht vorbei!</h1>
+                <p style="color: #666; margin-top: 6px;">Alle Notrufe sind erledigt.</p></div>
+            <div class="fz-report">
+                <div class="fz-stat"><b id="fzStFirst">0/6</b><small>sofort richtig</small></div>
+                <div class="fz-stat"><b id="fzStFast">0</b><small>⚡ in der Zeit</small></div>
+                <div class="fz-stat"><b id="fzStTaler">+0</b><small>Taler</small></div>
+            </div>
+            <div id="fzWordsBox"></div>
+            <button class="fz-send fz-auto" onclick="fzStartShift()">Nächste Schicht</button>
+        </section>
     </div>
 
     <!-- HÖR-DETEKTIV (Englisch, Theme 1) -->
@@ -6127,9 +6272,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.23.3';
+        const APP_VERSION = '2.24.0';
 
         const changelogEntries = [
+            {
+                version: '2.24.0',
+                date: '10.10.2026',
+                items: [
+                    '<b>Neu bei Theme 1: die Funkzentrale Camden &#128251;</b> — Notrufe von der Klassenfahrt kommen auf Englisch rein. Schick die richtige Hilfe an den richtigen Ort!',
+                    'Lies genau: wer <i>wasn\'t hurt</i> ist, braucht keinen Krankenwagen. Wörter kannst du antippen und nachschlagen, das kostet aber 5 Sekunden.',
+                    'Am Ende der Schicht kannst du die Wörter, die dich aufgehalten haben, mit einem Tipp als &#127919; Knackpunkte markieren.',
+                ]
+            },
             {
                 version: '2.23.3',
                 date: '10.10.2026',
@@ -6911,6 +7065,7 @@
                 themeUmfang(key) + ' Vokabeln · Spelling & Multiple Choice';
             document.getElementById('enVokabelheftCard').style.display = thema.heft ? '' : 'none';
             document.getElementById('enHoerCard').style.display = thema.heft ? '' : 'none';   // Sätze kommen aus dem Heft
+            document.getElementById('enFunkCard').style.display = thema.heft ? '' : 'none';   // Notrufe auch
             document.getElementById('englishModuleSelection').style.display = 'block';
             dvUpdateToggle();
             applyAprilDarkBody();
@@ -7753,10 +7908,11 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
             hdStopAll();
+            fzStopAll();
             const overlay = document.getElementById('introSuccessOverlay');
             if (overlay) overlay.style.display = 'none';
         }
@@ -12196,6 +12352,10 @@
             const vhScreenEl = document.getElementById('vokabelheftScreen');
             if (vhScreenEl && vhScreenEl.style.display !== 'none') return;
 
+            // Funkzentrale: alles per Antippen, die Tastatur bleibt außen vor.
+            const fzScreenEl = document.getElementById('funkzentraleScreen');
+            if (fzScreenEl && fzScreenEl.style.display !== 'none') return;
+
             // Hör-Detektiv: Kärtchen werden angetippt, Enter prüft.
             const hdScreenEl = document.getElementById('hoerDetektivScreen');
             if (hdScreenEl && hdScreenEl.style.display !== 'none') {
@@ -12328,6 +12488,391 @@
                     clearAnswer();
                 }
             }
+        });
+
+        // ===================================================================
+        // FUNKZENTRALE CAMDEN — Notrufe auf Englisch lesen, die richtige Hilfe
+        // an den richtigen Ort schicken. Wer nur Schlüsselwörter überfliegt,
+        // tappt in die Falle (wasn't hurt, weren't on the train, at first …).
+        // ===================================================================
+        const FZ_HELPERS = [
+            { id: 'amb',  e: '🚑', l: 'ambulance' },
+            { id: 'bus',  e: '🚐', l: 'minibus' },
+            { id: 'lead', e: '🧭', l: 'group leader' },
+            { id: 'head', e: '🎓', l: 'head teacher' },
+        ];
+        const FZ_PLACES = [
+            { id: 'rocks', e: '🪨', l: 'the rocks' },
+            { id: 'hosp',  e: '🏥', l: 'hospital' },
+            { id: 'stat',  e: '🚆', l: 'station' },
+            { id: 'camp',  e: '⛺', l: 'camp' },
+            { id: 'class', e: '🏫', l: 'classroom' },
+            { id: 'off',   e: '🗄️', l: 'office' },
+        ];
+        // {Wort im Text|Vokabel im Heft} — antippbar, Bedeutung kommt aus dem Heft.
+        // key: die Heftvokabeln, an denen die Entscheidung hängt.
+        // traps: Erklärung für den naheliegenden Fehlgriff ('helper:…' / 'place:…').
+        const FZ_CALLS = [
+            { id: 'lara-rocks', who: 'Mia', where: 'Camp, Dorset', av: '👧',
+              text: "Help! Lara {jumped|to jump} from the {rocks|rock} and {fell|to fall} {down|down}. She can't stand up. I think she is {hurt|hurt}!",
+              helper: 'amb', place: 'rocks', key: ['to fall', 'hurt'],
+              ok: "„fell down“ und „hurt“ – Lara ist gestürzt und verletzt. Sie liegt noch an den Felsen.",
+              traps: { 'place:hosp': "Lara ist noch nicht im Krankenhaus – sie liegt an den „rocks“. Der Krankenwagen muss sie erst holen.",
+                       'helper:bus': "„She can't stand up … she is hurt“ – sie ist verletzt. Dafür braucht es den Krankenwagen." } },
+            { id: 'kim-jo-hospital', who: 'Mr Brown', where: 'Hospital, Dorchester', av: '👨‍⚕️',
+              text: "Hello, this is the {hospital|hospital}. Kim and Jo {weren't|weren't (= were not)} on the {train|train}. They are {both|both} here with us – they are fine, nobody is {ill|ill}. Can you pick them up?",
+              helper: 'bus', place: 'hosp', key: ["weren't (= were not)", 'both', 'ill'],
+              ok: "„weren't on the train“ – sie waren NICHT im Zug, sondern sind beide im Krankenhaus. Gesund – also Kleinbus, kein Krankenwagen.",
+              traps: { 'place:stat': "„weren't on the train“ heißt: sie waren NICHT im Zug. Am Bahnhof wartest du umsonst.",
+                       'helper:amb': "„they are fine, nobody is ill“ – niemand ist krank. Ein Krankenwagen ist hier zu viel." } },
+            { id: 'group-station', who: 'Charlie', where: 'Station, Weymouth', av: '🧑',
+              text: "{At first|at first} our {group|group} {didn't|didn't (= did not)} want to {leave|to leave} the camp. Now we are at the station, but it's {dark|dark} and we don't know the way.",
+              helper: 'lead', place: 'stat', key: ['at first', 'to leave', 'dark'],
+              ok: "Die Gruppe ist JETZT am Bahnhof („Now we are at the station“). „At first … didn't want to leave the camp“ war vorher. Sie brauchen jemanden, der den Weg kennt.",
+              traps: { 'place:camp': "„At first“ = zuerst, also früher. Jetzt („Now“) sind sie am Bahnhof, nicht mehr im Camp." } },
+            { id: 'jack-rules', who: 'Mrs Patel', where: 'Classroom 4B', av: '👩‍🏫',
+              text: "Jack {broke|to break} the rules – he played {around|around} with his phone in class again. This is {serious|serious}. Please send someone who can {punish|to punish} him.",
+              helper: 'head', place: 'class', key: ['to break', 'serious', 'to punish'],
+              ok: "„broke the rules … serious … punish“ – eine Strafe gibt die Schulleitung. Jack sitzt noch im Klassenzimmer.",
+              traps: { 'place:off': "Jack ist noch „in class“ – im Klassenzimmer. Ins Sekretariat muss er erst gebracht werden." } },
+            { id: 'olivia-sad', who: 'Olivia', where: 'Camp, Dorset', av: '🧒',
+              text: "{Suddenly|suddenly} Fiona {pushed|to push} me. I {wasn't|wasn't (= was not)} {hurt|hurt}, but I'm sad and I want to {call|to call} my mum. {May|may} I?",
+              helper: 'lead', place: 'camp', key: ["wasn't (= was not)", 'hurt', 'may'],
+              ok: "„I wasn't hurt“ – Olivia ist NICHT verletzt. Sie braucht jemanden zum Reden und die Erlaubnis zu telefonieren.",
+              traps: { 'helper:amb': "Lies genau: „I wasn't hurt“ – sie war NICHT verletzt. Kein Krankenwagen!",
+                       'place:hosp': "„I wasn't hurt“ – kein Grund fürs Krankenhaus. Olivia ist im Camp." } },
+            { id: 'tom-ben-home', who: 'Ms Green', where: 'Camp office', av: '👩‍💼',
+              text: "{Most|most} pupils {agree|to agree}: the trip is great. But Tom and Ben {disagree|to disagree} – they want to go home. They are in my {office|office} with their bags. {If|if} they {leave|to leave} now, they can get the 6 o'clock {train|train}.",
+              helper: 'bus', place: 'off', key: ['to disagree', 'office', 'if'],
+              ok: "Tom und Ben wollen heim und warten mit ihren Taschen im „office“. Der Kleinbus holt sie dort ab und bringt sie zum Zug.",
+              traps: { 'place:stat': "Noch sind sie nicht am Bahnhof – „They are in my office“. Der Bus holt sie im Büro ab." } },
+            { id: 'rachel-dark', who: 'Mr Hill', where: 'Camp, Dorset', av: '🧔',
+              text: "Rachel is very {strong|strong}. She {climbed up|to climb (up)} the {high|high} rocks, but now it's {dark|dark}. She isn't {hurt|hurt}, but she can't come {down|down} alone.",
+              helper: 'lead', place: 'rocks', key: ['dark', 'hurt', 'down'],
+              ok: "Rachel ist nicht verletzt („isn't hurt“), kommt aber im Dunkeln nicht allein herunter. Jemand von der Gruppenleitung holt sie an den Felsen ab.",
+              traps: { 'helper:amb': "„She isn't hurt“ – Rachel ist NICHT verletzt. Sie braucht Hilfe beim Runterklettern, keinen Krankenwagen.",
+                       'place:camp': "Rachel ist noch oben auf den „high rocks“ – dort muss die Hilfe hin." } },
+            { id: 'pia-phone', who: 'Ms Hill', where: 'Classroom 4B', av: '👩‍🏫',
+              text: "Pia played {around|around} with her phone and {didn't|didn't (= did not)} {switch|to switch off} it {off|to switch off} in Mark's {presentation|presentation}. That was {annoying|annoying}. She is still in the classroom.",
+              helper: 'head', place: 'class', key: ["didn't (= did not)", 'to switch off', 'presentation'],
+              ok: "Pia hat das Handy NICHT ausgeschaltet („didn't switch it off“) und eine Präsentation gestört – ein Fall für die Schulleitung, im Klassenzimmer.",
+              traps: { 'helper:lead': "Hier wurde eine Regel gebrochen – Handy im Unterricht. Darum kümmert sich die Schulleitung." } },
+            { id: 'zoe-ill', who: 'Zoe', where: 'Camp, Dorset', av: '👧',
+              text: "I feel {ill|ill} and my head hurts. It's not {serious|serious}, but I want to see a doctor. Can someone take me to the {hospital|hospital}? I'm in my tent at the camp.",
+              helper: 'bus', place: 'camp', key: ['serious', 'hospital'],
+              ok: "„It's not serious“ – kein Notfall. Zoe ist noch im Camp; der Kleinbus holt sie dort ab und fährt sie zum Arzt.",
+              traps: { 'helper:amb': "„It's not serious“ – es ist nicht schlimm. Für einen Arztbesuch reicht der Kleinbus.",
+                       'place:hosp': "Zoe ist noch im Camp („I'm in my tent at the camp“). Dort muss der Bus sie abholen." } },
+            { id: 'train-gone', who: 'Jack', where: 'Station, Weymouth', av: '🧑',
+              text: "Our {group|group} {planned|to plan} to go back by {train|train}, but the train {wasn't|wasn't (= was not)} there. We waited for an hour and now we're {bored|bored}. Can you {send|to send} a car to get us?",
+              helper: 'bus', place: 'stat', key: ['to plan', "wasn't (= was not)", 'to send'],
+              ok: "Der Zug „wasn't there“ – die Gruppe sitzt am Bahnhof fest und bittet um ein Auto. Der Kleinbus holt sie ab.",
+              traps: { 'helper:lead': "Die Gruppe kennt den Weg, ihr fehlt nur die Fahrt: „Can you send a car?“ – also der Kleinbus." } },
+            { id: 'max-water', who: 'Kim', where: 'The rocks, Lulworth', av: '👧',
+              text: "There was an {accident|accident} at the {rocks|rock}! Jo {pulled|to pull} Max out of the water. Max {hurt|to hurt (sb)} his head and his leg. Please hurry!",
+              helper: 'amb', place: 'rocks', key: ['accident', 'to hurt (sb)'],
+              ok: "„accident … Max hurt his head and his leg“ – Max ist verletzt. Krankenwagen zu den Felsen.",
+              traps: { 'place:hosp': "Max liegt noch an den „rocks“ – der Krankenwagen muss ihn dort abholen." } },
+            { id: 'sam-office', who: 'Mrs Patel', where: 'School office', av: '👩‍🏫',
+              text: "Sam {left|to leave} the classroom during the lesson. Now he is in the {office|office}. He {went online|to go online} on the computer there and sent a {stupid|stupid} {message|message} to everybody.",
+              helper: 'head', place: 'off', key: ['to leave', 'office', 'to go online'],
+              ok: "Sam hat das Klassenzimmer verlassen („left“) und sitzt jetzt im Sekretariat. Für die dumme Nachricht an alle ist die Schulleitung zuständig.",
+              traps: { 'place:class': "„Sam left the classroom“ – er hat es VERLASSEN. Jetzt ist er im „office“." } },
+            { id: 'lara-wrong', who: 'Lara', where: 'Camp, Dorset', av: '👧',
+              text: "{Everything|everything} {went wrong|to go wrong} today. {At first|at first} I lost my phone, then I {fell|to fall} in the mud. I {wasn't|wasn't (= was not)} {hurt|hurt}, but I'm sad and I want to go home.",
+              helper: 'lead', place: 'camp', key: ["wasn't (= was not)", 'hurt', 'to go wrong'],
+              ok: "Viel ist schiefgegangen, aber „I wasn't hurt“. Lara braucht Trost von der Gruppenleitung im Camp.",
+              traps: { 'helper:amb': "„I wasn't hurt“ – Lara ist nicht verletzt, nur traurig.",
+                       'helper:bus': "Heimfahren ist nicht die erste Hilfe – Lara ist traurig und braucht jemanden zum Reden." } },
+            { id: 'mark-grandma', who: 'Ms Hill', where: 'Hospital, Dorchester', av: '👩‍🏫',
+              text: "Mark is at the {hospital|hospital} with his grandma – she is {ill|ill}, but Mark is fine. He has to {present|to present (sth to sb)} his ideas at school this afternoon. Can you bring him to his classroom?",
+              helper: 'bus', place: 'hosp', key: ['ill', 'to present (sth to sb)'],
+              ok: "Krank ist die Oma, nicht Mark („Mark is fine“). Der Kleinbus holt ihn am Krankenhaus ab.",
+              traps: { 'place:class': "Ins Klassenzimmer soll er erst – abgeholt wird er am „hospital“.",
+                       'helper:amb': "„Mark is fine“ – Mark ist gesund. Krank ist seine Oma, und die ist schon im Krankenhaus." } },
+            { id: 'george-arm', who: 'George', where: 'Classroom 4B', av: '🧒',
+              text: "Charlie {pushed|to push} me in the {break|break} and I {fell|to fall}. My arm {hurts|to hurt (sb)} a lot – I think it's broken. I'm in the classroom.",
+              helper: 'amb', place: 'class', key: ['to push', 'to hurt (sb)'],
+              ok: "Der Arm ist vielleicht gebrochen – erst der Krankenwagen. Über eine Strafe für Charlie wird später geredet.",
+              traps: { 'helper:head': "Zuerst braucht George Hilfe für seinen Arm („I think it's broken“). Die Strafe kommt danach." } },
+            { id: 'tent-fight', who: 'Mr Brown', where: 'Camp, Dorset', av: '🧔',
+              text: "Ollie and Finn {disagree|to disagree} about the tent. Ollie was really {unfriendly|unfriendly} and {pushed|to push} Finn's bag {away|away}. Nobody is {hurt|hurt}, but they are {both|both} very angry.",
+              helper: 'lead', place: 'camp', key: ['to disagree', 'hurt', 'both'],
+              ok: "Streit ums Zelt, aber „Nobody is hurt“. Die Gruppenleitung schlichtet im Camp.",
+              traps: { 'helper:amb': "„Nobody is hurt“ – niemand ist verletzt.",
+                       'helper:head': "Die Schulleitung ist in London. Einen Zeltstreit klärt die Gruppenleitung vor Ort." } },
+            { id: 'emma-stairs', who: 'Ms Green', where: 'Station, Weymouth', av: '👩‍💼',
+              text: "I'm at the station with Emma. She {fell|to fall} {down|down} the stairs and she can't walk. I think it's {serious|serious}.",
+              helper: 'amb', place: 'stat', key: ['to fall', 'serious'],
+              ok: "Emma ist gestürzt und kann nicht laufen – „serious“. Krankenwagen zum Bahnhof.",
+              traps: { 'place:hosp': "Emma ist noch am Bahnhof („I'm at the station with Emma“)." } },
+            { id: 'leo-presentation', who: 'Charlie', where: 'Classroom 4B', av: '🧑',
+              text: "Leo {called|to call} Mia {stupid|stupid} and {switched|to switch off} the computer {off|to switch off} in the middle of her {presentation|presentation}. Ms Hill says he needs a {punishment|punishment}.",
+              helper: 'head', place: 'class', key: ['to call', 'punishment'],
+              ok: "„he needs a punishment“ – eine Strafe gibt die Schulleitung. Leo ist im Klassenzimmer.",
+              traps: { 'helper:lead': "Hier geht es um eine Strafe („punishment“). Die gibt die Schulleitung." } },
+        ];
+        const FZ_SHIFT = 6;
+        const FZ_TIME = 45;     // Sekunden pro Notruf
+        const FZ_JOKER = 5;     // Kosten eines Blicks ins Wörterbuch
+
+        let fzRound = [], fzIdx = 0, fzSel = { helper: null, place: null }, fzT = FZ_TIME, fzTimer = null;
+        let fzFirstOk = 0, fzFast = 0, fzGained = 0, fzTrouble = 0, fzTriedWrong = false, fzDone = false;
+        let fzPeeked = new Set(), fzStuck = new Set();
+
+        function fzEl(id) { return document.getElementById(id); }
+        function fzKey(c) { return 'en:fz:' + c.id; }
+        function fzHeftWords(c) {
+            const out = [];
+            c.text.replace(/\{([^|}]+)\|([^}]+)\}/g, (m, s, w) => { if (out.indexOf(w) < 0) out.push(w); return m; });
+            return out;
+        }
+
+        // Heftzeile zu einer Vokabel, samt Päckchen-Buchstabe (für die Markierung).
+        function fzHeftRow(w) {
+            let hit = null;
+            vokabelheftData['en-theme1'].packets.forEach(p => p.rows.forEach(r => { if (r.w === w) hit = { row: r, packet: p.label }; }));
+            return hit;
+        }
+
+        function fzOpen() {
+            currentLanguage = 'english';
+            currentEnglishTheme = 'theme1';
+            englishDvActive = true;
+            hideAllScreens();
+            fzEl('funkzentraleScreen').style.display = 'block';
+            fzShow('start');
+            if (typeof hdPickVoice === 'function') hdPickVoice();   // dieselbe lokale Stimme wie im Hör-Detektiv
+            fzShowTaler();
+            dvUpdateToggle();
+            applyAprilDarkBody();
+            window.scrollTo(0, 0);
+        }
+
+        function fzBack() {
+            fzStopAll();
+            backToEnglishModules();
+        }
+
+        function fzShow(which) {
+            fzStopAll();
+            ['start', 'play', 'end'].forEach(k => {
+                fzEl('fz' + k.charAt(0).toUpperCase() + k.slice(1)).style.display = (k === which) ? 'block' : 'none';
+            });
+        }
+
+        function fzStopAll() {
+            if (fzTimer) { clearInterval(fzTimer); fzTimer = null; }
+            if ('speechSynthesis' in window) speechSynthesis.cancel();
+        }
+
+        function fzShowTaler() {
+            document.querySelectorAll('.fz-tal').forEach(e => { e.textContent = totalTalers; });
+        }
+
+        // Notrufe mit markierten Knackpunkten zuerst, sonst gewichtet nach Lernstand.
+        function fzPickShift() {
+            const progress = loadProgress();
+            const weight = c => {
+                const p = progress[fzKey(c)];
+                if (!p) return 2.0;
+                return Math.max(0.2, 1.0 + p.wrong * 2.0 - p.correct * 0.3);
+            };
+            let pool = FZ_CALLS.slice(), picked = [];
+            if (dvOn) {
+                const active = dvActiveWords();
+                picked = shuffleArray(pool.filter(c => fzHeftWords(c).some(w => active.has(w)))).slice(0, FZ_SHIFT);
+                pool = pool.filter(c => picked.indexOf(c) < 0);
+            }
+            while (picked.length < FZ_SHIFT && pool.length) {
+                const total = pool.reduce((s, c) => s + weight(c), 0);
+                let r = Math.random() * total, j = 0;
+                for (; j < pool.length - 1; j++) { r -= weight(pool[j]); if (r <= 0) break; }
+                picked.push(pool.splice(j, 1)[0]);
+            }
+            return shuffleArray(picked);
+        }
+
+        function fzStartShift() {
+            fzRound = fzPickShift();
+            fzIdx = 0; fzFirstOk = 0; fzFast = 0; fzGained = 0; fzTrouble = 0;
+            fzPeeked = new Set(); fzStuck = new Set();
+            fzShow('play');
+            fzHud();
+            fzLoadCall();
+        }
+
+        function fzRender(c) {
+            return c.text.replace(/\{([^|}]+)\|([^}]+)\}/g, (m, s, w) =>
+                '<span class="fz-w" data-w="' + vhAttr(w) + '">' + vhAttr(s) + '</span>');
+        }
+
+        function fzOpts(list, box, kind) {
+            fzEl(box).innerHTML = list.map(o =>
+                '<button class="fz-opt" data-k="' + kind + '" data-id="' + o.id + '" onclick="fzPick(this)">' +
+                '<span class="e">' + o.e + '</span><span class="l">' + o.l + '</span></button>').join('');
+        }
+
+        function fzLoadCall() {
+            const c = fzRound[fzIdx];
+            fzSel = { helper: null, place: null }; fzTriedWrong = false; fzDone = false; fzT = FZ_TIME;
+            fzEl('fzCallNo').textContent = '📞 Notruf ' + (fzIdx + 1) + ' / ' + fzRound.length;
+            fzEl('fzAvatar').textContent = c.av;
+            fzEl('fzCaller').innerHTML = vhAttr(c.who) + '<small>' + vhAttr(c.where) + '</small>';
+            fzEl('fzText').innerHTML = fzRender(c);
+            fzEl('fzGloss').style.display = 'none';
+            fzEl('fzRing').style.display = '';
+            fzEl('fzSpeakBtn').style.display = (typeof hdVoice !== 'undefined' && hdVoice) ? '' : 'none';
+            fzOpts(FZ_HELPERS, 'fzHelpers', 'helper');
+            fzOpts(FZ_PLACES, 'fzPlaces', 'place');
+            fzEl('fzFeedback').innerHTML = '';
+            fzEl('fzSendBtn').disabled = true;
+            fzEl('fzSendBtn').style.display = '';
+            fzTick();
+            if (fzTimer) clearInterval(fzTimer);
+            fzTimer = setInterval(() => { fzT = Math.max(0, fzT - 1); fzTick(); }, 1000);
+        }
+
+        function fzTick() {
+            fzEl('fzTimerFill').style.width = (fzT / FZ_TIME * 100) + '%';
+            fzEl('fzTimer').classList.toggle('low', fzT < FZ_TIME / 3);
+        }
+
+        function fzHud() {
+            fzEl('fzTrouble').textContent = '⚠️ ' + (fzTrouble ? '🔥'.repeat(Math.min(fzTrouble, 5)) : '–');
+            fzShowTaler();
+        }
+
+        // Wörterbuch: Bedeutung aus dem Vokabelheft, kostet Zeit.
+        function fzLookup(span) {
+            const w = span.dataset.w, hit = fzHeftRow(w);
+            if (!hit) return;
+            const clean = s => vhAttr((s || '').replace(/_/g, ''));
+            fzEl('fzGloss').innerHTML = '📖 <b>' + vhAttr(span.textContent) + '</b> → ' + clean(hit.row.w) +
+                (hit.row.f ? ' (' + clean(hit.row.f) + ')' : '') + ': ' + clean(hit.row.d);
+            fzEl('fzGloss').style.display = 'block';
+            if (fzDone) return;                       // nach dem Lösen kostet Nachlesen nichts
+            if (!span.classList.contains('peek')) {
+                fzT = Math.max(0, fzT - FZ_JOKER); fzTick();
+                fzPeeked.add(w);
+            }
+            document.querySelectorAll('#fzText .fz-w').forEach(x => { if (x.dataset.w === w) x.classList.add('peek'); });
+        }
+
+        function fzPick(btn) {
+            if (fzDone) return;
+            const k = btn.dataset.k;
+            document.querySelectorAll('.fz-opt[data-k="' + k + '"]').forEach(x => x.classList.remove('sel', 'wrong'));
+            btn.classList.add('sel');
+            fzSel[k] = btn.dataset.id;
+            fzEl('fzSendBtn').disabled = !(fzSel.helper && fzSel.place);
+        }
+
+        function fzSend() {
+            const c = fzRound[fzIdx];
+            if (fzDone || !fzSel.helper || !fzSel.place) return;
+            const hOk = fzSel.helper === c.helper, pOk = fzSel.place === c.place;
+            document.querySelectorAll('#fzText .fz-w').forEach(x => { if (c.key.indexOf(x.dataset.w) >= 0) x.classList.add('key'); });
+            if (hOk && pOk) {
+                fzDone = true;
+                if (fzTimer) { clearInterval(fzTimer); fzTimer = null; }
+                fzEl('fzRing').style.display = 'none';
+                let extra = '';
+                if (!fzTriedWrong) {
+                    fzFirstOk++;
+                    if (fzT > 0) fzFast++;
+                    recordAnswer(fzKey(c), true);
+                    if (fzFirstOk % 2 === 0) {          // wie überall: 2 auf Anhieb = 1 Taler
+                        fzGained++; totalTalers++;
+                        try { localStorage.setItem('vocabularyGameTalers', String(totalTalers)); } catch (e) {}
+                        extra = ' +1 🪙';
+                    }
+                }
+                fzHud();
+                document.querySelectorAll('.fz-opt.sel').forEach(x => x.classList.replace('sel', 'right'));
+                fzEl('fzSendBtn').style.display = 'none';
+                fzEl('fzFeedback').innerHTML = '<div class="fz-fb ok"><b class="t">✅ Hilfe ist unterwegs!' + extra + '</b>' +
+                    '<div>' + c.ok + '</div>' +
+                    '<button class="fz-send" onclick="fzNext()">' + (fzIdx + 1 < fzRound.length ? 'Nächster Notruf 📞' : 'Schicht beenden') + '</button></div>';
+            } else {
+                if (!fzTriedWrong) recordAnswer(fzKey(c), false);
+                fzTriedWrong = true; fzTrouble++; fzHud();
+                c.key.forEach(w => fzStuck.add(w));
+                let msg = null;
+                if (!pOk && c.traps['place:' + fzSel.place]) msg = c.traps['place:' + fzSel.place];
+                if (!hOk && c.traps['helper:' + fzSel.helper]) msg = c.traps['helper:' + fzSel.helper];
+                if (!msg) msg = !hOk && !pOk ? 'Hilfe und Ort passen beide nicht. Lies die gelben Wörter nochmal.'
+                              : !hOk ? 'Der Ort stimmt – aber wen braucht man dort? Schau auf die gelben Wörter.'
+                                     : 'Die Hilfe stimmt – aber wo genau? Schau auf die gelben Wörter.';
+                if (!hOk) document.querySelector('.fz-opt[data-k="helper"][data-id="' + fzSel.helper + '"]').classList.replace('sel', 'wrong');
+                if (!pOk) document.querySelector('.fz-opt[data-k="place"][data-id="' + fzSel.place + '"]').classList.replace('sel', 'wrong');
+                if (!hOk) fzSel.helper = null;
+                if (!pOk) fzSel.place = null;
+                fzEl('fzSendBtn').disabled = true;
+                fzEl('fzFeedback').innerHTML = '<div class="fz-fb bad"><b class="t">⚠️ Falsch geschickt – Ärger!</b><div>' + msg + '</div></div>';
+            }
+            fzEl('fzFeedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function fzNext() {
+            fzIdx++;
+            if (fzIdx < fzRound.length) { fzLoadCall(); window.scrollTo(0, 0); return; }
+            fzFinish();
+        }
+
+        function fzSpeak() {
+            const c = fzRound[fzIdx];
+            if (!c || typeof hdVoice === 'undefined' || !hdVoice) return;
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(c.text.replace(/\{([^|}]+)\|[^}]+\}/g, '$1'));
+            u.voice = hdVoice;
+            u.lang = hdVoice.lang;
+            u.rate = 0.9;
+            speechSynthesis.speak(u);
+        }
+
+        function fzFinish() {
+            fzShow('end');
+            fzEl('fzStFirst').textContent = fzFirstOk + '/' + fzRound.length;
+            fzEl('fzStFast').textContent = fzFast;
+            fzEl('fzStTaler').textContent = '+' + fzGained;
+            fzRenderWords();
+            fzShowTaler();
+            window.scrollTo(0, 0);
+        }
+
+        // Wörter, die gebremst haben — auf Knopfdruck ins Vokabelheft markiert,
+        // dann übt der 🎯-Schalter genau die.
+        function fzRenderWords() {
+            const words = [...new Set([...fzStuck, ...fzPeeked])].filter(w => fzHeftRow(w));
+            const box = fzEl('fzWordsBox');
+            if (!words.length) { box.innerHTML = '<p class="fz-note">Kein Wort hat dich aufgehalten – perfekte Schicht! 🌟</p>'; return; }
+            const neu = words.filter(w => { const h = fzHeftRow(w); return !vhMarks['en-theme1|' + h.packet + '|' + w]; });
+            box.innerHTML = '<p style="text-align: center; font-weight: bold;">Diese Wörter haben dich aufgehalten:</p>' +
+                '<div class="fz-chips">' + words.map(w => '<span class="fz-chip">' + vhAttr(w) + '</span>').join('') + '</div>' +
+                (neu.length
+                    ? '<button class="hd-btn ghost" style="display: block; margin: 10px auto 0;" onclick="fzMarkWords()">🎯 ' + neu.length +
+                      (neu.length === 1 ? ' Wort' : ' Wörter') + ' als Knackpunkte markieren</button>'
+                    : '<p class="fz-note">🎯 Alle schon als Knackpunkte markiert.</p>');
+            box.dataset.words = JSON.stringify(neu);
+        }
+
+        function fzMarkWords() {
+            let neu = [];
+            try { neu = JSON.parse(fzEl('fzWordsBox').dataset.words || '[]'); } catch (e) {}
+            neu.forEach(w => {
+                const h = fzHeftRow(w);
+                if (h) vhMarks['en-theme1|' + h.packet + '|' + w] = { h: 0, d: 0, r: null };
+            });
+            saveVhMarks();
+            dvUpdateToggle();
+            dvToast('🎯 ' + neu.length + (neu.length === 1 ? ' Wort ist' : ' Wörter sind') + ' jetzt im Vokabelheft markiert.');
+            fzRenderWords();
+        }
+
+        document.addEventListener('click', e => {
+            const w = e.target.closest && e.target.closest('#fzText .fz-w');
+            if (w) fzLookup(w);
         });
 
         // ===================================================================

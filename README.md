@@ -49,6 +49,17 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     (Mac, iPad/iPhone, sonst allgemein). „Später“ blendet ihn eine Woche aus (`hoerDetektivStimmeSpaeter`)
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
+- **📻 Funkzentrale Camden (Theme 1)**: 18 Notrufe von der Klassenfahrt, auf Englisch aus dem
+  Theme-1-Wortschatz gebaut (51 der 66 Vokabeln kommen vor). Das Kind schickt Hilfe (ambulance,
+  minibus, group leader, head teacher) an einen Ort (rocks, hospital, station, camp, classroom,
+  office). Jeder Notruf hat eine eingebaute Falle (*wasn't hurt*, *weren't on the train*, *at first*)
+  mit eigener Erklärung; die entscheidenden Wörter leuchten nach dem Schicken gelb
+  - 6 Notrufe pro Schicht, 45 s Uhr pro Notruf, Wörterbuch per Antippen (Bedeutung aus dem Heft)
+    kostet 5 s. 2 auf Anhieb richtig = 1 Taler, die Uhr zählt nur für die ⚡-Statistik
+  - Wörter, die gebremst haben, lassen sich am Schichtende per Knopf als Knackpunkte markieren —
+    nicht automatisch, die Markierungen im Heft gehören dem Kind
+  - Markup im Text: `{Wort im Text|Vokabel im Heft}`; Vorlesen mit derselben lokalen Stimme wie
+    der Hör-Detektiv
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
 
 ### 🏛️ Latein
@@ -87,7 +98,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.23.3
+**Version:** 2.24.0
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -133,6 +144,15 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.24.0 (10.10.2026)
+- **Neues Modul „Funkzentrale Camden“ für Theme 1** — Platz 4 der Pitch-Runde, auf Wunsch doch
+  gebaut. Gegenüber dem Prototyp: 18 statt 6 Notrufe (das größte Risiko war, dass das Kind sie
+  nach drei Schichten auswendig kennt), Taler nach der App-Regel statt 5+2 pro Notruf, und die
+  Knackpunkte nur auf Knopfdruck.
+- Die Notrufe stehen in `FZ_CALLS`; jedes `{…|…}` verweist auf eine Heftvokabel, das Wörterbuch
+  liest Bedeutung und Formen aus `vokabelheftData['en-theme1']`. Fortschritt unter `en:fz:<id>`,
+  mit 🎯 kommen Notrufe mit markierten Wörtern zuerst.
 
 ### Version 2.23.3 (10.10.2026)
 - **Hör-Detektiv: nur noch die zwei besten Stimmen in der Auswahl** — macOS meldet Dutzende, und
