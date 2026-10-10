@@ -2549,6 +2549,86 @@
         /* Eigene Zeile in der Liste: Klick ändert den Vornamen */
         .presence-row.self { cursor: pointer; }
         .presence-row.self:hover .presence-name { text-decoration: underline; }
+        /* ===== Hör-Detektiv (Englisch, Theme 1) ===== */
+        .module-card.hoer-card { background: linear-gradient(135deg, #c2e9fb 0%, #e0c3fc 100%); }
+        .hd-topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .hd-taler { background: linear-gradient(135deg, #f6d365, #fda085); border-radius: 14px; padding: 7px 14px; font-weight: bold; color: #5a3200; white-space: nowrap; }
+        .hd-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+        .hd-step { border-radius: 18px; padding: 16px 12px; text-align: center; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .hd-step .hd-ico { font-size: 2em; }
+        .hd-step b { display: block; margin: 6px 0 4px; }
+        .hd-step span { color: #666; font-size: 0.9em; }
+        @media (max-width: 560px) {
+            .hd-steps { grid-template-columns: 1fr; gap: 8px; }
+            .hd-step { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 14px; }
+            .hd-step b { margin: 0 0 2px; }
+        }
+        .hd-device { margin: 14px auto 0; max-width: 560px; font-size: 0.85em; color: #666; text-align: center; line-height: 1.5; }
+        .hd-device .ok { color: #2e9d5b; }
+        .hd-device .no { color: #b26a00; }
+        .hd-go { display: block; margin: 0 auto; border: none; border-radius: 18px; padding: 14px 36px; font-size: 1.15em; font-weight: bold;
+            color: #fff; background: linear-gradient(135deg, #43e97b 0%, #38b26b 100%); cursor: pointer; box-shadow: 0 6px 18px rgba(56,178,107,.35); }
+        .hd-go:disabled { opacity: .45; cursor: default; box-shadow: none; }
+        .hd-progress { display: flex; gap: 5px; justify-content: center; margin-bottom: 12px; }
+        .hd-progress i { width: 26px; height: 8px; border-radius: 4px; background: #e6e3f7; }
+        .hd-progress i.done { background: #2e9d5b; }
+        .hd-progress i.cur { background: #667eea; }
+        .hd-phase { display: flex; justify-content: center; gap: 6px; margin-bottom: 14px; font-size: 0.85em; flex-wrap: wrap; }
+        .hd-phase span { padding: 4px 12px; border-radius: 999px; background: #f0eef9; color: #888; }
+        .hd-phase span.on { background: #667eea; color: #fff; font-weight: bold; }
+        .hd-listen { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 6px 0 14px; }
+        .hd-play { width: 88px; height: 88px; border-radius: 50%; border: none; cursor: pointer; font-size: 2.2em; color: #fff;
+            background: radial-gradient(circle at 35% 30%, #8fa2ff, #667eea 55%, #764ba2); box-shadow: 0 8px 22px rgba(102,126,234,.45); }
+        .hd-play.hd-slow { width: 60px; height: 60px; font-size: 1.5em;
+            background: radial-gradient(circle at 35% 30%, #ffe08a, #f6b93b 60%, #e58e26); box-shadow: 0 6px 16px rgba(229,142,38,.35); }
+        .hd-play.hd-me { background: radial-gradient(circle at 35% 30%, #b8f5cf, #43e97b 60%, #2e9d5b); }
+        .hd-play:disabled { opacity: .4; cursor: default; }
+        .hd-play.hd-rec { animation: hdPulse 1s infinite; }
+        @keyframes hdPulse { 0% { box-shadow: 0 0 0 0 rgba(245,87,108,.6); } 100% { box-shadow: 0 0 0 22px rgba(245,87,108,0); } }
+        .hd-wave { display: flex; align-items: center; gap: 4px; height: 46px; }
+        .hd-wave i { width: 6px; border-radius: 3px; background: #cfc8ff; height: 30%; }
+        .hd-wave i:nth-child(2n) { height: 70%; }
+        .hd-wave i:nth-child(3n) { height: 50%; }
+        .hd-wave.speaking i { background: #667eea; animation: hdWave .7s ease-in-out infinite alternate; }
+        .hd-wave.speaking i:nth-child(2n) { animation-delay: .15s; }
+        .hd-wave.speaking i:nth-child(3n) { animation-delay: .3s; }
+        @keyframes hdWave { from { transform: scaleY(.4); } to { transform: scaleY(1.2); } }
+        .hd-count { text-align: center; font-size: 0.82em; color: #666; margin: -6px 0 12px; }
+        .hd-slot { min-height: 62px; border: 3px dashed #cfc8ff; border-radius: 18px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px;
+            align-items: center; background: #faf9ff; margin-bottom: 14px; }
+        .hd-slot .hd-ph { color: #aaa; font-size: 0.9em; padding-left: 4px; }
+        .hd-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px; }
+        .hd-chip { border: 2px solid #cfc8ff; background: #f3f1ff; border-radius: 12px; padding: 8px 13px; font: inherit; font-size: 1.08em;
+            cursor: pointer; color: #333; box-shadow: 0 2px 0 #cfc8ff; }
+        .hd-chip.used { opacity: .2; pointer-events: none; box-shadow: none; }
+        .hd-chip.ok { background: #e3f7ea; border-color: #2e9d5b; box-shadow: 0 2px 0 #2e9d5b; }
+        .hd-chip.bad { background: #fde8e8; border-color: #d64545; box-shadow: 0 2px 0 #d64545; }
+        .hd-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .hd-btn { border: none; border-radius: 14px; padding: 11px 22px; font: inherit; font-weight: bold; cursor: pointer; font-size: 1em; }
+        .hd-btn.check { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+        .hd-btn.ghost { background: #f0eef9; color: #764ba2; }
+        .hd-btn.green { background: linear-gradient(135deg, #43e97b, #38b26b); color: #fff; }
+        .hd-btn:disabled { opacity: .45; cursor: default; }
+        .hd-note { border-radius: 16px; padding: 12px 16px; margin: 14px 0 4px; line-height: 1.45; font-size: 0.95em; }
+        .hd-note.trap { background: #fff6d6; border-left: 6px solid #f6b93b; }
+        .hd-note.win { background: #e3f7ea; border-left: 6px solid #2e9d5b; }
+        .hd-clue { font-size: 0.92em; color: #555; margin-top: 6px; }
+        .hd-say { text-align: center; font-size: 1.3em; line-height: 1.6; margin: 6px 0 14px; }
+        .hd-heard { text-align: center; font-size: 0.88em; color: #666; margin-top: 4px; }
+        .hd-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+        .hd-stat { border-radius: 18px; padding: 14px 8px; text-align: center; background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        .hd-stat b { display: block; font-size: 1.6em; color: #764ba2; }
+        .hd-stat span { font-size: 0.85em; color: #666; }
+        .hd-traps { list-style: none; padding: 0; margin: 0; }
+        .hd-traps li { padding: 8px 4px; border-bottom: 1px solid #eee; font-size: 0.95em; line-height: 1.45; }
+        .hd-traps li .hd-pair { font-weight: bold; margin-right: 6px; }
+        .hd-traps li .hd-pair s { color: #d64545; }
+        .hd-traps li .hd-pair span { color: #2e9d5b; }
+        @media (max-width: 420px) {
+            .hd-chip { font-size: 1em; padding: 7px 10px; }
+            .hd-say { font-size: 1.12em; }
+            .hd-stat b { font-size: 1.35em; }
+        }
     </style>
 </head>
 <body>
@@ -2807,7 +2887,92 @@
                 <div class="module-title">Vokabelheft</div>
                 <div class="module-info">66 Vokabeln nachlesen, Abdeckblatt &amp; Markieren</div>
             </div>
+
+            <div class="module-card hoer-card" id="enHoerCard" onclick="hdOpen()">
+                <div class="module-icon">🎧</div>
+                <div class="module-title">Hör-Detektiv</div>
+                <div class="module-info">Sätze aus dem Heft hören, legen &amp; nachsprechen</div>
+            </div>
         </div>
+    </div>
+
+    <!-- HÖR-DETEKTIV (Englisch, Theme 1) -->
+    <div class="game-container" id="hoerDetektivScreen" style="display: none;">
+        <section id="hdStart">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="hdBack()">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="hd-tal">0</span>/50</span>
+            </div>
+            <div class="header">
+                <h1>🎧 Hör-Detektiv</h1>
+                <div class="current-set">6. Klasse · Theme 1: Back to Camden Town</div>
+                <p style="color: #666; margin-top: 10px;">Du hörst einen Satz aus dem Vokabelheft – aber du siehst ihn nicht.</p>
+            </div>
+            <div class="hd-steps">
+                <div class="hd-step"><div class="hd-ico">👂</div><div><b>1 · Hören</b><span>so oft du willst, auch in Zeitlupe 🐢</span></div></div>
+                <div class="hd-step"><div class="hd-ico">🧩</div><div><b>2 · Legen</b><span>Kärtchen in die richtige Reihenfolge – Achtung, Ohr-Fallen!</span></div></div>
+                <div class="hd-step"><div class="hd-ico">🎙️</div><div><b>3 · Nachsprechen</b><span>dich aufnehmen und mit dem Original vergleichen</span></div></div>
+            </div>
+            <button class="hd-go" id="hdGoBtn" onclick="hdStartRound()">Los geht's · 6 Sätze</button>
+            <div class="hd-device" id="hdDevice"></div>
+        </section>
+
+        <section id="hdGame" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="hdShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="hd-tal">0</span>/50</span>
+            </div>
+            <div class="hd-progress" id="hdProgress"></div>
+            <div class="hd-phase"><span id="hdPh1">👂🧩 Hören &amp; Legen</span><span id="hdPh2">🎙️ Nachsprechen</span></div>
+
+            <div id="hdBuild">
+                <div class="hd-listen">
+                    <button class="hd-play" onclick="hdSpeak(1)" aria-label="Satz anhören">▶</button>
+                    <div class="hd-wave" id="hdWave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <button class="hd-play hd-slow" onclick="hdSpeak(0.6)" aria-label="Langsam anhören">🐢</button>
+                </div>
+                <div class="hd-count" id="hdCount">Tippe auf ▶</div>
+                <div class="hd-slot" id="hdSlot"></div>
+                <div class="hd-pool" id="hdPool"></div>
+                <div class="hd-row" id="hdBuildBtns">
+                    <button class="hd-btn ghost" onclick="hdClear()">↺ Leeren</button>
+                    <button class="hd-btn check" id="hdCheckBtn" onclick="hdCheck()" disabled>Prüfen</button>
+                </div>
+                <div id="hdFeedback"></div>
+            </div>
+
+            <div id="hdSpeakPart" style="display: none;">
+                <div class="hd-say" id="hdSay"></div>
+                <div class="hd-listen">
+                    <button class="hd-play hd-slow" onclick="hdSpeak(1)" aria-label="Original anhören">🔊</button>
+                    <button class="hd-play" id="hdMic" onclick="hdToggleRec()" aria-label="Aufnehmen"
+                            style="background: radial-gradient(circle at 35% 30%, #ff9a9e, #f5576c 60%, #c43a50);">🎙️</button>
+                    <button class="hd-play hd-slow hd-me" id="hdMeBtn" onclick="hdPlayMe()" aria-label="Meine Aufnahme" disabled>🙋</button>
+                </div>
+                <div class="hd-heard" id="hdHeard"></div>
+                <div class="hd-row" style="margin-top: 14px;">
+                    <button class="hd-btn green" onclick="hdNext()">Weiter ▶</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="hdEnd" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="hdShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="hd-tal">0</span>/50</span>
+            </div>
+            <div class="header"><h1>🕵️ Fall gelöst!</h1>
+                <p style="color: #666; margin-top: 6px;" id="hdEndSub"></p></div>
+            <div class="hd-stats">
+                <div class="hd-stat"><b id="hdStFirst">0/6</b><span>beim 1. Versuch</span></div>
+                <div class="hd-stat"><b id="hdStPlays">0</b><span>mal hingehört</span></div>
+                <div class="hd-stat"><b id="hdStTaler">+0</b><span>Taler</span></div>
+            </div>
+            <div style="font-weight: bold; margin: 6px 0 4px;">🪤 Deine Ohr-Fallen</div>
+            <ul class="hd-traps" id="hdTraps"></ul>
+            <p class="hd-device" style="text-align: left; margin-left: 0;">Sätze, bei denen du danebenlagst, kommen bald wieder dran.</p>
+            <div class="hd-row" style="margin-top: 14px;"><button class="hd-go" onclick="hdStartRound()">Neue Runde</button></div>
+        </section>
     </div>
 
     <div class="game-container" id="vokabelheftScreen" style="display: none;">
@@ -5953,9 +6118,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.22.1';
+        const APP_VERSION = '2.23.0';
 
         const changelogEntries = [
+            {
+                version: '2.23.0',
+                date: '10.10.2026',
+                items: [
+                    '<b>Neu bei Theme 1: der Hör-Detektiv &#127911;</b> — du hörst einen Satz aus dem Vokabelheft, ohne ihn zu sehen, und legst ihn aus Kärtchen nach. Darunter liegen Ohr-Fallen wie <i>send</i> statt <i>sent</i>.',
+                    'Danach sprichst du den Satz nach und vergleichst deine Aufnahme mit dem Original. Die Aufnahme bleibt auf deinem Gerät.',
+                    'Mit dem &#127919;-Schalter kommen deine markierten Vokabeln zuerst dran.',
+                ]
+            },
             {
                 version: '2.22.1',
                 date: '10.10.2026',
@@ -6705,6 +6879,7 @@
             document.getElementById('enVocabInfo').textContent =
                 themeUmfang(key) + ' Vokabeln · Spelling & Multiple Choice';
             document.getElementById('enVokabelheftCard').style.display = thema.heft ? '' : 'none';
+            document.getElementById('enHoerCard').style.display = thema.heft ? '' : 'none';   // Sätze kommen aus dem Heft
             document.getElementById('englishModuleSelection').style.display = 'block';
             dvUpdateToggle();
             applyAprilDarkBody();
@@ -7547,9 +7722,10 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
+            hdStopAll();
             const overlay = document.getElementById('introSuccessOverlay');
             if (overlay) overlay.style.display = 'none';
         }
@@ -11989,6 +12165,17 @@
             const vhScreenEl = document.getElementById('vokabelheftScreen');
             if (vhScreenEl && vhScreenEl.style.display !== 'none') return;
 
+            // Hör-Detektiv: Kärtchen werden angetippt, Enter prüft.
+            const hdScreenEl = document.getElementById('hoerDetektivScreen');
+            if (hdScreenEl && hdScreenEl.style.display !== 'none') {
+                if (event.key === 'Enter' && !document.getElementById('hdCheckBtn').disabled &&
+                    document.getElementById('hdGame').style.display !== 'none') {
+                    event.preventDefault();
+                    hdCheck();
+                }
+                return;
+            }
+
             // Table mode: only intercept Enter, let browser handle rest
             if (currentMode === 'table') {
                 if (event.key === 'Enter') {
@@ -12111,6 +12298,417 @@
                 }
             }
         });
+
+        // ===================================================================
+        // HÖR-DETEKTIV — Beispielsatz aus dem Vokabelheft (Theme 1) hören,
+        // aus Kärtchen nachlegen, nachsprechen. Alles bleibt auf dem Gerät:
+        // nur Stimmen mit localService, keine Spracherkennung, die Aufnahme
+        // wird nirgends hingeschickt.
+        // ===================================================================
+        // w = Vokabel im Heft (Schlüssel für die Knackpunkte), s = Satz wie im Heft,
+        // trap = ähnlich klingende Ablenker-Kärtchen, hear = worauf es ankommt.
+        const HD_SENTENCES = [
+            { w:'welcome', s:'Welcome to Radio Dorset.', trap:['Welcomed'], hear:'Welcome',
+              why:'<b>Welcome</b> ohne -d am Ende – so begrüßt man jemanden.' },
+            { w:'adventure', s:'Our walk at night was a great adventure.', trap:['work','were'], hear:'walk / was',
+              why:'Bei <b>walk</b> ist das l stumm, es klingt wie „wohk“. <b>work</b> klingt wie „wörk“. Und ein Spaziergang → <b>was</b>, nicht were.' },
+            { w:'to send', s:'My best friend sent me a postcard from Madrid.', trap:['send'], hear:'sent',
+              why:'Hör aufs <b>t</b> am Ende: <b>sent</b> ist die Vergangenheit. <b>send</b> wäre „schicken“ jetzt.' },
+            { w:'hospital', s:'My mum is a doctor. She works at the hospital.', trap:['work'], hear:'works',
+              why:'<b>She works</b> – bei she/he/it hängt im Präsens ein <b>s</b> dran. Hör genau hin!' },
+            { w:'hurt', s:'Four people were hurt in an accident on Saturday.', trap:['where','hurts'], hear:'were hurt',
+              why:'<b>were</b> und <b>where</b> klingen fast gleich – hier heißt es „wurden verletzt“ (<i>were hurt</i>).' },
+            { w:'to jump', s:'Lara is jumping into the pool.', trap:['jumped'], hear:'jumping',
+              why:'Hör auf <b>-ing</b>: Lara springt gerade (<i>is jumping</i>).' },
+            { w:'rock', s:'Don\'t jump from the rocks, it\'s dangerous.', trap:['rock,'], hear:'rocks,',
+              why:'Ein leises <b>s</b>: <b>rocks</b> – mehrere Felsen.' },
+            { w:'to climb (up)', s:'Mike likes to climb trees.', trap:['like','three.'], hear:'likes / trees.',
+              why:'<b>likes</b> mit s (Mike = he). Und <b>trees</b> (Bäume) beginnt mit tr, <b>three</b> (drei) mit weichem th.' },
+            { w:'group', s:'The whole group had to work together.', trap:['hole'], hear:'whole',
+              why:'<b>whole</b> (ganz) und <b>hole</b> (Loch) klingen genau gleich – der Sinn entscheidet: die ganze Gruppe.' },
+            { w:'didn\'t (= did not)', s:'I didn\'t know it was your birthday today.', trap:['did'], hear:'didn\'t',
+              why:'Bei <b>didn\'t</b> verschluckt man das t fast – aber das <b>n</b> hört man. Ohne n wäre der Satz das Gegenteil!' },
+            { w:'high', s:'This house is 12 metres high.', trap:['These'], hear:'This',
+              why:'<b>This</b> mit kurzem i (ein Haus). <b>These</b> mit langem „ie“ wäre Mehrzahl.' },
+            { w:'at first', s:'At first I didn\'t like Jo but now we\'re friends.', trap:['were','did'], hear:'we\'re / didn\'t',
+              why:'<b>we\'re</b> (= we are, wir sind) klingt wie „wier“, <b>were</b> wie „wör“. Und hör auf das n in <b>didn\'t</b>.' },
+            { w:'down', s:'Don\'t fall down!', trap:['fell'], hear:'fall',
+              why:'Nach <b>Don\'t</b> kommt die Grundform: <b>fall</b>. <b>fell</b> wäre die Vergangenheit.' },
+            { w:'to show', s:'Charlie didn\'t want to show that he was scared.', trap:['what'], hear:'that',
+              why:'<b>that</b> (dass) mit weichem <b>th</b>, nicht <b>what</b>.' },
+            { w:'that', s:'I know that Paul is 14 years old.', trap:['no','40'], hear:'know / 14',
+              why:'<b>know</b> und <b>no</b> klingen gleich – hier heißt es „ich weiß“. Und four<b>teen</b> (14) ist hinten betont, <b>for</b>ty (40) vorne.' },
+            { w:'both', s:'John and Anna both wanted to go swimming.', trap:['boat','want'], hear:'both / wanted',
+              why:'<b>both</b> endet mit th, <b>boat</b> mit t. Und <b>wanted</b> hat eine Silbe mehr als want – das -ed nach t klingt wie „-id“.' },
+            { w:'everything', s:'Everything was fine but then something went wrong.', trap:['than','want'], hear:'then / went',
+              why:'<b>then</b> (dann) mit e. <b>went</b> (ging) ist die Vergangenheit von <i>to go</i> – nicht <b>want</b>.' },
+            { w:'suddenly', s:'Suddenly Lara lost her balance.', trap:['Sunday'], hear:'Suddenly',
+              why:'<b>Suddenly</b> hat drei Silben: SUD-den-ly.' },
+            { w:'strong', s:'Rachel is very strong.', trap:['was'], hear:'is',
+              why:'Hör auf das kurze <b>is</b> – Rachel ist jetzt stark, nicht früher (<i>was</i>).' },
+            { w:'to push', s:'Fiona pushed Olivia. When Olivia fell, she hurt her legs.', trap:['push','fall,'], hear:'pushed / fell,',
+              why:'Zwei Vergangenheiten: <b>pushed</b> (das -ed klingt wie ein kurzes t) und <b>fell</b> statt fall.' },
+            { w:'to choose', s:'He is choosing a book to read.', trap:['chose','red.'], hear:'choosing / read.',
+              why:'Hör auf <b>-ing</b>: er wählt gerade (<i>is choosing</i>), <b>chose</b> wäre Vergangenheit. Und <b>read</b> klingt hier wie „riid“, nicht wie <b>red</b> (rot).' },
+            { w:'wasn\'t (= was not)', s:'Zoe wasn\'t in London last year.', trap:['was'], hear:'wasn\'t',
+              why:'Bei <b>wasn\'t</b> ist das <b>n</b> leise, aber es dreht die Bedeutung um.' },
+            { w:'weren\'t (= were not)', s:'Kim and Jo weren\'t happy.', trap:['were'], hear:'weren\'t',
+              why:'<b>weren\'t</b> klingt wie „wörnt“ – ohne das <b>nt</b> wären die beiden glücklich.' },
+            { w:'to plan', s:'We planned our trip last year.', trap:['plane','plan'], hear:'planned',
+              why:'<b>planned</b> (geplant) endet mit einem d-Laut. <b>plane</b> ist das Flugzeug, mit langem „ei“.' },
+            { w:'annoying', s:'It\'s so annoying that our bus is late.', trap:['later.'], hear:'late.',
+              why:'<b>late</b> (spät) endet ohne r. <b>later</b> (später) hat eine Silbe mehr.' },
+            { w:'may', s:'You may bring your tablet to school, but you must not use it during the lesson.', trap:['brought'], hear:'bring',
+              why:'Nach <b>may</b> kommt die Grundform: <b>may bring</b>.' },
+            { w:'if', s:'We can have pizza if you like.', trap:['can\'t'], hear:'can',
+              why:'<b>can</b> klingt kurz und leicht, <b>can\'t</b> hat ein langes a und ein t am Ende („kaant“). Ein Buchstabe – ganz andere Bedeutung!' },
+            { w:'break', s:'Let\'s meet in our lunch break.', trap:['meat','hour'], hear:'meet / our',
+              why:'<b>meet</b> (treffen) und <b>meat</b> (Fleisch) klingen gleich, <b>our</b> (unser) und <b>hour</b> (Stunde) auch – der Sinn entscheidet.' },
+            { w:'to record', s:'Jack wants to record his first song.', trap:['want','recorded'], hear:'wants / record',
+              why:'Jack = he → <b>wants</b> mit s. Nach <i>to</i> kommt die Grundform: <b>to record</b>.' },
+            { w:'to break', s:'Jack broke the rules when he used his phone in class.', trap:['break'], hear:'broke',
+              why:'<b>broke</b> (Vergangenheit von <i>to break</i>) klingt wie „brouk“, nicht „breik“.' },
+            { w:'away', s:'Your teacher can take your phone away.', trap:['You\'re','took'], hear:'Your / take',
+              why:'<b>Your</b> (dein) und <b>You\'re</b> (du bist) klingen fast gleich – hier gehört etwas jemandem. Nach <i>can</i> kommt die Grundform <b>take</b>.' },
+            { w:'message', s:'Did you read my message?', trap:['massage?'], hear:'message?',
+              why:'<b>message</b> klingt wie „MES-sidsch“. <b>massage</b> ist was ganz anderes 😄' },
+            { w:'to leave', s:'You mustn\'t leave the classroom during the lesson.', trap:['must','live'], hear:'mustn\'t / leave',
+              why:'In <b>mustn\'t</b> ist das erste t stumm („massnt“), aber das n hört man. Und <b>leave</b> hat ein langes „ii“, <b>live</b> ein kurzes i.' },
+            { w:'most', s:'Most people like chocolate.', trap:['Must','likes'], hear:'Most / like',
+              why:'<b>Most</b> (die meisten) klingt wie „moust“, <b>must</b> wie „masst“. <i>people</i> ist Mehrzahl → <b>like</b> ohne s.' },
+            { w:'to ask (for sth)', s:'Can I ask you for some help?', trap:['sum','four'], hear:'some / for',
+              why:'<b>some</b> und <b>sum</b> (Summe) klingen gleich, <b>for</b> und <b>four</b> (vier) auch. Der Sinn entscheidet.' },
+            { w:'around', s:'Pia played around with her phone in class.', trap:['plays'], hear:'played',
+              why:'Hör aufs <b>-ed</b>: <b>played</b> ist die Vergangenheit.' },
+            { w:'to go online', s:'I can use my phone to go online.', trap:['can\'t','two'], hear:'can / to',
+              why:'<b>can</b> ist kurz und unbetont, <b>can\'t</b> hat ein t am Ende. Und <b>to</b> (zu) klingt wie <b>two</b> (zwei).' },
+            { w:'bored', s:'When are we leaving? I\'m bored.', trap:['board.'], hear:'bored.',
+              why:'<b>bored</b> und <b>board</b> klingen gleich – der Sinn entscheidet: „mir ist langweilig“.' },
+            { w:'to agree', s:'Charlie and George agree that football is great.', trap:['agrees'], hear:'agree',
+              why:'Charlie <b>und</b> George sind zwei → <b>agree</b> ohne s.' },
+            { w:'to prepare', s:'My dad is preparing dinner.', trap:['prepared'], hear:'preparing',
+              why:'Hör auf <b>-ing</b>: er ist gerade dabei.' },
+            { w:'presentation', s:'Mark is nervous about the presentation.', trap:['presentations.'], hear:'presentation.',
+              why:'Eine Präsentation: <b>presentation</b> ohne s am Ende.' },
+            { w:'(Great) Britain', s:'Britain is England, Scotland and Wales.', trap:['Whales.'], hear:'Wales.',
+              why:'<b>Wales</b> (das Land) und <b>whales</b> (Wale) klingen gleich 🐋 – hier geht es um Länder.' },
+            { w:'to punish', s:'The head teacher punished the pupils.', trap:['punish','people.'], hear:'punished / pupils.',
+              why:'Hör aufs <b>-ed</b>: <b>punished</b> klingt wie „pannischt“. Und <b>pupils</b> (Schüler) ≠ <b>people</b> (Leute).' },
+            { w:'to present (sth to sb)', s:'Would you like to present your ideas in class?', trap:['Wood','presents'], hear:'Would / present',
+              why:'<b>Would</b> und <b>wood</b> (Holz) klingen gleich. Nach <i>to</i> kommt die Grundform <b>present</b>.' },
+            { w:'serious', s:'We forgot our tickets. That\'s a serious problem.', trap:['forget'], hear:'forgot',
+              why:'<b>forgot</b> ist die Vergangenheit von <i>to forget</i> – hör aufs o.' },
+        ];
+        const HD_ROUND = 6;
+
+        let hdVoice = null;
+        let hdRound = [], hdIdx = 0, hdBuilt = [], hdPool = [], hdTries = 0, hdPlays = 0;
+        let hdTotalPlays = 0, hdFirstOk = 0, hdGained = 0, hdTrapsHit = [], hdSolved = false;
+        let hdRec = null, hdChunks = [], hdMyUrl = null, hdStream = null;
+        const hdHasTTS = 'speechSynthesis' in window;
+        const hdHasRec = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+
+        function hdKey(it) { return 'en:hd:' + it.s; }
+        function hdTokens(s) { return s.split(' '); }
+        function hdEl(id) { return document.getElementById(id); }
+
+        // Nur Stimmen, die auf dem Gerät rechnen. Chromes „Google UK English“
+        // läuft über Google-Server und bleibt deshalb draußen.
+        function hdPickVoice() {
+            if (!hdHasTTS) return;
+            const local = speechSynthesis.getVoices().filter(v => v.localService && /^en/i.test(v.lang));
+            hdVoice = local.find(v => /^en[-_]GB/i.test(v.lang)) || local[0] || null;
+            hdRenderDevice();
+        }
+        if (hdHasTTS) speechSynthesis.addEventListener('voiceschanged', hdPickVoice);
+
+        function hdRenderDevice() {
+            const box = hdEl('hdDevice');
+            if (!box) return;
+            let t;
+            if (!hdHasTTS) t = '<span class="no">🔇 Dieser Browser kann nicht vorlesen – der Hör-Detektiv braucht Ton.</span>';
+            else if (!hdVoice) t = '<span class="no">🔇 Keine englische Stimme gefunden, die ohne Internet spricht.<br>' +
+                'Auf dem iPad: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Englisch.</span>';
+            else t = '<span class="ok">🔊 Stimme: ' + vhAttr(hdVoice.name) + ' (' + vhAttr(hdVoice.lang) + ')</span>';
+            const m = hdHasRec ? '<span class="ok">🎙️ Deine Aufnahme bleibt auf dem Gerät</span>'
+                               : '<span class="no">🎙️ Aufnehmen geht hier nicht – dann sprichst du einfach laut mit</span>';
+            box.innerHTML = t + '<br>' + m;
+            hdEl('hdGoBtn').disabled = !hdVoice;
+        }
+
+        function hdShowTaler() {
+            document.querySelectorAll('.hd-tal').forEach(e => { e.textContent = totalTalers; });
+        }
+
+        function hdOpen() {
+            currentLanguage = 'english';
+            currentEnglishTheme = 'theme1';
+            englishDvActive = true;          // Sätze hängen am Heft von Theme 1
+            HD_SENTENCES.forEach(it => dvIndexKey(hdKey(it), it.w));
+            hideAllScreens();
+            hdEl('hoerDetektivScreen').style.display = 'block';
+            hdShow('start');
+            hdPickVoice();
+            hdRenderDevice();
+            hdShowTaler();
+            dvUpdateToggle();
+            applyAprilDarkBody();
+            window.scrollTo(0, 0);
+        }
+
+        function hdBack() {
+            hdStopAll();
+            backToEnglishModules();
+        }
+
+        function hdShow(which) {
+            hdStopAll();
+            ['start', 'game', 'end'].forEach(k => {
+                hdEl('hd' + k.charAt(0).toUpperCase() + k.slice(1)).style.display = (k === which) ? 'block' : 'none';
+            });
+            if (which === 'start') hdRenderDevice();
+        }
+
+        // Ton und Mikrofon aus — beim Verlassen und bei jedem Bildschirmwechsel.
+        function hdStopAll() {
+            if (hdHasTTS) speechSynthesis.cancel();
+            if (hdRec && hdRec.state === 'recording') hdRec.stop();
+            if (hdStream) { hdStream.getTracks().forEach(t => t.stop()); hdStream = null; }
+            const mic = hdEl('hdMic');
+            if (mic) mic.classList.remove('hd-rec');
+        }
+
+        // Knackpunkte zuerst, Rest nach Lernstand gewichtet wie bei den Vokabeln.
+        function hdPickRound() {
+            const progress = loadProgress();
+            const weight = it => {
+                const p = progress[hdKey(it)];
+                if (!p) return 2.0;
+                return Math.max(0.2, 1.0 + p.wrong * 2.0 - p.correct * 0.3);
+            };
+            let pool = HD_SENTENCES.slice();
+            let picked = [];
+            if (dvOn) {
+                const active = dvActiveWords();
+                picked = shuffleArray(pool.filter(it => active.has(it.w))).slice(0, HD_ROUND);
+                pool = pool.filter(it => picked.indexOf(it) < 0);
+            }
+            while (picked.length < HD_ROUND && pool.length) {
+                const total = pool.reduce((sum, it) => sum + weight(it), 0);
+                let r = Math.random() * total, j = 0;
+                for (; j < pool.length - 1; j++) { r -= weight(pool[j]); if (r <= 0) break; }
+                picked.push(pool.splice(j, 1)[0]);
+            }
+            return shuffleArray(picked);
+        }
+
+        function hdStartRound() {
+            hdRound = hdPickRound();
+            hdIdx = 0; hdTotalPlays = 0; hdFirstOk = 0; hdGained = 0; hdTrapsHit = [];
+            hdShow('game');
+            hdLoadItem();
+        }
+
+        function hdLoadItem() {
+            const it = hdRound[hdIdx];
+            hdBuilt = []; hdTries = 0; hdPlays = 0; hdSolved = false;
+            hdPool = shuffleArray(hdTokens(it.s).concat(it.trap)).map(w => ({ w: w, used: false }));
+            hdEl('hdCount').textContent = 'Tippe auf ▶';
+            hdEl('hdFeedback').innerHTML = '';
+            hdEl('hdBuild').style.display = 'block';
+            hdEl('hdSpeakPart').style.display = 'none';
+            hdEl('hdBuildBtns').style.display = 'flex';
+            hdEl('hdPh1').className = 'on';
+            hdEl('hdPh2').className = '';
+            hdEl('hdProgress').innerHTML = hdRound.map((_, i) =>
+                '<i class="' + (i < hdIdx ? 'done' : i === hdIdx ? 'cur' : '') + '"></i>').join('');
+            hdRenderChips();
+        }
+
+        function hdSpeak(rate) {
+            const it = hdRound[hdIdx];
+            if (!it || !hdHasTTS || !hdVoice) return;
+            hdPlays++; hdTotalPlays++;
+            hdEl('hdCount').textContent = 'schon ' + hdPlays + '× gehört';
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(it.s);
+            u.voice = hdVoice;
+            u.lang = hdVoice.lang;
+            u.rate = rate;
+            const wave = hdEl('hdWave');
+            u.onstart = () => wave.classList.add('speaking');
+            u.onend = u.onerror = () => wave.classList.remove('speaking');
+            speechSynthesis.speak(u);
+        }
+
+        function hdRenderChips(marks) {
+            const slot = hdEl('hdSlot');
+            slot.innerHTML = hdBuilt.length ? '' :
+                '<span class="hd-ph">Tippe die Kärtchen in der Reihenfolge an, in der du sie hörst …</span>';
+            hdBuilt.forEach((c, k) => {
+                const b = document.createElement('button');
+                b.className = 'hd-chip' + (marks ? ' ' + marks[k] : '');
+                b.textContent = c.w;
+                b.onclick = () => {
+                    if (hdSolved) return;
+                    c.used = false; hdBuilt.splice(k, 1); hdRenderChips();
+                };
+                slot.appendChild(b);
+            });
+            const pool = hdEl('hdPool');
+            pool.innerHTML = '';
+            hdPool.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'hd-chip' + (c.used ? ' used' : '');
+                b.textContent = c.w;
+                b.onclick = () => {
+                    if (hdSolved) return;
+                    c.used = true; hdBuilt.push(c); hdRenderChips();
+                };
+                pool.appendChild(b);
+            });
+            hdEl('hdCheckBtn').disabled = hdBuilt.length === 0 || hdSolved;
+        }
+
+        function hdClear() {
+            if (hdSolved) return;
+            hdPool.forEach(c => { c.used = false; });
+            hdBuilt = [];
+            hdRenderChips();
+            hdEl('hdFeedback').innerHTML = '';
+        }
+
+        function hdHeftClue(it) {
+            let row = null;
+            vokabelheftData['en-theme1'].packets.forEach(p => p.rows.forEach(r => { if (r.w === it.w) row = r; }));
+            if (!row) return '';
+            const clean = s => vhAttr((s || '').replace(/_/g, ''));
+            return '<b>' + clean(row.w) + '</b>' + (row.f ? ' · ' + clean(row.f) : '') + ' · ' + clean(row.d);
+        }
+
+        function hdCheck() {
+            if (hdSolved || !hdBuilt.length) return;
+            const it = hdRound[hdIdx], want = hdTokens(it.s);
+            hdTries++;
+            const marks = hdBuilt.map((c, k) => c.w === want[k] ? 'ok' : 'bad');
+            const ok = hdBuilt.length === want.length && marks.every(m => m === 'ok');
+            hdRenderChips(marks);
+            const fb = hdEl('hdFeedback');
+            if (ok) {
+                hdSolved = true;
+                if (hdTries === 1) {
+                    hdFirstOk++;
+                    recordAnswer(hdKey(it), true);
+                    if (hdFirstOk % 2 === 0) {           // wie überall: 2 auf Anhieb = 1 Taler
+                        hdGained++; totalTalers++;
+                        try { localStorage.setItem('vocabularyGameTalers', String(totalTalers)); } catch (e) {}
+                        hdShowTaler();
+                    }
+                }
+                hdEl('hdCheckBtn').disabled = true;
+                hdEl('hdBuildBtns').style.display = 'none';
+                fb.innerHTML = '<div class="hd-note win">✅ <b>Richtig gehört!</b>' +
+                    (hdTries === 1 && hdFirstOk % 2 === 0 ? ' +1 🪙' : '') +
+                    '<div class="hd-clue">🔎 Im Vokabelheft: ' + hdHeftClue(it) + '</div></div>' +
+                    '<div class="hd-row" style="margin-top: 12px;"><button class="hd-btn green" onclick="hdToSpeak()">Weiter: Nachsprechen 🎙️</button></div>';
+                return;
+            }
+            if (hdTries === 1) recordAnswer(hdKey(it), false);
+            const usedTrap = hdBuilt.some(c => it.trap.indexOf(c.w) >= 0);
+            if (usedTrap && hdTrapsHit.indexOf(it) < 0) hdTrapsHit.push(it);
+            let text;
+            if (usedTrap) text = '🪤 <b>Ohr-Falle!</b> Die roten Kärtchen stimmen nicht. Hör nochmal genau hin – vielleicht in Zeitlupe 🐢.' +
+                                 '<div class="hd-clue">' + it.why + '</div>';
+            else if (hdBuilt.length < want.length) text = '🤔 <b>Fast!</b> Es fehlen noch ' + (want.length - hdBuilt.length) + ' Kärtchen.';
+            else text = '🤔 <b>Noch nicht ganz.</b> Die roten Kärtchen stehen an der falschen Stelle. Hör nochmal hin.';
+            if (hdTries >= 2) text += '<div class="hd-row" style="margin-top: 10px;"><button class="hd-btn ghost" onclick="hdReveal()">Lösung zeigen</button></div>';
+            fb.innerHTML = '<div class="hd-note trap">' + text + '</div>';
+        }
+
+        // Nach zwei Fehlversuchen: richtig hinlegen, ohne Taler, weiter zum Nachsprechen.
+        function hdReveal() {
+            const it = hdRound[hdIdx];
+            hdPool.forEach(c => { c.used = false; });
+            hdBuilt = hdTokens(it.s).map(w => {
+                const c = hdPool.find(p => p.w === w && !p.used);
+                c.used = true;
+                return c;
+            });
+            hdSolved = true;
+            hdRenderChips(hdBuilt.map(() => 'ok'));
+            hdEl('hdBuildBtns').style.display = 'none';
+            hdEl('hdFeedback').innerHTML = '<div class="hd-note trap">💡 So heißt der Satz. Hör ihn dir noch einmal an.' +
+                '<div class="hd-clue">' + it.why + '</div></div>' +
+                '<div class="hd-row" style="margin-top: 12px;"><button class="hd-btn green" onclick="hdToSpeak()">Weiter: Nachsprechen 🎙️</button></div>';
+        }
+
+        function hdToSpeak() {
+            const it = hdRound[hdIdx];
+            hdEl('hdBuild').style.display = 'none';
+            hdEl('hdSpeakPart').style.display = 'block';
+            hdEl('hdPh1').className = '';
+            hdEl('hdPh2').className = 'on';
+            hdEl('hdSay').textContent = it.s;
+            if (hdMyUrl) { URL.revokeObjectURL(hdMyUrl); hdMyUrl = null; }
+            hdEl('hdMeBtn').disabled = true;
+            hdEl('hdHeard').textContent = hdHasRec
+                ? 'Tippe aufs Mikro, sprich den Satz, tippe nochmal. Dann vergleichen: 🔊 Original ↔ 🙋 du.'
+                : 'Sprich den Satz laut mit – erst 🔊 hören, dann selbst sagen.';
+        }
+
+        async function hdToggleRec() {
+            const mic = hdEl('hdMic');
+            if (hdRec && hdRec.state === 'recording') { hdRec.stop(); mic.classList.remove('hd-rec'); return; }
+            if (!hdHasRec) return;
+            if (hdHasTTS) speechSynthesis.cancel();
+            try {
+                hdStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                hdChunks = [];
+                hdRec = new MediaRecorder(hdStream);
+                hdRec.ondataavailable = e => { if (e.data && e.data.size) hdChunks.push(e.data); };
+                hdRec.onstop = () => {
+                    if (hdStream) { hdStream.getTracks().forEach(t => t.stop()); hdStream = null; }
+                    if (hdMyUrl) URL.revokeObjectURL(hdMyUrl);
+                    hdMyUrl = URL.createObjectURL(new Blob(hdChunks, { type: hdRec.mimeType || 'audio/mp4' }));
+                    hdEl('hdMeBtn').disabled = false;
+                    hdEl('hdHeard').textContent = 'Jetzt vergleichen: erst 🔊, dann 🙋 – klingt es gleich?';
+                };
+                hdRec.start();
+                mic.classList.add('hd-rec');
+                hdEl('hdHeard').textContent = '🔴 Ich nehme auf … tippe nochmal aufs Mikro, wenn du fertig bist.';
+            } catch (e) {
+                hdEl('hdHeard').textContent = 'Kein Zugriff aufs Mikrofon – du kannst trotzdem laut mitsprechen.';
+            }
+        }
+
+        function hdPlayMe() {
+            if (!hdMyUrl) return;
+            if (hdHasTTS) speechSynthesis.cancel();
+            new Audio(hdMyUrl).play();
+        }
+
+        function hdNext() {
+            hdStopAll();
+            if (hdMyUrl) { URL.revokeObjectURL(hdMyUrl); hdMyUrl = null; }
+            hdIdx++;
+            if (hdIdx >= hdRound.length) return hdFinish();
+            hdLoadItem();
+            window.scrollTo(0, 0);
+        }
+
+        function hdFinish() {
+            hdShow('end');
+            hdEl('hdEndSub').textContent = hdRound.length + ' Sätze gehört, gelegt und nachgesprochen.';
+            hdEl('hdStFirst').textContent = hdFirstOk + '/' + hdRound.length;
+            hdEl('hdStPlays').textContent = hdTotalPlays;
+            hdEl('hdStTaler').textContent = '+' + hdGained;
+            hdEl('hdTraps').innerHTML = hdTrapsHit.length
+                ? hdTrapsHit.map(t => '<li><span class="hd-pair"><s>' + t.trap.map(vhAttr).join(' / ') + '</s> → <span>' +
+                                      vhAttr(t.hear) + '</span></span><div class="hd-clue">' + t.why + '</div></li>').join('')
+                : '<li>Keine einzige – Detektiv-Ohren! 🕵️</li>';
+            hdShowTaler();
+            window.scrollTo(0, 0);
+        }
 
         // ===================================================================
         // EVENT LISTENERS

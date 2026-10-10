@@ -32,6 +32,15 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - Beim Spelling steht bei Verben das `to ` fest in den Feldern — gelegt wird nur das Verb dahinter
 - **🎯 Knackpunkte** gilt auch für Englisch, solange Theme 1 der Bezug ist (Übung oder Heft);
   Theme 2/3 und April haben kein Heft und blenden den Schalter aus
+- **🎧 Hör-Detektiv (Theme 1)**: 45 Beispielsätze aus dem Vokabelheft hören (auch in Zeitlupe),
+  aus Wortkärtchen nachlegen, nachsprechen. Unter den Kärtchen liegen Ohr-Fallen aus der Grammatik
+  von Theme 1 (send/sent, were/where, can/can't, bored/board) mit eigener Erklärung. 6 Sätze pro Runde,
+  2 auf Anhieb richtig = 1 Taler, Knackpunkte kommen zuerst dran
+  - **ohne Cloud**: vorgelesen wird nur mit Stimmen, die auf dem Gerät rechnen (`localService`) —
+    Chromes „Google UK English“ geht über Google-Server und bleibt draußen. Ohne eine solche Stimme
+    bleibt der Start gesperrt, mit Hinweis, wo man auf dem iPad eine lädt
+  - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
+    Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
 
 ### 🏛️ Latein
@@ -70,7 +79,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.22.1
+**Version:** 2.23.0
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -116,6 +125,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.23.0 (10.10.2026)
+- **Neues Modul „Hör-Detektiv“ für Theme 1** — Sieger einer Pitch-Runde mit vier Ideen
+  (Funkzentrale, Satzbaustelle, Camden Story, Hör-Detektiv). Grund: die App war bis dahin stumm,
+  und die Sätze stehen schon im Vokabelheft; neu ist pro Satz nur eine Ohr-Falle mit Erklärsatz.
+- 45 Sätze in `HD_SENTENCES`, jeder wörtlich aus `vokabelheftData['en-theme1']` und über `w` an
+  seine Heftvokabel gebunden. Damit zählt ein Treffer auch für die Knackpunkte (`dvIndexKey`).
+  Fortschritt unter `en:hd:<Satz>`; die Rundenauswahl gewichtet wie bei den Vokabeln.
+- Kein Netz, keine Cloud: nur lokale Stimmen, keine `SpeechRecognition`, Aufnahme nur im Browser.
+  Kachel nur bei Theme 1 sichtbar; Ton und Mikrofon gehen bei jedem Bildschirmwechsel aus.
 
 ### Version 2.22.1 (10.10.2026)
 - **Die nicht fetten Einträge sind aus dem Vokabelheft entfernt** — es enthält jetzt genau die
