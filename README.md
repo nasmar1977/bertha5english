@@ -48,7 +48,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     Siri-Stimmen gibt Apple nicht an Webseiten heraus
   - **Premium-Stimmen kommen im Browser nicht an:** Safari auf dem Mac meldet trotz geladener
     „Serena (Premium)“ nur `compact`-, `super-compact`-, Eloquence- und Spaßstimmen (geprüft am
-    10.10.2026 mit der echten Liste). Eine Anleitung zum Herunterladen bringt also nichts
+    10.10.2026 mit der echten Liste). Eine Anleitung zum Herunterladen bringt also nichts.
+    **Chrome auf dem Mac** gibt sie heraus (Serena, dazu Arthur, Martha, Catherine, Gordon …),
+    nennt aber weder „Premium“ noch eine sprechende `voiceURI` (= Name). Darum gibt es eine feste
+    Rangfolge bekannter Sprecher (`HD_GOOD_ORDER`, Serena vorn — die gibt es nur als Download).
+    In Chrome spricht damit Serena, in Safari Daniel
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - **📻 Funkzentrale Camden (Theme 1)**: 18 Notrufe von der Klassenfahrt, auf Englisch aus dem
@@ -102,7 +106,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.25.2
+**Version:** 2.25.3
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -148,6 +152,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.25.3 (10.10.2026)
+- **Chrome auf dem Mac gibt die geladene „Serena (Premium)“ heraus** — Safari nicht. Chrome meldet
+  sie aber nur als „Serena“, ohne Hinweis auf Premium. Neue feste Rangfolge bekannter Sprecher
+  (`HD_GOOD_ORDER`): Serena, Daniel, Arthur, Martha … Mit der echten Chrome-Liste ergibt das
+  Serena + Daniel, ohne Serena Daniel + Arthur; in Safari bleibt es Daniel + Karen.
+- Chrome übersetzt die Spaßstimmen anders als erwartet: „Gute/Schlechte Neuigkeiten“, „Katrin“,
+  „Monster“, „Seifenblasen“, „Spaßvogel“ sind nachgetragen. Erkannt werden jetzt alle 35.
+- Anzeige ohne Chromes Sprachzusatz: „Daniel (en-GB)“ statt „Daniel (Englisch (Vereinigtes
+  Königreich)) (en-GB)“.
 
 ### Version 2.25.2 (10.10.2026)
 - **Gelben Stimmen-Kasten aus v2.23.2 wieder entfernt.** Er riet, eine Premium-Stimme zu laden.

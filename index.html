@@ -6308,9 +6308,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.25.2';
+        const APP_VERSION = '2.25.3';
 
         const changelogEntries = [
+            {
+                version: '2.25.3',
+                date: '10.10.2026',
+                items: [
+                    'In Chrome auf dem Mac spricht jetzt Serena, wenn sie geladen ist. Ein paar Spaßstimmen mit deutschem Namen (Seifenblasen, Monster …) stehen nicht mehr zur Wahl.',
+                ]
+            },
             {
                 version: '2.25.2',
                 date: '10.10.2026',
@@ -13076,9 +13083,18 @@
         // voiceURI: Spaß- und Altstimmen liegen unter
         // com.apple.speech.synthesis.voice.*, Eloquence unter com.apple.eloquence.*.
         // Alex ist die eine gute Altstimme dort.
-        const HD_ROBOT_VOICES = /^(Albert|Bad News|Schlechte Nachrichten|Bahh|Bells|Glocken|Boing|Bubbles|Blubbern|Cellos|Good News|Gute Nachrichten|Jester|Narr|Organ|Orgel|Superstar|Trinoids|Whisper|Flüstern|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Oma|Grandpa|Opa|Reed|Rocko|Sandy|Shelley|Hysterical|Hysterisch|Deranged|Pipe Organ|Princess|Agnes|Vicki|Victoria|Bruce)\b/i;
-        // Bekannte gute Sprecher kommen vor alles Unbekannte.
-        const HD_GOOD_VOICES = /^(Daniel|Kate|Serena|Oliver|Jamie|Stephanie|Arthur|Martha|Moira|Karen|Tessa|Fiona|Samantha|Alex|Ava|Allison|Susan|Tom|Evan|Nathan|Joelle|Noelle|Zoe|Lee|Catherine|Gordon)\b/i;
+        const HD_ROBOT_VOICES = /^(Albert|Bad News|Schlechte Nachrichten|Schlechte Neuigkeiten|Bahh|Bells|Glocken|Boing|Bubbles|Blubbern|Seifenblasen|Cellos|Good News|Gute Nachrichten|Gute Neuigkeiten|Jester|Narr|Organ|Orgel|Superstar|Trinoids|Whisper|Flüstern|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Oma|Grandpa|Opa|Reed|Rocko|Sandy|Shelley|Hysterical|Hysterisch|Spaßvogel|Monster|Katrin|Deranged|Pipe Organ|Princess|Agnes|Vicki|Victoria|Bruce)\b/i;
+        // Bekannte gute Sprecher kommen vor alles Unbekannte, und zwar in dieser
+        // Reihenfolge. Chrome sagt nicht, ob eine Stimme Premium ist (voiceURI =
+        // Name). Serena gibt es aber nur als Download — wer sie hat, hat die gute.
+        const HD_GOOD_ORDER = ['Serena', 'Daniel', 'Arthur', 'Martha', 'Kate', 'Oliver', 'Jamie', 'Stephanie',
+            'Moira', 'Karen', 'Catherine', 'Gordon', 'Samantha', 'Alex', 'Ava', 'Allison', 'Susan', 'Tom',
+            'Evan', 'Nathan', 'Joelle', 'Noelle', 'Zoe', 'Aaron', 'Nicky', 'Tessa', 'Fiona', 'Lee'];
+
+        function hdGoodRank(v) {
+            const n = v.name.replace(/\s*\(.*\)\s*$/, '').toLowerCase();
+            return HD_GOOD_ORDER.findIndex(g => g.toLowerCase() === n);
+        }
 
         function hdIsRobot(v) {
             const uri = v.voiceURI || '';
@@ -13104,7 +13120,8 @@
             const q = hdVoiceQuality(v);
             if (q === 'Premium') s += 40;
             else if (q === 'Erweitert') s += 30;
-            if (HD_GOOD_VOICES.test(v.name)) s += 15;
+            const g = hdGoodRank(v);
+            if (g >= 0) s += 15 + Math.max(0, 8 - g);   // Serena 23, Daniel 22, Arthur 21 …
             if (/super-compact/i.test(v.voiceURI || '')) s -= 5;   // dieselbe Stimme, nur noch dünner
             if (hdIsRobot(v)) s -= 100;
             return s;
@@ -13112,7 +13129,8 @@
 
         function hdVoiceLabel(v) {
             const q = hdVoiceQuality(v);
-            return v.name + (q && v.name.indexOf(q) < 0 ? ' · ' + q : '') + ' (' + v.lang + ')' +
+            const name = v.name.replace(/\s*\(.*\)\s*$/, '');   // Chrome: „Daniel (Englisch (Vereinigtes Königreich))“
+            return name + (q && name.indexOf(q) < 0 ? ' · ' + q : '') + ' (' + v.lang + ')' +
                    (hdIsRobot(v) ? ' – Roboter' : '');
         }
 
