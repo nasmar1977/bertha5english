@@ -2620,35 +2620,29 @@
         <button class="back-btn" onclick="backToLanguage()">← Zurück</button>
         <div class="header">
             <h1>🎮 English Spelling Adventure</h1>
-            <p style="color: #666; margin-top: 10px;">Wähle dein Vokabel-Set:</p>
+            <p style="color: #666; margin-top: 10px;">Wähle dein Thema:</p>
         </div>
 
         <div class="set-selection">
-            <div class="module-card theme1-card" onclick="startGame('theme1')">
+            <div class="module-card theme1-card" onclick="selectEnglishTheme('theme1')">
                 <div class="module-icon">🏕️</div>
                 <div class="module-title">6. Klasse · Theme 1</div>
-                <div class="module-info">Back to Camden Town · 66 Vokabeln</div>
+                <div class="module-info">Back to Camden Town · 66 Vokabeln + Vokabelheft</div>
             </div>
 
-            <div class="module-card vokabelheft-card" onclick="openVokabelheftEnglish()">
-                <div class="module-icon">📓</div>
-                <div class="module-title">Vokabelheft</div>
-                <div class="module-info">Theme 1 · alle 96 Einträge</div>
-            </div>
-
-            <div class="module-card" onclick="startGame('theme2')">
+            <div class="module-card" onclick="selectEnglishTheme('theme2')">
                 <div class="module-icon">🏫</div>
                 <div class="module-title">5. Klasse · Theme 2</div>
                 <div class="module-info">At School · 77 Vokabeln</div>
             </div>
 
-            <div class="module-card" onclick="startGame('theme3')">
+            <div class="module-card" onclick="selectEnglishTheme('theme3')">
                 <div class="module-icon">🎭</div>
                 <div class="module-title">5. Klasse · Theme 3</div>
                 <div class="module-info">Hobbies · 98 Vokabeln</div>
             </div>
 
-            <div class="module-card" onclick="startGame('april')">
+            <div class="module-card" onclick="selectEnglishTheme('april')">
                 <div class="module-icon">📅</div>
                 <div class="module-title">5. Klasse · Vokabeln April</div>
                 <div class="module-info">24 Vokabeln</div>
@@ -2797,6 +2791,29 @@
     </div>
 
     <!-- VOKABELHEFT (Latein) -->
+    <!-- ENGLISCHE MODULAUSWAHL (zweite Ebene, wie in Latein) -->
+    <div class="game-container" id="englishModuleSelection" style="display: none;">
+        <button class="back-btn" onclick="backToEnglishThemes()">← Zurück</button>
+        <div class="header">
+            <h1>🇬🇧 English</h1>
+            <div class="current-set" id="enThemeName"></div>
+            <p style="color: #666; margin-top: 10px;">Was möchtest du üben?</p>
+        </div>
+        <div class="set-selection">
+            <div class="module-card" onclick="startEnglishVocab()">
+                <div class="module-icon">🎮</div>
+                <div class="module-title">Vokabeln üben</div>
+                <div class="module-info" id="enVocabInfo">Spelling &amp; Multiple Choice</div>
+            </div>
+
+            <div class="module-card vokabelheft-card" id="enVokabelheftCard" onclick="openVokabelheftEnglish()">
+                <div class="module-icon">📓</div>
+                <div class="module-title">Vokabelheft</div>
+                <div class="module-info">Alle 96 Einträge, Abdeckblatt &amp; Markieren</div>
+            </div>
+        </div>
+    </div>
+
     <div class="game-container" id="vokabelheftScreen" style="display: none;">
         <button class="back-btn" onclick="backToLatinModulesFromVH()">← Zurück</button>
         <div class="header">
@@ -5972,9 +5989,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.21.0';
+        const APP_VERSION = '2.22.0';
 
         const changelogEntries = [
+            {
+                version: '2.22.0',
+                date: '10.10.2026',
+                items: [
+                    '<b>Englisch ist jetzt nach Themen sortiert</b> — erst das Thema wählen, dann Vokabeln üben oder ins Vokabelheft. Genau wie bei Latein.',
+                ]
+            },
             {
                 version: '2.21.0',
                 date: '10.10.2026',
@@ -6684,6 +6708,54 @@
 
         // Englisch: steht auf true, solange Theme 1 der Bezug ist (Übung oder Heft).
         let englishDvActive = false;
+        // Welches Thema gerade offen ist — bestimmt, wohin „Zurück" führt.
+        let currentEnglishTheme = '';
+
+        const ENGLISH_THEMES = {
+            theme1: { name: '6. Klasse · Theme 1: Back to Camden Town', heft: true },
+            theme2: { name: '5. Klasse · Theme 2: At School',           heft: false },
+            theme3: { name: '5. Klasse · Theme 3: Hobbies',             heft: false },
+            april:  { name: '5. Klasse · Vokabeln April',               heft: false },
+        };
+
+        function themeUmfang(key) {
+            return ({ theme1: vocabularyTheme1, theme2: vocabularyTheme2,
+                      theme3: vocabularyTheme3, april: vocabularyApril }[key] || []).length;
+        }
+
+        function selectEnglishTheme(key) {
+            const thema = ENGLISH_THEMES[key];
+            if (!thema) return;
+            currentEnglishTheme = key;
+            englishDvActive = !!thema.heft;      // nur Theme 1 hat ein Heft zum Markieren
+            hideAllScreens();
+            document.getElementById('enThemeName').textContent = thema.name;
+            document.getElementById('enVocabInfo').textContent =
+                themeUmfang(key) + ' Vokabeln · Spelling & Multiple Choice';
+            document.getElementById('enVokabelheftCard').style.display = thema.heft ? '' : 'none';
+            document.getElementById('englishModuleSelection').style.display = 'block';
+            dvUpdateToggle();
+            applyAprilDarkBody();
+            window.scrollTo(0, 0);
+        }
+
+        function startEnglishVocab() {
+            if (currentEnglishTheme) startGame(currentEnglishTheme);
+        }
+
+        function backToEnglishThemes() {
+            currentEnglishTheme = '';
+            englishDvActive = false;
+            hideAllScreens();
+            document.getElementById('setSelection').style.display = 'block';
+            dvUpdateToggle();
+            applyAprilDarkBody();
+        }
+
+        function backToEnglishModules() {
+            if (currentEnglishTheme) selectEnglishTheme(currentEnglishTheme);
+            else backToEnglishThemes();
+        }
 
         // Selbst markierte „schwierige" Vokabeln — Schlüssel: kapitel|päckchen|wort
         const VH_MARKS_KEY = 'vokabelheftSchwierig';
@@ -7323,13 +7395,7 @@
         }
 
         function backToLatinModulesFromVH() {
-            if (currentLanguage === 'english') {
-                hideAllScreens();
-                document.getElementById('setSelection').style.display = 'block';
-                dvUpdateToggle();
-                applyAprilDarkBody();
-                return;
-            }
+            if (currentLanguage === 'english') { backToEnglishModules(); return; }
             backToLatinModules();
         }
 
@@ -7481,7 +7547,7 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
             const overlay = document.getElementById('introSuccessOverlay');
@@ -7491,6 +7557,7 @@
         function selectLanguage(lang) {
             currentLanguage = lang;
             englishDvActive = false;   // Bezug entsteht erst mit Theme 1 oder dem Heft
+            currentEnglishTheme = '';
             hideAllScreens();
             if (lang === 'english') {
                 document.getElementById('setSelection').style.display = 'block';
@@ -7544,6 +7611,10 @@
             }
 
             if (currentLanguage === 'english') {
+                if (currentEnglishTheme) {
+                    selectEnglishTheme(currentEnglishTheme);   // zurück in die Modulauswahl
+                    return;
+                }
                 document.getElementById('setSelection').style.display = 'block';
             } else {
                 document.getElementById('latinModuleSelection').style.display = 'block';
@@ -7622,6 +7693,9 @@
             isAprilChapter = (setChoice === 'april');
             // Nur Theme 1 hat ein Vokabelheft und damit Markierungen zum Filtern.
             englishDvActive = (setChoice === 'theme1');
+            // „Alle Vokabeln" und die Redewendungen gehören zu keinem Thema —
+            // „Zurück" führt von dort auf die Themenauswahl.
+            currentEnglishTheme = ENGLISH_THEMES[setChoice] ? setChoice : '';
 
             if (setChoice === 'theme1') {
                 vocabulary = vocabularyTheme1;
@@ -7634,7 +7708,7 @@
                 currentVocabularySet = '5. Klasse · Theme 3: Hobbies and Activities';
             } else if (setChoice === 'april') {
                 vocabulary = vocabularyApril;
-                currentVocabularySet = 'Vokabeln April';
+                currentVocabularySet = '5. Klasse · Vokabeln April';
             } else if (setChoice === 'all') {
                 vocabulary = [...vocabularyTheme1, ...vocabularyTheme2, ...vocabularyTheme3, ...vocabularyApril];
                 currentVocabularySet = 'Alle Vokabeln (Theme 1 + 2 + 3 + April)';
@@ -11250,7 +11324,7 @@
                 return el && el.style.display !== 'none';
             };
             const isAprilSession = visible('gameContainer') && isAprilChapter;
-            const isEnglishMenu = visible('setSelection');
+            const isEnglishMenu = visible('setSelection') || visible('englishModuleSelection');
             const isMainMenu    = visible('languageSelection');
             const inLatin5      = isInLatinKap5();
             const isLatinKap5Screen =
@@ -11480,6 +11554,8 @@
             currentLanguage = 'english';
             isPhraseMode = true;
             isAprilChapter = false;
+            currentEnglishTheme = '';     // gehört zu keinem Thema
+            englishDvActive = false;
             currentVocabularySet = 'Say it in English';
 
             hideAllScreens();

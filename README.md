@@ -71,7 +71,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.21.0
+**Version:** 2.22.0
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -117,6 +117,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.22.0 (10.10.2026)
+- **Englisch-Menü zweistufig wie Latein**: `setSelection` zeigt nur noch die Themen,
+  die neue `englishModuleSelection` darunter die Lernkacheln des gewählten Themas
+  (Vokabeln üben + Vokabelheft, letzteres nur bei Theme 1). „Say it in English" und
+  „Alle Vokabeln" starten weiterhin direkt — sie gehören zu keinem Thema.
+- `currentEnglishTheme` steuert, wohin „Zurück" führt: aus einer Runde in die Modulauswahl
+  des Themas, aus den themenlosen Sonderfällen auf die Themenauswahl. `selectEnglishTheme`
+  setzt zugleich `englishDvActive`, womit der 🎯-Schalter ab der Theme-1-Modulauswahl erscheint.
+- `englishModuleSelection` ist in `hideAllScreens` und im Nachtmodus-Zweig berücksichtigt.
 
 ### Version 2.21.0 (10.10.2026)
 - **Theme 1 „Back to Camden Town" (6. Klasse)**: die Buchseite von `welcome` bis `serious`.
