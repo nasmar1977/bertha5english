@@ -2666,6 +2666,13 @@
         .hd-device { margin: 14px auto 0; max-width: 560px; font-size: 0.85em; color: #666; text-align: center; line-height: 1.5; }
         .hd-device .ok { color: #2e9d5b; }
         .hd-device .no { color: #b26a00; }
+        .hd-voice-tip { margin: 16px auto 0; max-width: 560px; background: #fff6d6; border: 2px solid #f6b93b; border-radius: 18px;
+            padding: 14px 18px; line-height: 1.5; color: #4a3b10; }
+        .hd-voice-tip .hd-tip-title { font-weight: bold; font-size: 1.1em; margin-bottom: 6px; }
+        .hd-voice-tip p { margin: 6px 0; }
+        .hd-voice-tip ol { margin: 6px 0 10px; padding-left: 1.4em; }
+        .hd-voice-tip li { margin: 3px 0; }
+        .hd-tip-link { background: none; border: none; padding: 0; font: inherit; color: #764ba2; text-decoration: underline; cursor: pointer; }
         .hd-btn.hd-try { padding: 5px 12px; font-size: 0.95em; margin: 4px 0; }
         .hd-go { display: block; margin: 0 auto; border: none; border-radius: 18px; padding: 14px 36px; font-size: 1.15em; font-weight: bold;
             color: #fff; background: linear-gradient(135deg, #43e97b 0%, #38b26b 100%); cursor: pointer; box-shadow: 0 6px 18px rgba(56,178,107,.35); }
@@ -3099,6 +3106,7 @@
             </div>
             <button class="hd-go" id="hdGoBtn" onclick="hdStartRound()">Los geht's · 6 Sätze</button>
             <div class="hd-device" id="hdDevice"></div>
+            <div class="hd-voice-tip" id="hdVoiceTip" style="display: none;"></div>
         </section>
 
         <section id="hdGame" style="display: none;">
@@ -6308,9 +6316,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.25.3';
+        const APP_VERSION = '2.25.4';
 
         const changelogEntries = [
+            {
+                version: '2.25.4',
+                date: '10.10.2026',
+                items: [
+                    'Klingt die Stimme am Mac blechern? Unter der Stimme gibt es jetzt einen Tipp, wie es besser klingt: mit Chrome und der Stimme „Serena“.',
+                ]
+            },
             {
                 version: '2.25.3',
                 date: '10.10.2026',
@@ -13214,8 +13229,69 @@
             }
             const m = hdHasRec ? '<span class="ok">🎙️ Deine Aufnahme bleibt auf dem Gerät</span>'
                                : '<span class="no">🎙️ Aufnehmen geht hier nicht – dann sprichst du einfach laut mit</span>';
-            box.innerHTML = t + '<br>' + m;
+            if (hdVoice && hdVoiceTipCase())
+                t += '<br><button class="hd-tip-link" onclick="hdToggleVoiceTip()">Klingt die Stimme blechern?</button>';
+            box.innerHTML = t + '<br>' + m + hdVoiceDiagnose();
             hdEl('hdGoBtn').disabled = !hdVoice;
+            hdRenderVoiceTip();
+        }
+
+        // Diagnose für Geräte ohne Konsole (iPad): mit #stimmen hinter der Adresse
+        // steht unter der Stimmenzeile, was der Browser alles meldet.
+        function hdVoiceDiagnose() {
+            if (location.hash !== '#stimmen' || !hdHasTTS) return '';
+            const alle = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+            return '<div style="text-align: left; margin-top: 10px; font-size: 0.8em; color: #444;">' +
+                '<b>Alle englischen Stimmen (' + alle.length + '):</b><br>' +
+                alle.map(v => (hdVoices.indexOf(v) >= 0 ? '✅ ' : (hdIsRobot(v) ? '🤖 ' : (v.localService ? '· ' : '☁️ '))) +
+                              vhAttr(v.name) + ' | ' + vhAttr(v.lang) + ' | ' + vhAttr(v.voiceURI)).join('<br>') + '</div>';
+        }
+
+        // Bessere Stimme auf dem Mac: Safari gibt geladene Premium-Stimmen nicht an
+        // Webseiten weiter, Chrome schon (geprüft am 10.10.2026 mit „Serena
+        // (Premium)“). Der Kasten kommt nur auf Nachfrage und nur dort, wo wir
+        // wissen, was hilft — iPad und andere Systeme bleiben außen vor.
+        let hdVoiceTipOpen = false;
+
+        function hdVoiceTipCase() {
+            const ua = navigator.userAgent || '';
+            if (!/Macintosh/.test(ua) || navigator.maxTouchPoints > 1) return '';      // iPad meldet sich auch als Mac
+            const chrome = /Chrome\//.test(ua) && !/Edg\//.test(ua);
+            const safari = !chrome && /Safari\//.test(ua) && !/Firefox|Edg\//.test(ua);
+            const hatSerena = speechSynthesis.getVoices().some(v => /^Serena\b/i.test(v.name));
+            if (safari) return 'safari';
+            if (chrome && !hatSerena) return 'chrome';
+            return '';
+        }
+
+        function hdToggleVoiceTip() {
+            hdVoiceTipOpen = !hdVoiceTipOpen;
+            hdRenderVoiceTip();
+        }
+
+        function hdRenderVoiceTip() {
+            const box = hdEl('hdVoiceTip');
+            if (!box) return;
+            const fall = hdVoiceTipCase();
+            box.style.display = (hdVoiceTipOpen && fall) ? 'block' : 'none';
+            if (!hdVoiceTipOpen || !fall) return;
+            const laden = '<ol>' +
+                '<li>Apple-Menü → <b>Systemeinstellungen</b></li>' +
+                '<li><b>Bedienungshilfen</b> → <b>Gesprochene Inhalte</b></li>' +
+                '<li>Beim Menü <b>Systemstimme</b> auf <b>Stimmen verwalten …</b></li>' +
+                '<li><b>Englisch (Vereinigtes Königreich)</b> → <b>Serena (Premium)</b> laden</li>' +
+                '</ol>';
+            box.innerHTML = '<div class="hd-tip-title">🎧 Eine Stimme, die klingt wie echt</div>' +
+                '<p>Mit einer guten Stimme hörst du die Ohr-Fallen viel deutlicher: das <b>-ed</b> in <i>planned</i>, ' +
+                'das <b>n</b> in <i>didn\'t</i>, das <b>t</b> in <i>sent</i>. <b>Frag deine Eltern</b> – das kostet nichts:</p>' +
+                (fall === 'safari'
+                    ? '<p><b>1. Öffne den Vokabeltrainer in Chrome.</b> Safari gibt die guten Stimmen nicht an Webseiten weiter, ' +
+                      'Chrome schon. Hier in Safari bleibt es bei der einfachen Stimme.</p>' +
+                      '<p><b>2. Falls noch nicht geschehen, Serena laden:</b></p>' + laden +
+                      '<p>Danach Chrome einmal ganz beenden (⌘Q) und neu öffnen.</p>'
+                    : '<p><b>Serena laden:</b></p>' + laden +
+                      '<p>Danach Chrome einmal ganz beenden (⌘Q) und neu öffnen. Dann spricht hier Serena.</p>') +
+                '<div class="hd-row"><button class="hd-btn ghost hd-try" onclick="hdToggleVoiceTip()">Schließen</button></div>';
         }
 
         function hdShowTaler() {

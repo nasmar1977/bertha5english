@@ -53,6 +53,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     nennt aber weder „Premium“ noch eine sprechende `voiceURI` (= Name). Darum gibt es eine feste
     Rangfolge bekannter Sprecher (`HD_GOOD_ORDER`, Serena vorn — die gibt es nur als Download).
     In Chrome spricht damit Serena, in Safari Daniel
+  - **„Klingt die Stimme blechern?“** — Link unter der Stimmenzeile, nur am Mac: in Safari klappt er
+    einen Kasten auf mit „in Chrome öffnen“ + Anleitung, Serena (Premium) zu laden; in Chrome ohne
+    Serena nur die Anleitung. iPad und andere Systeme bekommen keinen, dort ist nicht geprüft, was hilft
+  - **Diagnose:** `…/bertha5english/#stimmen` listet im Hör-Detektiv alle englischen Stimmen, die
+    der Browser meldet (✅ gewählt, 🤖 aussortiert, ☁️ Cloud) — für Geräte ohne Konsole
   - Nachsprechen ist ein Selbstvergleich: Aufnahme per `MediaRecorder`, bleibt im Browser.
     Keine Spracherkennung — die schickt Audio an Apple bzw. Google
 - **📻 Funkzentrale Camden (Theme 1)**: 18 Notrufe von der Klassenfahrt, auf Englisch aus dem
@@ -106,7 +111,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.25.3
+**Version:** 2.25.4
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -152,6 +157,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.25.4 (10.10.2026)
+- **Tipp für eine bessere Stimme, diesmal auf Nachfrage und mit dem Weg, der wirklich hilft:**
+  „Klingt die Stimme blechern?“ öffnet am Mac einen Kasten. In Safari empfiehlt er Chrome (Safari
+  gibt Premium-Stimmen nicht weiter) und erklärt, wie man Serena (Premium) lädt; in Chrome ohne
+  Serena nur Letzteres. Menüpfade vom echten Mac abgeschrieben.
+- Diagnose `#stimmen` für das iPad-Testen ohne Konsole.
 
 ### Version 2.25.3 (10.10.2026)
 - **Chrome auf dem Mac gibt die geladene „Serena (Premium)“ heraus** — Safari nicht. Chrome meldet
