@@ -58,6 +58,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     kostet 5 s. 2 auf Anhieb richtig = 1 Taler, die Uhr zählt nur für die ⚡-Statistik
   - Wörter, die gebremst haben, lassen sich am Schichtende per Knopf als Knackpunkte markieren —
     nicht automatisch, die Markierungen im Heft gehören dem Kind
+  - Unter dem Anrufer steht eine Handynummer aus dem britischen Fiktionsbereich (07700 900xxx),
+    **nicht der Ort** — den muss der Notruftext selbst hergeben
   - Markup im Text: `{Wort im Text|Vokabel im Heft}`; Vorlesen mit derselben lokalen Stimme wie
     der Hör-Detektiv
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
@@ -98,7 +100,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.24.0
+**Version:** 2.24.1
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -144,6 +146,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.24.1 (10.10.2026)
+- **Funkzentrale: Die Absenderzeile verriet den Einsatzort** („The rocks, Lulworth“ unter dem
+  Namen) — damit war die halbe Aufgabe gelöst, ohne den Text zu lesen. Die `where`-Felder sind
+  raus, stattdessen steht eine Handynummer da (`fzNumber`, 07700 900xxx ist im UK für Fiktion
+  reserviert).
+- Fünf Notrufe nannten den Ort bis dahin nur in dieser Zeile; ihre Texte sagen ihn jetzt selbst
+  (*I'm in my tent now*, *We are still at the station*, *They are all still in the classroom* …).
 
 ### Version 2.24.0 (10.10.2026)
 - **Neues Modul „Funkzentrale Camden“ für Theme 1** — Platz 4 der Pitch-Runde, auf Wunsch doch
