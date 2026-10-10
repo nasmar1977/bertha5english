@@ -2099,6 +2099,44 @@
             .dv-toggle { top: 10px; right: 174px; width: 40px; height: 40px; font-size: 1.15em; }
             .dv-toggle .emoji-tooltip { top: 48px; right: -40px; width: 190px; }
         }
+        /* Stimmen-Schalter: nur im Hör-Detektiv und in der Funkzentrale */
+        .voice-toggle {
+            position: fixed; top: 18px; right: 274px; z-index: 20;
+            width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            display: none; align-items: center; justify-content: center;
+            font-size: 1.3em; color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .voice-toggle.visible { display: flex; }
+        .voice-toggle:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0,0,0,0.28); }
+        .voice-toggle .voice-badge {
+            position: absolute; bottom: -6px; right: -6px;
+            background: #e58e26; color: #fff; border-radius: 11px;
+            min-width: 20px; padding: 1px 6px;
+            font-size: 0.5em; font-weight: bold; line-height: 1.5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .voice-toggle .emoji-tooltip {
+            position: absolute; top: 54px; right: 0;
+            background: #263238; color: #fff; padding: 9px 13px; border-radius: 10px;
+            font-size: 0.62em; line-height: 1.35; width: 220px; text-align: left;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .voice-toggle .emoji-tooltip::before {
+            content: ""; position: absolute; top: -6px; right: 16px;
+            border-left: 6px solid transparent; border-right: 6px solid transparent;
+            border-bottom: 6px solid #263238;
+        }
+        .voice-toggle:hover .emoji-tooltip { opacity: 1; transform: translateY(0); }
+        @media (max-width: 520px) {
+            .voice-toggle { top: 10px; right: 226px; width: 40px; height: 40px; font-size: 1.15em; }
+            .voice-toggle .emoji-tooltip { display: none; }   /* auf dem Handy sagt es die Meldung unten */
+        }
+
         /* Kurze Meldung, wenn eine Vokabel eine Stufe geschafft hat */
         .dv-toast {
             position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 16px);
@@ -2628,7 +2666,6 @@
         .hd-device { margin: 14px auto 0; max-width: 560px; font-size: 0.85em; color: #666; text-align: center; line-height: 1.5; }
         .hd-device .ok { color: #2e9d5b; }
         .hd-device .no { color: #b26a00; }
-        .hd-voice-sel { font: inherit; font-size: 1em; padding: 4px 8px; border-radius: 10px; border: 2px solid #cfc8ff; background: #fff; max-width: 100%; }
         .hd-voice-tip { margin: 16px auto 0; max-width: 560px; background: #fff6d6; border: 2px solid #f6b93b; border-radius: 18px;
             padding: 14px 18px; line-height: 1.5; color: #4a3b10; }
         .hd-voice-tip .hd-tip-title { font-weight: bold; font-size: 1.1em; margin-bottom: 6px; }
@@ -3325,6 +3362,12 @@
         <span class="emoji-tooltip" id="dvToggleTip">Knackpunkte sind aus.</span>
     </button>
     <div class="dv-toast" id="dvToast"></div>
+
+    <button class="voice-toggle" id="voiceToggle" onclick="hdCycleVoice()">
+        <span>🗣️</span>
+        <span class="voice-badge" id="voiceBadge">1</span>
+        <span class="emoji-tooltip" id="voiceToggleTip">Stimme wechseln</span>
+    </button>
 
     <button class="presence-toggle" id="presenceToggle" onclick="togglePresence()">
         <span id="presenceToggleIcon">👥</span>
@@ -6272,9 +6315,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.24.1';
+        const APP_VERSION = '2.25.0';
 
         const changelogEntries = [
+            {
+                version: '2.25.0',
+                date: '10.10.2026',
+                items: [
+                    'Die Stimme wechselst du jetzt mit dem runden &#128483;&#65039;-Knopf oben rechts, im Hör-Detektiv und in der Funkzentrale. Ein Tipp – und die andere Stimme sagt gleich etwas zur Probe.',
+                ]
+            },
             {
                 version: '2.24.1',
                 date: '10.10.2026',
@@ -7920,6 +7970,7 @@
             });
             hdStopAll();
             fzStopAll();
+            hdUpdateVoiceToggle();
             const overlay = document.getElementById('introSuccessOverlay');
             if (overlay) overlay.style.display = 'none';
         }
@@ -11688,6 +11739,7 @@
         // sowie in allen Latein-Kap-5-Screens (Modul-Auswahl, Spiel, Rakete, 0→100).
         function applyAprilDarkBody() {
             dvUpdateToggle();   // läuft bei jedem Bildschirmwechsel mit
+            if (typeof hdUpdateVoiceToggle === 'function') hdUpdateVoiceToggle();
             if (!aprilDarkActive) {
                 document.body.classList.remove('april-dark');
                 return;
@@ -13057,6 +13109,36 @@
             try { saved = localStorage.getItem(HD_VOICE_KEY) || ''; } catch (e) {}
             hdVoice = hdVoices.find(v => v.voiceURI === saved) || hdVoices[0] || null;
             hdRenderDevice();
+            hdUpdateVoiceToggle();
+        }
+
+        // Runder Schalter oben rechts: wechselt zwischen den (höchstens zwei)
+        // Stimmen und spricht gleich eine Probe.
+        function hdUpdateVoiceToggle() {
+            const btn = document.getElementById('voiceToggle');
+            if (!btn) return;
+            const vis = id => { const el = document.getElementById(id); return el && el.style.display !== 'none'; };
+            const show = !!hdVoice && (vis('hoerDetektivScreen') || vis('funkzentraleScreen'));
+            btn.classList.toggle('visible', show);
+            if (!show) return;
+            const i = hdVoices.indexOf(hdVoice);
+            document.getElementById('voiceBadge').textContent = (i + 1) + '/' + hdVoices.length;
+            const other = hdVoices.length > 1 ? hdVoices[(i + 1) % hdVoices.length] : null;
+            document.getElementById('voiceToggleTip').textContent = 'Es spricht ' + hdVoiceLabel(hdVoice) + '. ' +
+                (other ? 'Klick, um ' + hdVoiceLabel(other) + ' zu hören.' : 'Auf diesem Gerät gibt es nur diese Stimme.');
+        }
+
+        function hdCycleVoice() {
+            if (!hdVoice) return;
+            if (hdVoices.length > 1) {
+                const i = hdVoices.indexOf(hdVoice);
+                hdChooseVoice(hdVoices[(i + 1) % hdVoices.length].voiceURI);
+            } else {
+                hdTryVoice();
+            }
+            hdRenderDevice();
+            hdUpdateVoiceToggle();
+            dvToast('🗣️ Jetzt spricht <b>' + vhAttr(hdVoiceLabel(hdVoice)) + '</b>.');
         }
 
         function hdChooseVoice(uri) {
@@ -13083,13 +13165,11 @@
             else if (!hdVoice) t = '<span class="no">🔇 Keine englische Stimme gefunden, die ohne Internet spricht.<br>' +
                 'Auf dem iPad: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Englisch.</span>';
             else {
-                t = '<label for="hdVoiceSel">🔊 Stimme:</label> <select id="hdVoiceSel" class="hd-voice-sel" onchange="hdChooseVoice(this.value)">' +
-                    hdVoices.map(v => '<option value="' + vhAttr(v.voiceURI) + '"' + (v === hdVoice ? ' selected' : '') + '>' +
-                                      vhAttr(hdVoiceLabel(v)) + '</option>').join('') +
-                    '</select> <button class="hd-btn ghost hd-try" onclick="hdTryVoice()">Probe hören</button>';
+                t = '<span class="ok">🔊 Stimme: ' + vhAttr(hdVoiceLabel(hdVoice)) + '</span>' +
+                    (hdVoices.length > 1 ? '<br>Andere Stimme? Tippe oben rechts auf 🗣️.' : '');
                 const besser = hdVoices.find(v => hdVoiceQuality(v));
                 if (!hdVoiceQuality(hdVoice) && besser)
-                    t += '<br><span class="no">Tipp: „' + vhAttr(hdVoiceLabel(besser)) + '“ klingt besser – oben auswählen.</span>';
+                    t += '<br><span class="no">Tipp: „' + vhAttr(hdVoiceLabel(besser)) + '“ klingt besser – mit 🗣️ oben rechts wechseln.</span>';
             }
             const m = hdHasRec ? '<span class="ok">🎙️ Deine Aufnahme bleibt auf dem Gerät</span>'
                                : '<span class="no">🎙️ Aufnehmen geht hier nicht – dann sprichst du einfach laut mit</span>';

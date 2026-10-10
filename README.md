@@ -39,7 +39,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - **ohne Cloud**: vorgelesen wird nur mit Stimmen, die auf dem Gerät rechnen (`localService`) —
     Chromes „Google UK English“ geht über Google-Server und bleibt draußen. Ohne eine solche Stimme
     bleibt der Start gesperrt, mit Hinweis, wo man auf dem iPad eine lädt
-  - **Stimmenwahl** auf dem Startbildschirm mit Hörprobe, gemerkt in `hoerDetektivStimme`.
+  - **Stimmenwahl** über den runden 🗣️-Schalter oben rechts (neben 🎯 👥 😀), sichtbar im
+    Hör-Detektiv und in der Funkzentrale: ein Tipp wechselt die Stimme und spricht eine Probe,
+    das Abzeichen zeigt 1/2 bzw. 2/2. Gemerkt in `hoerDetektivStimme`.
     Zur Wahl stehen nur die **zwei besten**, zwei verschiedene Sprecher (`HD_VOICE_MAX`).
     Vorausgewählt wird nach Rang: Premium vor Erweitert vor einfach, Britisch vor anderem Englisch,
     Spaß- und Eloquence-Stimmen von macOS (Bubbles, Grandpa, Rocko …) ganz unten.
@@ -100,7 +102,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.24.1
+**Version:** 2.25.0
 **Datum:** 10.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -146,6 +148,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.25.0 (10.10.2026)
+- **Stimmenwechsel als runder Schalter oben rechts** (`#voiceToggle`, 🗣️), in der Reihe mit 🎯 👥 😀
+  und genauso gebaut. Sichtbar nur im Hör-Detektiv und in der Funkzentrale
+  (`hdUpdateVoiceToggle`, läuft bei jedem Bildschirmwechsel mit). Ein Tipp schaltet zwischen den
+  zwei besten Stimmen um und spricht sofort eine Probe; eine Meldung unten nennt die neue Stimme.
+- Die Auswahlliste mit „Probe hören“ auf dem Startbildschirm ist dafür weg; dort steht nur noch,
+  welche Stimme spricht.
 
 ### Version 2.24.1 (10.10.2026)
 - **Funkzentrale: Die Absenderzeile verriet den Einsatzort** („The rocks, Lulworth“ unter dem
