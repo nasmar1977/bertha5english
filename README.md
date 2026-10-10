@@ -18,12 +18,21 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ 🎯 **Knackpunkte-Schalter** (Latein): übt ausschließlich die im Vokabelheft markierten Vokabeln
 - ✅ 👥 **Anwesenheitsliste** links neben der App: Vorname + „zuletzt gesehen" der anderen
   — Vorname wird beim ersten Start abgefragt, Schalter oben rechts blendet die Liste aus/ein.
-  **Noch Platzhalterdaten, es gibt keine Gegenstelle.**
+  Gegenstelle: Cloudflare Worker + D1, siehe [`worker/README.md`](worker/README.md).
 
 ### 🇬🇧 Englisch
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
 - Multiple-Choice-Modus (EN→DE): 5 Optionen mit kuratierten Distraktoren
-- Zufällige Modus-Zuweisung pro Wort in jeder Runde
+- Zufällige Modus-Zuweisung pro Wort in jeder Runde — außer bei Einträgen mit Klammern,
+  Punkten oder Apostroph (`What a/an ...!`), die taugen nicht als Buchstaben-Puzzle und
+  kommen nur im Multiple-Choice (`mcOnly`)
+- **Vokabelheft (Theme 1)**: neun Päckchen A–I mit allen 96 Einträgen der Buchseite, dreispaltig —
+  Wort · Formen (`simple past: sent`) · Bedeutung mit Beispielsatz. Abdeckblatt und Markieren wie
+  in Latein. Geübt wird nur der **aktive Wortschatz** (im Buch fett, 66 Einträge); die übrigen
+  stehen blass im Heft und kommen in keiner Runde vor
+- Beim Spelling steht bei Verben das `to ` fest in den Feldern — gelegt wird nur das Verb dahinter
+- **🎯 Knackpunkte** gilt auch für Englisch, solange Theme 1 der Bezug ist (Übung oder Heft);
+  Theme 2/3 und April haben kein Heft und blenden den Schalter aus
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
 
 ### 🏛️ Latein
@@ -62,9 +71,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.20.1
-**Datum:** 04.10.2026
-**Englisch:** 199 Vokabeln (Theme 2: 77 + Theme 3: 98 + Vokabeln April: 24) + 27 Redewendungen
+**Version:** 2.21.0
+**Datum:** 10.10.2026
+**Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
+Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
 
@@ -107,6 +117,40 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.21.0 (10.10.2026)
+- **Theme 1 „Back to Camden Town" (6. Klasse)**: die Buchseite von `welcome` bis `serious`.
+  Geübt wird nur der aktive Wortschatz — im Buch die fett gesetzten Einträge, 66 von 96. Mit Emoji,
+  Tipp und vier kuratierten Distraktoren je Eintrag; in „Alle Vokabeln" mit drin (jetzt 265).
+- **Das `to` bleibt am Eintrag** — es zeigt an, dass es ein Verb ist. Beim Spelling steht es als
+  feste Vorgabe in den ersten Feldern (`spellPrefix`, Slot-Klasse `fixed`, id `-2`); Pool und
+  Füllbuchstaben lassen es aus, `clearAnswer` löscht es nicht, Klicks darauf laufen ins Leere.
+  Nebeneffekt: `break` (Pause) und `to break` (verstoßen gegen) sind damit zwei verschiedene
+  Lernwörter — im Multiple-Choice gibt es keine zweideutige Frage.
+- **Keine Lautschrift im Heft.** Sie stand erst drin, machte die Seite aber unruhig.
+- **Anwesenheitsliste jetzt auch auf schmalen Geräten**: Der 👥-Schalter ist dort sichtbar und
+  klappt die Liste als kleines Fenster unter sich auf (`.presence-panel.mobil-offen`). Sie schließt
+  sich nach 8 s, bei Tippen daneben oder erneutem Druck; der Herzschlag läuft die ganze Zeit
+  weiter, damit man für die anderen sichtbar bleibt. Im Fenster steht ein „Liste ausschalten".
+  `presenceGeradeAuf` verhindert, dass der öffnende Klick beim Weiterlaufen zum Dokument das
+  Fenster sofort wieder schließt — genau das passierte nach der Namenseingabe.
+- Heftzeilen außerhalb des aktiven Wortschatzes tragen `nb: true`, stehen in normaler Schrift und
+  bekommen eine Legende unter dem Blatt.
+- **8 Einträge sind `mcOnly`** — Klammern oder Punkte machen sie als Buchstaben-Puzzle unzumutbar
+  (`didn't (= did not)`, `(Great) Britain`, `present (sth to sb)` …). `roundModes` erzwingt dort
+  Multiple-Choice, in beiden Rundenaufbauten.
+- **Englisches Vokabelheft** als `vokabelheftData['en-theme1']`, neun Päckchen A–I. Neue Zeilen-
+  eigenschaft `ph` (Lautschrift) steht klein unter dem Wort und wird nie abgedeckt; Spalte 2 führt
+  nur Formen wie `simple past: sent`. Beispielsätze ohne Übersetzung rendern einzeilig.
+- **Knackpunkte sprachübergreifend**: `dvContextKey()` ersetzt den direkten Zugriff auf
+  `currentLatinChapterKey` in `dvActiveWords`, `dvMarkKeysForWord`, `dvUpdateToggle` und beim
+  Bau der Markierungsschlüssel. Englische Marken heißen `en-theme1|A|welcome`.
+- Die englische Runde läuft über `dvSampleRound` statt `weightedSample`; `dvIndexItems` hinterlegt
+  vorher die Zuordnung Fortschrittsschlüssel → Heftvokabel.
+- Menü-Kacheln tragen jetzt die Klassenstufe (6. Klasse Theme 1, 5. Klasse Theme 2/3/April).
+- Acht englische Wörter kommen in mehreren Sets vor (`group`, `quite`, `both`, `suddenly`,
+  `break`, `message`, `stupid`, `another`) und teilen sich damit den Lernfortschritt — das war
+  schon vorher so und bleibt gewollt.
 
 ### Version 2.20.1 (10.10.2026)
 - **Gleiche Vornamen werden in der Liste gebündelt** (`buendleNachName` in `index.html`):

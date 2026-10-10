@@ -1835,6 +1835,28 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-color: #5e35b1; color: #fff;
         }
+        /* Lautschrift steht klein unter dem Wort, nicht daneben — sonst
+           sprengt sie die schmale Wortspalte des Hefts. */
+        /* Einträge, die im Buch nicht fett stehen: nur zum Nachlesen, nicht im Übungsset */
+        .vh-row.vh-passive .vh-word { font-weight: normal; color: #6b6b7b; }
+        body.april-dark .vh-row.vh-passive .vh-word { color: #9ca3af; }
+
+        /* „to " beim Buchstabenlegen: steht fest, wird nicht angeklickt */
+        .letter-slot.fixed {
+            background: #ece9f6;
+            border-style: solid;
+            border-color: #c5bde0;
+            color: #7a6fa8;
+            cursor: default;
+        }
+        body.april-dark .letter-slot.fixed {
+            background: #272a3d; border-color: #3b3f57; color: #a9a2c8;
+        }
+
+        .theme1-card {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        }
+
         .vh-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
         .vh-group { margin-bottom: 20px; }
         .vh-group-label {
@@ -2078,7 +2100,7 @@
         }
         .dv-toggle:hover .emoji-tooltip { opacity: 1; transform: translateY(0); }
         @media (max-width: 520px) {
-            .dv-toggle { top: 10px; right: 122px; width: 40px; height: 40px; font-size: 1.15em; }
+            .dv-toggle { top: 10px; right: 174px; width: 40px; height: 40px; font-size: 1.15em; }
             .dv-toggle .emoji-tooltip { top: 48px; right: -40px; width: 190px; }
         }
         /* Kurze Meldung, wenn eine Vokabel eine Stufe geschafft hat */
@@ -2426,9 +2448,38 @@
             text-align: center;
         }
 
-        /* Schmale Fenster: der Platz neben der App reicht nicht mehr */
+        /* Schmale Geräte: neben der App ist kein Platz. Die Liste erscheint
+           dort auf Knopfdruck als kleines Fenster unter dem Schalter und
+           verschwindet von selbst wieder. */
         @media (max-width: 1180px) {
             .presence-panel { display: none !important; }
+            .presence-panel.mobil-offen {
+                display: block !important;
+                top: 72px;
+                left: auto;
+                right: 12px;
+                transform: none;
+                width: min(230px, 72vw);
+                z-index: 60;
+                animation: presence-rein 0.18s ease-out;
+            }
+        }
+        @media (max-width: 520px) {
+            .presence-panel.mobil-offen { top: 58px; right: 8px; }
+        }
+        @keyframes presence-rein {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .presence-aus {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.72em;
+            color: #9aa0ae;
+            text-decoration: underline;
+            cursor: pointer;
+            text-align: center;
         }
 
         body.april-dark .presence-panel {
@@ -2492,9 +2543,11 @@
         }
         .presence-toggle:hover .emoji-tooltip { opacity: 1; transform: translateY(0); }
 
-        /* Gleiche Grenze wie die Liste: darunter ist daneben kein Platz */
-        @media (max-width: 1180px) {
-            .presence-toggle { display: none !important; }
+        /* Der Schalter bleibt auf jedem Gerät — auf schmalen blendet er die
+           Liste kurz ein, statt sie dauerhaft hinzustellen. */
+        @media (max-width: 520px) {
+            .presence-toggle { top: 10px; right: 122px; width: 40px; height: 40px; font-size: 1.15em; }
+            .presence-toggle .emoji-tooltip { display: none; }
         }
 
         /* Eigene Zeile in der Liste: Klick ändert den Vornamen */
@@ -2508,6 +2561,7 @@
         <div class="presence-title">Gerade da</div>
         <div id="presenceList"></div>
         <div class="presence-note" id="presenceNote">Beispiel&shy;daten &ndash; noch kein Server</div>
+        <span class="presence-aus" id="presenceAus" onclick="presenceAusschalten(event)" style="display: none;">Liste ausschalten</span>
     </div>
 
     <!-- VORNAME — einmalig beim ersten Start, nach dem Changelog -->
@@ -2570,21 +2624,33 @@
         </div>
 
         <div class="set-selection">
+            <div class="module-card theme1-card" onclick="startGame('theme1')">
+                <div class="module-icon">🏕️</div>
+                <div class="module-title">6. Klasse · Theme 1</div>
+                <div class="module-info">Back to Camden Town · 66 Vokabeln</div>
+            </div>
+
+            <div class="module-card vokabelheft-card" onclick="openVokabelheftEnglish()">
+                <div class="module-icon">📓</div>
+                <div class="module-title">Vokabelheft</div>
+                <div class="module-info">Theme 1 · alle 96 Einträge</div>
+            </div>
+
             <div class="module-card" onclick="startGame('theme2')">
                 <div class="module-icon">🏫</div>
-                <div class="module-title">Theme 2: At School</div>
-                <div class="module-info">77 Vokabeln</div>
+                <div class="module-title">5. Klasse · Theme 2</div>
+                <div class="module-info">At School · 77 Vokabeln</div>
             </div>
 
             <div class="module-card" onclick="startGame('theme3')">
                 <div class="module-icon">🎭</div>
-                <div class="module-title">Theme 3: Hobbies</div>
-                <div class="module-info">98 Vokabeln</div>
+                <div class="module-title">5. Klasse · Theme 3</div>
+                <div class="module-info">Hobbies · 98 Vokabeln</div>
             </div>
 
             <div class="module-card" onclick="startGame('april')">
                 <div class="module-icon">📅</div>
-                <div class="module-title">Vokabeln April</div>
+                <div class="module-title">5. Klasse · Vokabeln April</div>
                 <div class="module-info">24 Vokabeln</div>
             </div>
 
@@ -2597,7 +2663,7 @@
             <div class="module-card mixed" onclick="startGame('all')">
                 <div class="module-icon">🌟</div>
                 <div class="module-title">Alle Vokabeln</div>
-                <div class="module-info">199 Vokabeln gemischt</div>
+                <div class="module-info">265 Vokabeln gemischt</div>
             </div>
         </div>
 
@@ -4925,6 +4991,283 @@
         // Distractors are curated near-misses for 5th grade level
         // ===================================================================
 
+        // Theme 1: Back to Camden Town (6. Klasse). Geübt wird nur der aktive
+        // Wortschatz — im Buch die fett gesetzten Einträge (66 von 96).
+        // Das „to" bleibt am Eintrag, es zeigt ja das Verb an; beim Spelling steht
+        // es fest vorgeschrieben und nur der Rest wird gelegt.
+        const vocabularyTheme1 = [
+
+            // Päckchen A
+            { english: 'welcome', german: 'willkommen', image: '👋', hint: 'So begrüßt man Gäste',
+              distractors: ['auf Wiedersehen', 'gern geschehen', 'herzlich', 'einladend'], dvWord: 'welcome' },
+            { english: 'adventure', german: 'Abenteuer, Erlebnis', image: '🧗', hint: 'Etwas Aufregendes, das man erlebt',
+              distractors: ['Ausflug, Reise', 'Gefahr, Risiko', 'Erinnerung, Andenken', 'Überraschung, Wunder'], dvWord: 'adventure' },
+            { english: 'to send', german: '(zu)schicken', image: '📮', hint: 'Einen Brief auf den Weg bringen',
+              distractors: ['(ab)holen', '(auf)geben', '(mit)bringen', '(weiter)sagen'], dvWord: 'to send' },
+            { english: 'hospital', german: 'Krankenhaus', image: '🏥', hint: 'Dort arbeiten Ärztinnen und Pfleger',
+              distractors: ['Apotheke', 'Arztpraxis', 'Pflegeheim', 'Krankenwagen'], dvWord: 'hospital' },
+            { english: 'hurt', german: 'verletzt, verwundet', image: '🤕', hint: 'Nach einem Unfall ist man das',
+              distractors: ['krank, erkältet', 'müde, erschöpft', 'erschrocken, verängstigt', 'geheilt, gesund'], dvWord: 'hurt' },
+            { english: 'accident', german: 'Unfall', image: '💥', hint: 'Es geht plötzlich schief, jemand kommt zu Schaden',
+              distractors: ['Notfall', 'Zufall', 'Ereignis', 'Schaden'], dvWord: 'accident' },
+            { english: 'to fall', german: '(um)fallen, stürzen', image: '🍂', hint: 'Nach unten, ohne es zu wollen',
+              distractors: ['(aus)rutschen, gleiten', '(hoch)springen, hüpfen', '(hin)legen, betten', '(weg)laufen, fliehen'], dvWord: 'to fall' },
+
+            // Päckchen B
+            { english: 'to jump', german: 'springen', image: '🤸', hint: 'Mit beiden Füßen abheben',
+              distractors: ['rennen', 'klettern', 'tauchen', 'werfen'], dvWord: 'to jump' },
+            { english: 'rock', german: 'Stein, Fels(en)', image: '🪨', hint: 'Hart, groß und liegt am Strand',
+              distractors: ['Sand, Kies', 'Höhle, Grotte', 'Berg, Gipfel', 'Erde, Boden'], dvWord: 'rock' },
+            { english: 'to climb (up)', german: '(hinauf)steigen, klettern (auf), besteigen', image: '🧗‍♂️', hint: 'Mit Händen und Füßen nach oben',
+              distractors: ['(hinunter)steigen, absteigen', '(entlang)gehen, wandern', '(hinüber)springen, hüpfen', '(hinein)kriechen, schlüpfen'], mcOnly: true, dvWord: 'to climb (up)' },
+
+            // Päckchen C
+            { english: 'leader', german: 'Leiter/in, Führer/in', image: '🧭', hint: 'Wer die Gruppe anführt',
+              distractors: ['Lehrer/in, Ausbilder/in', 'Helfer/in, Begleiter/in', 'Sprecher/in, Vertreter/in', 'Trainer/in, Betreuer/in'], dvWord: 'leader' },
+            { english: 'group', german: 'Gruppe(n-)', image: '👥', hint: 'Mehrere zusammen',
+              distractors: ['Klasse', 'Mannschaft', 'Verein', 'Reihe'], dvWord: 'group' },
+            { english: 'didn\'t (= did not)', german: 'Vergangenheitsform von „don\'t/doesn\'t“', image: '⏮️', hint: 'Verneinung in der Vergangenheit',
+              distractors: ['Vergangenheitsform von „isn\'t“', 'Vergangenheitsform von „aren\'t“', 'Verneinung von „will“', 'Frageform von „do“'], mcOnly: true, dvWord: 'didn\'t (= did not)' },
+            { english: 'high', german: 'hoch', image: '📏', hint: 'Vom Boden weit nach oben',
+              distractors: ['tief', 'weit', 'breit', 'lang'], dvWord: 'high' },
+            { english: 'at first', german: 'zuerst', image: '1️⃣', hint: 'Ganz am Anfang',
+              distractors: ['zuletzt', 'sofort', 'damals', 'endlich'], dvWord: 'at first' },
+            { english: 'down', german: 'hinunter, herunter', image: '⬇️', hint: 'In Richtung Boden',
+              distractors: ['hinauf, herauf', 'hinüber, herüber', 'hinein, herein', 'hinaus, heraus'], dvWord: 'down' },
+            { english: 'to show', german: 'zeigen', image: '👉', hint: 'Andere etwas sehen lassen',
+              distractors: ['verstecken', 'erklären', 'ansehen', 'finden'], dvWord: 'to show' },
+            { english: 'that', german: 'dass', image: '🔗', hint: 'Leitet einen Nebensatz ein',
+              distractors: ['weil', 'obwohl', 'damit', 'wenn'], dvWord: 'that' },
+            { english: 'both', german: 'beide', image: '✌️', hint: 'Der eine und der andere',
+              distractors: ['alle', 'jeder', 'einige', 'keiner'], dvWord: 'both' },
+
+            // Päckchen D
+            { english: 'everything', german: 'alles', image: '🌍', hint: 'Nichts ausgenommen',
+              distractors: ['etwas', 'nichts', 'jeder', 'irgendwas'], dvWord: 'everything' },
+            { english: 'to go wrong', german: 'schiefgehen', image: '🙃', hint: 'Nicht so laufen wie geplant',
+              distractors: ['gut ausgehen', 'losgehen', 'umkehren', 'verschwinden'], dvWord: 'to go wrong' },
+            { english: 'suddenly', german: 'plötzlich', image: '⚡', hint: 'Ganz ohne Vorwarnung',
+              distractors: ['langsam', 'endlich', 'damals', 'schließlich'], dvWord: 'suddenly' },
+            { english: 'strong', german: 'stark, kräftig, fest', image: '💪', hint: 'Wer viel Kraft hat',
+              distractors: ['schwach, zart', 'schnell, flink', 'groß, hoch', 'mutig, tapfer'], dvWord: 'strong' },
+            { english: 'to push', german: 'stoßen, schieben, drücken', image: '👐', hint: 'Von sich weg bewegen',
+              distractors: ['ziehen, zerren', 'heben, tragen', 'werfen, schleudern', 'halten, festhalten'], dvWord: 'to push' },
+            { english: 'to hurt (sb)', german: '(jdm) wehtun, (jdn) verletzen', image: '🤕', hint: 'Jemandem Schmerzen zufügen',
+              distractors: ['(jdm) helfen, (jdn) retten', '(jdn) ärgern, (jdn) necken', '(jdn) trösten, (jdn) beruhigen', '(jdn) loben, (jdn) feiern'], mcOnly: true, dvWord: 'to hurt (sb)' },
+            { english: 'dark', german: 'dunkel', image: '🌑', hint: 'Wenn kein Licht da ist',
+              distractors: ['hell', 'trüb', 'grau', 'tief'], dvWord: 'dark' },
+            { english: 'to pull', german: 'ziehen', image: '🪢', hint: 'Zu sich heranbewegen',
+              distractors: ['schieben', 'drücken', 'heben', 'werfen'], dvWord: 'to pull' },
+            { english: 'to remember', german: 'sich erinnern; daran denken', image: '🧠', hint: 'Etwas nicht vergessen',
+              distractors: ['vergessen; verlieren', 'vermuten; glauben', 'verstehen; begreifen', 'versprechen; zusagen'], dvWord: 'to remember' },
+            { english: 'to choose', german: '(aus)wählen', image: '🤔', hint: 'Sich für eines entscheiden',
+              distractors: ['(aus)tauschen', '(ab)lehnen', '(an)nehmen', '(ein)sammeln'], dvWord: 'to choose' },
+
+            // Päckchen E
+            { english: 'wasn\'t (= was not)', german: 'Vergangenheitsform von „isn\'t“', image: '⏮️', hint: '„war nicht“',
+              distractors: ['Vergangenheitsform von „aren\'t“', 'Vergangenheitsform von „don\'t“', 'Verneinung von „will“', 'Frageform von „was“'], mcOnly: true, dvWord: 'wasn\'t (= was not)' },
+            { english: 'weren\'t (= were not)', german: 'Vergangenheitsform von „aren\'t“', image: '⏮️', hint: '„waren nicht“',
+              distractors: ['Vergangenheitsform von „isn\'t“', 'Vergangenheitsform von „doesn\'t“', 'Verneinung von „can“', 'Frageform von „were“'], mcOnly: true, dvWord: 'weren\'t (= were not)' },
+            { english: 'to plan', german: 'planen', image: '🗓️', hint: 'Vorher überlegen, was man tut',
+              distractors: ['packen', 'buchen', 'träumen', 'rechnen'], dvWord: 'to plan' },
+            { english: 'plane', german: 'Flugzeug', image: '✈️', hint: 'Fliegt durch die Luft',
+              distractors: ['Flughafen', 'Hubschrauber', 'Rakete', 'Fahrrad'], dvWord: 'plane' },
+            { english: 'train', german: 'Zug', image: '🚆', hint: 'Fährt auf Schienen',
+              distractors: ['Bus', 'Straßenbahn', 'Bahnhof', 'Lastwagen'], dvWord: 'train' },
+            { english: 'interesting', german: 'interessant', image: '🧐', hint: 'Man will mehr davon wissen',
+              distractors: ['langweilig', 'lustig', 'wichtig', 'seltsam'], dvWord: 'interesting' },
+            { english: 'annoying', german: 'ärgerlich', image: '😤', hint: 'Es nervt',
+              distractors: ['erfreulich', 'traurig', 'peinlich', 'erschreckend'], dvWord: 'annoying' },
+
+            // Päckchen F
+            { english: 'trouble', german: 'Schwierigkeiten, Ärger', image: '⚠️', hint: 'Wenn es Probleme gibt',
+              distractors: ['Glück, Zufall', 'Ruhe, Frieden', 'Mühe, Arbeit', 'Hilfe, Unterstützung'], dvWord: 'trouble' },
+            { english: 'may', german: 'können, dürfen', image: '✅', hint: 'Man hat die Erlaubnis',
+              distractors: ['müssen, sollen', 'wollen, mögen', 'werden, sollen', 'nicht dürfen, verboten sein'], dvWord: 'may' },
+            { english: 'to switch off', german: 'ausschalten, abschalten', image: '🔌', hint: 'Den Strom wegnehmen',
+              distractors: ['einschalten, anmachen', 'umschalten, wechseln', 'aufladen, laden', 'anschließen, verbinden'], dvWord: 'to switch off' },
+            { english: 'if', german: 'wenn, falls, ob', image: '❓', hint: 'Leitet eine Bedingung ein',
+              distractors: ['weil, da', 'obwohl, wenngleich', 'damit, sodass', 'als, während'], dvWord: 'if' },
+            { english: 'break', german: 'Pause', image: '☕', hint: 'Zwischen zwei Stunden',
+              distractors: ['Stunde', 'Ferien', 'Mittagessen', 'Freizeit'], dvWord: 'break' },
+            { english: 'to record', german: 'aufzeichnen, aufnehmen', image: '🎙️', hint: 'Ton oder Bild festhalten',
+              distractors: ['abspielen, wiedergeben', 'löschen, entfernen', 'senden, ausstrahlen', 'schreiben, notieren'], dvWord: 'to record' },
+            { english: 'unfriendly', german: 'unfreundlich', image: '😠', hint: 'Nicht nett zu anderen',
+              distractors: ['freundlich', 'schüchtern', 'ungeduldig', 'unglücklich'], dvWord: 'unfriendly' },
+            { english: 'to call', german: '(an)rufen, nennen', image: '📞', hint: 'Zum Telefon greifen',
+              distractors: ['(zu)hören, lauschen', '(an)schreiben, mailen', '(auf)suchen, besuchen', '(be)antworten, erwidern'], dvWord: 'to call' },
+            { english: 'ill', german: 'krank', image: '🤒', hint: 'Dann bleibt man im Bett',
+              distractors: ['gesund', 'müde', 'verletzt', 'traurig'], dvWord: 'ill' },
+            { english: 'office', german: 'Büro, Amt, hier: Sekretariat', image: '🗄️', hint: 'Dort liegen die Akten der Schule',
+              distractors: ['Lehrerzimmer, Konferenzraum', 'Klassenzimmer, Unterrichtsraum', 'Turnhalle, Sportraum', 'Bibliothek, Lesesaal'], dvWord: 'office' },
+            { english: 'to break', german: '(zer)brechen, hier: verstoßen gegen', image: '🔨', hint: 'Eine Regel nicht einhalten',
+              distractors: ['(zusammen)bauen, errichten', '(ein)halten, befolgen', '(aus)bessern, reparieren', '(auf)heben, aufsammeln'], dvWord: 'to break' },
+            { english: 'away', german: 'weg', image: '🏃', hint: 'Nicht mehr hier',
+              distractors: ['hier', 'zurück', 'nah', 'vorbei'], dvWord: 'away' },
+
+            // Päckchen G
+            { english: 'head teacher', german: 'Schulleiter/in, Direktor/in', image: '🎓', hint: 'Wer die ganze Schule leitet',
+              distractors: ['Klassenlehrer/in, Tutor/in', 'Hausmeister/in, Pförtner/in', 'Sekretär/in, Schreibkraft', 'Vertrauenslehrer/in, Beratungslehrer/in'], dvWord: 'head teacher' },
+            { english: 'punishment', german: 'Bestrafung, Strafe', image: '⛔', hint: 'Folgt auf eine Regelverletzung',
+              distractors: ['Belohnung, Preis', 'Warnung, Hinweis', 'Entschuldigung, Verzeihung', 'Erlaubnis, Zustimmung'], dvWord: 'punishment' },
+            { english: 'message', german: 'Nachricht, Botschaft', image: '💬', hint: 'Kommt aufs Handy',
+              distractors: ['Anruf, Telefonat', 'Brief, Postkarte', 'Zeitung, Blatt', 'Gespräch, Unterhaltung'], dvWord: 'message' },
+            { english: 'stupid', german: 'dumm, blöd', image: '🙄', hint: 'Das Gegenteil von klug',
+              distractors: ['klug, schlau', 'lustig, witzig', 'langweilig, öde', 'gemein, fies'], dvWord: 'stupid' },
+            { english: 'to leave', german: 'verlassen, weggehen, hier: (zurück)lassen', image: '🚶', hint: 'Hinausgehen und nicht mehr da sein',
+              distractors: ['betreten, hereinkommen', 'bleiben, verweilen', 'zurückkehren, wiederkommen', 'begleiten, mitgehen'], dvWord: 'to leave' },
+            { english: 'most', german: '(die) meisten', image: '📊', hint: 'Mehr als die Hälfte',
+              distractors: ['(die) wenigsten', '(die) meiste Zeit', '(die) einzigen', '(die) ersten'], dvWord: 'most' },
+            { english: 'to ask (for sth)', german: '(um etw) bitten', image: '🙏', hint: 'Höflich um Hilfe fragen',
+              distractors: ['(auf etw) antworten', '(von etw) erzählen', '(über etw) klagen', '(für etw) danken'], mcOnly: true, dvWord: 'to ask (for sth)' },
+            { english: 'around', german: 'umher, um, rund um, um ... herum', image: '🔄', hint: 'Im Kreis oder in der Nähe',
+              distractors: ['geradeaus, direkt', 'hindurch, quer', 'darüber, oberhalb', 'daneben, seitlich'], dvWord: 'around' },
+            { english: 'to go online', german: 'online gehen', image: '🌐', hint: 'Ins Internet',
+              distractors: ['offline gehen', 'einkaufen gehen', 'spazieren gehen', 'schlafen gehen'], dvWord: 'to go online' },
+
+            // Päckchen H
+            { english: 'bored', german: 'gelangweilt', image: '🥱', hint: 'Wenn nichts los ist',
+              distractors: ['begeistert', 'müde', 'genervt', 'neugierig'], dvWord: 'bored' },
+            { english: 'to agree', german: 'zustimmen, hier: sich einig sein', image: '🤝', hint: 'Derselben Meinung sein',
+              distractors: ['widersprechen, ablehnen', 'zweifeln, zögern', 'streiten, sich zanken', 'nachgeben, einlenken'], dvWord: 'to agree' },
+            { english: 'to prepare', german: 'vorbereiten, erstellen', image: '🍳', hint: 'Alles fertig machen',
+              distractors: ['aufräumen, wegräumen', 'austeilen, verteilen', 'wiederholen, üben', 'beenden, abschließen'], dvWord: 'to prepare' },
+            { english: 'presentation', german: 'Präsentation', image: '📽️', hint: 'Vor der Klasse vortragen',
+              distractors: ['Prüfung', 'Aufsatz', 'Besprechung', 'Vorlesung'], dvWord: 'presentation' },
+            { english: '(Great) Britain', german: 'Großbritannien', image: '🇬🇧', hint: 'England, Schottland und Wales zusammen',
+              distractors: ['Irland', 'Vereinigte Staaten', 'Australien', 'Neuseeland'], mcOnly: true, dvWord: '(Great) Britain' },
+
+            // Päckchen I
+            { english: 'to punish', german: '(be)strafen', image: '⚖️', hint: 'Eine Strafe geben',
+              distractors: ['(be)lohnen', '(ver)zeihen', '(er)mahnen', '(ver)bieten'], dvWord: 'to punish' },
+            { english: 'to disagree', german: 'nicht übereinstimmen, nicht einverstanden sein', image: '🙅', hint: 'Anderer Meinung sein',
+              distractors: ['übereinstimmen, einverstanden sein', 'unentschlossen sein, zögern', 'nachgeben, einlenken', 'sich entschuldigen, bedauern'], dvWord: 'to disagree' },
+            { english: 'to present (sth to sb)', german: '(jdm etw) präsentieren', image: '🎤', hint: 'Vor anderen vorstellen',
+              distractors: ['(jdm etw) schenken', '(jdm etw) erklären', '(jdm etw) verbieten', '(jdm etw) wegnehmen'], mcOnly: true, dvWord: 'to present (sth to sb)' },
+            { english: 'serious', german: 'ernst', image: '😐', hint: 'Kein Spaß, sondern wichtig',
+              distractors: ['lustig', 'leicht', 'harmlos', 'merkwürdig'], dvWord: 'serious' },
+        ];
+
+        // Englisches Vokabelheft — alle 96 Einträge der Buchseite, auch die, die
+        // nur zum Nachlesen da sind (nb: true, im Heft nicht fett). Spalte 2 führt
+        // die Formen. Lautschrift steht bewusst nicht drin: zu viel fürs Auge.
+        vokabelheftData['en-theme1'] = { name: '6. Klasse · Theme 1: Back to Camden Town', packets: [
+            { label: 'A', rows: [
+                { w:'welcome', f:'', d:'willkommen', ex:[['Welcome to Radio Dorset.','']] },
+                { w:'adventure', f:'', d:'Abenteuer, Erlebnis', ex:[['Our walk at night was a great adventure.','']] },
+                { w:'to send', f:'_simple past:_ sent', d:'(zu)schicken', ex:[['My best friend sent me a postcard from Madrid.','']] },
+                { w:'hospital', f:'', d:'Krankenhaus', ex:[['My mum is a doctor. She works at the hospital.','']] },
+                { w:'hurt', f:'', d:'verletzt, verwundet', ex:[['Four people were hurt in an accident on Saturday.','']] },
+                { w:'accident', f:'', d:'Unfall' },
+                { w:'to fall', f:'_simple past:_ fell', d:'(um)fallen, stürzen' },
+                { w:'to break one\'s arm', f:'_simple past:_ broke', d:'sich den Arm brechen', nb:true },
+            ]},
+            { label: 'B', rows: [
+                { w:'coasteering', f:'_no pl_', d:'Mischung aus verschiedenen Outdooraktivitäten wie Klettern, Springen, Schwimmen usw.', nb:true },
+                { w:'helmet', f:'', d:'Helm', nb:true },
+                { w:'wetsuit', f:'', d:'Taucheranzug', nb:true },
+                { w:'life jacket', f:'', d:'Schwimmweste', nb:true },
+                { w:'to jump', f:'', d:'springen', ex:[['Lara is jumping into the pool.','']] },
+                { w:'rock', f:'', d:'Stein, Fels(en)', ex:[['Don\'t jump from the rocks, it\'s dangerous.','']] },
+                { w:'cliff', f:'', d:'Klippe, Kliff', nb:true },
+                { w:'to climb (up)', f:'', d:'(hinauf)steigen, klettern (auf), besteigen', ex:[['Mike likes to climb trees.','']] },
+                { w:'sport', f:'', d:'Sport, Sportart', nb:true },
+                { w:'to be called', f:'', d:'genannt werden, heißen', nb:true },
+                { w:'scary', f:'', d:'furchterregend', nb:true },
+            ]},
+            { label: 'C', rows: [
+                { w:'leader', f:'', d:'Leiter/in, Führer/in' },
+                { w:'group', f:'', d:'Gruppe(n-)', ex:[['The whole group had to work together.','']] },
+                { w:'didn\'t (= did not)', f:'', d:'Vergangenheitsform von „don\'t/doesn\'t“', ex:[['I didn\'t know it was your birthday today.','']] },
+                { w:'high', f:'', d:'hoch', ex:[['This house is 12 metres high.','']] },
+                { w:'at first', f:'', d:'zuerst', ex:[['At first I didn\'t like Jo but now we\'re friends.','']] },
+                { w:'jump', f:'', d:'Sprung, Satz', nb:true, ex:[['Lara wanted to do a last big jump.','']] },
+                { w:'quite', f:'', d:'ziemlich, ganz', nb:true },
+                { w:'wet', f:'', d:'nass', nb:true, ex:[['I got wet because of the rain.','']] },
+                { w:'down', f:'', d:'hinunter, herunter', ex:[['Don\'t fall down!','']] },
+                { w:'to show', f:'', d:'zeigen', ex:[['Charlie didn\'t want to show that he was scared.','']] },
+                { w:'that', f:'', d:'dass', ex:[['I know that Paul is 14 years old.','']] },
+                { w:'What a/an ...!', f:'', d:'Was für ein(e) ...!', nb:true },
+                { w:'to cheer', f:'', d:'jubeln', nb:true },
+                { w:'both', f:'', d:'beide', ex:[['John and Anna both wanted to go swimming.','']] },
+                { w:'to get out of sth', f:'', d:'aus etw herauskommen', nb:true },
+            ]},
+            { label: 'D', rows: [
+                { w:'everything', f:'', d:'alles', ex:[['Everything was fine but then something went wrong.','']] },
+                { w:'to go wrong', f:'', d:'schiefgehen' },
+                { w:'suddenly', f:'', d:'plötzlich', ex:[['Suddenly Lara lost her balance.','']] },
+                { w:'to lose one\'s balance', f:'', d:'das Gleichgewicht verlieren', nb:true },
+                { w:'how to ...', f:'', d:'wie man ...', nb:true },
+                { w:'wave', f:'', d:'Welle', nb:true },
+                { w:'strong', f:'', d:'stark, kräftig, fest', ex:[['Rachel is very strong.','']] },
+                { w:'to push', f:'', d:'stoßen, schieben, drücken', ex:[['Fiona pushed Olivia. When Olivia fell, she hurt her legs.','']] },
+                { w:'to hurt (sb)', f:'_simple past:_ hurt', d:'(jdm) wehtun, (jdn) verletzen' },
+                { w:'dark', f:'', d:'dunkel' },
+                { w:'to pull', f:'', d:'ziehen', ex:[['to push ↔ to pull','']] },
+                { w:'out of', f:'', d:'aus', nb:true },
+                { w:'to remember', f:'', d:'sich erinnern; daran denken', ex:[['to remember ↔ to forget','']] },
+                { w:'not ... anything', f:'', d:'gar nichts', nb:true },
+                { w:'to choose', f:'_simple past:_ chose', d:'(aus)wählen', ex:[['He is choosing a book to read.','']] },
+            ]},
+            { label: 'E', rows: [
+                { w:'wasn\'t (= was not)', f:'', d:'Vergangenheitsform von „isn\'t“', ex:[['Zoe wasn\'t in London last year.','']] },
+                { w:'weren\'t (= were not)', f:'', d:'Vergangenheitsform von „aren\'t“', ex:[['Kim and Jo weren\'t happy.','']] },
+                { w:'to plan', f:'', d:'planen', ex:[['We planned our trip last year.','']] },
+                { w:'plane', f:'', d:'Flugzeug', ex:[['on the plane – im Flugzeug','']] },
+                { w:'train', f:'', d:'Zug' },
+                { w:'interesting', f:'', d:'interessant', ex:[['interesting ↔ boring','']] },
+                { w:'annoying', f:'', d:'ärgerlich', ex:[['It\'s so annoying that our bus is late.','']] },
+            ]},
+            { label: 'F', rows: [
+                { w:'trouble', f:'_no pl_', d:'Schwierigkeiten, Ärger' },
+                { w:'to make sb do sth', f:'_simple past:_ made', d:'jdn zu etwas bringen, jdn etwas tun lassen', nb:true },
+                { w:'may', f:'', d:'können, dürfen', ex:[['You may bring your tablet to school, but you must not use it during the lesson.','']] },
+                { w:'to switch off', f:'', d:'ausschalten, abschalten' },
+                { w:'if', f:'', d:'wenn, falls, ob', ex:[['We can have pizza if you like.','']] },
+                { w:'break', f:'', d:'Pause', ex:[['Let\'s meet in our lunch break.','']] },
+                { w:'to record', f:'', d:'aufzeichnen, aufnehmen', ex:[['Jack wants to record his first song.','']] },
+                { w:'unfriendly', f:'', d:'unfreundlich', ex:[['friendly ↔ unfriendly','']] },
+                { w:'to call', f:'', d:'(an)rufen, nennen', ex:[['to call = to phone','']] },
+                { w:'ill', f:'', d:'krank' },
+                { w:'office', f:'', d:'Büro, Amt, _hier:_ Sekretariat' },
+                { w:'to break', f:'_simple past:_ broke', d:'(zer)brechen, _hier:_ verstoßen gegen', ex:[['Jack broke the rules when he used his phone in class.','']] },
+                { w:'away', f:'', d:'weg', ex:[['Your teacher can take your phone away.','']] },
+            ]},
+            { label: 'G', rows: [
+                { w:'head teacher', f:'', d:'Schulleiter/in, Direktor/in' },
+                { w:'punishment', f:'', d:'Bestrafung, Strafe' },
+                { w:'message', f:'', d:'Nachricht, Botschaft', ex:[['Did you read my message?','']] },
+                { w:'stupid', f:'', d:'dumm, blöd', ex:[['a great idea ↔ a stupid idea','']] },
+                { w:'to leave', f:'_simple past:_ left', d:'verlassen, weggehen, _hier:_ (zurück)lassen', ex:[['You mustn\'t leave the classroom during the lesson.','']] },
+                { w:'most', f:'', d:'(die) meisten', ex:[['Most people like chocolate.','']] },
+                { w:'to ask (for sth)', f:'', d:'(um etw) bitten', ex:[['Can I ask you for some help?','']] },
+                { w:'around', f:'', d:'umher, um, rund um, um ... herum', ex:[['Pia played around with her phone in class.','']] },
+                { w:'to go online', f:'', d:'online gehen', ex:[['I can use my phone to go online.','']] },
+                { w:'recording', f:'', d:'Aufnahme, Aufzeichnen', nb:true },
+            ]},
+            { label: 'H', rows: [
+                { w:'bored', f:'', d:'gelangweilt', ex:[['When are we leaving? I\'m bored.','']] },
+                { w:'fault', f:'', d:'Schuld, Fehler', nb:true },
+                { w:'to agree', f:'', d:'zustimmen, _hier:_ sich einig sein', ex:[['Charlie and George agree that football is great.','']] },
+                { w:'to prepare', f:'', d:'vorbereiten, erstellen', ex:[['My dad is preparing dinner.','']] },
+                { w:'presentation', f:'', d:'Präsentation', ex:[['Mark is nervous about the presentation.','']] },
+                { w:'topic', f:'', d:'Thema', nb:true },
+                { w:'(Great) Britain', f:'', d:'Großbritannien', ex:[['Britain is England, Scotland and Wales.','']] },
+                { w:'another', f:'', d:'noch eine(r, s), ein(e) andere(r)', nb:true },
+                { w:'work', f:'', d:'Arbeit', nb:true },
+                { w:'to admit', f:'', d:'zugeben', nb:true },
+            ]},
+            { label: 'I', rows: [
+                { w:'to punish', f:'', d:'(be)strafen', ex:[['The head teacher punished the pupils.','']] },
+                { w:'to highlight', f:'', d:'hervorheben, markieren', nb:true },
+                { w:'note', f:'', d:'Notiz, Mitteilung', nb:true },
+                { w:'You\'re right.', f:'', d:'Du hast recht., Ihr habt recht., Sie haben recht.', nb:true },
+                { w:'to disagree', f:'', d:'nicht übereinstimmen, nicht einverstanden sein', ex:[['to agree ↔ to disagree','']] },
+                { w:'to present (sth to sb)', f:'', d:'(jdm etw) präsentieren', ex:[['Would you like to present your ideas in class?','']] },
+                { w:'serious', f:'', d:'ernst', ex:[['We forgot our tickets. – That\'s a serious problem.','']] },
+            ]},
+        ]};
+
         const vocabularyTheme2 = [
             // Theme 2: At school - Page 1
             { english: 'idea', german: 'Idee, Einfall', image: '💡', hint: 'Ein guter Gedanke',
@@ -5426,6 +5769,10 @@
         let correctCount = 0;
         let currentWord = '';
         let selectedLetters = [];
+        // Bei Verben steht „to " beim Buchstabenlegen schon da — gelegt wird nur
+        // das Verb dahinter. Die festen Felder tragen die id -2 und lassen sich
+        // nicht anklicken; -1 bleibt dem automatischen Leerzeichen vorbehalten.
+        let spellPrefix = '';
         let shuffledVocabulary = [];
         let wordStats = {};
         let currentWordStartTime = 0;
@@ -5625,9 +5972,20 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.20.1';
+        const APP_VERSION = '2.21.0';
 
         const changelogEntries = [
+            {
+                version: '2.21.0',
+                date: '10.10.2026',
+                items: [
+                    '<b>Neu: 6. Klasse &middot; Theme 1 — Back to Camden Town</b>, 66 Vokabeln. Geübt wird, was im Buch fett steht.',
+                    'Beim Buchstabenlegen steht das <i>to</i> schon da — du ergänzt nur das Verb dahinter.',
+                    '<b>Das Vokabelheft gibt es jetzt auch für Englisch</b> — neun Päckchen mit allen 96 Einträgen der Buchseite, mit den Formen (<i>simple past: sent</i>) und Beispielsätzen. Die blassen Einträge stehen nur zum Nachlesen.',
+                    'Zeile antippen markiert eine schwierige Vokabel. Mit dem &#127919;-Schalter oben rechts übst du dann nur noch diese.',
+                    '<b>Die Liste &#8222;Gerade da&#8220; gibt es jetzt auch auf dem Handy</b> — der &#128101;-Knopf oben rechts blendet sie kurz ein, nach ein paar Sekunden ist sie von selbst wieder weg.',
+                ]
+            },
             {
                 version: '2.20.1',
                 date: '10.10.2026',
@@ -5966,6 +6324,16 @@
         let myName = '';
         let presenceOff = false;
         let presenceTimer = null;
+        // Auf schmalen Geräten steht die Liste nicht dauerhaft daneben, sondern
+        // klappt auf Knopfdruck unter dem Schalter auf. Der Herzschlag läuft
+        // dabei weiter — die anderen sollen einen ja sehen.
+        let presenceOffen = false;
+        let presenceAutoZu = null;
+        let presenceGeradeAuf = false;
+
+        function presenceSchmal() {
+            return window.matchMedia('(max-width: 1180px)').matches;
+        }
 
         function loadPresencePrefs() {
             try {
@@ -6120,21 +6488,65 @@
         }
 
         function startPresence() {
-            const panel = document.getElementById('presencePanel');
-            if (!panel) return;
-            panel.style.display = 'block';
+            if (!document.getElementById('presencePanel')) return;
             refreshPresence();
             if (presenceTimer) clearInterval(presenceTimer);
             presenceTimer = setInterval(refreshPresence, PRESENCE_REFRESH_MS);
+            updatePresenceSicht();
             updatePresenceToggle();
         }
 
         function stopPresence() {
-            const panel = document.getElementById('presencePanel');
-            if (panel) panel.style.display = 'none';
+            presenceOffen = false;
             if (presenceTimer) { clearInterval(presenceTimer); presenceTimer = null; }
+            updatePresenceSicht();
             updatePresenceToggle();
         }
+
+        // Breit: die Liste steht fest links. Schmal: nur, wenn gerade aufgeklappt.
+        function updatePresenceSicht() {
+            const panel = document.getElementById('presencePanel');
+            if (!panel) return;
+            const laeuft = !presenceOff && !!myName && !!presenceTimer;
+            panel.style.display = laeuft ? 'block' : 'none';
+            panel.classList.toggle('mobil-offen', laeuft && presenceSchmal() && presenceOffen);
+            const aus = document.getElementById('presenceAus');
+            if (aus) aus.style.display = (laeuft && presenceSchmal()) ? '' : 'none';
+        }
+
+        function presenceAufklappen() {
+            presenceOffen = true;
+            // Der Klick, der das Fenster öffnet, läuft anschließend weiter zum
+            // Dokument. Ohne diese Sperre würde der Außenklick-Handler es sofort
+            // wieder zumachen — das passierte nach der Namenseingabe.
+            presenceGeradeAuf = true;
+            setTimeout(() => { presenceGeradeAuf = false; }, 0);
+            refreshPresence();
+            updatePresenceSicht();
+            if (presenceAutoZu) clearTimeout(presenceAutoZu);
+            presenceAutoZu = setTimeout(presenceZuklappen, 8000);   // von selbst wieder weg
+        }
+
+        function presenceZuklappen() {
+            presenceOffen = false;
+            if (presenceAutoZu) { clearTimeout(presenceAutoZu); presenceAutoZu = null; }
+            updatePresenceSicht();
+        }
+
+        function presenceAusschalten(e) {
+            if (e) e.stopPropagation();
+            presenceOff = true;
+            savePresencePrefs();
+            stopPresence();
+        }
+
+        // Tippen irgendwo sonst schließt das Fenster wieder.
+        document.addEventListener('click', e => {
+            if (!presenceOffen || presenceGeradeAuf) return;
+            if (e.target.closest('#presencePanel') || e.target.closest('#presenceToggle')) return;
+            presenceZuklappen();
+        });
+        window.addEventListener('resize', () => { if (presenceTimer) updatePresenceSicht(); });
 
         // --- Schalter oben rechts -------------------------------------------
         function updatePresenceToggle() {
@@ -6144,20 +6556,27 @@
             document.getElementById('presenceToggleIcon').textContent = presenceOff ? '\uD83D\uDE48' : '\uD83D\uDC65';
             document.getElementById('presenceToggleTip').textContent = presenceOff
                 ? 'Die Liste „Gerade da" ist aus. Klick, um sie einzublenden.'
-                : 'Die Liste „Gerade da" ist an. Klick, um sie auszublenden.';
+                : presenceSchmal()
+                    ? 'Klick zeigt dir kurz, wer gerade übt.'
+                    : 'Die Liste „Gerade da" ist an. Klick, um sie auszublenden.';
         }
 
         function togglePresence() {
-            if (!presenceOff) {
-                presenceOff = true;
+            if (presenceOff) {                       // aus → an
+                presenceOff = false;
                 savePresencePrefs();
-                stopPresence();
+                if (!myName) { openNameSplash(); return; }   // noch kein Name: erst fragen
+                startPresence();
+                if (presenceSchmal()) presenceAufklappen();
                 return;
             }
-            presenceOff = false;
+            if (presenceSchmal()) {                  // schmal: nur ein- und ausblenden
+                if (presenceOffen) presenceZuklappen(); else presenceAufklappen();
+                return;
+            }
+            presenceOff = true;                      // breit: ganz abschalten
             savePresencePrefs();
-            if (!myName) { openNameSplash(); return; }   // noch kein Name: erst fragen
-            startPresence();
+            stopPresence();
         }
 
         // --- Vornamen-Frage --------------------------------------------------
@@ -6205,6 +6624,7 @@
             savePresencePrefs();
             closeNameSplash();
             startPresence();
+            if (presenceSchmal()) presenceAufklappen();
         }
 
         function skipMyName() {
@@ -6261,6 +6681,9 @@
         // VOKABELHEFT — dreispaltige Vokabelliste, päckchenweise
         // ===================================================================
         let vhPacketIndex = 0; // -1 = alle Päckchen
+
+        // Englisch: steht auf true, solange Theme 1 der Bezug ist (Übung oder Heft).
+        let englishDvActive = false;
 
         // Selbst markierte „schwierige" Vokabeln — Schlüssel: kapitel|päckchen|wort
         const VH_MARKS_KEY = 'vokabelheftSchwierig';
@@ -6330,10 +6753,19 @@
         }
 
         // Markierte Vokabeln des aktuellen Kapitels, die heute noch dran sind.
+        // Woran hängen die Markierungen gerade? In Latein an der Lektion, in
+        // Englisch am Vokabelheft von Theme 1. Alles andere (Theme 2/3, April)
+        // hat kein Heft und damit nichts zu filtern.
+        function dvContextKey() {
+            if (currentLanguage === 'english') return englishDvActive ? 'en-theme1' : '';
+            return currentLatinChapterKey;
+        }
+
         function dvActiveWords() {
             const out = new Set();
-            if (!currentLatinChapterKey) return out;
-            const prefix = currentLatinChapterKey + '|';
+            const ctx = dvContextKey();
+            if (!ctx) return out;
+            const prefix = ctx + '|';
             const today = dvToday();
             Object.keys(vhMarks).forEach(key => {
                 if (key.indexOf(prefix) !== 0) return;
@@ -6347,7 +6779,7 @@
         // Dasselbe Wort kann in zwei Päckchen stehen (in, Lektion 4) — dann
         // zählen beide Markierungen gemeinsam.
         function dvMarkKeysForWord(word) {
-            const prefix = currentLatinChapterKey + '|';
+            const prefix = dvContextKey() + '|';
             return Object.keys(vhMarks).filter(key =>
                 key.indexOf(prefix) === 0 && dvWordOfKey(key) === word);
         }
@@ -6419,7 +6851,7 @@
                 dvToast('🎯 Knackpunkte an — geübt werden jetzt deine ' + n +
                         (n === 1 ? ' markierte Vokabel.' : ' markierten Vokabeln.'));
             } else {
-                dvToast('🎯 Knackpunkte an — in dieser Lektion ist noch nichts markiert. ' +
+                dvToast('🎯 Knackpunkte an — hier ist noch nichts markiert. ' +
                         'Tippe im Vokabelheft die Zeilen an, die dir schwerfallen.');
             }
         }
@@ -6427,7 +6859,7 @@
         function dvUpdateToggle() {
             const btn = document.getElementById('dvToggle');
             if (!btn) return;
-            const show = currentLanguage === 'latin' && !!currentLatinChapterKey;
+            const show = !!dvContextKey();
             btn.classList.toggle('visible', show);
             if (!show) return;
             const n = dvActiveWords().size;
@@ -6441,7 +6873,7 @@
             } else {
                 tip.textContent = n
                     ? 'Knackpunkte sind an. Geübt werden nur deine markierten Vokabeln (' + n + ' Stück).'
-                    : 'Knackpunkte sind an, aber in dieser Lektion ist nichts markiert — es kommen alle Vokabeln dran.';
+                    : 'Knackpunkte sind an, aber hier ist nichts markiert — es kommen alle Vokabeln dran.';
             }
         }
 
@@ -6869,9 +7301,16 @@
             }
         }
 
+        // Englisch: dasselbe Heft, nur ein anderer Datensatz. englishDvActive
+        // muss vor dem Rendern stehen — davon hängt dvContextKey() ab.
+        function openVokabelheftEnglish() {
+            englishDvActive = true;
+            openVokabelheft();
+        }
+
         function openVokabelheft() {
             hideAllScreens();
-            const data = vokabelheftData[currentLatinChapterKey];
+            const data = vokabelheftData[dvContextKey()];
             document.getElementById('vhChapterName').textContent = data ? data.name : '';
             document.getElementById('vokabelheftScreen').style.display = 'block';
             vhPacketIndex = 0;
@@ -6884,6 +7323,13 @@
         }
 
         function backToLatinModulesFromVH() {
+            if (currentLanguage === 'english') {
+                hideAllScreens();
+                document.getElementById('setSelection').style.display = 'block';
+                dvUpdateToggle();
+                applyAprilDarkBody();
+                return;
+            }
             backToLatinModules();
         }
 
@@ -6895,7 +7341,7 @@
         }
 
         function renderVokabelheft() {
-            const data = vokabelheftData[currentLatinChapterKey];
+            const data = vokabelheftData[dvContextKey()];
             const bar = document.getElementById('vhPackets');
             const sheet = document.getElementById('vhSheet');
             const feedback = document.getElementById('vhFeedback');
@@ -6919,12 +7365,14 @@
 
             const packets = vhPacketIndex === -1 ? data.packets : [data.packets[vhPacketIndex]];
             const hasStar = packets.some(p => p.rows.some(r => r.s));
+            const hasPassive = packets.some(p => p.rows.some(r => r.nb));
             vhStats = { meanTotal: 0, meanGot: 0, meanTypo: 0, formTotal: 0, formGot: 0, formTypo: 0, filled: 0 };
             // Beim Vergleich wird zuerst im Abdeck-Layout gerendert; erst der
             // Klassenwechsel danach lässt das Blatt zur Seite gleiten.
             sheet.className = vhMode === 'read' ? '' : 'vh-practice cover';
             sheet.innerHTML = packets.map(vhRenderPacket).join('') +
-                (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '');
+                (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '') +
+                (hasPassive ? '<div class="vh-note">Fett = wird geübt. Die blassen Einträge stehen nur zum Nachlesen.</div>' : '');
 
             renderVhModeBar();
             renderVhHint();
@@ -6944,7 +7392,7 @@
         function vhRenderPacket(p) {
             const practice = vhMode !== 'read';
             const rows = p.rows.map(r => {
-                const key = currentLatinChapterKey + '|' + p.label + '|' + r.w;
+                const key = dvContextKey() + '|' + p.label + '|' + r.w;
                 const head = '<div class="vh-mark">●</div>' +
                              '<div class="vh-star">' + (r.s ? '*' : '') + '</div>' +
                              '<div class="vh-word">' + vhText(r.w) + '</div>';
@@ -6952,7 +7400,8 @@
                 // richtig war — sie ruht dann bis morgen.
                 const mark = dvNormalizeMark(vhMarks[key]);
                 const resting = !!(mark && mark.r === dvToday());
-                const marked = mark ? (' marked' + (resting ? ' dv-rest' : '')) : '';
+                const marked = (mark ? (' marked' + (resting ? ' dv-rest' : '')) : '') +
+                               (r.nb ? ' vh-passive' : '');
                 const offen = mark ? DV_DAYS_TO_CLEAR - mark.d : 0;
                 const markTitle = !mark
                     ? 'Antippen: als schwierige Vokabel markieren'
@@ -6966,7 +7415,8 @@
                     let mean = '<div class="vh-mean">' + vhText(r.d);
                     (r.ex || []).forEach(pair => {
                         mean += '<div class="vh-ex"><span class="vh-ex-la">' + vhText(pair[0]) + '</span>' +
-                                '<br><span class="vh-ex-de">' + vhText(pair[1]) + '</span></div>';
+                                (pair[1] ? '<br><span class="vh-ex-de">' + vhText(pair[1]) + '</span>' : '') +
+                                '</div>';
                     });
                     mean += '</div>';
                     return '<div class="vh-row' + marked + '"' +
@@ -7040,6 +7490,7 @@
 
         function selectLanguage(lang) {
             currentLanguage = lang;
+            englishDvActive = false;   // Bezug entsteht erst mit Theme 1 oder dem Heft
             hideAllScreens();
             if (lang === 'english') {
                 document.getElementById('setSelection').style.display = 'block';
@@ -7169,18 +7620,24 @@
             currentLanguage = 'english';
             isPhraseMode = false;
             isAprilChapter = (setChoice === 'april');
-            if (setChoice === 'theme2') {
+            // Nur Theme 1 hat ein Vokabelheft und damit Markierungen zum Filtern.
+            englishDvActive = (setChoice === 'theme1');
+
+            if (setChoice === 'theme1') {
+                vocabulary = vocabularyTheme1;
+                currentVocabularySet = '6. Klasse · Theme 1: Back to Camden Town';
+            } else if (setChoice === 'theme2') {
                 vocabulary = vocabularyTheme2;
-                currentVocabularySet = 'Theme 2: At School';
+                currentVocabularySet = '5. Klasse · Theme 2: At School';
             } else if (setChoice === 'theme3') {
                 vocabulary = vocabularyTheme3;
-                currentVocabularySet = 'Theme 3: Hobbies and Activities';
+                currentVocabularySet = '5. Klasse · Theme 3: Hobbies and Activities';
             } else if (setChoice === 'april') {
                 vocabulary = vocabularyApril;
                 currentVocabularySet = 'Vokabeln April';
             } else if (setChoice === 'all') {
-                vocabulary = [...vocabularyTheme2, ...vocabularyTheme3, ...vocabularyApril];
-                currentVocabularySet = 'Alle Vokabeln (Theme 2 + 3 + April)';
+                vocabulary = [...vocabularyTheme1, ...vocabularyTheme2, ...vocabularyTheme3, ...vocabularyApril];
+                currentVocabularySet = 'Alle Vokabeln (Theme 1 + 2 + 3 + April)';
             }
 
             hideAllScreens();
@@ -9326,10 +9783,17 @@
             wordStats = {};
 
             const progress = loadProgress();
-            shuffledVocabulary = weightedSample(vocabulary, 15, progress);
+            // dvSampleRound fällt ohne Markierungen auf die normale Auswahl
+            // zurück; dvIndexItems hinterlegt, zu welcher Heftzeile ein Wort gehört.
+            dvIndexItems(vocabulary);
+            shuffledVocabulary = dvSampleRound(vocabulary, 15, progress);
 
             // Assign random mode per word for this round
-            roundModes = shuffledVocabulary.map(() => Math.random() < 0.5 ? 'spelling' : 'mc');
+            // Einträge mit Klammern, Punkten oder Apostroph taugen nicht als
+            // Buchstaben-Puzzle („What a/an ...!") — die kommen nur im Multiple-Choice.
+            // mcOnly: taugt nicht als Buchstaben-Puzzle („What a/an ...!").
+            roundModes = shuffledVocabulary.map(v => v.mcOnly ? 'mc'
+                : (Math.random() < 0.5 ? 'spelling' : 'mc'));
 
             const savedTalers = localStorage.getItem('vocabularyGameTalers');
             if (savedTalers) {
@@ -10374,7 +10838,11 @@
                     currentWordIndex = 0;
                     shuffledVocabulary = wordsToRepeat;
                     // Assign fresh random modes for repeat round
-                    roundModes = shuffledVocabulary.map(() => Math.random() < 0.5 ? 'spelling' : 'mc');
+                    // Einträge mit Klammern, Punkten oder Apostroph taugen nicht als
+            // Buchstaben-Puzzle („What a/an ...!") — die kommen nur im Multiple-Choice.
+            // mcOnly: taugt nicht als Buchstaben-Puzzle („What a/an ...!").
+            roundModes = shuffledVocabulary.map(v => v.mcOnly ? 'mc'
+                : (Math.random() < 0.5 ? 'spelling' : 'mc'));
                     wordsToRepeat = [];
                     document.getElementById('total').textContent = shuffledVocabulary.length;
                     document.getElementById('feedback').textContent = '🔄 Jetzt wiederholen wir die schwierigen Vokabeln!';
@@ -10477,7 +10945,7 @@
         function showAutoHint() {
             const autoHintElement = document.getElementById('autoHint');
             if (currentMode === 'spelling') {
-                const firstLetter = currentWord[0].toUpperCase();
+                const firstLetter = currentWord[spellPrefix.length].toUpperCase();
                 autoHintElement.textContent = `💡 Tipp: Das Wort beginnt mit "${firstLetter}"`;
                 autoHintElement.className = 'auto-hint show';
             }
@@ -10488,11 +10956,21 @@
             const answerArea = document.getElementById('answerArea');
             answerArea.innerHTML = '';
 
+            spellPrefix = (currentLanguage === 'english' && /^to /.test(currentWord)) ? 'to ' : '';
+            selectedLetters = [];
+            for (let i = 0; i < spellPrefix.length; i++) {
+                selectedLetters.push({ letter: spellPrefix[i], id: -2 });
+            }
+
             for (let i = 0; i < currentWord.length; i++) {
                 const slot = document.createElement('div');
-                slot.className = 'letter-slot';
+                slot.className = 'letter-slot' + (i < spellPrefix.length ? ' fixed filled' : '');
                 slot.dataset.index = i;
-                slot.addEventListener('click', () => removeLetterFromSlot(i));
+                if (i < spellPrefix.length) {
+                    slot.textContent = spellPrefix[i].toUpperCase();
+                } else {
+                    slot.addEventListener('click', () => removeLetterFromSlot(i));
+                }
                 answerArea.appendChild(slot);
             }
         }
@@ -10501,8 +10979,9 @@
             const lettersPool = document.getElementById('lettersPool');
             lettersPool.innerHTML = '';
 
-            // Leerzeichen kommen NICHT in den Pool - sie werden beim Tippen automatisch gesetzt
-            const wordLetters = currentWord.split('').filter(c => c !== ' ');
+            // Leerzeichen kommen NICHT in den Pool - sie werden beim Tippen automatisch gesetzt.
+            // Das feste „to " ebenso wenig: es steht schon in den Feldern.
+            const wordLetters = currentWord.slice(spellPrefix.length).split('').filter(c => c !== ' ');
             const extraLetters = 'abcdefghijklmnopqrstuvwxyz';
             const numExtras = Math.min(5, Math.floor(currentWord.length / 2) + 2);
 
@@ -10510,7 +10989,9 @@
                 let randomLetter;
                 do {
                     randomLetter = extraLetters[Math.floor(Math.random() * extraLetters.length)];
-                } while (wordLetters.includes(randomLetter));
+                    // Buchstaben aus dem festen „to " nicht als Füllmaterial —
+                    // sie stehen oben schon und würden nur verwirren.
+                } while (wordLetters.includes(randomLetter) || spellPrefix.includes(randomLetter));
                 wordLetters.push(randomLetter);
             }
 
@@ -10550,13 +11031,14 @@
 
         function removeLetterFromSlot(index) {
             if (index >= selectedLetters.length) return;
+            if (index < spellPrefix.length) return;   // „to " ist vorgegeben
 
             // Wenn auf Auto-Space-Slot geklickt: stattdessen vorhergehenden echten Buchstaben entfernen
             let realIndex = index;
             while (realIndex >= 0 && selectedLetters[realIndex] && selectedLetters[realIndex].id === -1) {
                 realIndex--;
             }
-            if (realIndex < 0) return;
+            if (realIndex < spellPrefix.length) return;
 
             const removed = selectedLetters[realIndex];
             // For Latin spelling, look in lettersPool specifically
@@ -10566,7 +11048,8 @@
 
             // Buchstabe + alle nachfolgenden Auto-Leerzeichen wegnehmen
             selectedLetters.splice(realIndex);
-            while (selectedLetters.length > 0 && selectedLetters[selectedLetters.length - 1].id === -1) {
+            while (selectedLetters.length > spellPrefix.length &&
+                   selectedLetters[selectedLetters.length - 1].id === -1) {
                 selectedLetters.pop();
             }
             updateAnswerArea();
@@ -10584,6 +11067,8 @@
                 }
             });
         }
+
+        // Feste Vorgabe („to ") sieht anders aus als ein gelegtes Feld.
 
         function checkAnswer() {
             if (currentLanguage === 'latin') {
@@ -10841,7 +11326,11 @@
                 const tile = document.querySelector(`[data-id="${item.id}"]`);
                 if (tile) tile.classList.remove('used');
             });
+            // Das feste „to " bleibt stehen — gelöscht wird nur, was gelegt wurde.
             selectedLetters = [];
+            for (let i = 0; i < spellPrefix.length; i++) {
+                selectedLetters.push({ letter: spellPrefix[i], id: -2 });
+            }
             updateAnswerArea();
         }
 
