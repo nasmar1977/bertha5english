@@ -2099,7 +2099,7 @@
             .dv-toggle { top: 10px; right: 174px; width: 40px; height: 40px; font-size: 1.15em; }
             .dv-toggle .emoji-tooltip { top: 48px; right: -40px; width: 190px; }
         }
-        /* Stimmen-Schalter: nur im Hör-Detektiv und in der Funkzentrale */
+        /* Stimmen-Schalter: nur im Hör-Detektiv, in der Funkzentrale und bei Sätze schreiben */
         .voice-toggle {
             position: fixed; top: 18px; right: 274px; z-index: 20;
             width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
@@ -2650,6 +2650,30 @@
         }
 
         /* ===== Hör-Detektiv (Englisch, Theme 1) ===== */
+        /* ===== Sätze schreiben (Englisch, Theme 1) ===== */
+        .module-card.saetze-card { background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); }
+        .ss-card { background: #fff; border-radius: 22px; padding: 16px 18px; box-shadow: 0 4px 16px rgba(118, 75, 162, .12); }
+        .ss-label { font-size: .8em; font-weight: bold; letter-spacing: .04em; color: #764ba2; text-transform: uppercase; margin-bottom: 6px; }
+        .ss-de { font-size: 1.25em; line-height: 1.55; color: #2d2d3a; }
+        .ss-input { width: 100%; box-sizing: border-box; border: 3px solid #e3def7; border-radius: 16px; padding: 12px 14px;
+            font: inherit; font-size: 1.15em; margin-bottom: 12px; outline: none; background: #fcfbff; color: #2d2d3a; }
+        .ss-input:focus { border-color: #667eea; }
+        .ss-input.ok { border-color: #2e9d5b; background: #f2fbf5; }
+        .ss-input.bad { border-color: #f0ad4e; }
+        .ss-input:disabled { opacity: 1; }
+        .ss-sol { font-size: 1.15em; margin: 6px 0; padding: 8px 12px; background: rgba(255, 255, 255, .75); border-radius: 12px; line-height: 1.6; }
+        .ss-miss { background: #ffe08a; border-bottom: 2px solid #f5a623; border-radius: 4px; padding: 0 2px; font-weight: bold; }
+        .ss-typo { border-bottom: 2px dashed #f5a623; }
+        .ss-hints { margin: 6px 0; padding-left: 1.3em; }
+        .ss-hints li { margin: 3px 0; }
+        .ss-tip { margin: 8px 0; background: #fff6d6; border-radius: 12px; padding: 8px 12px; }
+        .ss-notes { margin: 8px 0; font-size: .92em; color: #6b4b00; }
+        .ss-used { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+        .ss-chip { border-radius: 999px; padding: 3px 10px; font-size: .85em; background: #eee; color: #888; }
+        .ss-chip.on { background: #d8f3e2; color: #1f6e40; font-weight: bold; }
+        .ss-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+        .ss-btns .ss-speak { margin-right: auto; }
+
         .module-card.hoer-card { background: linear-gradient(135deg, #c2e9fb 0%, #e0c3fc 100%); }
         .hd-topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
         .hd-taler { background: linear-gradient(135deg, #f6d365, #fda085); border-radius: 14px; padding: 7px 14px; font-weight: bold; color: #5a3200; white-space: nowrap; }
@@ -3007,6 +3031,12 @@
                 <div class="module-title">Funkzentrale Camden</div>
                 <div class="module-info">Notrufe auf Englisch verstehen &amp; die richtige Hilfe schicken</div>
             </div>
+
+            <div class="module-card saetze-card" id="enSaetzeCard" onclick="ssOpen()">
+                <div class="module-icon">✍️</div>
+                <div class="module-title">Sätze schreiben</div>
+                <div class="module-info">Deutsche Sätze selbst ins Englische übersetzen</div>
+            </div>
         </div>
     </div>
 
@@ -3084,6 +3114,65 @@
             </div>
             <div id="fzWordsBox"></div>
             <button class="fz-send fz-auto" onclick="fzStartShift()">Nächste Schicht</button>
+        </section>
+    </div>
+
+    <!-- SÄTZE SCHREIBEN (Englisch, Theme 1) -->
+    <div class="game-container" id="saetzeScreen" style="display: none;">
+        <section id="ssStart">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="ssBack()">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="ss-tal">0</span>/50</span>
+            </div>
+            <div class="fz-hero">✍️</div>
+            <div class="header">
+                <h1>Sätze schreiben</h1>
+                <div class="current-set">6. Klasse · Theme 1: Back to Camden Town</div>
+                <p style="color: #666; margin-top: 10px;">Du bekommst einen deutschen Satz – und schreibst ihn selbst auf Englisch.</p>
+            </div>
+            <div class="fz-rules">
+                <div class="fz-rule"><span>🇩🇪</span><div>Lies den deutschen Satz und schreib ihn <b>auf Englisch</b>. Achte auf die <b>Vergangenheit</b>: fell, sent, didn't …</div></div>
+                <div class="fz-rule"><span>📖</span><div>Unterstrichenes Wort antippen = Vokabelheft. Das Wort landet am Ende auf deiner Liste.</div></div>
+                <div class="fz-rule"><span>✏️</span><div>Nicht ganz richtig? Du bekommst Hinweise und darfst <b>einmal verbessern</b>.</div></div>
+                <div class="fz-rule"><span>🪙</span><div>6 Sätze pro Runde. Für je 2 Sätze auf Anhieb richtig gibt es 1 Taler.</div></div>
+            </div>
+            <button class="fz-send fz-auto" onclick="ssStart()">Los geht's ✍️</button>
+        </section>
+
+        <section id="ssPlay" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="ssShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="ss-tal">0</span>/50</span>
+            </div>
+            <div class="hd-progress" id="ssProgress"></div>
+            <div class="ss-card">
+                <div class="ss-label">🇩🇪 Auf Deutsch</div>
+                <div class="ss-de" id="ssDe"></div>
+                <div class="fz-gloss" id="ssGloss" style="display: none;"></div>
+                <div class="ss-label" style="margin-top: 14px;">🇬🇧 Auf Englisch</div>
+                <input type="text" class="ss-input" id="ssInput" placeholder="Schreib den Satz auf Englisch …"
+                       autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"
+                       oninput="ssInputChanged()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); if (!ssEl('ssCheckBtn').disabled) ssCheck(); }">
+                <button class="fz-send" id="ssCheckBtn" onclick="ssCheck()" disabled>Prüfen ✓</button>
+            </div>
+            <div id="ssFeedback"></div>
+        </section>
+
+        <section id="ssEnd" style="display: none;">
+            <div class="hd-topbar">
+                <button class="back-btn" onclick="ssShow('start')">← Zurück</button>
+                <span class="hd-taler">🪙 <span class="ss-tal">0</span>/50</span>
+            </div>
+            <div class="fz-hero">🏁</div>
+            <div class="header"><h1>Runde geschafft!</h1></div>
+            <div class="fz-report">
+                <div class="fz-stat"><b id="ssStFirst">0/6</b><small>auf Anhieb richtig</small></div>
+                <div class="fz-stat"><b id="ssStWords">0/0</b><small>Theme-1-Wörter benutzt</small></div>
+                <div class="fz-stat"><b id="ssStTaler">+0</b><small>Taler</small></div>
+            </div>
+            <p class="fz-note" id="ssSelfNote" style="margin-bottom: 10px;"></p>
+            <div id="ssWordsBox"></div>
+            <button class="fz-send fz-auto" onclick="ssStart()">Nächste Runde</button>
         </section>
     </div>
 
@@ -6316,9 +6405,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.25.4';
+        const APP_VERSION = '2.26.0';
 
         const changelogEntries = [
+            {
+                version: '2.26.0',
+                date: '12.10.2026',
+                items: [
+                    '<b>Neu bei Theme 1: Sätze schreiben &#9997;&#65039;</b> — du bekommst einen deutschen Satz und schreibst ihn selbst auf Englisch. Darin stecken die Wörter aus dem Vokabelheft und die Vergangenheit: <i>fell, sent, didn\'t, weren\'t</i>.',
+                    'Nicht ganz richtig? Dann siehst du, welches Wort noch nicht passt, und darfst einmal verbessern. Kleine Tippfehler zählen nicht.',
+                ]
+            },
             {
                 version: '2.25.4',
                 date: '10.10.2026',
@@ -7152,6 +7249,7 @@
             document.getElementById('enVokabelheftCard').style.display = thema.heft ? '' : 'none';
             document.getElementById('enHoerCard').style.display = thema.heft ? '' : 'none';   // Sätze kommen aus dem Heft
             document.getElementById('enFunkCard').style.display = thema.heft ? '' : 'none';   // Notrufe auch
+            document.getElementById('enSaetzeCard').style.display = thema.heft ? '' : 'none'; // Sätze auch
             document.getElementById('englishModuleSelection').style.display = 'block';
             dvUpdateToggle();
             applyAprilDarkBody();
@@ -7994,11 +8092,12 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen'].forEach(id => {
+            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen','saetzeScreen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
             hdStopAll();
             fzStopAll();
+            ssStopAll();
             hdUpdateVoiceToggle();
             const overlay = document.getElementById('introSuccessOverlay');
             if (overlay) overlay.style.display = 'none';
@@ -12444,6 +12543,10 @@
             const fzScreenEl = document.getElementById('funkzentraleScreen');
             if (fzScreenEl && fzScreenEl.style.display !== 'none') return;
 
+            // Sätze schreiben: die Tastatur gehört dem Eingabefeld.
+            const ssScreenEl = document.getElementById('saetzeScreen');
+            if (ssScreenEl && ssScreenEl.style.display !== 'none') return;
+
             // Hör-Detektiv: Kärtchen werden angetippt, Enter prüft.
             const hdScreenEl = document.getElementById('hoerDetektivScreen');
             if (hdScreenEl && hdScreenEl.style.display !== 'none') {
@@ -12973,6 +13076,668 @@
         });
 
         // ===================================================================
+        // SÄTZE SCHREIBEN — deutscher Satz vorgegeben, englisch frei übersetzen.
+        // Geprüft wird auf dem Gerät: gegen eine Musterlösung mit erlaubten
+        // Varianten, Wort für Wort. Kleine Tippfehler gehen durch — aber nicht,
+        // wenn aus dem Tippfehler eine andere Form wird (send/sent, fall/fell).
+        // Kein Netz, keine KI.
+        // ===================================================================
+        // de: {Wort im Satz|Vokabel im Heft} — antippbar, zeigt das Heft.
+        // en: Lösungen. (a|b|) = eine davon (leer = darf fehlen). Satzzeichen
+        //     und Groß-/Kleinschreibung zählen nicht, Kurzformen gelten wie Langformen.
+        // tip: kommt nach einem Fehlversuch dazu.
+        const SS_SENTENCES = [
+            { id: 'welcome',
+              de: '{Willkommen|welcome} in Dorset! Unsere Klassenfahrt ist ein großes {Abenteuer|adventure}.',
+              en: ['Welcome to Dorset! Our (class trip|school trip|trip) is a (great|big) adventure.'],
+              tip: '„Willkommen in …“ heißt auf Englisch <b>Welcome to …</b>' },
+            { id: 'first-leave',
+              de: '{Zuerst|at first} wollte unsere {Gruppe|group} das Camp {nicht|didn\'t (= did not)} {verlassen|to leave}.',
+              en: ['At first our group didn\'t want to leave the camp.'],
+              tip: 'Verneinung in der Vergangenheit: <b>didn\'t</b> + Grundform – also <i>didn\'t want</i>, nicht <i>didn\'t wanted</i>.' },
+            { id: 'climb-rock',
+              de: 'Lara {kletterte|to climb (up)} auf einen {hohen|high} {Felsen|rock}.',
+              en: ['Lara climbed (up|onto|on|up onto|) a high rock.'],
+              tip: 'Regelmäßige Verben bekommen im simple past ein <b>-ed</b>: climb → <b>climbed</b>.' },
+            { id: 'fell-down',
+              de: '{Plötzlich|suddenly} {fiel|to fall} sie {hinunter|down} und {verletzte|to hurt (sb)} sich am Bein.',
+              en: ['Suddenly she fell down and hurt her leg.'],
+              tip: 'fall → <b>fell</b>, hurt → <b>hurt</b> (bleibt gleich). „sich am Bein verletzen“ = <b>hurt her leg</b>.' },
+            { id: 'call-leader',
+              de: 'Mia {rief|to call} den {Gruppenleiter|leader} an.',
+              en: ['Mia called the group leader.'],
+              tip: '„anrufen“ = <b>to call</b>, im simple past <b>called</b>. Der Gruppenleiter = <b>the group leader</b>.' },
+            { id: 'send-hospital',
+              de: 'Er {schickte|to send} Lara ins {Krankenhaus|hospital}.',
+              en: ['He sent Lara to (the|) hospital.'],
+              tip: 'send → <b>sent</b> (unregelmäßig). „ins Krankenhaus“ = <b>to hospital</b> oder <b>to the hospital</b>.' },
+            { id: 'bored-hospital',
+              de: 'Im {Krankenhaus|hospital} war Lara {gelangweilt|bored}.',
+              en: ['In (the|) hospital Lara was bored.', 'Lara was bored in (the|) hospital.'],
+              tip: '„gelangweilt“ = <b>bored</b>. <i>boring</i> wäre „langweilig“ – das ist etwas anderes.' },
+            { id: 'not-train',
+              de: 'Kim und Jo {waren nicht|weren\'t (= were not)} im {Zug|train}.',
+              en: ['Kim and Jo weren\'t on the train.'],
+              tip: 'Zwei Personen → <b>were</b>, verneint <b>weren\'t</b>. Und Achtung: „im Zug“ heißt <b>on the train</b>.' },
+            { id: 'both-station',
+              de: 'Sie waren {beide|both} am Bahnhof.',
+              en: ['They were both at the (station|train station).', 'Both of them were at the (station|train station).'],
+              tip: '<b>both</b> steht nach <i>were</i>: <i>They were both …</i>' },
+            { id: 'message',
+              de: 'Warum hast du meine {Nachricht|message} {nicht|didn\'t (= did not)} gelesen?',
+              en: ['Why didn\'t you read my message?', 'Why did you not read my message?'],
+              tip: 'Frage in der Vergangenheit: <b>Why didn\'t you</b> + Grundform <b>read</b>.' },
+            { id: 'switch-off',
+              de: 'Mein Handy war aus, weil ich es im Unterricht {ausgeschaltet|to switch off} habe.',
+              en: ['My phone was off because I switched it off in (class|the lesson|lessons).'],
+              tip: '<b>switch off</b> wird getrennt, wenn <i>it</i> dazukommt: <b>switched it off</b>.' },
+            { id: 'break-rules',
+              de: 'Jack benutzte im Unterricht sein Handy und {verstieß gegen|to break} die Regeln.',
+              en: ['Jack used his phone in (class|the lesson) and broke the rules.',
+                   'Jack broke the rules (when|because) he used his phone in (class|the lesson).'],
+              tip: '„gegen die Regeln verstoßen“ = <b>break the rules</b>, im simple past <b>broke</b>.' },
+            { id: 'take-away',
+              de: 'Die Lehrerin nahm ihm das Handy {weg|away}.',
+              en: ['The teacher took his phone away.', 'The teacher took away his phone.', 'The teacher took the phone away from him.'],
+              tip: 'take → <b>took</b>. „wegnehmen“ = <b>take away</b>.' },
+            { id: 'head-office',
+              de: 'Dann schickte sie ihn ins {Büro|office} der {Schulleiterin|head teacher}.',
+              en: ['Then she sent him to the head teacher\'s office.'],
+              tip: 'Bei Personen steht das <b>\'s</b>: <i>the head teacher<b>\'s</b> office</i>.' },
+            { id: 'punishment',
+              de: 'Jack fand die {Strafe|punishment} {dumm|stupid}.',
+              en: ['Jack thought (that|) the punishment was stupid.'],
+              tip: '„etwas dumm finden“ = <b>think (that) something is stupid</b> – im simple past <b>thought … was</b>.' },
+            { id: 'agree',
+              de: 'Die {meisten|most} Kinder {waren einverstanden|to agree}, aber Paul {war nicht einverstanden|to disagree}.',
+              en: ['Most (of the|) (children|kids|pupils|students) agreed, but Paul (disagreed|didn\'t agree).'],
+              tip: '„die meisten Kinder“ = <b>most children</b> (ohne <i>the</i>). einverstanden sein = <b>agree</b>, nicht einverstanden = <b>disagree</b>.' },
+            { id: 'presentation',
+              de: 'Wir haben unsere {Präsentation|presentation} über {Großbritannien|(Great) Britain} {vorbereitet|to prepare}.',
+              en: ['We (prepared|have prepared) our presentation (about|on) (Great|) Britain.'],
+              tip: 'Erzählte Vergangenheit: <b>prepared</b> (simple past). „über“ = <b>about</b>.' },
+            { id: 'not-bored',
+              de: 'Die {Präsentation|presentation} war {interessant|interesting}, und niemand war {gelangweilt|bored}.',
+              en: ['The presentation was interesting, and (nobody|no one|no-one) was bored.'],
+              tip: '„niemand“ = <b>nobody</b>. „gelangweilt“ = <b>bored</b>.' },
+            { id: 'may-ask',
+              de: '{Darf|may} ich Sie {um|to ask (for sth)} Hilfe {bitten|to ask (for sth)}?',
+              en: ['(May|Can) I ask you for (some|) help?'],
+              tip: '„um etwas bitten“ = <b>ask for</b> something: <i>ask you <b>for</b> help</i>.' },
+            { id: 'go-online',
+              de: '{Wenn|if} du {gelangweilt|bored} bist, kannst du {online gehen|to go online}.',
+              en: ['If you are bored, you can go online.', 'You can go online if you are bored.'],
+              tip: '<b>If</b> leitet die Bedingung ein. Im Englischen bleibt die Wortstellung normal: <i>you can go online</i>.' },
+            { id: 'remember',
+              de: '{Erinnerst du dich an|to remember} den {Unfall|accident}?',
+              en: ['Do you remember the accident?'],
+              tip: '„sich erinnern an“ = <b>remember</b> – ohne <i>yourself</i> und ohne <i>on</i>. Frage mit <b>Do you …?</b>' },
+            { id: 'went-wrong',
+              de: '{Alles|everything} war gut, aber dann {ging|to go wrong} etwas {schief|to go wrong}.',
+              en: ['Everything was (fine|good|OK|okay), but then something went wrong.'],
+              tip: '<b>Everything</b> ist Einzahl → <b>was</b>. go → <b>went</b>: <i>something went wrong</i>.' },
+            { id: 'push-pull',
+              de: 'Fiona {schubste|to push} Olivia, und Olivia {zog|to pull} Fiona an den Haaren.',
+              en: ['Fiona pushed Olivia, and Olivia pulled Fiona\'s hair.'],
+              tip: '„jemanden an den Haaren ziehen“ = <b>pull someone\'s hair</b>: <i>pulled Fiona<b>\'s</b> hair</i>.' },
+            { id: 'dark-way',
+              de: 'Es war {dunkel|dark}, und die {Gruppe|group} kannte den Weg {nicht|didn\'t (= did not)}.',
+              en: ['It was dark, and the group didn\'t know the way.'],
+              tip: 'Verneinung in der Vergangenheit: <b>didn\'t know</b> – nach <i>didn\'t</i> kommt die Grundform.' },
+            { id: 'annoying',
+              de: 'Unser {Zug|train} war spät. Das war so {ärgerlich|annoying}!',
+              en: ['Our train was late. (That|It) was so annoying!'],
+              tip: '„ärgerlich“ = <b>annoying</b>. Ein Ding → <b>was</b>.' },
+            { id: 'record-send',
+              de: 'Jack {nahm|to record} sein erstes Lied {auf|to record} und {schickte|to send} es mir.',
+              en: ['Jack recorded his first song and sent it to me.'],
+              tip: 'record → <b>recorded</b>, send → <b>sent</b>. „schickte es mir“ = <b>sent it to me</b>.' },
+            { id: 'choose-show',
+              de: '{Wähl|to choose} ein Buch aus und {zeig|to show} es mir!',
+              en: ['(Choose|Pick) a book and show it to me!', '(Choose|Pick) a book and show me!'],
+              tip: 'Aufforderung = Grundform am Anfang: <b>Choose …!</b> „zeig es mir“ = <b>show it to me</b>.' },
+            { id: 'zoe-britain',
+              de: 'Zoe {war nicht|wasn\'t (= was not)} letztes Jahr in {Großbritannien|(Great) Britain}.',
+              en: ['Zoe wasn\'t in (Great|) Britain last year.', 'Last year Zoe wasn\'t in (Great|) Britain.'],
+              tip: 'Eine Person → <b>was</b>, verneint <b>wasn\'t</b>. Die Zeitangabe <i>last year</i> steht am Ende oder ganz vorn.' },
+            { id: 'plan-ill',
+              de: 'Wir haben unsere Reise {geplant|to plan}, aber dann war Ben {krank|ill}.',
+              en: ['We (planned|have planned) our (trip|journey), but then Ben was ill.'],
+              tip: 'plan → <b>planned</b> – das <b>n</b> wird verdoppelt. „krank“ = <b>ill</b>.' },
+            { id: 'plane-train',
+              de: 'Sie flogen nicht mit dem {Flugzeug|plane}, sie nahmen den {Zug|train}.',
+              en: ['They didn\'t (go|travel|fly) by plane, they (took the train|went by train|travelled by train).'],
+              tip: '„mit dem Flugzeug / Zug“ = <b>by plane / by train</b>. take → <b>took</b>.' },
+            { id: 'jump-hurt',
+              de: 'Lara {sprang|to jump} von den {Felsen|rock}, aber sie war nicht {verletzt|hurt}.',
+              en: ['Lara jumped (from|off) the rocks, but she (wasn\'t|was not) hurt.'],
+              tip: 'jump → <b>jumped</b>. „verletzt sein“ = <b>be hurt</b>: <i>she wasn\'t hurt</i>.' },
+            { id: 'trouble-strong',
+              de: 'Ben war in {Schwierigkeiten|trouble}, aber Rachel war {stark|strong} und half ihm.',
+              en: ['Ben was in trouble, but Rachel was strong and helped him.'],
+              tip: '„in Schwierigkeiten sein“ = <b>be in trouble</b> – ohne <i>a</i>, denn trouble hat keine Mehrzahl.' },
+            { id: 'break-around',
+              de: 'In der {Pause|break} spielte Pia mit ihrem Handy {herum|around}.',
+              en: ['(In|During) the break, Pia played around with her phone.', 'Pia played around with her phone (in|during) the break.'],
+              tip: '„herumspielen mit“ = <b>play around with</b>. „in der Pause“ = <b>in the break</b>.' },
+            { id: 'punish-unfriendly',
+              de: 'Die {Schulleiterin|head teacher} {bestrafte|to punish} die Schüler, weil sie {unfreundlich|unfriendly} waren.',
+              en: ['The head teacher punished the (pupils|students|children|kids) because they were unfriendly.'],
+              tip: 'punish → <b>punished</b>. Mehrere Schüler → <b>they were</b>.' },
+            { id: 'present-serious',
+              de: 'Mark {präsentierte|to present (sth to sb)} sein Projekt, und er war sehr {ernst|serious}.',
+              en: ['Mark presented his project, and he was very serious.'],
+              tip: '„präsentieren“ = <b>present</b>, im simple past <b>presented</b>. „ernst“ = <b>serious</b>.' },
+            { id: 'birthday-that',
+              de: 'Ich wusste {nicht|didn\'t (= did not)}, {dass|that} heute dein Geburtstag ist.',
+              en: ['I didn\'t know (that|) it (was|is) your birthday today.', 'I didn\'t know (that|) today (was|is) your birthday.'],
+              tip: '„Ich wusste nicht“ = <b>I didn\'t know</b> – nach didn\'t die Grundform <i>know</i>. „dass“ = <b>that</b>.' },
+        ];
+        const SS_ROUND = 6;
+
+        let ssRound = [], ssIdx = 0, ssTries = 0, ssDone = false, ssChecked = '';
+        let ssFirstOk = 0, ssGained = 0, ssUsed = 0, ssUsedOf = 0, ssSelf = 0;
+        let ssPeeked = new Set(), ssStuck = new Set();
+
+        function ssEl(id) { return document.getElementById(id); }
+        function ssKey(s) { return 'en:ss:' + s.id; }
+        function ssHeftWords(s) {
+            const out = [];
+            s.de.replace(/\{([^|}]+)\|([^}]+)\}/g, (m, t, w) => { if (out.indexOf(w) < 0) out.push(w); return m; });
+            return out;
+        }
+
+        // ---------- Text vergleichbar machen ----------
+        const SS_SHORT = {   // Kurzformen → Langformen, auch ohne Apostroph getippt
+            "can't": 'can not', "cannot": 'can not', "won't": 'will not', "don't": 'do not', "doesn't": 'does not',
+            "didn't": 'did not', "isn't": 'is not', "aren't": 'are not', "wasn't": 'was not', "weren't": 'were not',
+            "haven't": 'have not', "hasn't": 'has not', "mustn't": 'must not', "couldn't": 'could not',
+            "i'm": 'i am', "you're": 'you are', "we're": 'we are', "they're": 'they are', "it's": 'it is',
+            "that's": 'that is', "he's": 'he is', "she's": 'she is', "i've": 'i have', "we've": 'we have',
+            "you've": 'you have', "they've": 'they have', "let's": 'let us',
+            cant: 'can not', dont: 'do not', doesnt: 'does not', didnt: 'did not', isnt: 'is not',
+            arent: 'are not', wasnt: 'was not', werent: 'were not', havent: 'have not', mustnt: 'must not', im: 'i am',
+        };
+        const SS_NO_APOS = /\b(cant|dont|doesnt|didnt|isnt|arent|wasnt|werent|havent|mustnt|im)\b/i;
+
+        function ssWords(text) {
+            return String(text || '').toLowerCase()
+                .replace(/[’‘´`]/g, "'")
+                .replace(/[^a-z0-9' ]+/g, ' ')
+                .split(/\s+/).filter(Boolean)
+                .map(w => w.replace(/^'+|'+$/g, ''))
+                .filter(Boolean);
+        }
+        function ssNorm(word) {
+            const w = word.toLowerCase();
+            return SS_SHORT[w] ? SS_SHORT[w].split(' ') : [w];
+        }
+        function ssTokens(text) {
+            return ssWords(text).reduce((out, w) => out.concat(ssNorm(w)), []);
+        }
+
+        // (a|b|) ausmultiplizieren — verschachtelt geht auch.
+        function ssExpand(p) {
+            const i = p.indexOf('(');
+            if (i < 0) return [p.replace(/\s+/g, ' ').replace(/ ([.,!?])/g, '$1').trim()];
+            let depth = 0, j = i;
+            for (; j < p.length; j++) {
+                if (p[j] === '(') depth++;
+                else if (p[j] === ')' && --depth === 0) break;
+            }
+            const inner = p.slice(i + 1, j), parts = [];
+            let d = 0, start = 0;
+            for (let k = 0; k <= inner.length; k++) {
+                const c = inner[k];
+                if (c === '(') d++;
+                else if (c === ')') d--;
+                else if ((c === '|' && d === 0) || k === inner.length) { parts.push(inner.slice(start, k)); start = k + 1; }
+            }
+            const rest = ssExpand(p.slice(j + 1));
+            const out = [];
+            parts.forEach(part => ssExpand(p.slice(0, i) + part).forEach(head =>
+                rest.forEach(tail => out.push((head + ' ' + tail).replace(/\s+/g, ' ').replace(/ ([.,!?])/g, '$1').trim()))));
+            return out;
+        }
+
+        // ---------- Wort gegen Wort ----------
+        function ssLev(a, b) {
+            const m = a.length, n = b.length, d = [];
+            for (let i = 0; i <= m; i++) d[i] = [i];
+            for (let j = 0; j <= n; j++) d[0][j] = j;
+            for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+                d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+            return d[m][n];
+        }
+
+        // Paare, die wie Tippfehler aussehen, aber Grammatik sind.
+        const SS_PAST = { send: 'sent', fall: 'fell', hurt: 'hurt', choose: 'chose', break: 'broke', leave: 'left',
+            go: 'went', take: 'took', think: 'thought', know: 'knew', read: 'read', is: 'was', are: 'were', am: 'was',
+            do: 'did', does: 'did', have: 'had', has: 'had', can: 'could', come: 'came', see: 'saw', get: 'got',
+            find: 'found', fly: 'flew', say: 'said', tell: 'told', make: 'made', buy: 'bought', bring: 'brought' };
+        const SS_CONFUSE = [['was', 'were'], ['where', 'were'], ['then', 'than'], ['bored', 'boring'], ['bored', 'board'],
+            ['a', 'an'], ['the', 'a'], ['on', 'in'], ['to', 'too'], ['its', 'it'], ['his', 'her'], ['he', 'she'],
+            ['hear', 'here'], ['their', 'there'], ['plan', 'plane'], ['planed', 'planned'], ['of', 'off']];
+        const SS_PAST_REV = {};
+        Object.keys(SS_PAST).forEach(k => { SS_PAST_REV[SS_PAST[k]] = k; });
+
+        function ssFormOf(a, b) {          // b = a + Endung, oder unregelmäßige Form
+            if (SS_PAST[a] === b || SS_PAST[b] === a) return true;
+            return ['s', 'es', 'd', 'ed', 'ing'].some(e => a + e === b || b + e === a) ||
+                   (a.endsWith('y') && a.slice(0, -1) + 'ied' === b) || (b.endsWith('y') && b.slice(0, -1) + 'ied' === a) ||
+                   (a.length > 2 && a + a.slice(-1) + 'ed' === b) || (b.length > 2 && b + b.slice(-1) + 'ed' === a);
+        }
+        function ssGrammarPair(a, b) {
+            return ssFormOf(a, b) || SS_CONFUSE.some(p => (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a));
+        }
+        // 'same' | 'typo' | 'diff'
+        function ssCompare(user, target) {
+            if (user === target) return 'same';
+            if (target.length <= 3 || ssGrammarPair(user, target)) return 'diff';
+            return ssLev(user, target) <= (target.length >= 8 ? 2 : 1) ? 'typo' : 'diff';
+        }
+
+        // Wortweise Ausrichtung (Editierdistanz über Wörter) mit Rückverfolgung.
+        function ssAlign(user, target) {
+            const m = user.length, n = target.length, d = [], kind = [];
+            const COST = { same: 0, typo: 0.3, diff: 1 };
+            for (let i = 0; i <= m; i++) { d[i] = [i]; kind[i] = []; }
+            for (let j = 0; j <= n; j++) d[0][j] = j;
+            for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) {
+                const k = ssCompare(user[i - 1], target[j - 1]);
+                kind[i][j] = k;
+                d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + COST[k]);
+            }
+            const ops = [];
+            let i = m, j = n;
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + COST[kind[i][j]]) {
+                    ops.unshift({ op: kind[i][j], u: user[i - 1], t: target[j - 1], ti: j - 1 }); i--; j--;
+                } else if (j > 0 && d[i][j] === d[i][j - 1] + 1) {
+                    ops.unshift({ op: 'missing', t: target[j - 1], ti: j - 1 }); j--;
+                } else {
+                    ops.unshift({ op: 'extra', u: user[i - 1] }); i--;
+                }
+            }
+            return { cost: d[m][n], ops };
+        }
+
+        // Beste Lösung zum Satz des Kindes suchen.
+        function ssJudge(s, answer) {
+            const user = ssTokens(answer);
+            let best = null;
+            s.en.forEach(p => ssExpand(p).forEach(v => {
+                const a = ssAlign(user, ssTokens(v));
+                if (!best || a.cost < best.cost) best = { cost: a.cost, ops: a.ops, variant: v };
+            }));
+            best.ok = best.ops.every(o => o.op === 'same' || o.op === 'typo');
+            best.typos = best.ops.filter(o => o.op === 'typo');
+            return best;
+        }
+
+        // ---------- Welche Heftwörter stecken im Satz? ----------
+        function ssWordForms(heftWord) {
+            const isVerb = /^to /.test(heftWord);
+            const base = ssTokens(heftWord.replace(/\([^)]*\)/g, ' ').replace(/^to /, ''));
+            if (!base.length) return [];
+            const head = base[0], forms = new Set([head]);
+            const row = fzHeftRow(heftWord);
+            const past = row && /simple past:_?\s*([a-z]+)/i.exec(row.row.f || '');
+            if (past) forms.add(past[1].toLowerCase());
+            if (SS_PAST[head]) forms.add(SS_PAST[head]);
+            ['s', 'es', 'd', 'ed', 'ing'].forEach(e => forms.add(head + e));
+            if (isVerb && head.length > 2) forms.add(head + head.slice(-1) + 'ed');
+            return { forms: [...forms], rest: base.slice(1) };
+        }
+        // Wort gilt als benutzt, wenn seine Teile in Reihenfolge vorkommen
+        // (mit höchstens zwei Wörtern dazwischen: switched IT off).
+        function ssUses(tokens, heftWord) {
+            const f = ssWordForms(heftWord);
+            if (!f.forms) return false;
+            const hit = (tok, want) => { tok = tok.replace(/'s$/, ''); return ssCompare(tok, want) !== 'diff' || ssFormOf(tok, want); };
+            for (let i = 0; i < tokens.length; i++) {
+                if (!f.forms.some(x => hit(tokens[i], x))) continue;
+                let pos = i, ok = true;
+                for (const r of f.rest) {
+                    let found = -1;
+                    for (let k = pos + 1; k <= Math.min(tokens.length - 1, pos + 3); k++) if (hit(tokens[k], r)) { found = k; break; }
+                    if (found < 0) { ok = false; break; }
+                    pos = found;
+                }
+                if (ok) return true;
+            }
+            return false;
+        }
+
+        // ---------- Bildschirm ----------
+        function ssOpen() {
+            currentLanguage = 'english';
+            currentEnglishTheme = 'theme1';
+            englishDvActive = true;
+            hideAllScreens();
+            ssEl('saetzeScreen').style.display = 'block';
+            ssShow('start');
+            if (typeof hdPickVoice === 'function') hdPickVoice();
+            ssShowTaler();
+            dvUpdateToggle();
+            applyAprilDarkBody();
+            window.scrollTo(0, 0);
+        }
+        function ssBack() { ssStopAll(); backToEnglishModules(); }
+        function ssShow(which) {
+            ssStopAll();
+            ['start', 'play', 'end'].forEach(k => {
+                ssEl('ss' + k.charAt(0).toUpperCase() + k.slice(1)).style.display = (k === which) ? 'block' : 'none';
+            });
+            applyAprilDarkBody();
+        }
+        function ssStopAll() {
+            if ('speechSynthesis' in window) speechSynthesis.cancel();
+        }
+        function ssShowTaler() {
+            document.querySelectorAll('.ss-tal').forEach(e => { e.textContent = totalTalers; });
+        }
+
+        // Sätze mit markierten Knackpunkten zuerst, sonst gewichtet nach Lernstand.
+        function ssPickRound() {
+            const progress = loadProgress();
+            const weight = s => {
+                const p = progress[ssKey(s)];
+                if (!p) return 2.0;
+                return Math.max(0.2, 1.0 + p.wrong * 2.0 - p.correct * 0.3);
+            };
+            let pool = SS_SENTENCES.slice(), picked = [];
+            if (dvOn) {
+                const active = dvActiveWords();
+                picked = shuffleArray(pool.filter(s => ssHeftWords(s).some(w => active.has(w)))).slice(0, SS_ROUND);
+                pool = pool.filter(s => picked.indexOf(s) < 0);
+            }
+            while (picked.length < SS_ROUND && pool.length) {
+                const total = pool.reduce((sum, s) => sum + weight(s), 0);
+                let r = Math.random() * total, j = 0;
+                for (; j < pool.length - 1; j++) { r -= weight(pool[j]); if (r <= 0) break; }
+                picked.push(pool.splice(j, 1)[0]);
+            }
+            return shuffleArray(picked);
+        }
+
+        function ssStart() {
+            ssRound = ssPickRound();
+            ssIdx = 0; ssFirstOk = 0; ssGained = 0; ssUsed = 0; ssUsedOf = 0; ssSelf = 0;
+            ssPeeked = new Set(); ssStuck = new Set();
+            ssShow('play');
+            ssLoad();
+        }
+
+        function ssLoad() {
+            const s = ssRound[ssIdx];
+            ssTries = 0; ssDone = false; ssChecked = '';
+            ssEl('ssProgress').innerHTML = ssRound.map((x, i) =>
+                '<i class="' + (i < ssIdx ? 'done' : i === ssIdx ? 'cur' : '') + '"></i>').join('');
+            ssEl('ssDe').innerHTML = s.de.replace(/\{([^|}]+)\|([^}]+)\}/g, (m, t, w) =>
+                '<span class="fz-w" data-w="' + vhAttr(w) + '">' + vhAttr(t) + '</span>');
+            ssEl('ssGloss').style.display = 'none';
+            const inp = ssEl('ssInput');
+            inp.value = ''; inp.disabled = false; inp.classList.remove('ok', 'bad');
+            ssEl('ssCheckBtn').style.display = '';
+            ssEl('ssCheckBtn').disabled = true;
+            ssEl('ssFeedback').innerHTML = '';
+            ssShowTaler();
+            setTimeout(() => { try { inp.focus(); } catch (e) {} }, 50);
+        }
+
+        // Derselbe Satz wird nicht zweimal geprüft — erst ändern, dann nochmal.
+        function ssInputChanged() {
+            const v = ssEl('ssInput').value;
+            if (v !== ssChecked) ssEl('ssInput').classList.remove('bad');
+            ssEl('ssCheckBtn').disabled = ssDone || ssTokens(v).length < 2 || v === ssChecked;
+        }
+
+        function ssLookup(span) {
+            const w = span.dataset.w, hit = fzHeftRow(w);
+            if (!hit) return;
+            const clean = x => vhAttr((x || '').replace(/_/g, ''));
+            ssEl('ssGloss').innerHTML = '📖 <b>' + vhAttr(span.textContent) + '</b> → ' + clean(hit.row.w) +
+                (hit.row.f ? ' (' + clean(hit.row.f) + ')' : '');
+            ssEl('ssGloss').style.display = 'block';
+            if (ssDone) return;
+            ssPeeked.add(w);
+            document.querySelectorAll('#ssDe .fz-w').forEach(x => { if (x.dataset.w === w) x.classList.add('peek'); });
+        }
+
+        // Musterlösung in Originalschreibweise, Wörter nach Ergebnis eingefärbt.
+        function ssRenderSolution(best) {
+            const status = [];                       // pro Lösungs-Token
+            best.ops.forEach(o => { if (o.ti !== undefined) status[o.ti] = o.op; });
+            let ti = 0;
+            return best.variant.split(' ').map(word => {
+                const n = ssWords(word).reduce((c, w) => c + ssNorm(w).length, 0);
+                const st = status.slice(ti, ti + n);
+                ti += n;
+                const cls = st.some(x => x === 'diff' || x === 'missing') ? 'miss' : st.some(x => x === 'typo') ? 'typo' : '';
+                return cls ? '<span class="ss-' + cls + '">' + vhAttr(word) + '</span>' : vhAttr(word);
+            }).join(' ');
+        }
+
+        // Konkrete Hinweise aus der Ausrichtung — höchstens drei.
+        function ssHints(best) {
+            const out = [], ops = best.ops;
+            ops.forEach((o, i) => {
+                const n = ops[i + 1], p = ops[i - 1];
+                if (o.op === 'diff' && n && n.op === 'diff' && o.u === n.t && n.u === o.t) {   // zwei Wörter vertauscht
+                    out.push('Reihenfolge: <b>' + vhAttr(o.t + ' ' + n.t) + '</b> statt <i>' + vhAttr(o.u + ' ' + n.u) + '</i>');
+                } else if (o.op === 'diff' && p && p.op === 'diff' && p.u === o.t && o.u === p.t) {
+                    // schon beim Vorgänger erklärt
+                } else if (o.op === 'diff') {
+                    const past = SS_PAST[o.u] === o.t || o.t === o.u + 'ed' || o.t === o.u + 'd' ||
+                                 (o.u.length > 2 && o.t === o.u + o.u.slice(-1) + 'ed');
+                    out.push('Statt <b>' + vhAttr(o.u) + '</b> gehört hier <b>' + vhAttr(o.t) + '</b>' +
+                             (past ? ' – Vergangenheit (simple past)!' : '.'));
+                } else if (o.op === 'missing') {
+                    out.push('Es fehlt: <b>' + vhAttr(o.t) + '</b>');
+                } else if (o.op === 'extra') {
+                    out.push('Das gehört nicht hinein: <b>' + vhAttr(o.u) + '</b>');
+                }
+            });
+            return out.slice(0, 3);
+        }
+
+        // Großschreibung & Apostroph: zählt nicht als Fehler, wird aber erwähnt.
+        function ssStyleNotes(answer, best) {
+            const notes = [], raw = answer.trim();
+            if (/^[a-z]/.test(raw)) notes.push('Satzanfang groß schreiben.');
+            if (/(^|[^A-Za-z'])i([^A-Za-z']|$)/.test(raw)) notes.push('<b>I</b> („ich“) schreibt man immer groß.');
+            const vw = best.variant.split(' ');   // Großgeschriebenes mitten im Satz = Name
+            const names = vw.filter((w, i) => i > 0 && !/[.!?]$/.test(vw[i - 1]))
+                .map(w => w.replace(/'s$/, '').replace(/[^A-Za-z]/g, ''))
+                .filter(w => /^[A-Z][a-z]/.test(w));
+            const low = names.filter(nm => new RegExp('\\b' + nm.toLowerCase() + '\\b').test(raw));
+            if (low.length) notes.push('Namen groß: <b>' + low.map(vhAttr).join(', ') + '</b>.');
+            const ap = SS_NO_APOS.exec(raw);
+            if (ap) notes.push('Apostroph nicht vergessen: <b>' + vhAttr(Object.keys(SS_SHORT).find(k =>
+                k.replace("'", '') === ap[1].toLowerCase() && k.indexOf("'") > 0) || ap[1]) + '</b>');
+            return notes;
+        }
+
+        function ssCheck() {
+            const s = ssRound[ssIdx], answer = ssEl('ssInput').value;
+            if (ssDone || ssTokens(answer).length < 2) return;
+            ssTries++;
+            ssChecked = answer;
+            ssEl('ssCheckBtn').disabled = true;
+            const best = ssJudge(s, answer);
+            const tokens = ssTokens(answer);
+            const words = ssHeftWords(s);
+            const used = words.filter(w => ssUses(tokens, w));
+            const chips = '<div class="ss-used">' + words.map(w =>
+                '<span class="ss-chip ' + (used.indexOf(w) >= 0 ? 'on' : '') + '">' +
+                (used.indexOf(w) >= 0 ? '✓ ' : '') + vhAttr(w.replace(/\s*\(=.*\)/, '')) + '</span>').join('') + '</div>';
+            const notes = ssStyleNotes(answer, best);
+            const notesHtml = notes.length ? '<div class="ss-notes">✏️ ' + notes.join(' ') + '</div>' : '';
+            const speak = (typeof hdVoice !== 'undefined' && hdVoice)
+                ? '<button class="hd-btn ghost ss-speak" onclick="ssSpeak()">🔊 Anhören</button>' : '';
+            ssEl('ssInput').classList.toggle('ok', best.ok);
+            ssEl('ssInput').classList.toggle('bad', !best.ok);
+
+            if (best.ok) {
+                ssDone = true;
+                ssEl('ssInput').disabled = true;
+                ssEl('ssCheckBtn').style.display = 'none';
+                let extra = '';
+                if (ssTries === 1) {
+                    ssFirstOk++;
+                    recordAnswer(ssKey(s), true);
+                    if (ssFirstOk % 2 === 0) {              // wie überall: 2 auf Anhieb = 1 Taler
+                        ssGained++; totalTalers++;
+                        try { localStorage.setItem('vocabularyGameTalers', String(totalTalers)); } catch (e) {}
+                        extra = ' +1 🪙';
+                    }
+                } else {
+                    recordAnswer(ssKey(s), false);
+                }
+                ssCountUsed(used.length, words.length);
+                const typoTxt = best.typos.length
+                    ? '<div>Kleine Tippfehler: ' + best.typos.map(o => '<s>' + vhAttr(o.u) + '</s> → <b>' + vhAttr(o.t) + '</b>').join(', ') + '</div>' : '';
+                ssEl('ssFeedback').innerHTML = '<div class="fz-fb ok"><b class="t">' +
+                    (best.typos.length ? '👍 Fast perfekt!' : '✅ Richtig!') + extra + '</b>' +
+                    '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' + typoTxt + notesHtml + chips +
+                    '<div class="ss-btns">' + speak + '<button class="hd-btn check" onclick="ssNext()">' +
+                    (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div></div>';
+            } else {
+                ssHeftWords(s).forEach(w => { if (used.indexOf(w) < 0) ssStuck.add(w); });
+                const hints = ssHints(best);
+                const tip = s.tip ? '<div class="ss-tip">💡 ' + s.tip + '</div>' : '';
+                ssEl('ssFeedback').innerHTML = '<div class="fz-fb bad"><b class="t">' +
+                    (ssTries === 1 ? '🤔 Noch nicht ganz' : '🤔 Immer noch nicht') + '</b>' +
+                    (ssTries === 1
+                        ? '<ul class="ss-hints">' + hints.map(h => '<li>' + h + '</li>').join('') + '</ul>' + tip +
+                          '<div class="ss-btns"><button class="hd-btn check" onclick="ssRetry()">✏️ Verbessern</button>' +
+                          '<button class="hd-btn ghost" onclick="ssReveal()">Lösung zeigen</button></div>'
+                        : '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' +
+                          '<ul class="ss-hints">' + hints.map(h => '<li>' + h + '</li>').join('') + '</ul>' + tip + notesHtml +
+                          '<div class="ss-btns">' + speak + ssOwnBtn() + '<button class="hd-btn check" onclick="ssGiveUp()">' +
+                          (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div>') +
+                    '</div>';
+                if (ssTries >= 2) { ssDone = true; ssEl('ssInput').disabled = true; ssEl('ssCheckBtn').style.display = 'none'; ssEl('ssCheckBtn').disabled = true; }
+            }
+            ssEl('ssFeedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function ssOwnBtn() {
+            return '<button class="hd-btn ghost" onclick="ssOwn()" title="Wenn dein Satz anders, aber auch richtig ist">🙋 Meiner stimmt auch</button>';
+        }
+
+        function ssCountUsed(n, of) { ssUsed += n; ssUsedOf += of; }
+
+        function ssRetry() {
+            ssEl('ssFeedback').innerHTML = '';
+            const inp = ssEl('ssInput');
+            inp.focus();
+            try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (e) {}
+        }
+
+        // Lösung gleich nach dem ersten Versuch sehen = zweiter Versuch aufgegeben.
+        function ssReveal() {
+            ssTries = 2;
+            const s = ssRound[ssIdx], best = ssJudge(s, ssEl('ssInput').value);
+            ssDone = true;
+            ssEl('ssInput').disabled = true;
+            ssEl('ssCheckBtn').style.display = 'none';
+            const speak = (typeof hdVoice !== 'undefined' && hdVoice)
+                ? '<button class="hd-btn ghost ss-speak" onclick="ssSpeak()">🔊 Anhören</button>' : '';
+            ssEl('ssFeedback').innerHTML = '<div class="fz-fb bad"><b class="t">So heißt der Satz:</b>' +
+                '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' +
+                (s.tip ? '<div class="ss-tip">💡 ' + s.tip + '</div>' : '') +
+                '<div class="ss-btns">' + speak + ssOwnBtn() + '<button class="hd-btn check" onclick="ssGiveUp()">' +
+                (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div></div>';
+        }
+
+        function ssGiveUp() {
+            const s = ssRound[ssIdx], words = ssHeftWords(s);
+            recordAnswer(ssKey(s), false);
+            ssCountUsed(words.filter(w => ssUses(ssTokens(ssEl('ssInput').value), w)).length, words.length);
+            ssNext();
+        }
+
+        // Selbsteinschätzung: zählt weder als Fehler noch als Taler. Der Satz wird
+        // gemerkt (saetzeEigene), damit ein Erwachsener ihn ansehen und — wenn er
+        // stimmt — als weitere Lösung eintragen kann.
+        function ssOwn() {
+            const s = ssRound[ssIdx], answer = ssEl('ssInput').value.trim(), words = ssHeftWords(s);
+            ssSelf++;
+            ssCountUsed(words.filter(w => ssUses(ssTokens(answer), w)).length, words.length);
+            try {
+                const list = JSON.parse(localStorage.getItem('saetzeEigene') || '[]');
+                list.push({ id: s.id, satz: answer, am: new Date().toISOString().slice(0, 10) });
+                localStorage.setItem('saetzeEigene', JSON.stringify(list.slice(-100)));
+            } catch (e) {}
+            ssHeftWords(s).forEach(w => ssStuck.delete(w));
+            ssNext();
+        }
+
+        function ssNext() {
+            ssIdx++;
+            if (ssIdx < ssRound.length) { ssLoad(); window.scrollTo(0, 0); return; }
+            ssFinish();
+        }
+
+        function ssSpeak() {
+            const s = ssRound[ssIdx];
+            if (!s || typeof hdVoice === 'undefined' || !hdVoice) return;
+            const best = ssJudge(s, ssEl('ssInput').value);
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(best.variant);
+            u.voice = hdVoice;
+            u.lang = hdVoice.lang;
+            u.rate = 0.9;
+            speechSynthesis.speak(u);
+        }
+
+        function ssFinish() {
+            ssShow('end');
+            ssEl('ssStFirst').textContent = ssFirstOk + '/' + ssRound.length;
+            ssEl('ssStWords').textContent = ssUsed + '/' + ssUsedOf;
+            ssEl('ssStTaler').textContent = '+' + ssGained;
+            ssEl('ssSelfNote').textContent = ssSelf
+                ? '🙋 ' + ssSelf + (ssSelf === 1 ? ' Satz hast du' : ' Sätze hast du') + ' selbst als richtig gewertet.' : '';
+            ssRenderWords();
+            ssShowTaler();
+            window.scrollTo(0, 0);
+        }
+
+        function ssRenderWords() {
+            const words = [...new Set([...ssStuck, ...ssPeeked])].filter(w => fzHeftRow(w));
+            const box = ssEl('ssWordsBox');
+            if (!words.length) { box.innerHTML = '<p class="fz-note">Kein Wort hat dich aufgehalten – stark! 🌟</p>'; return; }
+            const neu = words.filter(w => { const h = fzHeftRow(w); return !vhMarks['en-theme1|' + h.packet + '|' + w]; });
+            box.innerHTML = '<p style="text-align: center; font-weight: bold;">Diese Wörter haben dich aufgehalten:</p>' +
+                '<div class="fz-chips">' + words.map(w => '<span class="fz-chip">' + vhAttr(w) + '</span>').join('') + '</div>' +
+                (neu.length
+                    ? '<button class="hd-btn ghost" style="display: block; margin: 10px auto 0;" onclick="ssMarkWords()">🎯 ' + neu.length +
+                      (neu.length === 1 ? ' Wort' : ' Wörter') + ' als Knackpunkte markieren</button>'
+                    : '<p class="fz-note">🎯 Alle schon als Knackpunkte markiert.</p>');
+            box.dataset.words = JSON.stringify(neu);
+        }
+
+        function ssMarkWords() {
+            let neu = [];
+            try { neu = JSON.parse(ssEl('ssWordsBox').dataset.words || '[]'); } catch (e) {}
+            neu.forEach(w => {
+                const h = fzHeftRow(w);
+                if (h) vhMarks['en-theme1|' + h.packet + '|' + w] = { h: 0, d: 0, r: null };
+            });
+            saveVhMarks();
+            dvUpdateToggle();
+            dvToast('🎯 ' + neu.length + (neu.length === 1 ? ' Wort ist' : ' Wörter sind') + ' jetzt im Vokabelheft markiert.');
+            ssRenderWords();
+        }
+
+        document.addEventListener('click', e => {
+            const w = e.target.closest && e.target.closest('#ssDe .fz-w');
+            if (w) ssLookup(w);
+        });
+
+        // ===================================================================
         // HÖR-DETEKTIV — Beispielsatz aus dem Vokabelheft (Theme 1) hören,
         // aus Kärtchen nachlegen, nachsprechen. Alles bleibt auf dem Gerät:
         // nur Stimmen mit localService, keine Spracherkennung, die Aufnahme
@@ -13174,7 +13939,7 @@
             const btn = document.getElementById('voiceToggle');
             if (!btn) return;
             const vis = id => { const el = document.getElementById(id); return el && el.style.display !== 'none'; };
-            const show = !!hdVoice && (vis('hoerDetektivScreen') || vis('funkzentraleScreen'));
+            const show = !!hdVoice && (vis('hoerDetektivScreen') || vis('funkzentraleScreen') || vis('saetzeScreen'));
             btn.classList.toggle('visible', show);
             if (!show) return;
             const i = hdVoices.indexOf(hdVoice);

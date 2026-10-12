@@ -73,6 +73,25 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     **nicht der Ort** — den muss der Notruftext selbst hergeben
   - Markup im Text: `{Wort im Text|Vokabel im Heft}`; Vorlesen mit derselben lokalen Stimme wie
     der Hör-Detektiv
+- **✍️ Sätze schreiben (Theme 1)**: 36 deutsche Sätze (Klassenfahrt, Handy im Unterricht,
+  Präsentation), die das Kind frei ins Englische übersetzt. Drin stecken alle 66 Vokabeln und die
+  Grammatik von Theme 1 (simple past, was/were, wasn't/weren't, didn't); Hilfswörter aus der 5. Klasse
+  - **geprüft wird auf dem Gerät, ohne KI und ohne Netz**: Jeder Satz hat eine Musterlösung mit
+    erlaubten Varianten (`(a|b|)` in `SS_SENTENCES`, ergibt 128 Fassungen). Satzzeichen und
+    Groß-/Kleinschreibung zählen nicht, Kurz- und Langform gelten gleich (`didn't` = `did not`)
+  - Vergleich Wort für Wort (Editierdistanz über Wörter, `ssAlign`). Tippfehler gehen durch, aber
+    **nicht, wenn daraus eine andere Form wird**: send/sent, fall/fell, planed/planned, bored/boring,
+    in/on, was/were (`ssGrammarPair`). Hinweise nennen das Wort („Statt *send* gehört hier *sent* –
+    Vergangenheit!“), vertauschte Wörter heißen „Reihenfolge“
+  - Großschreibung, Namen, „I“ und fehlender Apostroph werden erwähnt, gelten aber nicht als Fehler
+  - Ablauf: ein Versuch, bei Fehlern Hinweise + Grammatik-Tipp und **einmal verbessern** (oder Lösung
+    zeigen). Danach die Lösung mit markierten Stellen, 🔊 mit der Stimme des Hör-Detektivs
+  - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
+    noch als Taler; der Satz wird in `localStorage.saetzeEigene` gemerkt (höchstens 100), damit ein
+    Erwachsener ihn ansehen und als Variante nachtragen kann
+  - 6 Sätze pro Runde, 2 auf Anhieb richtig = 1 Taler, Knackpunkte zuerst. Deutsche Heftwörter sind
+    antippbar (Bedeutung aus dem Heft); nachgeschlagene und verfehlte Wörter lassen sich am Ende als
+    Knackpunkte markieren. Unter jeder Lösung steht, welche Theme-1-Wörter das Kind benutzt hat
 - 2 Vokabel-Sets: Theme 2 (At School, 70 Wörter) + Theme 3 (Hobbies, 70 Wörter)
 
 ### 🏛️ Latein
@@ -111,8 +130,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.25.4
-**Datum:** 10.10.2026
+**Version:** 2.26.0
+**Datum:** 12.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -157,6 +176,15 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.26.0 (12.10.2026)
+- **Neues Modul „✍️ Sätze schreiben“ (Theme 1)**: deutscher Satz vorgegeben, englisch frei
+  übersetzen. 36 Sätze mit allen 66 Vokabeln, geprüft rein auf dem Gerät gegen Musterlösungen mit Varianten.
+  Tippfehlertoleranz, außer wo der Tippfehler eine andere Grammatikform ergäbe. Ein Verbesserungsversuch,
+  Selbsteinschätzung „Meiner stimmt auch“ (gemerkt in `saetzeEigene`).
+- Bewusst **ohne KI-Korrektur** für den Anfang. Der Weg über den Klassenarbeit-Trainer hieße:
+  Gemini-Schlüssel im Link. Besser wäre später ein eigener Pfad im Cloudflare-Worker mit dem
+  Schlüssel als Secret.
 
 ### Version 2.25.4 (10.10.2026)
 - **Tipp für eine bessere Stimme, diesmal auf Nachfrage und mit dem Weg, der wirklich hilft:**
