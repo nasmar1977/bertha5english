@@ -2671,6 +2671,9 @@
         .ss-used { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
         .ss-chip { border-radius: 999px; padding: 3px 10px; font-size: .85em; background: #eee; color: #888; }
         .ss-chip.on { background: #d8f3e2; color: #1f6e40; font-weight: bold; }
+        .ss-ki { margin: 8px 0; background: #eef2ff; border-radius: 12px; padding: 8px 12px; }
+        .ss-alt { margin: 6px 0; font-size: .92em; color: #555; }
+        .fz-fb.ss-wait { background: #f2f0ff; border: 2px dashed #b9b2e8; color: #5a4fa0; }
         .ss-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: flex-end; }
         .ss-btns .ss-speak { margin-right: auto; }
 
@@ -3134,6 +3137,7 @@
                 <div class="fz-rule"><span>🇩🇪</span><div>Lies den deutschen Satz und schreib ihn <b>auf Englisch</b>. Achte auf die <b>Vergangenheit</b>: fell, sent, didn't …</div></div>
                 <div class="fz-rule"><span>📖</span><div>Unterstrichenes Wort antippen = Vokabelheft. Das Wort landet am Ende auf deiner Liste.</div></div>
                 <div class="fz-rule"><span>✏️</span><div>Nicht ganz richtig? Du bekommst Hinweise und darfst <b>einmal verbessern</b>.</div></div>
+                <div class="fz-rule"><span>🤖</span><div>Sieht dein Satz anders aus als die Musterlösung, fragt die App eine <b>KI</b> um Rat. Dorthin geht nur der Satz, nicht dein Name.</div></div>
                 <div class="fz-rule"><span>🪙</span><div>6 Sätze pro Runde. Für je 2 Sätze auf Anhieb richtig gibt es 1 Taler.</div></div>
             </div>
             <button class="fz-send fz-auto" onclick="ssStart()">Los geht's ✍️</button>
@@ -6405,9 +6409,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.26.0';
+        const APP_VERSION = '2.27.0';
 
         const changelogEntries = [
+            {
+                version: '2.27.0',
+                date: '12.10.2026',
+                items: [
+                    '<b>Sätze schreiben fragt jetzt eine KI um Rat</b> &#129302;, wenn dein Satz anders aussieht als die Musterlösung. Ist er auch richtig, zählt er wie ein richtiger Satz – auch für die Taler.',
+                    'Ist er nicht richtig, erklärt dir die KI, welches Wort noch nicht passt. Zur KI geht nur dein Satz, nicht dein Name.',
+                ]
+            },
             {
                 version: '2.26.0',
                 date: '12.10.2026',
@@ -13236,6 +13248,7 @@
         const SS_ROUND = 6;
 
         let ssRound = [], ssIdx = 0, ssTries = 0, ssDone = false, ssChecked = '';
+        let ssReq = 0, ssKiAus = false;     // ssReq: Zähler gegen veraltete KI-Antworten; ssKiAus: Tageslimit erreicht
         let ssFirstOk = 0, ssGained = 0, ssUsed = 0, ssUsedOf = 0, ssSelf = 0;
         let ssPeeked = new Set(), ssStuck = new Set();
 
@@ -13432,6 +13445,7 @@
             applyAprilDarkBody();
         }
         function ssStopAll() {
+            ssReq++;    // laufende KI-Antwort verwerfen
             if ('speechSynthesis' in window) speechSynthesis.cancel();
         }
         function ssShowTaler() {
@@ -13559,13 +13573,63 @@
             return notes;
         }
 
-        function ssCheck() {
+        // ---------- KI-Zweitmeinung über den Worker ----------
+        // Gefragt wird nur, wenn die eigene Prüfung den Satz nicht erkennt.
+        // Hin geht: deutscher Satz, Musterlösung, Antwort, Geräte-ID (fürs
+        // Tageslimit). Kein Name. Antwortet der Worker nicht, bleibt alles
+        // wie ohne KI.
+        const SS_KI_API = PRESENCE_API ? PRESENCE_API.replace(/\/?$/, '/') + 'korrektur' : '';
+        const SS_KI_TIMEOUT = 9000;
+
+        async function ssAskKI(s, answer, best) {
+            if (!SS_KI_API || ssKiAus || (navigator.onLine === false)) return null;
+            const ctl = ('AbortController' in window) ? new AbortController() : null;
+            const t = ctl ? setTimeout(() => ctl.abort(), SS_KI_TIMEOUT) : null;
+            try {
+                const r = await fetch(SS_KI_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: myDeviceId(), de: s.de.replace(/\{([^|}]+)\|[^}]+\}/g, '$1'),
+                                           loesung: best.variant, antwort: answer }),
+                    signal: ctl ? ctl.signal : undefined,
+                });
+                if (r.status === 429) { ssKiAus = true; return null; }
+                if (!r.ok) return null;
+                const d = await r.json();
+                return typeof d.ok === 'boolean' ? d : null;
+            } catch (e) {
+                return null;
+            } finally {
+                if (t) clearTimeout(t);
+            }
+        }
+
+        // Hat die eigene Prüfung eine falsche Form desselben Worts gefunden
+        // (send/sent, fall/fell, want/wanted), zählt ein „ok“ der KI nicht.
+        function ssFormSlip(best) {
+            return best.ops.some(o => o.op === 'diff' && ssFormOf(o.u, o.t));
+        }
+
+        async function ssCheck() {
             const s = ssRound[ssIdx], answer = ssEl('ssInput').value;
             if (ssDone || ssTokens(answer).length < 2) return;
             ssTries++;
             ssChecked = answer;
             ssEl('ssCheckBtn').disabled = true;
             const best = ssJudge(s, answer);
+            let ki = null;
+            if (!best.ok) {
+                const req = ++ssReq, idx = ssIdx;
+                ssEl('ssInput').disabled = true;
+                ssEl('ssFeedback').innerHTML = SS_KI_API && !ssKiAus
+                    ? '<div class="fz-fb ss-wait">⏳ Dein Satz sieht anders aus als meine Lösung – ich schaue genauer hin …</div>' : '';
+                ki = await ssAskKI(s, answer, best);
+                if (req !== ssReq || idx !== ssIdx || ssEl('ssPlay').style.display === 'none') return;   // inzwischen weiter
+                ssEl('ssInput').disabled = false;
+            }
+            const kiOk = !best.ok && ki && ki.ok && !ssFormSlip(best);
+            if (ki && ki.ok && !kiOk) ki = null;     // KI-Lob unter „Noch nicht ganz“ wäre widersprüchlich
+            const ok = best.ok || kiOk;
             const tokens = ssTokens(answer);
             const words = ssHeftWords(s);
             const used = words.filter(w => ssUses(tokens, w));
@@ -13576,10 +13640,11 @@
             const notesHtml = notes.length ? '<div class="ss-notes">✏️ ' + notes.join(' ') + '</div>' : '';
             const speak = (typeof hdVoice !== 'undefined' && hdVoice)
                 ? '<button class="hd-btn ghost ss-speak" onclick="ssSpeak()">🔊 Anhören</button>' : '';
-            ssEl('ssInput').classList.toggle('ok', best.ok);
-            ssEl('ssInput').classList.toggle('bad', !best.ok);
+            const kiLine = ki && ki.erklaerung ? '<div class="ss-ki">🤖 ' + vhAttr(ki.erklaerung) + '</div>' : '';
+            ssEl('ssInput').classList.toggle('ok', ok);
+            ssEl('ssInput').classList.toggle('bad', !ok);
 
-            if (best.ok) {
+            if (ok) {
                 ssDone = true;
                 ssEl('ssInput').disabled = true;
                 ssEl('ssCheckBtn').style.display = 'none';
@@ -13596,25 +13661,38 @@
                     recordAnswer(ssKey(s), false);
                 }
                 ssCountUsed(used.length, words.length);
-                const typoTxt = best.typos.length
-                    ? '<div>Kleine Tippfehler: ' + best.typos.map(o => '<s>' + vhAttr(o.u) + '</s> → <b>' + vhAttr(o.t) + '</b>').join(', ') + '</div>' : '';
+                let body;
+                if (kiOk) {
+                    ssRemember(s, answer, 'ki');             // Kandidat für eine neue Variante
+                    body = '<div class="ss-sol">' + vhAttr(ki.korrigiert || answer) + '</div>' + kiLine +
+                           '<div class="ss-alt">So steht es in meiner Lösung: <i>' + vhAttr(best.variant) + '</i></div>';
+                } else {
+                    const typoTxt = best.typos.length
+                        ? '<div>Kleine Tippfehler: ' + best.typos.map(o => '<s>' + vhAttr(o.u) + '</s> → <b>' + vhAttr(o.t) + '</b>').join(', ') + '</div>' : '';
+                    body = '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' + typoTxt;
+                }
                 ssEl('ssFeedback').innerHTML = '<div class="fz-fb ok"><b class="t">' +
-                    (best.typos.length ? '👍 Fast perfekt!' : '✅ Richtig!') + extra + '</b>' +
-                    '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' + typoTxt + notesHtml + chips +
+                    (kiOk ? '✅ Richtig – anders als meine Lösung, aber das geht auch!' : best.typos.length ? '👍 Fast perfekt!' : '✅ Richtig!') +
+                    extra + '</b>' + body + notesHtml + chips +
                     '<div class="ss-btns">' + speak + '<button class="hd-btn check" onclick="ssNext()">' +
                     (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div></div>';
             } else {
                 ssHeftWords(s).forEach(w => { if (used.indexOf(w) < 0) ssStuck.add(w); });
-                const hints = ssHints(best);
+                // Hat die KI geantwortet, erklärt sie — ihre Hinweise passen zum Satz des
+                // Kindes. Die Wortvergleich-Hinweise beziehen sich auf die Musterlösung
+                // und stiften bei anders gebauten Sätzen eher Verwirrung.
+                const hints = ki ? '' : '<ul class="ss-hints">' + ssHints(best).map(h => '<li>' + h + '</li>').join('') + '</ul>';
                 const tip = s.tip ? '<div class="ss-tip">💡 ' + s.tip + '</div>' : '';
+                const fixed = ki && ki.korrigiert && ssTries >= 2
+                    ? '<div class="ss-alt">Dein Satz, verbessert: <b>' + vhAttr(ki.korrigiert) + '</b></div>' : '';
                 ssEl('ssFeedback').innerHTML = '<div class="fz-fb bad"><b class="t">' +
                     (ssTries === 1 ? '🤔 Noch nicht ganz' : '🤔 Immer noch nicht') + '</b>' +
                     (ssTries === 1
-                        ? '<ul class="ss-hints">' + hints.map(h => '<li>' + h + '</li>').join('') + '</ul>' + tip +
+                        ? kiLine + hints + tip +
                           '<div class="ss-btns"><button class="hd-btn check" onclick="ssRetry()">✏️ Verbessern</button>' +
                           '<button class="hd-btn ghost" onclick="ssReveal()">Lösung zeigen</button></div>'
-                        : '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' +
-                          '<ul class="ss-hints">' + hints.map(h => '<li>' + h + '</li>').join('') + '</ul>' + tip + notesHtml +
+                        : fixed + '<div class="ss-sol">' + ssRenderSolution(best) + '</div>' +
+                          kiLine + hints + tip + notesHtml +
                           '<div class="ss-btns">' + speak + ssOwnBtn() + '<button class="hd-btn check" onclick="ssGiveUp()">' +
                           (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div>') +
                     '</div>';
@@ -13663,16 +13741,22 @@
         // gemerkt (saetzeEigene), damit ein Erwachsener ihn ansehen und — wenn er
         // stimmt — als weitere Lösung eintragen kann.
         function ssOwn() {
-            const s = ssRound[ssIdx], answer = ssEl('ssInput').value.trim(), words = ssHeftWords(s);
+            const s = ssRound[ssIdx], answer = ssEl('ssInput').value, words = ssHeftWords(s);
             ssSelf++;
             ssCountUsed(words.filter(w => ssUses(ssTokens(answer), w)).length, words.length);
-            try {
-                const list = JSON.parse(localStorage.getItem('saetzeEigene') || '[]');
-                list.push({ id: s.id, satz: answer, am: new Date().toISOString().slice(0, 10) });
-                localStorage.setItem('saetzeEigene', JSON.stringify(list.slice(-100)));
-            } catch (e) {}
+            ssRemember(s, answer, 'kind');
             ssHeftWords(s).forEach(w => ssStuck.delete(w));
             ssNext();
+        }
+
+        // Sätze, die die Musterlösung nicht kennt, aber das Kind oder die KI für
+        // richtig hält — zum Nachsehen und Nachtragen als Variante.
+        function ssRemember(s, answer, von) {
+            try {
+                const list = JSON.parse(localStorage.getItem('saetzeEigene') || '[]');
+                list.push({ id: s.id, satz: answer.trim(), von: von, am: new Date().toISOString().slice(0, 10) });
+                localStorage.setItem('saetzeEigene', JSON.stringify(list.slice(-100)));
+            } catch (e) {}
         }
 
         function ssNext() {

@@ -76,7 +76,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **✍️ Sätze schreiben (Theme 1)**: 36 deutsche Sätze (Klassenfahrt, Handy im Unterricht,
   Präsentation), die das Kind frei ins Englische übersetzt. Drin stecken alle 66 Vokabeln und die
   Grammatik von Theme 1 (simple past, was/were, wasn't/weren't, didn't); Hilfswörter aus der 5. Klasse
-  - **geprüft wird auf dem Gerät, ohne KI und ohne Netz**: Jeder Satz hat eine Musterlösung mit
+  - **zuerst geprüft wird auf dem Gerät, ohne Netz**: Jeder Satz hat eine Musterlösung mit
     erlaubten Varianten (`(a|b|)` in `SS_SENTENCES`, ergibt 128 Fassungen). Satzzeichen und
     Groß-/Kleinschreibung zählen nicht, Kurz- und Langform gelten gleich (`didn't` = `did not`)
   - Vergleich Wort für Wort (Editierdistanz über Wörter, `ssAlign`). Tippfehler gehen durch, aber
@@ -86,9 +86,17 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - Großschreibung, Namen, „I“ und fehlender Apostroph werden erwähnt, gelten aber nicht als Fehler
   - Ablauf: ein Versuch, bei Fehlern Hinweise + Grammatik-Tipp und **einmal verbessern** (oder Lösung
     zeigen). Danach die Lösung mit markierten Stellen, 🔊 mit der Stimme des Hör-Detektivs
+  - **🤖 KI-Zweitmeinung** (ab 2.27.0): Passt der Satz zu keiner Variante, fragt die App den Worker
+    (`POST …/korrektur`, siehe [`worker/README.md`](worker/README.md)), der Google Gemini fragt.
+    Hin gehen deutscher Satz, Musterlösung und Antwort, die Geräte-ID nur fürs Tageslimit
+    (40 pro Gerät, 400 insgesamt). Ein „ok“ der KI zählt wie ein richtiger Satz, **außer** die eigene
+    Prüfung hat eine falsche Form desselben Worts gefunden (send/sent, want/wanted — `ssFormSlip`).
+    Sagt die KI „falsch“, ersetzt ihre Erklärung die Wortvergleich-Hinweise; beim zweiten Fehlversuch
+    kommt ihr verbesserter Satz dazu. Kein Netz, Limit, Fehler oder Zeitüberschreitung (9 s) →
+    alles wie ohne KI. Von der KI akzeptierte Sätze landen mit `von: 'ki'` in `saetzeEigene`
   - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
-    noch als Taler; der Satz wird in `localStorage.saetzeEigene` gemerkt (höchstens 100), damit ein
-    Erwachsener ihn ansehen und als Variante nachtragen kann
+    noch als Taler; der Satz wird mit `von: 'kind'` in `localStorage.saetzeEigene` gemerkt (höchstens 100),
+    damit ein Erwachsener ihn ansehen und als Variante nachtragen kann
   - 6 Sätze pro Runde, 2 auf Anhieb richtig = 1 Taler, Knackpunkte zuerst. Deutsche Heftwörter sind
     antippbar (Bedeutung aus dem Heft); nachgeschlagene und verfehlte Wörter lassen sich am Ende als
     Knackpunkte markieren. Unter jeder Lösung steht, welche Theme-1-Wörter das Kind benutzt hat
@@ -130,7 +138,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.26.0
+**Version:** 2.27.0
 **Datum:** 12.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -154,7 +162,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | Pfad | Inhalt |
 |---|---|
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
-| `worker/` | Anwesenheits-Dienst (Cloudflare Worker + D1) hinter der Liste „Gerade da“ |
+| `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
 
 ## 🚀 Wie benutzen?
@@ -176,6 +184,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.27.0 (12.10.2026)
+- **KI-Zweitmeinung für „Sätze schreiben“** über einen neuen Pfad im vorhandenen Worker
+  (`POST /korrektur`) → Google Gemini (`gemini-2.5-flash-lite`, per `GEMINI_MODEL` tauschbar).
+  Der Schlüssel liegt als Secret `GEMINI_KEY` im Worker, nicht im Link wie im Klassenarbeit-Trainer.
+  Tageslimit in D1 (Tabelle `korrektur`, 40 pro Gerät, 400 gesamt), gezählt **vor** der Anfrage.
+- Die App fragt nur, wenn die eigene Prüfung den Satz nicht kennt. Ein „ok“ der KI wird verworfen,
+  wenn der Wortvergleich eine falsche Form desselben Worts gefunden hat.
+- Ohne eingerichteten Worker (503), ohne Netz oder beim Limit: unverändertes Verhalten wie in 2.26.0.
+  App und Worker lassen sich also in beliebiger Reihenfolge ausliefern.
 
 ### Version 2.26.0 (12.10.2026)
 - **Neues Modul „✍️ Sätze schreiben“ (Theme 1)**: deutscher Satz vorgegeben, englisch frei

@@ -110,6 +110,82 @@ Danach: **Adresse an mich**, ich trage sie in `PRESENCE_API` ein.
 
 ---
 
+# KI-Korrektur für „Sätze schreiben“ (Route `/korrektur`)
+
+Seit App-Version 2.27.0 fragt das Modul „Sätze schreiben“ den Worker um eine
+Zweitmeinung, wenn ein Satz zu keiner hinterlegten Musterlösung passt. Der
+Worker reicht ihn an **Google Gemini** weiter. Der Schlüssel liegt nur im Worker,
+die App kennt ihn nicht.
+
+Solange die Schritte unten fehlen, antwortet die Route mit 503, und die App
+prüft wie bisher allein. Ausfallen kann also nichts.
+
+## K1 — Zähltabelle anlegen
+
+D1-Datenbank → **Console**, einzeln und ohne Kommentar:
+
+```sql
+CREATE TABLE IF NOT EXISTS korrektur (tag TEXT NOT NULL, id TEXT NOT NULL, anzahl INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (tag, id));
+```
+
+Ohne diese Tabelle fragt der Worker die KI absichtlich gar nicht. Eine
+Korrektur ohne Deckel soll es nicht geben.
+
+## K2 — Gemini-Schlüssel als Secret
+
+Schlüssel holen: https://aistudio.google.com/apikey → **Create API key**.
+Am besten einen **neuen** nehmen, nicht den aus dem Klassenarbeit-Link: Der steht
+schon in Links und Browserverläufen.
+
+Im Worker: **Settings → Variables and Secrets → Add**
+
+| Feld | Wert |
+|---|---|
+| Type | **Secret** (nicht *Text*) |
+| Variable name | `GEMINI_KEY` |
+| Value | der Schlüssel (`AIza…`) |
+
+**Deploy** bzw. **Save**.
+
+Optional als *Text*-Variable `GEMINI_MODEL`, falls Google
+`gemini-2.5-flash-lite` einmal abschaltet. Dann lässt sich das Modell ohne
+neuen Code tauschen.
+
+## K3 — Code einsetzen
+
+Wie A5: **Edit code**, alles ersetzen durch [`src/worker.js`](src/worker.js), **Deploy**.
+
+## K4 — Gegenprobe
+
+```bash
+curl -s -X POST https://bertha-presence.marcator.workers.dev/korrektur \
+  -H 'Content-Type: application/json' \
+  -d '{"id":"probe-12345","de":"Er schickte Lara ins Krankenhaus.","loesung":"He sent Lara to hospital.","antwort":"He sent Lara into the hospital."}'
+```
+
+Richtig ist eine Antwort wie `{"ok":false,"korrigiert":"…","erklaerung":"…","rest":39}`.
+
+| Antwort | Ursache |
+|---|---|
+| `keine KI eingerichtet` (503) | K2 fehlt, oder der Name ist nicht genau `GEMINI_KEY` |
+| `zähler fehlt` (503) | K1 fehlt |
+| `ki` (502) | Gemini lehnt ab: Schlüssel falsch oder Modell abgeschaltet |
+| `limit` (429) | Tageslimit erreicht (40 pro Gerät, 400 insgesamt) |
+| `name fehlt` (400) | Der alte Code läuft noch, K3 fehlt |
+
+## Was die KI bekommt
+
+Den deutschen Satz, die Musterlösung und die Antwort des Kindes, mehr nicht. Kein
+Vorname, keine Geräte-ID (die bleibt im Worker und dient nur dem Zähler).
+In der Gratis-Stufe darf Google die Eingaben zum Verbessern seiner Modelle nutzen.
+Hier sind das Schulsätze ohne persönliche Daten.
+
+**Absicherung in der App:** Findet die eigene Prüfung eine falsche Form
+desselben Worts (send/sent, fall/fell, want/wanted), zählt ein „ok“ der KI
+nicht. Die Grammatik von Theme 1 entscheidet also nie die KI allein.
+
+---
+
 # Weg B — Kommandozeile (wrangler)
 
 Nur nötig, wenn du am Worker weiterarbeiten willst. Voraussetzung: **Node 18+**
@@ -285,5 +361,6 @@ SELECT substr(tag,1,7) AS monat, MAX(name) AS kind, ROUND(SUM(aktive)*20/60.0) A
 ## Gespeichert wird
 
 Vorname (max. 16 Zeichen, auf Buchstaben gefiltert), eine zufällige Geräte-ID und
-ein Zeitstempel. Keine IP-Adresse, kein Lernfortschritt, keine Taler. Nach sieben
+ein Zeitstempel. Für die KI-Korrektur zusätzlich je Tag und Gerät nur die
+**Anzahl** der Anfragen (Tabelle `korrektur`, nach 30 Tagen weg), nicht die Sätze. Keine IP-Adresse, kein Lernfortschritt, keine Taler. Nach sieben
 Tagen ohne Lebenszeichen verschwindet die Zeile von selbst.
