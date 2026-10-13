@@ -188,6 +188,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 ### Version 2.27.1 (13.10.2026)
 - KI-Korrektur live geprüft: Gemini 3.1 Flash-Lite brauchte 5–8 s. Der Worker setzt jetzt
   `thinkingLevel: 'minimal'` (nur bei `gemini-3*`), die App wartet 12 statt 9 s.
+- Wartekasten mit hüpfenden Punkten, damit die Wartezeit nicht wie Hängen aussieht.
 - Worker-Anweisung: Was in der Musterlösung steht (z. B. „to hospital“ ohne „the“), ist nie ein Fehler.
 - Standardmodell `gemini-3.1-flash-lite`: `gemini-2.5-flash-lite` gibt neuen Projekten nur 404.
 
