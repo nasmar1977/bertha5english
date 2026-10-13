@@ -92,7 +92,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     (40 pro Gerät, 400 insgesamt). Ein „ok“ der KI zählt wie ein richtiger Satz, **außer** die eigene
     Prüfung hat eine falsche Form desselben Worts gefunden (send/sent, want/wanted — `ssFormSlip`).
     Sagt die KI „falsch“, ersetzt ihre Erklärung die Wortvergleich-Hinweise; beim zweiten Fehlversuch
-    kommt ihr verbesserter Satz dazu. Kein Netz, Limit, Fehler oder Zeitüberschreitung (9 s) →
+    kommt ihr verbesserter Satz dazu. Kein Netz, Limit, Fehler oder Zeitüberschreitung (12 s) →
     alles wie ohne KI. Von der KI akzeptierte Sätze landen mit `von: 'ki'` in `saetzeEigene`
   - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
     noch als Taler; der Satz wird mit `von: 'kind'` in `localStorage.saetzeEigene` gemerkt (höchstens 100),
@@ -138,8 +138,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.27.0
-**Datum:** 12.10.2026
+**Version:** 2.27.1
+**Datum:** 13.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 – 239 Vokabeln + 31 Mehrwort-Ausdrücke,
@@ -184,6 +184,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.27.1 (13.10.2026)
+- KI-Korrektur live geprüft: Gemini 3.1 Flash-Lite brauchte 5–8 s. Der Worker setzt jetzt
+  `thinkingLevel: 'minimal'` (nur bei `gemini-3*`), die App wartet 12 statt 9 s.
+- Worker-Anweisung: Was in der Musterlösung steht (z. B. „to hospital“ ohne „the“), ist nie ein Fehler.
+- Standardmodell `gemini-3.1-flash-lite`: `gemini-2.5-flash-lite` gibt neuen Projekten nur 404.
 
 ### Version 2.27.0 (12.10.2026)
 - **KI-Zweitmeinung für „Sätze schreiben“** über einen neuen Pfad im vorhandenen Worker

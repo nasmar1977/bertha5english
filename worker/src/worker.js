@@ -75,6 +75,7 @@ Du bekommst einen deutschen Satz, eine Musterlösung und die englische Übersetz
 
 Entscheide, ob die Übersetzung des Kindes (1) richtiges Englisch ist und (2) den deutschen Satz vollständig und sinngemäß wiedergibt.
 - Andere Wörter oder eine andere Satzstellung als die Musterlösung sind ERLAUBT, wenn sie richtig sind.
+- Die Musterlösung ist richtig. Was dort steht (auch britisches Englisch wie "to hospital" ohne "the"), nennst du nie einen Fehler.
 - STRENG bei: Zeitform (erzählte Vergangenheit = simple past; deutsches Perfekt darf mit simple past übersetzt werden, present perfect ist auch ok), was/were, Verneinung mit didn't + Grundform (nicht "didn't wanted"), unregelmäßige Formen (sent, fell, broke, left, took, went), Präpositionen (on the train), Wortstellung, Artikel, Rechtschreibung.
 - Ein einzelner kleiner Tippfehler, der kein anderes Wort und keine andere Form ergibt, darf ok sein — nenne ihn dann.
 - Groß-/Kleinschreibung und Satzzeichen IGNORIEREN.
@@ -143,9 +144,11 @@ async function korrektur(body, env) {
                     'Deutscher Satz: ' + de + '\nMusterlösung: ' + loesung + '\nÜbersetzung des Kindes: ' + antwort }] }],
                 generationConfig: {
                     temperature: 0.1,
-                    maxOutputTokens: 300,
+                    maxOutputTokens: 1024,
                     responseMimeType: 'application/json',
                     responseSchema: KORR_SCHEMA,
+                    // Gemini 3 denkt sonst ausgiebig nach: 5–8 s statt 1–2 s.
+                    ...(modell.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'minimal' } } : {}),
                 },
             }),
         });

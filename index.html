@@ -6409,9 +6409,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.27.0';
+        const APP_VERSION = '2.27.1';
 
         const changelogEntries = [
+            {
+                version: '2.27.1',
+                date: '13.10.2026',
+                items: [
+                    'Die KI bei <b>Sätze schreiben</b> antwortet jetzt schneller, und die App wartet etwas länger auf sie.',
+                ]
+            },
             {
                 version: '2.27.0',
                 date: '12.10.2026',
@@ -13579,7 +13586,7 @@
         // Tageslimit). Kein Name. Antwortet der Worker nicht, bleibt alles
         // wie ohne KI.
         const SS_KI_API = PRESENCE_API ? PRESENCE_API.replace(/\/?$/, '/') + 'korrektur' : '';
-        const SS_KI_TIMEOUT = 9000;
+        const SS_KI_TIMEOUT = 12000;
 
         async function ssAskKI(s, answer, best) {
             if (!SS_KI_API || ssKiAus || (navigator.onLine === false)) return null;
