@@ -3144,6 +3144,7 @@
                 <div class="fz-rule"><span>📖</span><div>Unterstrichenes Wort antippen = Vokabelheft. Das Wort landet am Ende auf deiner Liste.</div></div>
                 <div class="fz-rule"><span>✏️</span><div>Nicht ganz richtig? Du bekommst Hinweise und darfst <b>einmal verbessern</b>.</div></div>
                 <div class="fz-rule"><span>🤖</span><div>Sieht dein Satz anders aus als die Musterlösung, fragt die App eine <b>KI</b> um Rat. Dorthin geht nur der Satz, nicht dein Name.</div></div>
+                <div class="fz-rule"><span>📈</span><div>Es geht <b>leicht los</b> und wird von Satz zu Satz schwerer. Je mehr du schon geschafft hast, desto mehr schwere Sätze kommen.</div></div>
                 <div class="fz-rule"><span>🪙</span><div>6 Sätze pro Runde. Für je 2 Sätze auf Anhieb richtig gibt es 1 Taler.</div></div>
             </div>
             <button class="fz-send fz-auto" onclick="ssStart()">Los geht's ✍️</button>
@@ -6415,9 +6416,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.27.1';
+        const APP_VERSION = '2.28.0';
 
         const changelogEntries = [
+            {
+                version: '2.28.0',
+                date: '13.10.2026',
+                items: [
+                    '<b>Sätze schreiben fängt jetzt leichter an</b> – mit 14 neuen kurzen Sätzen wie <i>Rachel is very strong.</i> Jede Runde wird von Satz zu Satz etwas schwerer.',
+                    'Je mehr Sätze du schon geschafft hast, desto mehr schwere kommen dran.',
+                ]
+            },
             {
                 version: '2.27.1',
                 date: '13.10.2026',
@@ -13111,149 +13120,209 @@
         // en: Lösungen. (a|b|) = eine davon (leer = darf fehlen). Satzzeichen
         //     und Groß-/Kleinschreibung zählen nicht, Kurzformen gelten wie Langformen.
         // tip: kommt nach einem Fehlversuch dazu.
+        // lv: 1 leicht (kurz, Gegenwart) · 2 mittel (simple past, ein Satz) · 3 schwer
+        //     (zwei Satzteile, Stolperstellen). Jede Runde geht von leicht nach schwer.
         const SS_SENTENCES = [
-            { id: 'welcome',
+            // ---- Stufe 1: kurz, Gegenwart, ein Heftwort ----
+            { id: 'easy-bored', lv: 1,
+              de: 'Heute bin ich {gelangweilt|bored}.',
+              en: ['Today I am bored.', 'I am bored today.'],
+              tip: '„gelangweilt“ = <b>bored</b>. „ich bin“ = <b>I am</b> oder kurz <b>I\'m</b>.' },
+            { id: 'easy-ill', lv: 1,
+              de: 'Ben ist heute {krank|ill}.',
+              en: ['Ben is (ill|sick) today.', 'Today Ben is (ill|sick).'],
+              tip: '„krank“ = <b>ill</b>. Die Zeitangabe <i>today</i> steht am Ende oder ganz vorn.' },
+            { id: 'easy-strong', lv: 1,
+              de: 'Rachel ist sehr {stark|strong}.',
+              en: ['Rachel is very strong.'],
+              tip: '„sehr“ = <b>very</b>, „stark“ = <b>strong</b>.' },
+            { id: 'easy-train', lv: 1,
+              de: 'Der {Zug|train} ist spät.',
+              en: ['The train is late.'],
+              tip: '„spät“ = <b>late</b>. Ein Zug → <b>is</b>.' },
+            { id: 'easy-rock', lv: 1,
+              de: 'Der {Felsen|rock} ist sehr {hoch|high}.',
+              en: ['The rock is very high.'],
+              tip: '„hoch“ = <b>high</b>, „sehr“ = <b>very</b>.' },
+            { id: 'easy-message', lv: 1,
+              de: 'Ich habe eine {Nachricht|message} für dich.',
+              en: ['I have (got|) a message for you.'],
+              tip: '„Ich habe“ = <b>I have</b> oder <b>I\'ve got</b>. „für dich“ = <b>for you</b>.' },
+            { id: 'easy-rule', lv: 1,
+              de: 'Diese Regel ist {dumm|stupid}.',
+              en: ['This rule is stupid.'],
+              tip: '„diese“ = <b>this</b>, „Regel“ = <b>rule</b>.' },
+            { id: 'easy-book', lv: 1,
+              de: 'Das Buch ist sehr {interessant|interesting}.',
+              en: ['(The|This) book is very interesting.'],
+              tip: '„interessant“ = <b>interesting</b> – mit <b>-ing</b> am Ende.' },
+            { id: 'easy-brother', lv: 1,
+              de: 'Mein Bruder ist so {nervig|annoying}!',
+              en: ['My brother is so annoying!'],
+              tip: '„nervig“ = <b>annoying</b>. „so“ bleibt <b>so</b>.' },
+            { id: 'easy-group', lv: 1,
+              de: 'Unsere {Gruppe|group} ist groß.',
+              en: ['Our group is (big|large).'],
+              tip: '„unsere“ = <b>our</b>, „groß“ = <b>big</b>.' },
+            { id: 'easy-welcome', lv: 1,
+              de: '{Willkommen|welcome} in unserer Schule!',
+              en: ['Welcome to our school!'],
+              tip: '„Willkommen in …“ heißt auf Englisch <b>Welcome to …</b>' },
+            { id: 'easy-call', lv: 1,
+              de: '{Ruf|to call} mich morgen {an|to call}!',
+              en: ['Call me tomorrow!', 'Tomorrow call me!', '(Please|) call me tomorrow(, please|)!'],
+              tip: '„anrufen“ = <b>call</b>. Aufforderung: das Verb steht vorn – <i>Call me …!</i>' },
+            { id: 'easy-dark', lv: 1,
+              de: 'Im Wald ist es {dunkel|dark}.',
+              en: ['It is dark in the (forest|woods|wood).', 'In the (forest|woods|wood) it is dark.'],
+              tip: '„es ist dunkel“ = <b>it is dark</b>. „Wald“ = <b>forest</b> oder <b>woods</b>.' },
+            { id: 'easy-leader', lv: 1,
+              de: 'Herr Hill ist unser {Gruppenleiter|leader}.',
+              en: ['Mr Hill is our (group leader|leader).'],
+              tip: '„Herr“ = <b>Mr</b>. „Gruppenleiter“ = <b>group leader</b>.' },
+            // ---- Stufe 2 und 3: Vergangenheit, zwei Satzteile, Stolperstellen ----
+            { id: 'welcome', lv: 2,
               de: '{Willkommen|welcome} in Dorset! Unsere Klassenfahrt ist ein großes {Abenteuer|adventure}.',
               en: ['Welcome to Dorset! Our (class trip|school trip|trip) is a (great|big) adventure.'],
               tip: '„Willkommen in …“ heißt auf Englisch <b>Welcome to …</b>' },
-            { id: 'first-leave',
+            { id: 'first-leave', lv: 3,
               de: '{Zuerst|at first} wollte unsere {Gruppe|group} das Camp {nicht|didn\'t (= did not)} {verlassen|to leave}.',
               en: ['At first our group didn\'t want to leave the camp.'],
               tip: 'Verneinung in der Vergangenheit: <b>didn\'t</b> + Grundform – also <i>didn\'t want</i>, nicht <i>didn\'t wanted</i>.' },
-            { id: 'climb-rock',
+            { id: 'climb-rock', lv: 2,
               de: 'Lara {kletterte|to climb (up)} auf einen {hohen|high} {Felsen|rock}.',
               en: ['Lara climbed (up|onto|on|up onto|) a high rock.'],
               tip: 'Regelmäßige Verben bekommen im simple past ein <b>-ed</b>: climb → <b>climbed</b>.' },
-            { id: 'fell-down',
+            { id: 'fell-down', lv: 3,
               de: '{Plötzlich|suddenly} {fiel|to fall} sie {hinunter|down} und {verletzte|to hurt (sb)} sich am Bein.',
               en: ['Suddenly she fell down and hurt her leg.'],
               tip: 'fall → <b>fell</b>, hurt → <b>hurt</b> (bleibt gleich). „sich am Bein verletzen“ = <b>hurt her leg</b>.' },
-            { id: 'call-leader',
+            { id: 'call-leader', lv: 2,
               de: 'Mia {rief|to call} den {Gruppenleiter|leader} an.',
               en: ['Mia called the group leader.'],
               tip: '„anrufen“ = <b>to call</b>, im simple past <b>called</b>. Der Gruppenleiter = <b>the group leader</b>.' },
-            { id: 'send-hospital',
+            { id: 'send-hospital', lv: 2,
               de: 'Er {schickte|to send} Lara ins {Krankenhaus|hospital}.',
               en: ['He sent Lara to (the|) hospital.'],
               tip: 'send → <b>sent</b> (unregelmäßig). „ins Krankenhaus“ = <b>to hospital</b> oder <b>to the hospital</b>.' },
-            { id: 'bored-hospital',
+            { id: 'bored-hospital', lv: 2,
               de: 'Im {Krankenhaus|hospital} war Lara {gelangweilt|bored}.',
               en: ['In (the|) hospital Lara was bored.', 'Lara was bored in (the|) hospital.'],
               tip: '„gelangweilt“ = <b>bored</b>. <i>boring</i> wäre „langweilig“ – das ist etwas anderes.' },
-            { id: 'not-train',
+            { id: 'not-train', lv: 2,
               de: 'Kim und Jo {waren nicht|weren\'t (= were not)} im {Zug|train}.',
               en: ['Kim and Jo weren\'t on the train.'],
               tip: 'Zwei Personen → <b>were</b>, verneint <b>weren\'t</b>. Und Achtung: „im Zug“ heißt <b>on the train</b>.' },
-            { id: 'both-station',
+            { id: 'both-station', lv: 2,
               de: 'Sie waren {beide|both} am Bahnhof.',
               en: ['They were both at the (station|train station).', 'Both of them were at the (station|train station).'],
               tip: '<b>both</b> steht nach <i>were</i>: <i>They were both …</i>' },
-            { id: 'message',
+            { id: 'message', lv: 3,
               de: 'Warum hast du meine {Nachricht|message} {nicht|didn\'t (= did not)} gelesen?',
               en: ['Why didn\'t you read my message?', 'Why did you not read my message?'],
               tip: 'Frage in der Vergangenheit: <b>Why didn\'t you</b> + Grundform <b>read</b>.' },
-            { id: 'switch-off',
+            { id: 'switch-off', lv: 3,
               de: 'Mein Handy war aus, weil ich es im Unterricht {ausgeschaltet|to switch off} habe.',
               en: ['My phone was off because I switched it off in (class|the lesson|lessons).'],
               tip: '<b>switch off</b> wird getrennt, wenn <i>it</i> dazukommt: <b>switched it off</b>.' },
-            { id: 'break-rules',
+            { id: 'break-rules', lv: 3,
               de: 'Jack benutzte im Unterricht sein Handy und {verstieß gegen|to break} die Regeln.',
               en: ['Jack used his phone in (class|the lesson) and broke the rules.',
                    'Jack broke the rules (when|because) he used his phone in (class|the lesson).'],
               tip: '„gegen die Regeln verstoßen“ = <b>break the rules</b>, im simple past <b>broke</b>.' },
-            { id: 'take-away',
+            { id: 'take-away', lv: 2,
               de: 'Die Lehrerin nahm ihm das Handy {weg|away}.',
               en: ['The teacher took his phone away.', 'The teacher took away his phone.', 'The teacher took the phone away from him.'],
               tip: 'take → <b>took</b>. „wegnehmen“ = <b>take away</b>.' },
-            { id: 'head-office',
+            { id: 'head-office', lv: 3,
               de: 'Dann schickte sie ihn ins {Büro|office} der {Schulleiterin|head teacher}.',
               en: ['Then she sent him to the head teacher\'s office.'],
               tip: 'Bei Personen steht das <b>\'s</b>: <i>the head teacher<b>\'s</b> office</i>.' },
-            { id: 'punishment',
+            { id: 'punishment', lv: 3,
               de: 'Jack fand die {Strafe|punishment} {dumm|stupid}.',
               en: ['Jack thought (that|) the punishment was stupid.'],
               tip: '„etwas dumm finden“ = <b>think (that) something is stupid</b> – im simple past <b>thought … was</b>.' },
-            { id: 'agree',
+            { id: 'agree', lv: 3,
               de: 'Die {meisten|most} Kinder {waren einverstanden|to agree}, aber Paul {war nicht einverstanden|to disagree}.',
               en: ['Most (of the|) (children|kids|pupils|students) agreed, but Paul (disagreed|didn\'t agree).'],
               tip: '„die meisten Kinder“ = <b>most children</b> (ohne <i>the</i>). einverstanden sein = <b>agree</b>, nicht einverstanden = <b>disagree</b>.' },
-            { id: 'presentation',
+            { id: 'presentation', lv: 2,
               de: 'Wir haben unsere {Präsentation|presentation} über {Großbritannien|(Great) Britain} {vorbereitet|to prepare}.',
               en: ['We (prepared|have prepared) our presentation (about|on) (Great|) Britain.'],
               tip: 'Erzählte Vergangenheit: <b>prepared</b> (simple past). „über“ = <b>about</b>.' },
-            { id: 'not-bored',
+            { id: 'not-bored', lv: 2,
               de: 'Die {Präsentation|presentation} war {interessant|interesting}, und niemand war {gelangweilt|bored}.',
               en: ['The presentation was interesting, and (nobody|no one|no-one) was bored.'],
               tip: '„niemand“ = <b>nobody</b>. „gelangweilt“ = <b>bored</b>.' },
-            { id: 'may-ask',
+            { id: 'may-ask', lv: 2,
               de: '{Darf|may} ich Sie {um|to ask (for sth)} Hilfe {bitten|to ask (for sth)}?',
               en: ['(May|Can) I ask you for (some|) help?'],
               tip: '„um etwas bitten“ = <b>ask for</b> something: <i>ask you <b>for</b> help</i>.' },
-            { id: 'go-online',
+            { id: 'go-online', lv: 2,
               de: '{Wenn|if} du {gelangweilt|bored} bist, kannst du {online gehen|to go online}.',
               en: ['If you are bored, you can go online.', 'You can go online if you are bored.'],
               tip: '<b>If</b> leitet die Bedingung ein. Im Englischen bleibt die Wortstellung normal: <i>you can go online</i>.' },
-            { id: 'remember',
+            { id: 'remember', lv: 2,
               de: '{Erinnerst du dich an|to remember} den {Unfall|accident}?',
               en: ['Do you remember the accident?'],
               tip: '„sich erinnern an“ = <b>remember</b> – ohne <i>yourself</i> und ohne <i>on</i>. Frage mit <b>Do you …?</b>' },
-            { id: 'went-wrong',
+            { id: 'went-wrong', lv: 2,
               de: '{Alles|everything} war gut, aber dann {ging|to go wrong} etwas {schief|to go wrong}.',
               en: ['Everything was (fine|good|OK|okay), but then something went wrong.'],
               tip: '<b>Everything</b> ist Einzahl → <b>was</b>. go → <b>went</b>: <i>something went wrong</i>.' },
-            { id: 'push-pull',
+            { id: 'push-pull', lv: 3,
               de: 'Fiona {schubste|to push} Olivia, und Olivia {zog|to pull} Fiona an den Haaren.',
               en: ['Fiona pushed Olivia, and Olivia pulled Fiona\'s hair.'],
               tip: '„jemanden an den Haaren ziehen“ = <b>pull someone\'s hair</b>: <i>pulled Fiona<b>\'s</b> hair</i>.' },
-            { id: 'dark-way',
+            { id: 'dark-way', lv: 2,
               de: 'Es war {dunkel|dark}, und die {Gruppe|group} kannte den Weg {nicht|didn\'t (= did not)}.',
               en: ['It was dark, and the group didn\'t know the way.'],
               tip: 'Verneinung in der Vergangenheit: <b>didn\'t know</b> – nach <i>didn\'t</i> kommt die Grundform.' },
-            { id: 'annoying',
+            { id: 'annoying', lv: 2,
               de: 'Unser {Zug|train} war spät. Das war so {ärgerlich|annoying}!',
               en: ['Our train was late. (That|It) was so annoying!'],
               tip: '„ärgerlich“ = <b>annoying</b>. Ein Ding → <b>was</b>.' },
-            { id: 'record-send',
+            { id: 'record-send', lv: 2,
               de: 'Jack {nahm|to record} sein erstes Lied {auf|to record} und {schickte|to send} es mir.',
               en: ['Jack recorded his first song and sent it to me.'],
               tip: 'record → <b>recorded</b>, send → <b>sent</b>. „schickte es mir“ = <b>sent it to me</b>.' },
-            { id: 'choose-show',
+            { id: 'choose-show', lv: 2,
               de: '{Wähl|to choose} ein Buch aus und {zeig|to show} es mir!',
               en: ['(Choose|Pick) a book and show it to me!', '(Choose|Pick) a book and show me!'],
               tip: 'Aufforderung = Grundform am Anfang: <b>Choose …!</b> „zeig es mir“ = <b>show it to me</b>.' },
-            { id: 'zoe-britain',
+            { id: 'zoe-britain', lv: 2,
               de: 'Zoe {war nicht|wasn\'t (= was not)} letztes Jahr in {Großbritannien|(Great) Britain}.',
               en: ['Zoe wasn\'t in (Great|) Britain last year.', 'Last year Zoe wasn\'t in (Great|) Britain.'],
               tip: 'Eine Person → <b>was</b>, verneint <b>wasn\'t</b>. Die Zeitangabe <i>last year</i> steht am Ende oder ganz vorn.' },
-            { id: 'plan-ill',
+            { id: 'plan-ill', lv: 2,
               de: 'Wir haben unsere Reise {geplant|to plan}, aber dann war Ben {krank|ill}.',
               en: ['We (planned|have planned) our (trip|journey), but then Ben was ill.'],
               tip: 'plan → <b>planned</b> – das <b>n</b> wird verdoppelt. „krank“ = <b>ill</b>.' },
-            { id: 'plane-train',
+            { id: 'plane-train', lv: 3,
               de: 'Sie flogen nicht mit dem {Flugzeug|plane}, sie nahmen den {Zug|train}.',
               en: ['They didn\'t (go|travel|fly) by plane, they (took the train|went by train|travelled by train).'],
               tip: '„mit dem Flugzeug / Zug“ = <b>by plane / by train</b>. take → <b>took</b>.' },
-            { id: 'jump-hurt',
+            { id: 'jump-hurt', lv: 2,
               de: 'Lara {sprang|to jump} von den {Felsen|rock}, aber sie war nicht {verletzt|hurt}.',
               en: ['Lara jumped (from|off) the rocks, but she (wasn\'t|was not) hurt.'],
               tip: 'jump → <b>jumped</b>. „verletzt sein“ = <b>be hurt</b>: <i>she wasn\'t hurt</i>.' },
-            { id: 'trouble-strong',
+            { id: 'trouble-strong', lv: 2,
               de: 'Ben war in {Schwierigkeiten|trouble}, aber Rachel war {stark|strong} und half ihm.',
               en: ['Ben was in trouble, but Rachel was strong and helped him.'],
               tip: '„in Schwierigkeiten sein“ = <b>be in trouble</b> – ohne <i>a</i>, denn trouble hat keine Mehrzahl.' },
-            { id: 'break-around',
+            { id: 'break-around', lv: 3,
               de: 'In der {Pause|break} spielte Pia mit ihrem Handy {herum|around}.',
               en: ['(In|During) the break, Pia played around with her phone.', 'Pia played around with her phone (in|during) the break.'],
               tip: '„herumspielen mit“ = <b>play around with</b>. „in der Pause“ = <b>in the break</b>.' },
-            { id: 'punish-unfriendly',
+            { id: 'punish-unfriendly', lv: 3,
               de: 'Die {Schulleiterin|head teacher} {bestrafte|to punish} die Schüler, weil sie {unfreundlich|unfriendly} waren.',
               en: ['The head teacher punished the (pupils|students|children|kids) because they were unfriendly.'],
               tip: 'punish → <b>punished</b>. Mehrere Schüler → <b>they were</b>.' },
-            { id: 'present-serious',
+            { id: 'present-serious', lv: 2,
               de: 'Mark {präsentierte|to present (sth to sb)} sein Projekt, und er war sehr {ernst|serious}.',
               en: ['Mark presented his project, and he was very serious.'],
               tip: '„präsentieren“ = <b>present</b>, im simple past <b>presented</b>. „ernst“ = <b>serious</b>.' },
-            { id: 'birthday-that',
+            { id: 'birthday-that', lv: 3,
               de: 'Ich wusste {nicht|didn\'t (= did not)}, {dass|that} heute dein Geburtstag ist.',
               en: ['I didn\'t know (that|) it (was|is) your birthday today.', 'I didn\'t know (that|) today (was|is) your birthday.'],
               tip: '„Ich wusste nicht“ = <b>I didn\'t know</b> – nach didn\'t die Grundform <i>know</i>. „dass“ = <b>that</b>.' },
@@ -13465,7 +13534,17 @@
             document.querySelectorAll('.ss-tal').forEach(e => { e.textContent = totalTalers; });
         }
 
-        // Sätze mit markierten Knackpunkten zuerst, sonst gewichtet nach Lernstand.
+        // Stufenmischung je Runde, nach Zahl der schon einmal gelösten Sätze.
+        // Am Anfang fast nur leichte Sätze, später mehr schwere.
+        const SS_MIX = [
+            { ab: 0,  lv: [1, 1, 1, 1, 2, 2] },
+            { ab: 6,  lv: [1, 1, 1, 2, 2, 3] },
+            { ab: 15, lv: [1, 1, 2, 2, 3, 3] },
+            { ab: 30, lv: [1, 2, 2, 3, 3, 3] },
+        ];
+
+        // Sätze mit markierten Knackpunkten zuerst, sonst gewichtet nach Lernstand —
+        // in der Stufenmischung. Die Runde läuft von leicht nach schwer.
         function ssPickRound() {
             const progress = loadProgress();
             const weight = s => {
@@ -13473,19 +13552,31 @@
                 if (!p) return 2.0;
                 return Math.max(0.2, 1.0 + p.wrong * 2.0 - p.correct * 0.3);
             };
+            const solved = SS_SENTENCES.filter(s => (progress[ssKey(s)] || {}).correct > 0).length;
+            const need = SS_MIX.filter(m => solved >= m.ab).pop().lv.slice();
             let pool = SS_SENTENCES.slice(), picked = [];
             if (dvOn) {
                 const active = dvActiveWords();
                 picked = shuffleArray(pool.filter(s => ssHeftWords(s).some(w => active.has(w)))).slice(0, SS_ROUND);
                 pool = pool.filter(s => picked.indexOf(s) < 0);
+                picked.forEach(s => {     // Platz der passenden Stufe belegen, sonst den schwersten
+                    const k = need.indexOf(s.lv);
+                    need.splice(k >= 0 ? k : need.length - 1, 1);
+                });
             }
-            while (picked.length < SS_ROUND && pool.length) {
-                const total = pool.reduce((sum, s) => sum + weight(s), 0);
+            need.forEach(lv => {
+                if (picked.length >= SS_ROUND || !pool.length) return;
+                // gewünschte Stufe; ist sie leer, die nächstliegende
+                const dist = s => Math.abs(s.lv - lv);
+                const near = Math.min(...pool.map(dist));
+                const cand = pool.filter(s => dist(s) === near);
+                const total = cand.reduce((sum, s) => sum + weight(s), 0);
                 let r = Math.random() * total, j = 0;
-                for (; j < pool.length - 1; j++) { r -= weight(pool[j]); if (r <= 0) break; }
-                picked.push(pool.splice(j, 1)[0]);
-            }
-            return shuffleArray(picked);
+                for (; j < cand.length - 1; j++) { r -= weight(cand[j]); if (r <= 0) break; }
+                picked.push(cand[j]);
+                pool.splice(pool.indexOf(cand[j]), 1);
+            });
+            return shuffleArray(picked).sort((a, b) => a.lv - b.lv);
         }
 
         function ssStart() {

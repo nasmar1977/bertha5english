@@ -73,11 +73,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     **nicht der Ort** — den muss der Notruftext selbst hergeben
   - Markup im Text: `{Wort im Text|Vokabel im Heft}`; Vorlesen mit derselben lokalen Stimme wie
     der Hör-Detektiv
-- **✍️ Sätze schreiben (Theme 1)**: 36 deutsche Sätze (Klassenfahrt, Handy im Unterricht,
+- **✍️ Sätze schreiben (Theme 1)**: 50 deutsche Sätze (Klassenfahrt, Handy im Unterricht,
   Präsentation), die das Kind frei ins Englische übersetzt. Drin stecken alle 66 Vokabeln und die
   Grammatik von Theme 1 (simple past, was/were, wasn't/weren't, didn't); Hilfswörter aus der 5. Klasse
   - **zuerst geprüft wird auf dem Gerät, ohne Netz**: Jeder Satz hat eine Musterlösung mit
-    erlaubten Varianten (`(a|b|)` in `SS_SENTENCES`, ergibt 128 Fassungen). Satzzeichen und
+    erlaubten Varianten (`(a|b|)` in `SS_SENTENCES`, ergibt 160 Fassungen). Satzzeichen und
     Groß-/Kleinschreibung zählen nicht, Kurz- und Langform gelten gleich (`didn't` = `did not`)
   - Vergleich Wort für Wort (Editierdistanz über Wörter, `ssAlign`). Tippfehler gehen durch, aber
     **nicht, wenn daraus eine andere Form wird**: send/sent, fall/fell, planed/planned, bored/boring,
@@ -97,6 +97,10 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
     noch als Taler; der Satz wird mit `von: 'kind'` in `localStorage.saetzeEigene` gemerkt (höchstens 100),
     damit ein Erwachsener ihn ansehen und als Variante nachtragen kann
+  - **Drei Stufen** (`lv` in `SS_SENTENCES`): 1 = kurz, Gegenwart, ein Heftwort (14 Sätze);
+    2 = simple past, ein Satz (23); 3 = zwei Satzteile und Stolperstellen (13). Die Mischung je Runde
+    hängt davon ab, wie viele Sätze schon einmal gelöst sind (`SS_MIX`): anfangs 1-1-1-1-2-2, ab 6
+    gelösten 1-1-1-2-2-3, ab 15 1-1-2-2-3-3, ab 30 1-2-2-3-3-3. Jede Runde läuft von leicht nach schwer.
   - 6 Sätze pro Runde, 2 auf Anhieb richtig = 1 Taler, Knackpunkte zuerst. Deutsche Heftwörter sind
     antippbar (Bedeutung aus dem Heft); nachgeschlagene und verfehlte Wörter lassen sich am Ende als
     Knackpunkte markieren. Unter jeder Lösung steht, welche Theme-1-Wörter das Kind benutzt hat
@@ -138,7 +142,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.27.1
+**Version:** 2.28.0
 **Datum:** 13.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -184,6 +188,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.28.0 (13.10.2026)
+- **„Sätze schreiben“ fängt leichter an**: Rückmeldung war, die Sätze seien zu schwer. 14 neue
+  Sätze der Stufe 1 (kurz, Gegenwart: *Rachel is very strong.*), alle 50 Sätze in drei Stufen
+  eingeteilt. Die erste Runde ist 1-1-1-1-2-2, mit wachsender Zahl gelöster Sätze kommen mehr
+  schwere dazu (`SS_MIX`). Jede Runde ist von leicht nach schwer sortiert statt gemischt.
 
 ### Version 2.27.1 (13.10.2026)
 - KI-Korrektur live geprüft: Gemini 3.1 Flash-Lite brauchte 5–8 s. Der Worker setzt jetzt
