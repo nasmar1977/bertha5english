@@ -68,7 +68,7 @@ function json(daten, status = 200) {
 // ---------------------------------------------------------------------------
 const KORR_PRO_GERAET = 40;    // Aufrufe pro Gerät und Tag
 const KORR_GESAMT     = 400;   // Aufrufe aller Geräte pro Tag (Gratis-Stufe hat mehr)
-const KORR_MODELL     = 'gemini-2.5-flash-lite';
+const KORR_MODELL     = 'gemini-3.1-flash-lite';
 
 const KORR_ANWEISUNG = `Du prüfst Übersetzungen eines Kindes (6. Klasse Gymnasium in Deutschland, zweites Englischjahr).
 Du bekommst einen deutschen Satz, eine Musterlösung und die englische Übersetzung des Kindes.

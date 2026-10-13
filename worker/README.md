@@ -148,8 +148,9 @@ Im Worker: **Settings → Variables and Secrets → Add**
 **Deploy** bzw. **Save**.
 
 Optional als *Text*-Variable `GEMINI_MODEL`, falls Google
-`gemini-2.5-flash-lite` einmal abschaltet. Dann lässt sich das Modell ohne
-neuen Code tauschen.
+`gemini-3.1-flash-lite` einmal abschaltet. Dann lässt sich das Modell ohne
+neuen Code tauschen. (Im Oktober 2026 nötig gewesen: `gemini-2.5-flash-lite`
+gab neuen Projekten nur noch 404.)
 
 ## K3 — Code einsetzen
 
@@ -169,7 +170,9 @@ Richtig ist eine Antwort wie `{"ok":false,"korrigiert":"…","erklaerung":"…",
 |---|---|
 | `keine KI eingerichtet` (503) | K2 fehlt, oder der Name ist nicht genau `GEMINI_KEY` |
 | `zähler fehlt` (503) | K1 fehlt |
-| `ki` (502) | Gemini lehnt ab: Schlüssel falsch oder Modell abgeschaltet |
+| `ki` (502), `status` 404 | Modell für dieses Projekt nicht (mehr) da → `GEMINI_MODEL` setzen |
+| `ki` (502), `status` 402 | Kein Guthaben: Bezahlstufe ohne Prepaid-Guthaben in AI Studio |
+| `ki` (502), sonst | Gemini lehnt ab, z. B. Schlüssel falsch |
 | `limit` (429) | Tageslimit erreicht (40 pro Gerät, 400 insgesamt) |
 | `name fehlt` (400) | Der alte Code läuft noch, K3 fehlt |
 

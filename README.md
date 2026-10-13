@@ -187,7 +187,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ### Version 2.27.0 (12.10.2026)
 - **KI-Zweitmeinung für „Sätze schreiben“** über einen neuen Pfad im vorhandenen Worker
-  (`POST /korrektur`) → Google Gemini (`gemini-2.5-flash-lite`, per `GEMINI_MODEL` tauschbar).
+  (`POST /korrektur`) → Google Gemini (`gemini-3.1-flash-lite`, per `GEMINI_MODEL` tauschbar).
   Der Schlüssel liegt als Secret `GEMINI_KEY` im Worker, nicht im Link wie im Klassenarbeit-Trainer.
   Tageslimit in D1 (Tabelle `korrektur`, 40 pro Gerät, 400 gesamt), gezählt **vor** der Anfrage.
 - Die App fragt nur, wenn die eigene Prüfung den Satz nicht kennt. Ein „ok“ der KI wird verworfen,
