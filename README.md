@@ -92,8 +92,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     (40 pro Gerät, 400 insgesamt). Ein „ok“ der KI zählt wie ein richtiger Satz, **außer** die eigene
     Prüfung hat eine falsche Form desselben Worts gefunden (send/sent, want/wanted — `ssFormSlip`).
     Sagt die KI „falsch“, ersetzt ihre Erklärung die Wortvergleich-Hinweise; beim zweiten Fehlversuch
-    kommt ihr verbesserter Satz dazu. Kein Netz, Limit, Fehler oder Zeitüberschreitung (12 s) →
-    alles wie ohne KI. Von der KI akzeptierte Sätze landen mit `von: 'ki'` in `saetzeEigene`
+    kommt ihr verbesserter Satz dazu. Das Kind wartet höchstens 4 s (`SS_KI_SOFT`): Ist die KI bis
+    dahin nicht da, erscheint das eigene Urteil mit der Zeile „🤖 Ich schaue noch genauer hin“; eine
+    Antwort bis 20 s (`SS_KI_TIMEOUT`) wird nachgetragen — „ok“ macht daraus „Richtig“ (solange der
+    Satz unverändert ist), „falsch“ setzt die Erklärung an die Stelle der Zeile. Nach „Verbessern“ oder
+    „Lösung zeigen“ wird sie verworfen. Kein Netz, Limit, Fehler oder mehr als 20 s → alles wie ohne KI. Von der KI akzeptierte Sätze landen mit `von: 'ki'` in `saetzeEigene`
   - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
     noch als Taler; der Satz wird mit `von: 'kind'` in `localStorage.saetzeEigene` gemerkt (höchstens 100),
     damit ein Erwachsener ihn ansehen und als Variante nachtragen kann
@@ -142,7 +145,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.30.1
+**Version:** 2.31.0
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -190,6 +193,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.31.0 (19.10.2026)
+- **KI-Korrektur wartet nicht mehr bis zu 12 s.** Live gemessen: meist 1–3 s, aber etwa jede dritte
+  Anfrage 8–15 s (Gemini-Gratis-Stufe). Jetzt zeigt die App nach 4 s ihr eigenes Urteil, die KI darf
+  bis 20 s nachliefern und ergänzt es dann: „Doch richtig“ inkl. Taler, oder ihre Erklärung.
+  `ssCheck` aufgeteilt; die Darstellung steht jetzt in `ssRespond`.
 
 ### Version 2.30.1 (19.10.2026)
 - **Buchstabieren (Englisch und Latein)**: Ein Klick auf ein früheres Feld nimmt alle Buchstaben ab

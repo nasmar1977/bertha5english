@@ -2672,6 +2672,7 @@
         .ss-chip { border-radius: 999px; padding: 3px 10px; font-size: .85em; background: #eee; color: #888; }
         .ss-chip.on { background: #d8f3e2; color: #1f6e40; font-weight: bold; }
         .ss-ki { margin: 8px 0; background: #eef2ff; border-radius: 12px; padding: 8px 12px; }
+        .ss-ki.ss-late { color: #5a4fa0; font-size: 0.92em; }
         .ss-alt { margin: 6px 0; font-size: .92em; color: #555; }
         .fz-fb.ss-wait { background: #f2f0ff; border: 2px dashed #b9b2e8; color: #5a4fa0; }
         .ss-dots span { display: inline-block; width: 7px; height: 7px; margin: 0 2px; border-radius: 50%;
@@ -7069,9 +7070,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.30.1';
+        const APP_VERSION = '2.31.0';
 
         const changelogEntries = [
+            {
+                version: '2.31.0',
+                date: '19.10.2026',
+                items: [
+                    '<b>Sätze schreiben</b>: Du wartest höchstens noch 4 Sekunden. Braucht die KI länger, siehst du schon meine Rückmeldung – und wenn die KI danach sagt, dass dein Satz doch stimmt, wird daraus ein ✅ (mit Taler).',
+                ]
+            },
             {
                 version: '2.30.1',
                 date: '19.10.2026',
@@ -14463,7 +14471,12 @@
         // Tageslimit). Kein Name. Antwortet der Worker nicht, bleibt alles
         // wie ohne KI.
         const SS_KI_API = PRESENCE_API ? PRESENCE_API.replace(/\/?$/, '/') + 'korrektur' : '';
-        const SS_KI_TIMEOUT = 12000;
+        // Das Kind wartet höchstens SS_KI_SOFT. Danach zeigt die App ihr eigenes Urteil;
+        // eine spätere KI-Antwort (bis SS_KI_TIMEOUT) ergänzt es noch. Gemessen 10/2026:
+        // meist 1–3 s, etwa jede dritte Anfrage aber 8–15 s (Gratis-Stufe).
+        const SS_KI_SOFT = 4000;
+        const SS_KI_TIMEOUT = 20000;
+        let ssLastStuck = [];                // vom letzten „Noch nicht“ als hängengeblieben gemerkt
 
         async function ssAskKI(s, answer, best) {
             if (!SS_KI_API || ssKiAus || (navigator.onLine === false)) return null;
@@ -14494,6 +14507,8 @@
             return best.ops.some(o => o.op === 'diff' && ssFormOf(o.u, o.t));
         }
 
+        const SS_DOTS = '<span class="ss-dots"><span></span><span></span><span></span></span>';
+
         async function ssCheck() {
             const s = ssRound[ssIdx], answer = ssEl('ssInput').value;
             if (ssDone || ssTokens(answer).length < 2) return;
@@ -14501,16 +14516,39 @@
             ssChecked = answer;
             ssEl('ssCheckBtn').disabled = true;
             const best = ssJudge(s, answer);
-            let ki = null;
-            if (!best.ok) {
-                const req = ++ssReq, idx = ssIdx;
-                ssEl('ssInput').disabled = true;
-                ssEl('ssFeedback').innerHTML = SS_KI_API && !ssKiAus
-                    ? '<div class="fz-fb ss-wait">🤖 Dein Satz sieht anders aus als meine Lösung – ich schaue genauer hin <span class="ss-dots"><span></span><span></span><span></span></span></div>' : '';
-                ki = await ssAskKI(s, answer, best);
-                if (req !== ssReq || idx !== ssIdx || ssEl('ssPlay').style.display === 'none') return;   // inzwischen weiter
-                ssEl('ssInput').disabled = false;
+            if (best.ok || !SS_KI_API || ssKiAus || navigator.onLine === false) { ssRespond(s, answer, best, null, false); return; }
+
+            const req = ++ssReq, idx = ssIdx;
+            const stale = () => req !== ssReq || idx !== ssIdx || ssEl('ssPlay').style.display === 'none';   // inzwischen weiter
+            ssEl('ssInput').disabled = true;
+            ssEl('ssFeedback').innerHTML = '<div class="fz-fb ss-wait">🤖 Dein Satz sieht anders aus als meine Lösung – ich schaue genauer hin ' + SS_DOTS + '</div>';
+            const kiP = ssAskKI(s, answer, best);
+            const LATE = {};
+            const first = await Promise.race([kiP, new Promise(r => setTimeout(() => r(LATE), SS_KI_SOFT))]);
+            if (stale()) return;
+            ssEl('ssInput').disabled = false;
+            if (first !== LATE) { ssRespond(s, answer, best, first, false); return; }
+
+            // KI braucht länger: eigenes Urteil jetzt, KI-Antwort hängt sich später an.
+            ssRespond(s, answer, best, null, true);
+            const ki = await kiP;
+            const slot = document.getElementById('ssKiLate');
+            if (stale() || !slot) return;              // Verbessern / Lösung zeigen / weiter → verwerfen
+            const kiOk = ki && ki.ok && !ssFormSlip(best);
+            if (kiOk && ssEl('ssInput').value === answer) {
+                // Doch richtig: die Rückmeldung wird zum „Richtig“, so als wäre die KI rechtzeitig da gewesen.
+                ssLastStuck.forEach(w => ssStuck.delete(w));
+                ssDone = false;
+                ssRespond(s, answer, best, ki, false);
+            } else if (ki && !ki.ok && ki.erklaerung) {
+                slot.outerHTML = '<div class="ss-ki">🤖 ' + vhAttr(ki.erklaerung) + '</div>';
+            } else {
+                slot.remove();
             }
+        }
+
+        // Rückmeldung zu einem geprüften Satz. pending = KI-Antwort steht noch aus.
+        function ssRespond(s, answer, best, ki, pending) {
             const kiOk = !best.ok && ki && ki.ok && !ssFormSlip(best);
             if (ki && ki.ok && !kiOk) ki = null;     // KI-Lob unter „Noch nicht ganz“ wäre widersprüchlich
             const ok = best.ok || kiOk;
@@ -14524,7 +14562,8 @@
             const notesHtml = notes.length ? '<div class="ss-notes">✏️ ' + notes.join(' ') + '</div>' : '';
             const speak = (typeof hdVoice !== 'undefined' && hdVoice)
                 ? '<button class="hd-btn ghost ss-speak" onclick="ssSpeak()">🔊 Anhören</button>' : '';
-            const kiLine = ki && ki.erklaerung ? '<div class="ss-ki">🤖 ' + vhAttr(ki.erklaerung) + '</div>' : '';
+            const kiLine = pending ? '<div class="ss-ki ss-late" id="ssKiLate">🤖 Ich schaue noch genauer hin ' + SS_DOTS + '</div>'
+                : ki && ki.erklaerung ? '<div class="ss-ki">🤖 ' + vhAttr(ki.erklaerung) + '</div>' : '';
             ssEl('ssInput').classList.toggle('ok', ok);
             ssEl('ssInput').classList.toggle('bad', !ok);
 
@@ -14561,7 +14600,8 @@
                     '<div class="ss-btns">' + speak + '<button class="hd-btn check" onclick="ssNext()">' +
                     (ssIdx + 1 < ssRound.length ? 'Nächster Satz →' : 'Fertig') + '</button></div></div>';
             } else {
-                ssHeftWords(s).forEach(w => { if (used.indexOf(w) < 0) ssStuck.add(w); });
+                ssLastStuck = ssHeftWords(s).filter(w => used.indexOf(w) < 0 && !ssStuck.has(w));
+                ssLastStuck.forEach(w => ssStuck.add(w));
                 // Hat die KI geantwortet, erklärt sie — ihre Hinweise passen zum Satz des
                 // Kindes. Die Wortvergleich-Hinweise beziehen sich auf die Musterlösung
                 // und stiften bei anders gebauten Sätzen eher Verwirrung.
