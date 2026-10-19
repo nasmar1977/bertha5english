@@ -221,7 +221,7 @@ for (const ch of chapters)
 // 7  Deutsche Hilfssätze der Schlange                                   (Befund 1, 7, 8)
 // =====================================================================
 const TRENNBAR = /^(an|auf|ab|aus|ein|mit|nach|vor|zu|zurück|her|hin|weg|los|bei|fest|frei|statt|teil)(?=[a-zäöüß]{3,})/;
-const UNTRENNBAR = new Set(['antworten','umringen','beabsichtigen','anbeten','bemerken','beginnen','besuchen','bewirtschaften']);
+const UNTRENNBAR = new Set(['antworten','umringen','beabsichtigen','anbeten','bemerken','beginnen','besuchen','bewirtschaften','herrschen']);
 for (const ch of chapters)
   for (const v of snakeVerbs(ch)) {
     const ctx = env.getSnakeContext(v.infinitive) || {};
@@ -257,6 +257,16 @@ if (env.getGermanCaseForm)
       else if (/s$/.test(wort) && (wort.slice(0,-1).match(/[aeiouäöüy]+/g)||[]).length === 1)
         info('genitiv-sicht', `"${g}" — Einsilber, -es prüfen (des ${wort.slice(0,-1)}es?)`, `${ch} ${n.nom_sg}`);
     }
+
+// 8b Schwache Maskulina: dem Löwen, den Löwen — nicht „dem Löwe"  (Befund L10-Review)
+if (env.getGermanCaseForm)
+  for (const ch of chapters)
+    for (const n of snakeNouns(ch))
+      if (/^der \S+e$/.test(n.german))
+        for (const k of ['dat_sg','akk_sg','abl_sg']) {
+          const g = env.getGermanCaseForm(n, k);
+          if (!/n$/.test(g)) err('genitiv', `"${g}" — schwaches Maskulinum braucht -n`, `${ch} ${n.nom_sg} ${k}`);
+        }
 
 // =====================================================================
 // 9  Vokabelheft gegen Trainingsdaten                                   (Befund 11)
