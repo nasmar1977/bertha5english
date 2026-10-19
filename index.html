@@ -7069,9 +7069,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.30.0';
+        const APP_VERSION = '2.30.1';
 
         const changelogEntries = [
+            {
+                version: '2.30.1',
+                date: '19.10.2026',
+                items: [
+                    'Beim Buchstabieren: Wer auf einen früheren Buchstaben tippt, um ab dort neu anzufangen, bekommt jetzt <b>alle</b> weggenommenen Buchstaben unten wieder zurück – nicht nur den angetippten.',
+                ]
+            },
             {
                 version: '2.30.0',
                 date: '19.10.2026',
@@ -12469,14 +12476,16 @@
             }
             if (realIndex < spellPrefix.length) return;
 
-            const removed = selectedLetters[realIndex];
             // For Latin spelling, look in lettersPool specifically
             const poolSelector = (currentLanguage === 'latin' && currentMode === 'spelling') ? '#lettersPool ' : '';
-            const tile = document.querySelector(`${poolSelector}[data-id="${removed.id}"]`);
-            if (tile) tile.classList.remove('used');
 
-            // Buchstabe + alle nachfolgenden Auto-Leerzeichen wegnehmen
-            selectedLetters.splice(realIndex);
+            // Ab dem angeklickten Feld fällt alles weg — und jeder weggenommene Buchstabe
+            // muss unten wieder anklickbar werden, nicht nur der angeklickte.
+            selectedLetters.splice(realIndex).forEach(removed => {
+                if (removed.id === -1) return;   // Auto-Leerzeichen hat keine Kachel
+                const tile = document.querySelector(`${poolSelector}[data-id="${removed.id}"]`);
+                if (tile) tile.classList.remove('used');
+            });
             while (selectedLetters.length > spellPrefix.length &&
                    selectedLetters[selectedLetters.length - 1].id === -1) {
                 selectedLetters.pop();

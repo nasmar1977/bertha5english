@@ -142,7 +142,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.30.0
+**Version:** 2.30.1
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -190,6 +190,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.30.1 (19.10.2026)
+- **Buchstabieren (Englisch und Latein)**: Ein Klick auf ein früheres Feld nimmt alle Buchstaben ab
+  dort weg, gab aber nur die Kachel des angeklickten Felds im Pool wieder frei. Die übrigen blieben
+  blass und ließen sich nicht mehr antippen. `removeLetterFromSlot` gibt jetzt jede weggenommene
+  Kachel frei.
 
 ### Version 2.30.0 (19.10.2026)
 - **Latein Lektion 9** (Vesuv & Pompeji): 45 Vokabeln in 4 Päckchen, 9 Mehrwort-Ausdrücke
