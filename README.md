@@ -145,7 +145,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.31.1
+**Version:** 2.31.2
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -193,6 +193,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.31.2 (19.10.2026)
+- **Perfekt → Infinitiv**: Tipp „Präsens: occurrō“ statt „Zurück zum Infinitiv“ — wie im Heft
+  (occurrō, occurrī). Erscheint nach 15 s und, neu, sofort nach einem Fehlversuch (`hintOnWrong`).
+  Der Stamm wird bewusst nicht vorgegeben: ihn zu finden (vīcī → vinc-ere) ist die Übung.
 
 ### Version 2.31.1 (19.10.2026)
 - **„🙋 Meiner stimmt auch“** erscheint nicht mehr, wenn die KI den Satz geprüft und für falsch

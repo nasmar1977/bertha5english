@@ -7070,9 +7070,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.31.1';
+        const APP_VERSION = '2.31.2';
 
         const changelogEntries = [
+            {
+                version: '2.31.2',
+                date: '19.10.2026',
+                items: [
+                    '<b>Perfekt</b> (Latein): Wenn du vom Perfekt zum Infinitiv zurück musst und dich vertippst, hilft dir jetzt sofort die Präsensform – z. B. <i>occurrō</i> zu <i>occurrī</i>.',
+                ]
+            },
             {
                 version: '2.31.1',
                 date: '19.10.2026',
@@ -10386,7 +10393,9 @@
                         type: 'perfect', mode: 'spelling',
                         prompt: vf.perfect + ' (' + vf.german + ')',
                         answer: vf.infinitive.toLowerCase(), displayAnswer: vf.infinitive,
-                        image: '🕰️', hint: 'Zurück zum Infinitiv',
+                        // Brücke wie im Heft (occurrō, occurrī): aus dem Präsens ergibt sich
+                        // der Infinitiv. Kommt nach 15 s oder sofort nach einem Fehlversuch.
+                        image: '🕰️', hint: 'Präsens: ' + vf.firstPerson, hintOnWrong: true,
                         question: 'Wie heißt der Infinitiv?',
                         id: 'perf_p2i_' + vf.infinitive,
                         dvWord: vf.infinitive
@@ -11526,6 +11535,11 @@
                 feedback.textContent = '❌ Das ist leider nicht richtig. Versuch es nochmal!';
                 feedback.className = 'feedback wrong';
                 playSound('wrong');
+                if (currentLatinItem.hintOnWrong && currentLatinItem.hint) {
+                    const autoHintEl = document.getElementById('autoHint');
+                    autoHintEl.textContent = '💡 ' + currentLatinItem.hint;
+                    autoHintEl.className = 'auto-hint show';
+                }
                 setTimeout(() => {
                     slots.forEach(slot => { slot.classList.remove('wrong'); slot.classList.remove('correct'); });
                 }, 1500);
