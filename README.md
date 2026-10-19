@@ -97,7 +97,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
     Antwort bis 20 s (`SS_KI_TIMEOUT`) wird nachgetragen — „ok“ macht daraus „Richtig“ (solange der
     Satz unverändert ist), „falsch“ setzt die Erklärung an die Stelle der Zeile. Nach „Verbessern“ oder
     „Lösung zeigen“ wird sie verworfen. Kein Netz, Limit, Fehler oder mehr als 20 s → alles wie ohne KI. Von der KI akzeptierte Sätze landen mit `von: 'ki'` in `saetzeEigene`
-  - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist. Zählt weder als Fehler
+  - **„🙋 Meiner stimmt auch“**: wenn die eigene Fassung anders, aber richtig ist — nur angeboten, wenn die KI nicht „falsch“ gesagt hat. Zählt weder als Fehler
     noch als Taler; der Satz wird mit `von: 'kind'` in `localStorage.saetzeEigene` gemerkt (höchstens 100),
     damit ein Erwachsener ihn ansehen und als Variante nachtragen kann
   - **Drei Stufen** (`lv` in `SS_SENTENCES`): 1 = kurz, Gegenwart, ein Heftwort (14 Sätze);
@@ -145,7 +145,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.31.0
+**Version:** 2.31.1
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -193,6 +193,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.31.1 (19.10.2026)
+- **„🙋 Meiner stimmt auch“** erscheint nicht mehr, wenn die KI den Satz geprüft und für falsch
+  gehalten hat (`ssKiNein`, auch bei nachgereichter Antwort). Gedacht ist der Knopf für Sätze, die
+  niemand außer dem Kind beurteilen konnte. Nach dem Klick kurz „🙋 Gemerkt!“ statt sofort weiter.
 
 ### Version 2.31.0 (19.10.2026)
 - **KI-Korrektur wartet nicht mehr bis zu 12 s.** Live gemessen: meist 1–3 s, aber etwa jede dritte

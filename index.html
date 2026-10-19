@@ -7070,9 +7070,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.31.0';
+        const APP_VERSION = '2.31.1';
 
         const changelogEntries = [
+            {
+                version: '2.31.1',
+                date: '19.10.2026',
+                items: [
+                    '<b>„Meiner stimmt auch“</b> gibt es nur noch, wenn die KI deinen Satz nicht prüfen konnte. Hat sie ihn sich angesehen und für falsch gehalten, fällt der Knopf weg.',
+                    'Nach dem Klick siehst du jetzt kurz „🙋 Gemerkt!“, bevor der nächste Satz kommt.',
+                ]
+            },
             {
                 version: '2.31.0',
                 date: '19.10.2026',
@@ -14118,6 +14126,7 @@
         const SS_ROUND = 6;
 
         let ssRound = [], ssIdx = 0, ssTries = 0, ssDone = false, ssChecked = '';
+        let ssKiNein = false;                // KI hat den Satz geprüft und für falsch gehalten
         let ssReq = 0, ssKiAus = false;     // ssReq: Zähler gegen veraltete KI-Antworten; ssKiAus: Tageslimit erreicht
         let ssFirstOk = 0, ssGained = 0, ssUsed = 0, ssUsedOf = 0, ssSelf = 0;
         let ssPeeked = new Set(), ssStuck = new Set();
@@ -14377,7 +14386,7 @@
 
         function ssLoad() {
             const s = ssRound[ssIdx];
-            ssTries = 0; ssDone = false; ssChecked = '';
+            ssTries = 0; ssDone = false; ssChecked = ''; ssKiNein = false;
             ssEl('ssProgress').innerHTML = ssRound.map((x, i) =>
                 '<i class="' + (i < ssIdx ? 'done' : i === ssIdx ? 'cur' : '') + '"></i>').join('');
             ssEl('ssDe').innerHTML = s.de.replace(/\{([^|}]+)\|([^}]+)\}/g, (m, t, w) =>
@@ -14541,6 +14550,7 @@
                 ssDone = false;
                 ssRespond(s, answer, best, ki, false);
             } else if (ki && !ki.ok && ki.erklaerung) {
+                ssKiNein = true;
                 slot.outerHTML = '<div class="ss-ki">🤖 ' + vhAttr(ki.erklaerung) + '</div>';
             } else {
                 slot.remove();
@@ -14550,6 +14560,7 @@
         // Rückmeldung zu einem geprüften Satz. pending = KI-Antwort steht noch aus.
         function ssRespond(s, answer, best, ki, pending) {
             const kiOk = !best.ok && ki && ki.ok && !ssFormSlip(best);
+            if (ki && !ki.ok) ssKiNein = true;
             if (ki && ki.ok && !kiOk) ki = null;     // KI-Lob unter „Noch nicht ganz“ wäre widersprüchlich
             const ok = best.ok || kiOk;
             const tokens = ssTokens(answer);
@@ -14625,7 +14636,11 @@
             ssEl('ssFeedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        // Hat die KI den Satz schon geprüft und für falsch befunden, wäre „Meiner stimmt
+        // auch“ ein Widerspruch — der Knopf ist für Sätze, die niemand außer dem Kind
+        // beurteilen konnte (keine KI, Limit, keine Antwort).
         function ssOwnBtn() {
+            if (ssKiNein) return '';
             return '<button class="hd-btn ghost" onclick="ssOwn()" title="Wenn dein Satz anders, aber auch richtig ist">🙋 Meiner stimmt auch</button>';
         }
 
@@ -14670,7 +14685,10 @@
             ssCountUsed(words.filter(w => ssUses(ssTokens(answer), w)).length, words.length);
             ssRemember(s, answer, 'kind');
             ssHeftWords(s).forEach(w => ssStuck.delete(w));
-            ssNext();
+            ssEl('ssFeedback').innerHTML = '<div class="fz-fb ok"><b class="t">🙋 Gemerkt!</b>' +
+                '<div>Dein Satz zählt nicht als Fehler und wird gemerkt.</div></div>';
+            const idx = ssIdx;
+            setTimeout(() => { if (idx === ssIdx && ssEl('ssPlay').style.display !== 'none') ssNext(); }, 1800);
         }
 
         // Sätze, die die Musterlösung nicht kennt, aber das Kind oder die KI für
