@@ -100,7 +100,9 @@ for (const ch of chapters) {
       'kons. Deklination': { gen_sg:'is', dat_sg:'ī', akk_sg:'em', abl_sg:'e', gen_pl:'um', dat_pl:'ibus' },
     };
     const soll = SOLL[(n.declension||'').replace(/\s*\(.*\)/,'')];
-    if (soll) for (const [k, wanted] of Object.entries(soll)) {
+    // i-Stämme mit Vermerk „Gen. Pl. -ium" im Vokabelheft (urbs, mōns, pars)
+    const sollIum = soll && /-ium/.test(n.declension||'') ? { ...soll, gen_pl: 'ium' } : soll;
+    if (soll) for (const [k, wanted] of Object.entries(sollIum)) {
       if (!n[k] || !env.nounKeyFitsStem(n, k, st)) continue;
       const e = env.getEnding(n[k], st);
       // Neutra weichen im Akkusativ ab, das ist regelhaft
@@ -240,6 +242,10 @@ for (const ch of chapters)
       if (st.length > 3 && !de.toLowerCase().includes(st.toLowerCase()))
         err('deutsch', `Stamm "${st}" fehlt in "${de}"`, `${ch} ${v.infinitive} ${k}`);
     }
+    // „wir"/„sie" (Plural) ist immer der Infinitiv — fing „wir verliern"  (Befund L9-Review)
+    for (const k of ['pl1','pl3'])
+      if (env.conjugateGermanSimple(v.german, k) !== clean)
+        err('deutsch', `Plural "${env.conjugateGermanSimple(v.german, k)}" ≠ Infinitiv "${clean}"`, `${ch} ${v.infinitive} ${k}`);
   }
 
 // =====================================================================
@@ -258,12 +264,13 @@ if (env.getGermanCaseForm)
         info('genitiv-sicht', `"${g}" — Einsilber, -es prüfen (des ${wort.slice(0,-1)}es?)`, `${ch} ${n.nom_sg}`);
     }
 
-// 8b Schwache Maskulina: dem Löwen, den Löwen — nicht „dem Löwe"  (Befund L10-Review)
+// 8b Schwache Maskulina: dem Löwen, des Menschen — nicht „dem Löwe" (Befund L10-Review);
+//    auf -e erkannt, ohne -e (der Mensch) über das Feld germanWeak
 if (env.getGermanCaseForm)
   for (const ch of chapters)
     for (const n of snakeNouns(ch))
-      if (/^der \S+e$/.test(n.german))
-        for (const k of ['dat_sg','akk_sg','abl_sg']) {
+      if (/^der \S+e$/.test(n.german) || n.germanWeak)
+        for (const k of ['gen_sg','dat_sg','akk_sg','abl_sg']) {
           const g = env.getGermanCaseForm(n, k);
           if (!/n$/.test(g)) err('genitiv', `"${g}" — schwaches Maskulinum braucht -n`, `${ch} ${n.nom_sg} ${k}`);
         }

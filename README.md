@@ -142,11 +142,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.29.0
+**Version:** 2.30.0
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
-**Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
+**Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
 71 Verb-Formen, 62 Substantive, 57 Beispielsätze
 
 | Lektion | Thema | Vokabeln | Verben | Substantive | Sätze | Module |
@@ -158,6 +158,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | 6 | Merkur & Apollon | 42 (+8) | 7 | 11 | 12 | alle |
 | 7 | Forum & Händler | 41 (+8) | 16 | 13 | 12 | alle |
 | 8 | Amphitheater & Gladiatoren | 47 (+8) | 15 | 11 | 12 | alle + Perfekt |
+| 9 | Vesuv & Pompeji | 45 (+9) | 22 | 11 | 14 | alle + Perfekt |
 | 10 | Romulus & Remus | 50 (+5) | 14 | 12 | 14 | alle + Perfekt |
 
 (Zahl in Klammern = Mehrwort-Ausdrücke)
@@ -189,6 +190,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.30.0 (19.10.2026)
+- **Latein Lektion 9** (Vesuv & Pompeji): 45 Vokabeln in 4 Päckchen, 9 Mehrwort-Ausdrücke
+  (cōnsilium capere, alius … alius und die sieben Beispielsätze des Hefts), 22 Verb-Formen mit
+  Perfekt, 11 Substantive, 14 Beispielsätze — voller Modulumfang inkl. Profi-Rakete und
+  Nachtmodus. Seite 27 nachfotografiert (IMG_4417), liegt bei den Fotos vom 19.10.
+- Abschrift von S. 27 dreimal unabhängig (zwei Agenten blind + von Hand), gleich bis auf eine
+  Kursiv-Markierung. Umsetzung von zwei unabhängigen Prüf-Agenten gegengelesen: drei Wörter erst
+  aus Lektion 10 (fīlia, nēmō, ante) ersetzt, Distraktoren mit Kommaliste ergänzt, damit die
+  richtige Antwort nicht an ihrer Form erkennbar ist; dūcere in die Verben aufgenommen.
+- **Gen. Pl. -ium** (urbs, mōns, pars): Deklinationsangabe `kons. Deklination (Gen. Pl. -ium)`,
+  das Prüfskript erwartet dann `-ium`.
+- **Deutsche Konjugation**: „wir verliern“ → „wir verlieren“. Die Kurzendung -n gilt nur, wenn der
+  Infinitiv selbst auf -n endet (ändern, sammeln). Neue Prüfung: 1./3. Plural = Infinitiv.
+- **Schwache Maskulina ohne -e** über das Feld `germanWeak` (der Mensch → des/dem/den Menschen),
+  Prüfung 8b deckt es mit ab.
 
 ### Version 2.29.0 (19.10.2026)
 - **Latein Lektion 10** (Romulus & Remus): 50 Vokabeln in 5 Päckchen, 5 Mehrwort-Ausdrücke,
