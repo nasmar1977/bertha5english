@@ -464,6 +464,12 @@
             pointer-events: none;
         }
 
+        .feedback.solution-note {
+            color: #5b4bb7;
+            font-size: 1.15em;
+            line-height: 1.5;
+        }
+
         .letter-slot.wrong {
             background: #ef4444;
             border-color: #ef4444;
@@ -5525,27 +5531,27 @@
                     { infinitive: 'parcere', firstPerson: 'parcō', german: 'schonen',
                       present: { sg2: 'parcis', sg3: 'parcit', pl1: 'parcimus', pl2: 'parcitis', pl3: 'parcunt' },
                       imperative: { sg: 'parce', pl: 'parcite' } },
-                    { infinitive: 'ēripere', firstPerson: 'ēripiō', perfect: 'ēripuī', perfectType: 'u', german: 'entreißen',
+                    { infinitive: 'ēripere', firstPerson: 'ēripiō', perfect: 'ēripuī', perfectType: 'u', perfectNote: 'das i aus ēripiō fällt weg, an ērip‑ kommt <b>‑uī</b>.', german: 'entreißen',
                       present: { sg2: 'ēripis', sg3: 'ēripit', pl1: 'ēripimus', pl2: 'ēripitis', pl3: 'ēripiunt' },
                       imperative: { sg: 'ēripe', pl: 'ēripite' } },
-                    { infinitive: 'petere', firstPerson: 'petō', perfect: 'petīvī', perfectType: 'v', german: 'bitten',
+                    { infinitive: 'petere', firstPerson: 'petō', perfect: 'petīvī', perfectType: 'v', perfectNote: 'an pet‑ kommt <b>‑īvī</b>.', german: 'bitten',
                       present: { sg2: 'petis', sg3: 'petit', pl1: 'petimus', pl2: 'petitis', pl3: 'petunt' },
                       imperative: { sg: 'pete', pl: 'petite' } },
                     { infinitive: 'facere', firstPerson: 'faciō', german: 'machen',
                       present: { sg2: 'facis', sg3: 'facit', pl1: 'facimus', pl2: 'facitis', pl3: 'faciunt' },
                       imperative: { sg: 'fac', pl: 'facite' } },
                     // Unregelmäßig: kein Imperativ, deshalb nicht in der Schlange
-                    { infinitive: 'esse', firstPerson: 'sum', perfect: 'fuī', perfectType: 'irr', german: 'sein',
+                    { infinitive: 'esse', firstPerson: 'sum', perfect: 'fuī', perfectType: 'irr', perfectNote: '<b>fuī</b> sieht ganz anders aus als sum, also auswendig lernen.', german: 'sein',
                       present: { sg2: 'es', sg3: 'est', pl1: 'sumus', pl2: 'estis', pl3: 'sunt' } },
-                    { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', perfectType: 'irr', german: 'da sein',
+                    { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>ad‑fuī</b>.', german: 'da sein',
                       present: { sg2: 'ades', sg3: 'adest', pl1: 'adsumus', pl2: 'adestis', pl3: 'adsunt' } },
-                    { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', perfectType: 'irr', german: 'fehlen',
+                    { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>dē‑fuī</b>.', german: 'fehlen',
                       present: { sg2: 'dēes', sg3: 'dēest', pl1: 'dēsumus', pl2: 'dēestis', pl3: 'dēsunt' } },
-                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'irr', german: 'können',
+                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'irr', perfectNote: 'posse kommt von pot‑ + esse; das Perfekt heißt <b>pot‑uī</b>. Auswendig lernen!', german: 'können',
                       present: { sg2: 'potes', sg3: 'potest', pl1: 'possumus', pl2: 'potestis', pl3: 'possunt' } },
-                    { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', german: 'wollen',
+                    { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', perfectNote: 'an den Stamm vol‑ (wie in volō) kommt <b>‑uī</b>.', german: 'wollen',
                       present: { sg2: 'vīs', sg3: 'vult', pl1: 'volumus', pl2: 'vultis', pl3: 'volunt' } },
-                    { infinitive: 'nōlle', firstPerson: 'nōlō', perfect: 'nōluī', perfectType: 'u', german: 'nicht wollen',
+                    { infinitive: 'nōlle', firstPerson: 'nōlō', perfect: 'nōluī', perfectType: 'u', perfectNote: 'an den Stamm nōl‑ (wie in nōlō) kommt <b>‑uī</b>.', german: 'nicht wollen',
                       present: { sg2: 'nōn vīs', sg3: 'nōn vult', pl1: 'nōlumus', pl2: 'nōn vultis', pl3: 'nōlunt' } },
                 ],
                 sentences: [
@@ -5742,70 +5748,70 @@
                       latinDistractors: ['Gnaeus in urbem venīre contendit.', 'Gnaeus ex urbe discēdit.', 'Gnaeus in urbem contendit.', 'Gnaeus ex urbe discēdere timet.'] },
                 ],
                 verbForms: [
-                    { infinitive: 'facere', firstPerson: 'faciō', perfect: 'fēcī', perfectType: 'dehn', german: 'machen',
+                    { infinitive: 'facere', firstPerson: 'faciō', perfect: 'fēcī', perfectType: 'dehn', perfectNote: 'das a wird zu langem <b>ē</b>, das i aus faciō fällt weg.', german: 'machen',
                       present: { sg2: 'facis', sg3: 'facit', pl1: 'facimus', pl2: 'facitis', pl3: 'faciunt' },
                       imperative: { sg: 'fac', pl: 'facite' } },
-                    { infinitive: 'sentīre', firstPerson: 'sentiō', perfect: 'sēnsī', perfectType: 's', german: 'fühlen',
+                    { infinitive: 'sentīre', firstPerson: 'sentiō', perfect: 'sēnsī', perfectType: 's', perfectNote: 'an sent‑ kommt ‑sī; das t fällt weg und das e wird lang: <b>sēnsī</b>.', german: 'fühlen',
                       present: { sg2: 'sentīs', sg3: 'sentit', pl1: 'sentīmus', pl2: 'sentītis', pl3: 'sentiunt' },
                       imperative: { sg: 'sentī', pl: 'sentīte' } },
-                    { infinitive: 'currere', firstPerson: 'currō', perfect: 'cucurrī', perfectType: 'red', german: 'laufen',
+                    { infinitive: 'currere', firstPerson: 'currō', perfect: 'cucurrī', perfectType: 'red', perfectNote: 'vorn kommt <b>cu‑</b> dazu: cu‑curr‑ī.', german: 'laufen',
                       present: { sg2: 'curris', sg3: 'currit', pl1: 'currimus', pl2: 'curritis', pl3: 'currunt' },
                       imperative: { sg: 'curre', pl: 'currite' } },
                     { infinitive: 'animadvertere', firstPerson: 'animadvertō', perfect: 'animadvertī', perfectType: 'ohne', german: 'bemerken',
                       present: { sg2: 'animadvertis', sg3: 'animadvertit', pl1: 'animadvertimus', pl2: 'animadvertitis', pl3: 'animadvertunt' },
                       imperative: { sg: 'animadverte', pl: 'animadvertite' } },
-                    { infinitive: 'vidēre', firstPerson: 'videō', perfect: 'vīdī', perfectType: 'dehn', german: 'sehen',
+                    { infinitive: 'vidēre', firstPerson: 'videō', perfect: 'vīdī', perfectType: 'dehn', perfectNote: 'das i wird <b>lang</b>, das e vor ‑ō fällt weg: vīd‑ī.', german: 'sehen',
                       present: { sg2: 'vidēs', sg3: 'videt', pl1: 'vidēmus', pl2: 'vidētis', pl3: 'vident' },
                       imperative: { sg: 'vidē', pl: 'vidēte' } },
-                    { infinitive: 'cadere', firstPerson: 'cadō', perfect: 'cecidī', perfectType: 'red', german: 'fallen',
+                    { infinitive: 'cadere', firstPerson: 'cadō', perfect: 'cecidī', perfectType: 'red', perfectNote: 'vorn kommt <b>ce‑</b> dazu, aus a wird i: ce‑cid‑ī.', german: 'fallen',
                       present: { sg2: 'cadis', sg3: 'cadit', pl1: 'cadimus', pl2: 'caditis', pl3: 'cadunt' },
                       imperative: { sg: 'cade', pl: 'cadite' } },
-                    { infinitive: 'occurrere', firstPerson: 'occurrō', perfect: 'occurrī', perfectType: 'ohne', german: 'begegnen',
+                    { infinitive: 'occurrere', firstPerson: 'occurrō', perfect: 'occurrī', perfectType: 'ohne', perfectNote: 'wie currere, aber <b>ohne</b> Verdopplung vorn: occurr‑ī.', german: 'begegnen',
                       present: { sg2: 'occurris', sg3: 'occurrit', pl1: 'occurrimus', pl2: 'occurritis', pl3: 'occurrunt' },
                       imperative: { sg: 'occurre', pl: 'occurrite' } },
                     { infinitive: 'dīcere', firstPerson: 'dīcō', perfect: 'dīxī', perfectType: 's', german: 'sagen',
                       present: { sg2: 'dīcis', sg3: 'dīcit', pl1: 'dīcimus', pl2: 'dīcitis', pl3: 'dīcunt' },
                       imperative: { sg: 'dīc', pl: 'dīcite' } },
-                    { infinitive: 'capere', firstPerson: 'capiō', perfect: 'cēpī', perfectType: 'dehn', german: 'nehmen',
+                    { infinitive: 'capere', firstPerson: 'capiō', perfect: 'cēpī', perfectType: 'dehn', perfectNote: 'das a wird zu langem <b>ē</b>, das i aus capiō fällt weg.', german: 'nehmen',
                       present: { sg2: 'capis', sg3: 'capit', pl1: 'capimus', pl2: 'capitis', pl3: 'capiunt' },
                       imperative: { sg: 'cape', pl: 'capite' } },
-                    { infinitive: 'discēdere', firstPerson: 'discēdō', perfect: 'discessī', perfectType: 's', german: 'weggehen',
+                    { infinitive: 'discēdere', firstPerson: 'discēdō', perfect: 'discessī', perfectType: 's', perfectNote: 'an discēd‑ kommt ‑sī; aus d + s wird <b>ss</b>.', german: 'weggehen',
                       present: { sg2: 'discēdis', sg3: 'discēdit', pl1: 'discēdimus', pl2: 'discēditis', pl3: 'discēdunt' },
                       imperative: { sg: 'discēde', pl: 'discēdite' } },
                     { infinitive: 'monēre', firstPerson: 'moneō', perfect: 'monuī', perfectType: 'u', german: 'ermahnen',
                       present: { sg2: 'monēs', sg3: 'monet', pl1: 'monēmus', pl2: 'monētis', pl3: 'monent' },
                       imperative: { sg: 'monē', pl: 'monēte' } },
-                    { infinitive: 'manēre', firstPerson: 'maneō', perfect: 'mānsī', perfectType: 's', german: 'bleiben',
+                    { infinitive: 'manēre', firstPerson: 'maneō', perfect: 'mānsī', perfectType: 's', perfectNote: 'an man‑ kommt <b>‑sī</b>, das a wird lang: <b>mānsī</b>.', german: 'bleiben',
                       present: { sg2: 'manēs', sg3: 'manet', pl1: 'manēmus', pl2: 'manētis', pl3: 'manent' },
                       imperative: { sg: 'manē', pl: 'manēte' } },
                     { infinitive: 'flēre', firstPerson: 'fleō', perfect: 'flēvī', perfectType: 'v', german: 'weinen',
                       present: { sg2: 'flēs', sg3: 'flet', pl1: 'flēmus', pl2: 'flētis', pl3: 'flent' },
                       imperative: { sg: 'flē', pl: 'flēte' } },
-                    { infinitive: 'fugere', firstPerson: 'fugiō', perfect: 'fūgī', perfectType: 'dehn', german: 'fliehen',
+                    { infinitive: 'fugere', firstPerson: 'fugiō', perfect: 'fūgī', perfectType: 'dehn', perfectNote: 'das u wird <b>lang</b>, das i aus fugiō fällt weg.', german: 'fliehen',
                       present: { sg2: 'fugis', sg3: 'fugit', pl1: 'fugimus', pl2: 'fugitis', pl3: 'fugiunt' },
                       imperative: { sg: 'fuge', pl: 'fugite' } },
                     { infinitive: 'dūcere', firstPerson: 'dūcō', perfect: 'dūxī', perfectType: 's', german: 'führen',
                       present: { sg2: 'dūcis', sg3: 'dūcit', pl1: 'dūcimus', pl2: 'dūcitis', pl3: 'dūcunt' },
                       imperative: { sg: 'dūc', pl: 'dūcite' } },
-                    { infinitive: 'reperīre', firstPerson: 'reperiō', perfect: 'repperī', perfectType: 'red', german: 'finden',
+                    { infinitive: 'reperīre', firstPerson: 'reperiō', perfect: 'repperī', perfectType: 'red', perfectNote: 'das <b>p</b> wird verdoppelt: re‑periō → rep‑perī.', german: 'finden',
                       present: { sg2: 'reperīs', sg3: 'reperit', pl1: 'reperīmus', pl2: 'reperītis', pl3: 'reperiunt' },
                       imperative: { sg: 'reperī', pl: 'reperīte' } },
-                    { infinitive: 'accipere', firstPerson: 'accipiō', perfect: 'accēpī', perfectType: 'dehn', german: 'erhalten',
+                    { infinitive: 'accipere', firstPerson: 'accipiō', perfect: 'accēpī', perfectType: 'dehn', perfectNote: 'aus ‑cip‑ wird ‑<b>cēp</b>‑, das i vor ‑ō fällt weg (wie capiō → cēpī).', german: 'erhalten',
                       present: { sg2: 'accipis', sg3: 'accipit', pl1: 'accipimus', pl2: 'accipitis', pl3: 'accipiunt' },
                       imperative: { sg: 'accipe', pl: 'accipite' } },
-                    { infinitive: 'perdere', firstPerson: 'perdō', perfect: 'perdidī', perfectType: 'red', german: 'verlieren',
+                    { infinitive: 'perdere', firstPerson: 'perdō', perfect: 'perdidī', perfectType: 'red', perfectNote: 'aus ‑dō wird <b>‑didī</b>: das d wird verdoppelt.', german: 'verlieren',
                       present: { sg2: 'perdis', sg3: 'perdit', pl1: 'perdimus', pl2: 'perditis', pl3: 'perdunt' },
                       imperative: { sg: 'perde', pl: 'perdite' } },
-                    { infinitive: 'parcere', firstPerson: 'parcō', perfect: 'pepercī', perfectType: 'red', german: 'schonen',
+                    { infinitive: 'parcere', firstPerson: 'parcō', perfect: 'pepercī', perfectType: 'red', perfectNote: 'vorn kommt <b>pe‑</b> dazu, aus a wird e: pe‑perc‑ī.', german: 'schonen',
                       present: { sg2: 'parcis', sg3: 'parcit', pl1: 'parcimus', pl2: 'parcitis', pl3: 'parcunt' },
                       imperative: { sg: 'parce', pl: 'parcite' } },
                     { infinitive: 'contendere', firstPerson: 'contendō', perfect: 'contendī', perfectType: 'ohne', german: 'eilen',
                       present: { sg2: 'contendis', sg3: 'contendit', pl1: 'contendimus', pl2: 'contenditis', pl3: 'contendunt' },
                       imperative: { sg: 'contende', pl: 'contendite' } },
-                    { infinitive: 'relinquere', firstPerson: 'relinquō', perfect: 'relīquī', perfectType: 'dehn', german: 'verlassen',
+                    { infinitive: 'relinquere', firstPerson: 'relinquō', perfect: 'relīquī', perfectType: 'dehn', perfectNote: 'das n fällt weg, das i wird <b>lang</b>.', german: 'verlassen',
                       present: { sg2: 'relinquis', sg3: 'relinquit', pl1: 'relinquimus', pl2: 'relinquitis', pl3: 'relinquunt' },
                       imperative: { sg: 'relinque', pl: 'relinquite' } },
-                    { infinitive: 'vincere', firstPerson: 'vincō', perfect: 'vīcī', perfectType: 'dehn', german: 'besiegen',
+                    { infinitive: 'vincere', firstPerson: 'vincō', perfect: 'vīcī', perfectType: 'dehn', perfectNote: 'das n fällt weg, das i wird <b>lang</b>.', german: 'besiegen',
                       present: { sg2: 'vincis', sg3: 'vincit', pl1: 'vincimus', pl2: 'vincitis', pl3: 'vincunt' },
                       imperative: { sg: 'vince', pl: 'vincite' } },
                 ],
@@ -6006,46 +6012,46 @@
                       latinDistractors: ['Cōpiae contrā lībertātem pūgnābant.', 'Cōpiae lībertātem fugiēbant.', 'Rēx prō lībertāte pūgnābat.', 'Cōpiae prō rēge pūgnābant.'] },
                 ],
                 verbForms: [
-                    { infinitive: 'iubēre', firstPerson: 'iubeō', perfect: 'iussī', perfectType: 's', german: 'befehlen',
+                    { infinitive: 'iubēre', firstPerson: 'iubeō', perfect: 'iussī', perfectType: 's', perfectNote: 'an iub‑ kommt ‑sī; aus b + s wird <b>ss</b>.', german: 'befehlen',
                       present: { sg2: 'iubēs', sg3: 'iubet', pl1: 'iubēmus', pl2: 'iubētis', pl3: 'iubent' },
                       imperative: { sg: 'iubē', pl: 'iubēte' } },
-                    { infinitive: 'venīre', firstPerson: 'veniō', perfect: 'vēnī', perfectType: 'dehn', german: 'kommen',
+                    { infinitive: 'venīre', firstPerson: 'veniō', perfect: 'vēnī', perfectType: 'dehn', perfectNote: 'das e wird <b>lang</b>, das i vor ‑ō fällt weg: vēn‑ī.', german: 'kommen',
                       present: { sg2: 'venīs', sg3: 'venit', pl1: 'venīmus', pl2: 'venītis', pl3: 'veniunt' },
                       imperative: { sg: 'venī', pl: 'venīte' } },
-                    { infinitive: 'accēdere', firstPerson: 'accēdō', perfect: 'accessī', perfectType: 's', german: 'sich nähern',
+                    { infinitive: 'accēdere', firstPerson: 'accēdō', perfect: 'accessī', perfectType: 's', perfectNote: 'an accēd‑ kommt ‑sī; aus d + s wird <b>ss</b>.', german: 'sich nähern',
                       present: { sg2: 'accēdis', sg3: 'accēdit', pl1: 'accēdimus', pl2: 'accēditis', pl3: 'accēdunt' },
                       imperative: { sg: 'accēde', pl: 'accēdite' } },
-                    { infinitive: 'cōnsistere', firstPerson: 'cōnsistō', perfect: 'cōnstitī', perfectType: 'red', german: 'stehen bleiben',
+                    { infinitive: 'cōnsistere', firstPerson: 'cōnsistō', perfect: 'cōnstitī', perfectType: 'red', perfectNote: 'aus ‑sistō wird ‑<b>stitī</b>: das t kommt jetzt zweimal vor.', german: 'stehen bleiben',
                       present: { sg2: 'cōnsistis', sg3: 'cōnsistit', pl1: 'cōnsistimus', pl2: 'cōnsistitis', pl3: 'cōnsistunt' },
                       imperative: { sg: 'cōnsiste', pl: 'cōnsistite' } },
-                    { infinitive: 'sedēre', firstPerson: 'sedeō', perfect: 'sēdī', perfectType: 'dehn', german: 'sitzen',
+                    { infinitive: 'sedēre', firstPerson: 'sedeō', perfect: 'sēdī', perfectType: 'dehn', perfectNote: 'das e in sed‑ wird <b>lang</b>, das e vor ‑ō fällt weg: sēd‑ī.', german: 'sitzen',
                       present: { sg2: 'sedēs', sg3: 'sedet', pl1: 'sedēmus', pl2: 'sedētis', pl3: 'sedent' },
                       imperative: { sg: 'sedē', pl: 'sedēte' } },
                     { infinitive: 'dūcere', firstPerson: 'dūcō', perfect: 'dūxī', perfectType: 's', german: 'führen',
                       present: { sg2: 'dūcis', sg3: 'dūcit', pl1: 'dūcimus', pl2: 'dūcitis', pl3: 'dūcunt' },
                       imperative: { sg: 'dūc', pl: 'dūcite' } },
-                    { infinitive: 'committere', firstPerson: 'committō', perfect: 'commīsī', perfectType: 's', german: 'veranstalten',
+                    { infinitive: 'committere', firstPerson: 'committō', perfect: 'commīsī', perfectType: 's', perfectNote: 'wie mittere → mīsī, nur mit Vorsilbe: <b>com‑mīsī</b>.', german: 'veranstalten',
                       present: { sg2: 'committis', sg3: 'committit', pl1: 'committimus', pl2: 'committitis', pl3: 'committunt' },
                       imperative: { sg: 'committe', pl: 'committite' } },
-                    { infinitive: 'interficere', firstPerson: 'interficiō', perfect: 'interfēcī', perfectType: 'dehn', german: 'töten',
+                    { infinitive: 'interficere', firstPerson: 'interficiō', perfect: 'interfēcī', perfectType: 'dehn', perfectNote: 'aus ‑fic‑ wird ‑<b>fēc</b>‑, das i vor ‑ō fällt weg (wie faciō → fēcī).', german: 'töten',
                       present: { sg2: 'interficis', sg3: 'interficit', pl1: 'interficimus', pl2: 'interficitis', pl3: 'interficiunt' },
                       imperative: { sg: 'interfice', pl: 'interficite' } },
                     { infinitive: 'cōnstituere', firstPerson: 'cōnstituō', perfect: 'cōnstituī', perfectType: 'ohne', german: 'beschließen',
                       present: { sg2: 'cōnstituis', sg3: 'cōnstituit', pl1: 'cōnstituimus', pl2: 'cōnstituitis', pl3: 'cōnstituunt' },
                       imperative: { sg: 'cōnstitue', pl: 'cōnstituite' } },
-                    { infinitive: 'crēdere', firstPerson: 'crēdō', perfect: 'crēdidī', perfectType: 'red', german: 'glauben',
+                    { infinitive: 'crēdere', firstPerson: 'crēdō', perfect: 'crēdidī', perfectType: 'red', perfectNote: 'aus ‑dō wird <b>‑didī</b>: das d wird verdoppelt.', german: 'glauben',
                       present: { sg2: 'crēdis', sg3: 'crēdit', pl1: 'crēdimus', pl2: 'crēditis', pl3: 'crēdunt' },
                       imperative: { sg: 'crēde', pl: 'crēdite' } },
-                    { infinitive: 'invenīre', firstPerson: 'inveniō', perfect: 'invēnī', perfectType: 'dehn', german: 'finden',
+                    { infinitive: 'invenīre', firstPerson: 'inveniō', perfect: 'invēnī', perfectType: 'dehn', perfectNote: 'wie venīre → vēnī: das e wird <b>lang</b>, das i vor ‑ō fällt weg: invēn‑ī.', german: 'finden',
                       present: { sg2: 'invenīs', sg3: 'invenit', pl1: 'invenīmus', pl2: 'invenītis', pl3: 'inveniunt' },
                       imperative: { sg: 'invenī', pl: 'invenīte' } },
-                    { infinitive: 'mittere', firstPerson: 'mittō', perfect: 'mīsī', perfectType: 's', german: 'schicken',
+                    { infinitive: 'mittere', firstPerson: 'mittō', perfect: 'mīsī', perfectType: 's', perfectNote: 'an mitt‑ kommt ‑sī; aus tt + s wird <b>s</b>, das i wird lang.', german: 'schicken',
                       present: { sg2: 'mittis', sg3: 'mittit', pl1: 'mittimus', pl2: 'mittitis', pl3: 'mittunt' },
                       imperative: { sg: 'mitte', pl: 'mittite' } },
                     { infinitive: 'imperāre', firstPerson: 'imperō', perfect: 'imperāvī', perfectType: 'v', german: 'herrschen',
                       present: { sg2: 'imperās', sg3: 'imperat', pl1: 'imperāmus', pl2: 'imperātis', pl3: 'imperant' },
                       imperative: { sg: 'imperā', pl: 'imperāte' } },
-                    { infinitive: 'rīdēre', firstPerson: 'rīdeō', perfect: 'rīsī', perfectType: 's', german: 'lachen',
+                    { infinitive: 'rīdēre', firstPerson: 'rīdeō', perfect: 'rīsī', perfectType: 's', perfectNote: 'an rīd‑ kommt ‑sī; das d fällt weg: <b>rīsī</b>.', german: 'lachen',
                       present: { sg2: 'rīdēs', sg3: 'rīdet', pl1: 'rīdēmus', pl2: 'rīdētis', pl3: 'rīdent' },
                       imperative: { sg: 'rīdē', pl: 'rīdēte' } },
                 ],
@@ -7080,9 +7086,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.31.3';
+        const APP_VERSION = '2.31.4';
 
         const changelogEntries = [
+            {
+                version: '2.31.4',
+                date: '20.10.2026',
+                items: [
+                    'Nach <b>„💡 Lösung zeigen“</b> steht unter dem Wort jetzt eine Erklärung statt nochmal dasselbe Wort. Beim <b>Perfekt</b> erfährst du, wie es gebildet wird – z. B. <i>cadō → cecidī</i>: vorn kommt ce‑ dazu, aus a wird i.',
+                ]
+            },
             {
                 version: '2.31.3',
                 date: '20.10.2026',
@@ -10394,15 +10407,30 @@
                     ohne: 'Perfekt ohne Stammveränderung',
                     irr:  'unregelmäßig'
                 };
+                // Erklärung bei „Lösung zeigen": Das Wort steht dann schon in den Feldern,
+                // darunter steht, warum es so heißt.
+                const WIE = {
+                    v:    'an den Stamm kommt <b>‑vī</b>.',
+                    u:    'das e fällt weg, an den Stamm kommt <b>‑uī</b>.',
+                    s:    'an den Stamm kommt <b>‑sī</b>; c oder g + s wird zu <b>x</b>.',
+                    dehn: 'der Vokal im Stamm wird <b>lang</b>.',
+                    red:  'vorn wird ein Teil der ersten Silbe <b>verdoppelt</b>.',
+                    ohne: 'der Stamm bleibt <b>gleich</b>, nur die Endung <b>‑ī</b> kommt dazu.',
+                    irr:  'diese Form muss man auswendig lernen.'
+                };
                 const perfVerbs = (ch.verbForms || []).filter(v => v.perfect);
                 perfVerbs.forEach(vf => {
+                    const explain = vf.perfectType && TYP[vf.perfectType]
+                        ? '<i>' + vf.infinitive + '</i>: ' + vf.firstPerson + ' → ' + vf.perfect +
+                          '<br><b>' + TYP[vf.perfectType] + '</b> – ' + (vf.perfectNote || WIE[vf.perfectType])
+                        : '<i>' + vf.infinitive + '</i>: ' + vf.firstPerson + ' → ' + vf.perfect;
                     // 1) Infinitiv → Perfekt
                     items.push({
                         type: 'perfect', mode: 'spelling',
                         prompt: vf.infinitive + ' (' + vf.german + ')',
                         answer: vf.perfect.toLowerCase(), displayAnswer: vf.perfect,
                         image: '🕰️', hint: 'Die 1. Person Perfekt',
-                        question: '1. Person Perfekt?',
+                        question: '1. Person Perfekt?', explain,
                         id: 'perf_i2p_' + vf.infinitive,
                         dvWord: vf.infinitive
                     });
@@ -10414,7 +10442,7 @@
                         // Brücke wie im Heft (occurrō, occurrī): aus dem Präsens ergibt sich
                         // der Infinitiv. Kommt nach 15 s oder sofort nach einem Fehlversuch.
                         image: '🕰️', hint: 'Präsens: ' + vf.firstPerson, hintOnWrong: true,
-                        question: 'Wie heißt der Infinitiv?',
+                        question: 'Wie heißt der Infinitiv?', explain,
                         id: 'perf_p2i_' + vf.infinitive,
                         dvWord: vf.infinitive
                     });
@@ -12303,14 +12331,22 @@
             });
         }
 
+        // Unter den Feldern nicht noch einmal dasselbe Wort, sondern was hilft:
+        // eine Erklärung, sonst die Form mit Längen, sonst ein Satz zum Merken.
+        function solutionNote(explain, displayAns, typed) {
+            if (explain) return explain;
+            if (displayAns && displayAns.toLowerCase() !== typed.toLowerCase())
+                return 'Mit Längenzeichen: <b>' + displayAns + '</b>';
+            return 'Schau es dir gut an – das Wort kommt gleich noch einmal.';
+        }
+
         function latinSkipWord() {
             const feedback = document.getElementById('feedback');
             const displayAns = currentLatinItem.displayAnswer || currentWord;
-            feedback.textContent = 'Die richtige Antwort ist: ' + displayAns.toUpperCase();
-            feedback.className = 'feedback';
             showSolutionInSlots(currentWord);
-            feedback.style.color = '#667eea';
-            feedback.style.fontSize = '1.8em';
+            feedback.innerHTML = solutionNote(currentLatinItem.explain, displayAns, currentWord);
+            feedback.className = 'feedback solution-note';
+            feedback.style.color = ''; feedback.style.fontSize = '';
 
             if (hintTimeout) clearTimeout(hintTimeout);
 
@@ -12689,11 +12725,10 @@
         function skipWord() {
             if (currentLanguage === 'latin') { latinSkipWord(); return; }
             const feedback = document.getElementById('feedback');
-            feedback.textContent = `Die richtige Antwort ist: ${currentWord.toUpperCase()}`;
-            feedback.className = 'feedback';
             showSolutionInSlots(currentWord);
-            feedback.style.color = '#667eea';
-            feedback.style.fontSize = '1.8em';
+            feedback.innerHTML = solutionNote(null, currentWord, currentWord);
+            feedback.className = 'feedback solution-note';
+            feedback.style.color = ''; feedback.style.fontSize = '';
 
             if (hintTimeout) {
                 clearTimeout(hintTimeout);
