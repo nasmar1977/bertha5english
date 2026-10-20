@@ -145,7 +145,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.31.2
+**Version:** 2.31.3
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -193,6 +193,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.31.3 (20.10.2026)
+- **„Überspringen“ heißt jetzt „💡 Lösung zeigen“** (Spelling Englisch/Latein, Beispielsätze, Tabellen).
+  Die Lösung kam schon vorher, aber der Name klang nach „weiter ohne Antwort“. Jetzt steht das Wort
+  zusätzlich in den Feldern (`.letter-slot.solution`, lila), nicht nur als Zeile darunter.
+  Zählt weiter als Fehler, das Wort kommt in die Wiederholung. Tabelle: Lösung 2,5 s statt 1,5 s sichtbar.
+- **Konjugationsschlange**: neuer Knopf „💡 Lösung zeigen“ neben „Prüfen“ (`snakeReveal`). Er zeigt die Endung
+  ohne „Falsch!“, danach wird sie abgetippt wie nach einem Fehlversuch.
 
 ### Version 2.31.2 (19.10.2026)
 - **Perfekt → Infinitiv**: Tipp „Präsens: occurrō“ statt „Zurück zum Infinitiv“ — wie im Heft

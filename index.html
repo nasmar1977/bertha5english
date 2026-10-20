@@ -455,6 +455,15 @@
             animation: celebrate 0.5s;
         }
 
+        /* „Lösung zeigen": das Wort steht in den Feldern, sichtbar anders als selbst gelegt */
+        .letter-slot.solution {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            border-style: solid;
+            color: white;
+            pointer-events: none;
+        }
+
         .letter-slot.wrong {
             background: #ef4444;
             border-color: #ef4444;
@@ -3573,7 +3582,7 @@
             <div id="terminalContainer" class="terminal-container"></div>
             <div style="text-align: center;">
                 <button id="tableCheckBtn" onclick="checkTableAnswer()">✓ Prüfen (Enter)</button>
-                <button class="btn btn-skip" id="tableSkipBtn" onclick="skipTableAnswer()">→ Überspringen</button>
+                <button class="btn btn-skip" id="tableSkipBtn" onclick="skipTableAnswer()">💡 Lösung zeigen</button>
             </div>
         </div>
 
@@ -3585,6 +3594,7 @@
             <div class="snake-target" id="snakeTarget" style="display: none;"></div>
             <div style="text-align: center; margin-top: 8px;">
                 <button class="snake-check-btn" id="snakeCheckBtn" style="display: none;" onclick="checkSnakeAnswer()">✓ Prüfen</button>
+                <button class="btn btn-skip" id="snakeRevealBtn" style="display: none;" onclick="snakeReveal()">💡 Lösung zeigen</button>
                 <button class="btn btn-continue" id="snakeContinueBtn" style="display: none;" onclick="snakeContinue()">▶️ Weiter</button>
             </div>
             <div class="snake-noending-note" id="snakeNoEndingNote">Manche Formen haben keine Endung — dann das Feld leer lassen und auf „Prüfen" drücken.</div>
@@ -3597,7 +3607,7 @@
         <div class="buttons" id="spellingButtons">
             <button class="btn btn-clear" id="clearBtn">🔄 Löschen <small>(ESC)</small></button>
             <button class="btn btn-check" id="checkBtn">✓ Prüfen <small>(ENTER)</small></button>
-            <button class="btn btn-skip" id="skipBtn">→ Überspringen</button>
+            <button class="btn btn-skip" id="skipBtn">💡 Lösung zeigen</button>
             <button class="btn btn-continue" id="continueBtn" style="display: none;">▶️ Weiter</button>
         </div>
 
@@ -7070,9 +7080,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.31.2';
+        const APP_VERSION = '2.31.3';
 
         const changelogEntries = [
+            {
+                version: '2.31.3',
+                date: '20.10.2026',
+                items: [
+                    'Aus <b>„Überspringen“</b> wird <b>„💡 Lösung zeigen“</b>: Das richtige Wort steht dann lila in den Feldern, damit du es geschrieben siehst. Das Wort kommt danach noch einmal dran.',
+                    'Auch in der <b>Konjugationsschlange</b> gibt es jetzt „💡 Lösung zeigen“ – danach tippst du die Endung einmal ab.',
+                ]
+            },
             {
                 version: '2.31.2',
                 date: '19.10.2026',
@@ -11892,7 +11910,7 @@
                 blankCell.innerHTML = currentLatinItem.displayAnswer;
             }
             playSound('wrong');
-            setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 1500);
+            setTimeout(() => { currentWordIndex++; loadLatinWord(); }, 2500);
         }
 
         // ===================================================================
@@ -11940,7 +11958,7 @@
             target.style.display = 'block';
 
             // Show check button, hide praise
-            document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+            setSnakeCheckVisible('inline-block');
             document.getElementById('snakePraise').style.display = 'none';
             const chain = document.getElementById('snakeChain');
             chain.classList.remove('snake-celebrate');
@@ -12093,16 +12111,32 @@
             return v === '' || /^[-–—/0]+$/.test(v);
         }
 
+        function setSnakeCheckVisible(display) {
+            document.getElementById('snakeCheckBtn').style.display = display;
+            document.getElementById('snakeRevealBtn').style.display = display;
+        }
+
+        // Wer die Endung nicht weiß, bekommt sie gezeigt — zählt wie ein Fehlversuch
+        // und muss danach abgetippt werden.
+        let snakeRevealing = false;
+        function snakeReveal() {
+            snakeRevealing = true;
+            checkSnakeAnswer();
+        }
+
         function checkSnakeAnswer() {
             const input = document.getElementById('snakeEndingInput');
             if (!input) return;
             const item = currentLatinItem;
             const raw = input.value.trim();
             const expected = stripMacrons(item.answer);
+            const revealed = snakeRevealing;
+            snakeRevealing = false;
             // Leeres Feld nur werten, wenn „keine Endung" auch die richtige Antwort ist —
             // sonst bliebe ein versehentliches Prüfen als Fehler hängen.
-            if (!raw && expected !== '') return;
-            const userAnswer = snakeNoEnding(raw) ? '' : stripMacrons(raw.toLowerCase());
+            if (!raw && expected !== '' && !revealed) return;
+            const userAnswer = revealed ? null
+                : snakeNoEnding(raw) ? '' : stripMacrons(raw.toLowerCase());
             const stats = wordStats[item.id];
             const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
 
@@ -12110,7 +12144,7 @@
                 if (userAnswer === expected) {
                     input.className = 'snake-ending-input correct';
                     input.disabled = true;
-                    document.getElementById('snakeCheckBtn').style.display = 'none';
+                    setSnakeCheckVisible('none');
                     const seg = document.getElementById('snakeCurrentSegment');
                     seg.className = 'snake-segment completed';
                     seg.querySelector('.snake-segment-form').textContent = item.fullForm;
@@ -12125,9 +12159,9 @@
                     }
                 } else {
                     input.className = 'snake-ending-input wrong';
-                    document.getElementById('snakeCheckBtn').style.display = 'none';
+                    setSnakeCheckVisible('none');
                     document.getElementById('snakeInstruction').textContent =
-                        'Falsch! ' + (item.answer === ''
+                        (revealed ? '' : 'Falsch! ') + (item.answer === ''
                         ? 'Diese Form hat keine Endung — sie ist der blanke Stamm.'
                         : 'Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length));
                     document.getElementById('snakeInstruction').style.color = '#f44336';
@@ -12136,7 +12170,7 @@
                         input.className = 'snake-ending-input';
                         input.value = '';
                         input.focus();
-                        document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+                        setSnakeCheckVisible('inline-block');
                         document.getElementById('snakeInstruction').textContent = 'Tippe die richtige Endung:';
                         document.getElementById('snakeInstruction').style.color = '';
                     }, 2000);
@@ -12160,7 +12194,7 @@
 
                 // Show correct ending in target
                 input.value = item.answer;
-                document.getElementById('snakeCheckBtn').style.display = 'none';
+                setSnakeCheckVisible('none');
 
                 handleCorrectAnswer(stats, timeElapsed);
                 playSound('correct');
@@ -12180,9 +12214,9 @@
                 const seg = document.getElementById('snakeCurrentSegment');
                 seg.className = 'snake-segment wrong';
 
-                document.getElementById('snakeCheckBtn').style.display = 'none';
+                setSnakeCheckVisible('none');
                 document.getElementById('snakeInstruction').textContent =
-                    'Falsch! ' + (item.answer === ''
+                    (revealed ? '' : 'Falsch! ') + (item.answer === ''
                         ? 'Diese Form hat keine Endung — sie ist der blanke Stamm.'
                         : 'Die richtige Endung ist: ' + item.displayAnswer.slice(item.stem.length));
                 document.getElementById('snakeInstruction').style.color = '#f44336';
@@ -12196,7 +12230,7 @@
                     input.value = '';
                     input.disabled = false;
                     input.focus();
-                    document.getElementById('snakeCheckBtn').style.display = 'inline-block';
+                    setSnakeCheckVisible('inline-block');
                     document.getElementById('snakeInstruction').textContent = 'Tippe die richtige Endung:';
                     document.getElementById('snakeInstruction').style.color = '';
                     seg.className = 'snake-segment current';
@@ -12256,11 +12290,25 @@
             loadLatinWord();
         }
 
+        // „Lösung zeigen": das richtige Wort in die Felder legen, damit man es
+        // geschrieben sieht und nicht nur als Zeile darunter.
+        function showSolutionInSlots(word) {
+            const area = currentMode === 'sentence' ? '#sentenceAnswerArea' : '#answerArea';
+            document.querySelectorAll(area + ' .letter-slot').forEach((slot, i) => {
+                const ch = word[i] || '';
+                if (slot.classList.contains('fixed')) return;
+                slot.textContent = ch.trim() ? ch.toUpperCase() : '';
+                slot.classList.remove('filled', 'wrong');
+                slot.classList.add('solution');
+            });
+        }
+
         function latinSkipWord() {
             const feedback = document.getElementById('feedback');
             const displayAns = currentLatinItem.displayAnswer || currentWord;
-            feedback.textContent = 'Die richtige Antwort war: ' + displayAns.toUpperCase();
+            feedback.textContent = 'Die richtige Antwort ist: ' + displayAns.toUpperCase();
             feedback.className = 'feedback';
+            showSolutionInSlots(currentWord);
             feedback.style.color = '#667eea';
             feedback.style.fontSize = '1.8em';
 
@@ -12641,8 +12689,9 @@
         function skipWord() {
             if (currentLanguage === 'latin') { latinSkipWord(); return; }
             const feedback = document.getElementById('feedback');
-            feedback.textContent = `Die richtige Antwort war: ${currentWord.toUpperCase()}`;
+            feedback.textContent = `Die richtige Antwort ist: ${currentWord.toUpperCase()}`;
             feedback.className = 'feedback';
+            showSolutionInSlots(currentWord);
             feedback.style.color = '#667eea';
             feedback.style.fontSize = '1.8em';
 
