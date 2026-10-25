@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Klassenarbeit üben · Back to Camden Town</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Lexend:wght@400;500;600&display=swap">
 <style>
 /* Layout: eine Londoner U-Bahn-Linie oben, jede Station ist ein Teil der Arbeit; darunter eine Karte pro Aufgabe. Bewusst nur helles Thema. */
 :root {
@@ -453,10 +451,13 @@ let MAX = {};
 // Zustand (nur in diesem Browser, für "später weitermachen")
 // ---------------------------------------------------------------------------
 const STORE = 'klassenarbeit-camden-v1';
-const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), at: 'vocab' });
+const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), at: 'vocab' });
 let S = fresh();
 try { const raw = localStorage.getItem(STORE); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch (e) {}
-if (S.writeAi && S.writeAi.wait) S.writeAi = null;   // Seite wurde während einer KI-Anfrage neu geladen
+if (S.writeAi && (S.writeAi.wait || S.writeAi.err)) S.writeAi = null;
+// Nur für diese Sitzung: KI-Fehlermeldungen (je Aufgabe, 'write', 'plan') und „liest gerade“.
+const kiErr = new Map();
+let writeWait = false;
 
 // Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
 // Aufgaben beim Neuladen gleich bleiben. Ohne seed (= 0) die erste Arbeit.
@@ -527,20 +528,39 @@ let kiStatus = 'aus';
 const kiOn = () => kiStatus === 'an' && navigator.onLine !== false;
 // Prüfen, ob der Worker die Klassenarbeit-Routen kennt – ohne eine Frage zu
 // verbrauchen: Ohne Aufgabe antwortet er mit 400, bevor er zählt.
-(async () => {
+async function kiProbe() {
   try {
     const r = await fetch(KI_API + 'pruefen', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: myDeviceId() }) });
     const d = await r.json().catch(() => ({}));
     if (r.status === 400 && /aufgabe/.test(d.fehler || '')) { kiStatus = 'an'; render(); }
   } catch (e) {}
-})();
+}
+kiProbe();
+window.addEventListener('online', () => { if (kiStatus === 'aus') kiProbe(); });
+
+// Dieselbe Sperre wie im Worker (plausibel()): kein Punkt für etwas, das gar
+// kein Antwortversuch ist – viel zu lang, Steuerwörter, kaum Wörter der Lösung.
+function plausibel(antwort, loesung) {
+  const a = String(antwort || '').toLowerCase(), l = String(loesung || '').toLowerCase();
+  if (a.length > 2 * l.length + 15) return false;
+  if (/ignor|instruction|anweis|regel|richtig|correct|true|system|prompt/i.test(a)) return false;
+  const woerter = s => s.replace(/[’‘]/g, "'").match(/[a-z']+/g) || [];
+  const lw = woerter(l);
+  if (lw.length <= 3) return true;
+  const aw = new Set(woerter(a));
+  return lw.filter(w => aw.has(w)).length / lw.length >= 0.5;
+}
 async function kiFrage(route, body, ms) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), ms);
   try {
     const r = await fetch(KI_API + route, { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(Object.assign({ id: myDeviceId() }, body)), signal: ctl.signal });
+    if (r.status === 503) {
+      const d = await r.json().catch(() => ({}));
+      if (d.fehler === 'ki-belegt') throw { code: 'belegt' };   // Minutenlimit: gleich nochmal
+    }
     if (r.status === 429 || r.status === 503) { kiStatus = 'weg'; throw { code: 'weg', status: r.status }; }
     if (!r.ok) throw { code: 'fehler' };
     return await r.json();
@@ -556,6 +576,7 @@ function kiFail(e) {
     ? 'Die KI hat heute genug Fragen beantwortet. Morgen geht es wieder.'
     : 'KI heute nicht verfügbar.';
   if (e && e.code === 'zeit') return 'Die KI hat zu lange gebraucht. Probier es noch einmal.';
+  if (e && e.code === 'belegt') return 'Gerade viel los – versuch es gleich nochmal.';
   return 'Das hat nicht geklappt. Probier es noch einmal.';
 }
 
@@ -681,10 +702,10 @@ function typedItem(it, n, kind, promptHtml, opts = {}) {
     else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
     else {
       fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(showSol(it, kind))}</span>`;
-      if (kiOn() && val.trim()) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
+      if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
     }
   }
-  const ai = S.answers['ai-' + it.id] ? `<div class="claude-box">${esc(S.answers['ai-' + it.id])}</div>` : '';
+  const ai = kiBox(it.id);
   const body = opts.inline
     ? `<div class="inline">${promptHtml.replace('%INPUT%', input)}</div>`
     : `<div class="q">${promptHtml}</div>${input}`;
@@ -743,6 +764,12 @@ function renderGrammar(sec) {
     submitBar(g, 'Grammatik');
 }
 
+// KI-Antwort (gespeichert) oder KI-Fehler (nur diese Sitzung) unter einer Aufgabe
+function kiBox(id) {
+  const t = S.ai[id] ? S.ai[id].erklaerung : kiErr.get(id);
+  return t ? `<div class="claude-box">${esc(t)}</div>` : '';
+}
+
 function renderOrder(sec) {
   const done = S.done.order;
   const rows = ORDER.map((it, n) => {
@@ -761,10 +788,10 @@ function renderOrder(sec) {
       else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
       else {
         fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(it.sol)}</span>`;
-        if (kiOn() && val.trim()) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="order">🤖 Warum? / Stimmt meins auch?</button>`;
+        if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="order">🤖 Warum? / Stimmt meins auch?</button>`;
       }
     }
-    const ai = S.answers['ai-' + it.id] ? `<div class="claude-box">${esc(S.answers['ai-' + it.id])}</div>` : '';
+    const ai = kiBox(it.id);
     return `<div class="item ${done ? ((ok || cOk) ? 'ok' : 'no') : ''}"><span class="n">${n + 1}</span><div class="body">
       <div class="sentence-line">${line}</div>
       ${done ? '' : `<div class="tile-pool">${pool}</div>`}
@@ -859,9 +886,9 @@ function renderWriting(sec) {
   const st = writingStats(S.writing);
   const ai = S.writeAi;
   let aiHtml = '';
-  if (ai && ai.err) aiHtml = `<div class="claude-box">${esc(ai.err)}</div>`;
-  else if (ai && ai.wait) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
-  else if (ai) {
+  if (writeWait) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
+  else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
+  if (ai && !writeWait) {
     aiHtml = `<div class="wf">
       <div class="row"><b>${aiCurrent() ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.` : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.'}</b></div>
       ${(ai.lob || []).length ? `<div class="row"><b>👍 Das ist gut:</b><ul>${ai.lob.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
@@ -886,11 +913,18 @@ function renderWriting(sec) {
           : `<label><input type="checkbox" data-self="${c.k}" ${S.self[c.k] ? 'checked' : ''} ${done ? 'disabled' : ''}> ${esc(c.t)}</label>`).join('')}
       </div>
       ${aiHtml}
-      ${kiOn() && !done && !(ai && ai.wait) ? `<div style="margin-top:12px"><button type="button" class="btn claude" data-claude-write ${st.words < 30 ? 'disabled' : ''}>🤖 KI, lies meine Geschichte</button>
-        <span class="note" style="color:var(--muted);font-size:.88rem">${st.words < 30 ? 'Ab 30 Wörtern.' : (ai && !ai.err ? 'Du kannst verbessern und nochmal fragen.' : 'Die KI gibt Tipps und vergibt die Punkte.')}</span></div>` : ''}
+      ${kiOn() && !done && !writeWait ? `<div style="margin-top:12px">
+        <button type="button" class="btn claude" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
+        <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
       ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
     </div>` +
     submitBar('writing', 'Text');
+}
+// Ein Text wird nur einmal bewertet; erst nach einer Änderung darf man wieder fragen.
+function writeNote(st) {
+  if (aiCurrent()) return 'Ändere deinen Text, dann kannst du nochmal fragen.';
+  if (st.words < 30) return 'Ab 30 Wörtern.';
+  return S.writeAi ? 'Du kannst verbessern und nochmal fragen.' : 'Die KI gibt Tipps und vergibt die Punkte.';
 }
 function meterHtml(st) {
   return `<span class="${st.words >= 80 ? 'on' : ''}">📝 ${st.words} Wörter</span>
@@ -917,7 +951,7 @@ function renderResult(sec) {
     </div>
     ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
       <p class="task">Die KI schaut auf deine Fehler und sagt dir, was du bis zur Arbeit noch üben solltest.</p>
-      ${S.answers.plan ? `<div class="claude-box">${esc(S.answers.plan)}</div>` : ''}
+      ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
       <button type="button" class="btn claude" data-plan style="margin-top:8px">🤖 Was soll ich noch üben?</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
       <p class="task">Eine neue Arbeit mischt andere Aufgaben aus einem größeren Vorrat (der Lesetext bleibt gleich). Deine jetzigen Antworten werden dabei gelöscht.</p>
@@ -945,8 +979,19 @@ document.addEventListener('input', e => {
   if (id === 'writing') {
     S.writing = e.target.value;
     $('#meter').innerHTML = meterHtml(writingStats(S.writing));
-    const wb = document.querySelector('[data-claude-write]');   // Knopf erst ab 30 Wörtern
-    if (wb) wb.disabled = writingStats(S.writing).words < 30;
+    const wb = document.querySelector('[data-claude-write]');   // Knopf erst ab 30 Wörtern, nicht für denselben Text
+    if (wb) {
+      const st = writingStats(S.writing);
+      wb.disabled = st.words < 30;
+      wb.hidden = aiCurrent();
+      const wn = document.getElementById('write-note');
+      if (wn) wn.textContent = writeNote(st);
+    }
+    // „Die KI gibt dir … Punkte“ gilt nur für den bewerteten Text
+    const wfHead = document.querySelector('.wf .row b');
+    if (wfHead && S.writeAi) wfHead.textContent = aiCurrent()
+      ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.`
+      : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.';
   } else {
     S.answers[id] = e.target.value;
   }
@@ -1012,60 +1057,70 @@ function taskText(kind, it) {
   }[kind];
 }
 async function askWhy(id, kind, btn) {
-  if (!kiOn()) return;
+  if (!kiOn() || S.ai[id]) return;
   const it = ALL_TYPED[kind].find(x => x.id === id);
+  const antwort = S.answers[id] || '', loesung = showSol(it, kind);
   btn.disabled = true;
   btn.textContent = '🤖 denkt nach …';
+  kiErr.delete(id);
   try {
-    const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung: showSol(it, kind), antwort: S.answers[id] || '' }, 20000);
-    S.answers['ai-' + id] = String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.';
-    if (r && r.richtig === true) S.claudeOk[id] = true;
+    const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung, antwort }, 20000);
+    const richtig = !!(r && r.richtig === true && plausibel(antwort, loesung));
+    S.ai[id] = { richtig, erklaerung: String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.' };
+    if (richtig) S.claudeOk[id] = true;
   } catch (err) {
-    S.answers['ai-' + id] = kiFail(err);
+    kiErr.set(id, kiFail(err));
   }
   save(); render();
 }
 
 async function askWriting() {
-  if (!kiOn()) return;
+  if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
-  S.writeAi = { wait: true }; render();
+  writeWait = true; kiErr.delete('write'); render();
   try {
     const r = await kiFrage('text', { text }, 45000);
+    const punkte = Number(r && r.punkte);
+    if (!isFinite(punkte)) throw { code: 'fehler' };
     S.writeAi = {
       text,
-      punkte: Number(r && r.punkte),
-      lob: Array.isArray(r && r.lob) ? r.lob.slice(0, 3).map(String) : [],
-      fehler: Array.isArray(r && r.fehler) ? r.fehler.slice(0, 6).filter(f => f && typeof f === 'object') : [],
-      tipps: Array.isArray(r && r.tipps) ? r.tipps.slice(0, 3).map(String) : [],
+      punkte,
+      lob: Array.isArray(r.lob) ? r.lob.filter(x => typeof x === 'string').slice(0, 3) : [],
+      fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
+      tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
     };
-    if (!isFinite(S.writeAi.punkte)) S.writeAi.punkte = null;
   } catch (err) {
-    S.writeAi = { err: kiFail(err) };
+    kiErr.set('write', kiFail(err));
   }
+  writeWait = false;
   save(); render();
 }
 
 async function askPlan(btn) {
   if (!kiOn()) return;
   btn.disabled = true; btn.textContent = '🤖 denkt nach …';
-  const wrong = [];
-  Object.entries(ALL_TYPED).forEach(([kind, list]) => list.forEach(it => {
-    if (!isRight(S.answers[it.id], it.en, it) && !S.claudeOk[it.id]) wrong.push(`${taskText(kind, it)} – Kind: "${S.answers[it.id] || '(leer)'}", richtig: "${showSol(it, kind)}"`);
-  }));
-  TF.forEach(t => { if (S.answers[t.id] !== String(t.a)) wrong.push(`Lesen true/false: "${t.s}"`); });
-  ADJ.forEach(t => { if (S.answers[t.id] !== t.a) wrong.push(`Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`); });
-  SPEECH.forEach(t => { if (S.answers[t.id] !== String(t.a)) wrong.push(`Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`); });
+  kiErr.delete('plan');
+  const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
+  const zeilen = [];
+  const teil = (liste) => zeilen.push(...liste.slice(0, 5));   // je Teil höchstens 5 Zeilen
+  Object.entries(ALL_TYPED).forEach(([kind, list]) => teil(list
+    .filter(it => !isRight(S.answers[it.id], it.en, it) && !S.claudeOk[it.id])
+    .map(it => `${taskText(kind, it)} – Kind: "${cut(S.answers[it.id]) || '(leer)'}", richtig: "${showSol(it, kind)}"`)));
+  teil(TF.filter(t => S.answers[t.id] !== String(t.a)).map(t => `Lesen true/false: "${t.s}"`));
+  teil(ADJ.filter(t => S.answers[t.id] !== t.a).map(t => `Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`));
+  teil(SPEECH.filter(t => S.answers[t.id] !== String(t.a)).map(t => `Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`));
   const mr = markResult();
-  if (mr.pts < 4) wrong.push(`Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
+  if (mr.pts < 4) zeilen.push(`Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
+  if (S.writeAi && Array.isArray(S.writeAi.fehler)) S.writeAi.fehler.slice(0, 3)
+    .forEach(f => zeilen.push(`Text: ${cut(f.original)} → ${cut(f.besser)}`));
   try {
     const r = await kiFrage('lernplan', {
       ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
-      fehler: wrong.slice(0, 40).join('\n'),
+      fehler: zeilen.join('\n'),
     }, 30000);
     S.answers.plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
   } catch (err) {
-    S.answers.plan = kiFail(err);
+    kiErr.set('plan', kiFail(err));
   }
   save(); render();
 }

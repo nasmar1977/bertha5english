@@ -151,8 +151,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.32.0
-**Datum:** 19.10.2026
+**Version:** 2.32.1
+**Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -200,6 +200,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.32.1 (25.10.2026)
+- Zwei unabhängige Prüfberichte zu 2.32.0 eingearbeitet.
+- **Worker `/pruefen`**: Eingabe als JSON (`aufgabe, musterloesung, antwort_des_kindes`). Andere korrekte Wortstellung
+  gilt als richtig. Jeder Rechtschreibfehler macht die Antwort falsch, auch `didnt`. Erklärung kommt vor dem Urteil
+  (`propertyOrdering`). Danach greift die Plausibilitätssperre `plausibel()`, ebenso auf der Seite: zu lang,
+  Steuerwörter oder unter 50 % Wortüberlappung (außer bei Lösungen mit 1–3 Wörtern) → kein „richtig“.
+- **Worker `/text`**: Gemini gibt sechs Kriterien je 0–3 mit Stufenankern. Der Worker summiert, kappt (ohne
+  Anführungszeichen speech ≤ 1, unter 2 connectives connectives ≤ 1) und zieht unter 80 Wörtern ¼ ab, wie die Seite.
+  Rechtschreibung kostet keine Kriteriumspunkte. Ungültige Zahlen → 502.
+- **Worker allgemein**: Ein 429 von Gemini (Minutenlimit) wird zu 503 `ki-belegt`, auch bei `/korrektur`; die App
+  schaltet die KI dann nicht für den Tag ab. Body, der kein Objekt ist → 400.
+- **Seite**: „Stimmt meins auch?“ einmal pro Aufgabe (`S.ai`). KI-Fehlermeldungen nur in der Sitzung (`kiErr`).
+  Derselbe Text wird nicht zweimal bewertet. Lernplan mit gekürzten Zeilen (≤ 5 je Teil) und den ersten drei
+  Textfehlern. `ki-belegt` → „gleich nochmal“. Beim Wechsel auf online wird die KI-Probe wiederholt.
+  Keine Google Fonts mehr.
 
 ### Version 2.32.0 (25.10.2026)
 - **Klassenarbeit üben** als eigene Seite `klassenarbeit.html`, Kachel in der Englisch-Themenauswahl.

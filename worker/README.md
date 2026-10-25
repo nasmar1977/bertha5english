@@ -174,6 +174,7 @@ Richtig ist eine Antwort wie `{"ok":false,"korrigiert":"…","erklaerung":"…",
 | `ki` (502), `status` 402 | Kein Guthaben: Bezahlstufe ohne Prepaid-Guthaben in AI Studio |
 | `ki` (502), sonst | Gemini lehnt ab, z. B. Schlüssel falsch |
 | `limit` (429) | Tageslimit erreicht (40 pro Gerät, 400 insgesamt) |
+| `ki-belegt` (503) | Gemini-Minutenlimit (Gratis-Stufe), gleich nochmal versuchen |
 | `name fehlt` (400) | Der alte Code läuft noch, K3 fehlt |
 
 ## Klassenarbeit: `/pruefen`, `/text`, `/lernplan`
@@ -193,16 +194,34 @@ Erwartet: `{"richtig":true,"erklaerung":"…","rest":…}`. Kommt `name fehlt` (
 | Route | schickt | bekommt |
 |---|---|---|
 | `/pruefen` | `id, aufgabe, loesung, antwort` | `richtig, erklaerung, rest` |
-| `/text` | `id, text` (ab 20 Wörtern) | `punkte` 0–18, `lob[]`, `fehler[{original, besser, warum}]`, `tipps[]`, `rest` |
+| `/text` | `id, text` (ab 20 Wörtern) | `punkte` 0–18, `kriterien{wwww, rahmen, past, adjektive, connectives, speech}`, `lob[]`, `fehler[{original, besser, warum}]`, `tipps[]`, `rest` |
 | `/lernplan` | `id, ergebnis, fehler` (Text) | `plan, rest` |
 
 Die Seite fragt beim Laden `/pruefen` nur mit `id` an. Der neue Code antwortet
 `aufgabe, loesung und antwort nötig` (400), **ohne** zu zählen. Erst dann zeigt sie
-die KI-Knöpfe. Bei 429/503 verschwinden die Knöpfe für die Sitzung.
+die KI-Knöpfe. Bei 429 (Tageslimit) und 503 verschwinden die Knöpfe für die Sitzung,
+außer bei 503 `ki-belegt`: Das ist Geminis Minutenlimit, dann heißt es „gleich nochmal“.
+
+**Was der Worker selbst entscheidet**, statt es der KI zu glauben:
+
+- `/pruefen`: `richtig` wird auf `false` gesetzt, wenn die Antwort länger als
+  2 × Musterlösung + 15 Zeichen ist, Steuerwörter enthält (ignore, instruction,
+  Anweisung, Regel, richtig, correct, true, system, prompt) oder weniger als die
+  Hälfte der Wörter der Musterlösung trifft. Bei Lösungen mit 1–3 Wörtern
+  (Vokabeln, Verbformen) entfällt die Überlappungsprüfung, Synonyme bleiben möglich.
+- `/text`: Gemini liefert sechs Kriterien je 0–3. Der Worker summiert. Ohne
+  Anführungszeichen im Text gibt es bei speech höchstens 1, mit weniger als zwei
+  connectives aus der Seitenliste bei connectives höchstens 1. Unter 80 Wörtern
+  gilt ¾ der Summe. Ist eine Zahl ungültig, kommt `ki` (502) statt einer Null.
+
+`ki-belegt` (503) kommt jetzt auch von `/korrektur`, wenn Gemini das Minutenlimit
+meldet. Bisher war das ein 429 `limit` und hat in der App die KI für die Sitzung
+abgeschaltet.
 
 ## Was die KI bekommt
 
-Den deutschen Satz, die Musterlösung und die Antwort des Kindes, mehr nicht. Kein
+Den deutschen Satz, die Musterlösung und die Antwort des Kindes, mehr nicht
+(bei der Klassenarbeit: Aufgabe, Musterlösung, Antwort bzw. die Geschichte oder die Fehlerliste). Kein
 Vorname, keine Geräte-ID (die bleibt im Worker und dient nur dem Zähler).
 In der Gratis-Stufe darf Google die Eingaben zum Verbessern seiner Modelle nutzen.
 Hier sind das Schulsätze ohne persönliche Daten.
