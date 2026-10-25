@@ -848,6 +848,7 @@ let S = readState(CUR) || newState(CUR);
 const kiErr = new Map();
 // Laufende Anfragen dieser Sitzung (Arbeit:Aufgabe bzw. Arbeit) – kein Doppelklick
 const kiBusy = new Set(), writeBusy = new Set(), planBusy = new Set();
+const writeAgain = new Set();   // Geschichte neu abgegeben, während ihre Bewertung noch lief
 const busyKey = (...x) => [CUR, runTag(S), ...x].join(':');
 
 // Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
@@ -1199,6 +1200,18 @@ function markResult() {
   return { good, bad, pts: Math.max(0, Math.min(4, good) - bad) };
 }
 const aiCurrent = () => S.writeAi && typeof S.writeAi.punkte === 'number' && S.writeAi.text === S.writing.trim();
+// KI grundsätzlich da (nicht aus, nicht für heute weg) – kurz offline zählt mit
+const kiDa = () => kiStatus === 'an';
+// Abgegebene Geschichte ohne gültige KI-Bewertung: vorläufig (die KI kann noch bewerten) oder Selbsteinschätzung
+function writingTag() {
+  if (!S.done.writing || aiCurrent() || writingStats(S.writing).words < 30) return '';
+  return kiDa() ? 'vorläufig' : 'Selbsteinschätzung';
+}
+function aiHead() {
+  if (!aiCurrent()) return '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.';
+  return `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.`
+    + (S.writeAi.nachAbgabe && S.done.writing && typeof S.selfPts === 'number' ? ` Diese Punkte zählen jetzt statt deiner vorläufigen ${S.selfPts}.` : '');
+}
 function writingPoints() {
   if (aiCurrent()) return Math.max(0, Math.min(WRITING_MAX, Math.round(S.writeAi.punkte)));
   // Abgegebene Geschichte ohne gültige KI-Bewertung: die bei der Abgabe eingefrorenen Punkte
@@ -1330,7 +1343,7 @@ function submitBar(key, label) {
       ? `<button type="button" class="btn ghost" data-reopen="writing">✏️ Weiterschreiben</button>`
       : partEmpty(key) ? `<button type="button" class="btn ghost" data-reopen="${key}">↩️ Abgabe zurücknehmen</button>` : '';
     const msg = partEmpty(key) ? 'Leer abgegeben – die Lösungen bleiben verborgen, bis du es versuchst.'
-      : `Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>${key === 'writing' && !aiCurrent() ? ' (vorläufig)' : ''}.`;
+      : `Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>${key === 'writing' && writingTag() ? ` (${writingTag()})` : ''}.`;
     return `<div class="actions"><span class="note">${msg}</span>
       <span style="display:flex;flex-wrap:wrap;gap:8px">${back}${next(key)}</span></div>`;
   }
@@ -1344,6 +1357,7 @@ function submitBar(key, label) {
       if (e) warn = `Achtung: ${e} ${e === 1 ? 'Aufgabe ist' : 'Aufgaben sind'} noch leer.`;
     }
     const what = key === 'writing' ? (kiAuto() ? 'Danach liest die KI deine Geschichte und vergibt die Punkte. Weiterschreiben kannst du auch später noch.'
+      : kiDa() && !aiCurrent() && writingStats(S.writing).words >= 30 ? 'Danach zählen deine Punkte vorläufig – die KI kann sie später noch bewerten. Weiterschreiben kannst du auch später noch.'
       : 'Danach zählen deine Punkte. Weiterschreiben kannst du auch später noch.')
       : 'Danach siehst du die Lösungen und kannst nichts mehr ändern.';
     return `<div class="actions"><div class="confirm-box" role="alertdialog" aria-label="Wirklich abgeben?">
@@ -1547,16 +1561,20 @@ function renderWriting(sec) {
   const ai = S.writeAi;
   let aiHtml = '';
   const waiting = writeBusy.has(busyKey());
+  let errHtml = '';
   if (waiting) aiHtml = `<div class="claude-box wait">🤖 liest deinen Text … das dauert ein paar Sekunden.${done ? ' Bis dahin gelten deine Punkte vorläufig.' : ''}</div>`;
-  else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
+  else if (kiErr.has('write')) errHtml = `<div class="claude-box">${esc(kiErr.get('write').text)}</div>`;
+  // Nochmal versuchen nur bei vorübergehenden Fehlern – nicht nach dem Tageslimit
+  const retry = kiErr.has('write') && ['belegt', 'zeit', 'fehler'].includes(kiErr.get('write').code);
   if (ai && !waiting) {
     aiHtml = `<div class="wf">
-      <div class="row"><b>${aiCurrent() ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.` : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.'}</b></div>
+      <div class="row"><b>${aiHead()}</b></div>
       ${(ai.lob || []).length ? `<div class="row"><b>👍 Das ist gut:</b><ul>${ai.lob.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
       ${(ai.fehler || []).length ? `<div class="row"><b>✏️ Verbessere:</b><ul>${ai.fehler.map(f => `<li>${f.original ? `<del>${esc(f.original)}</del> → ` : ''}${f.besser ? `<ins>${esc(f.besser)}</ins>` : ''}${f.warum ? (f.original || f.besser ? ' – ' : '') + esc(f.warum) : ''}</li>`).join('')}</ul></div>` : ''}
       ${(ai.tipps || []).length ? `<div class="row"><b>💡 Nächstes Mal:</b><ul>${ai.tipps.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
     </div>`;
   }
+  aiHtml = errHtml + aiHtml;
   return head(sec, 'Schreib eine eigene Geschichte. Nimm dir dafür Zeit.') +
     `<div class="card"><h3>D · ${esc(WRITE_TASK.title)} <span class="pts">${WRITING_MAX} Punkte</span></h3>
       <p class="task">${WRITE_TASK.de} Erzähl nicht die Geschichte aus dem Lesetext nach – schreib deine eigene.<br>${WRITE_TASK.en} Write your own story – don't retell the text. ${WRITE_REST}</p>
@@ -1577,9 +1595,9 @@ function renderWriting(sec) {
       ${kiOn() && !done && !waiting ? `<div style="margin-top:12px">
         <button type="button" class="btn claude" id="ki-write" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
         <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
-      ${done && !waiting && !aiCurrent() && st.words >= 30 && (kiOn() || kiErr.has('write')) ? `<div style="margin-top:12px">
-        <button type="button" class="btn claude" data-claude-write>${kiErr.has('write') ? '🤖 Später nochmal bewerten lassen' : '🤖 Jetzt von der KI bewerten lassen'}</button>
-        <span class="note" style="color:var(--muted);font-size:.88rem">Bis dahin gelten deine Punkte vorläufig.</span></div>` : ''}
+      ${done && !waiting && !aiCurrent() && st.words >= 30 && (retry || (kiDa() && !kiErr.has('write'))) ? `<div style="margin-top:12px">
+        <button type="button" class="btn claude" data-claude-write>${retry ? '🤖 Nochmal versuchen' : '🤖 Jetzt von der KI bewerten lassen'}</button>
+        <span class="note" style="color:var(--muted);font-size:.88rem">${retry ? 'Klappt es nicht, probier es später nochmal. ' : ''}Bis dahin gelten deine Punkte vorläufig.</span></div>` : ''}
       ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
     </div>` +
     submitBar('writing', 'Text');
@@ -1605,12 +1623,12 @@ function renderResult(sec) {
   return head(sec, allDone ? 'Fertig! So hast du abgeschnitten.' : 'Hier siehst du deine Punkte, sobald du einen Teil abgegeben hast.') +
     `<div class="card"><h3>Punkte</h3>
       <div class="result-grid" style="margin-top:10px">
-        ${parts.map(s => `<span>${s.name} <small style="color:var(--muted)">${s.sub}</small></span><b>${S.done[s.key] ? points(s.key) : '–'} / ${MAX[s.key]}</b>
+        ${parts.map(s => `<span>${s.name} <small style="color:var(--muted)">${s.sub}</small>${s.key === 'writing' && writingTag() ? ` <small>(${writingTag()})</small>` : ''}</span><b>${S.done[s.key] ? points(s.key) : '–'} / ${MAX[s.key]}</b>
           <div class="bar"><i style="width:${S.done[s.key] ? Math.round(points(s.key) / MAX[s.key] * 100) : 0}%;background:${s.color}"></i></div>`).join('')}
         <span><b>Gesamt</b></span><b>${t} / ${m}</b>
       </div>
       ${allDone ? `<div class="grade"><div class="big">${note}</div><div><b style="font-family:var(--font-display);font-size:1.4rem">Übungsnote: ${word}</b><br>
-        <span class="scale">${pc} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrkraft kann anders bewerten.</span></div></div>` :
+        <span class="scale">${pc} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrkraft kann anders bewerten.</span>${writingTag() === 'vorläufig' ? `<br><span class="scale">Die Note kann sich noch ändern, wenn die KI deine Geschichte bewertet hat.</span>` : ''}</div></div>` :
         `<p class="task" style="margin-top:12px">Noch offen: ${parts.filter(s => !S.done[s.key]).map(s => `<button type="button" class="btn small ghost" data-go="${s.key}">${s.name}</button>`).join(' ')}</p>`}
     </div>
     ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
@@ -1648,6 +1666,7 @@ function testStatus(k) {
   if (st && hasProgress(st)) {
     res.t = total(); res.m = totalMax(); res.all = PARTS.every(p => S.done[p]);
     if (res.all) res.grade = grade(Math.floor(res.t / res.m * 100) / 100);
+    res.vorl = writingTag() === 'vorläufig';
   }
   S = keepS; CUR = keepCur; applyVariant();
   return res;
@@ -1656,7 +1675,7 @@ function renderMenu() {
   const tiles = Object.keys(TESTS).filter(k => !TESTS[k].training).map(k => {
     const t = TESTS[k], st = testStatus(k);
     const runde = st.round > 1 ? ` · ${st.round}. Durchgang` : '';
-    const state = st.grade ? `<span class="t-state finished">✓ fertig · ${st.t}/${st.m} · Note ${st.grade[0]}${runde}</span>`
+    const state = st.grade ? `<span class="t-state finished">✓ fertig · ${st.t}/${st.m} · Note ${st.grade[0]}${st.vorl ? ' (vorläufig)' : ''}${runde}</span>`
       : st.t !== undefined ? `<span class="t-state started">angefangen · ${st.t} von ${st.m} Punkten${runde}</span>`
       : `<span class="t-state">${st.round > 1 ? `${st.round}. Durchgang · noch leer` : 'noch nicht begonnen'}</span>`;
     const title = t.random ? 'Zufallsarbeit' : esc(st.title);
@@ -1740,9 +1759,7 @@ document.addEventListener('input', e => {
     }
     // „Die KI gibt dir … Punkte“ gilt nur für den bewerteten Text
     const wfHead = document.querySelector('.wf .row b');
-    if (wfHead && S.writeAi) wfHead.textContent = aiCurrent()
-      ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.`
-      : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.';
+    if (wfHead && S.writeAi) wfHead.textContent = aiHead();
   } else {
     S.answers[id] = e.target.value;
   }
@@ -1792,20 +1809,24 @@ document.addEventListener('click', async e => {
     const auto = b.dataset.submitYes === 'writing' && kiAuto();                     // vor der Abgabe prüfen
     if (b.dataset.submitYes === 'writing') S.selfPts = writingSelfPoints();         // Punkte ohne KI einfrieren
     save(); render();
-    if (auto) askWriting();   // KI bewertet den abgegebenen Text; bis dahin gelten die selfPts vorläufig
+    if (auto) {
+      askWriting();   // die KI bewertet den abgegebenen Text; bis dahin gelten die selfPts vorläufig
+      const box = document.querySelector('.claude-box.wait');
+      if (box) { box.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' }); return;
   }
   if (b.dataset.reopen) {
     // Writing zeigt keine Lösungen; andere Teile nur, wenn sie leer abgegeben wurden.
     const k = b.dataset.reopen;
-    if (k === 'writing' || partEmpty(k)) { S.done[k] = false; if (k === 'writing') delete S.selfPts; save(); render(); }
+    if (k === 'writing' || partEmpty(k)) { S.done[k] = false; if (k === 'writing') { delete S.selfPts; if (S.writeAi) delete S.writeAi.nachAbgabe; } save(); render(); }
     return;
   }
   if (spellClick(b)) return;
   if (b.dataset.why) { askWhy(b.dataset.why, b.dataset.kind, b); return; }
   if (b.hasAttribute('data-claude-write')) {
     if (!kiOn() && navigator.onLine !== false) await kiProbe();   // „Später nochmal“: ist sie wieder da?
-    if (!kiOn()) { kiErr.set('write', 'Die KI ist gerade nicht erreichbar. Versuch es später nochmal.'); render(); return; }
+    if (!kiOn()) { kiErr.set('write', { text: 'Die KI ist gerade nicht erreichbar. Versuch es später nochmal.', code: 'fehler' }); render(); return; }
     askWriting(); return;
   }
   if (b.hasAttribute('data-plan')) { askPlan(b); return; }
@@ -1866,7 +1887,7 @@ async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
   const mineKey = CUR, tag = runTag(S), wbusy = busyKey(), abgegeben = !!S.done.writing;
-  if (writeBusy.has(wbusy)) return;
+  if (writeBusy.has(wbusy)) { writeAgain.add(wbusy); return; }   // neu abgegeben, während die erste Anfrage läuft
   writeBusy.add(wbusy); kiErr.delete('write'); render();
   try {
     const r = await kiFrage('text', { text, story: STORY_KEY }, 45000);
@@ -1875,6 +1896,7 @@ async function askWriting() {
     const res = {
       text,
       punkte,
+      nachAbgabe: abgegeben,
       lob: Array.isArray(r.lob) ? r.lob.filter(x => typeof x === 'string').slice(0, 3) : [],
       fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
@@ -1888,9 +1910,11 @@ async function askWriting() {
     applyFor(mineKey, st => { if (runTag(st) !== tag || (abgegeben && res.text !== st.writing.trim()) || (st.writeAi && typeof st.writeAi.punkte === 'number' && st.writeAi.text === st.writing.trim() && res.text !== st.writing.trim())) return false; st.writeAi = res; });
   } catch (err) {
     writeBusy.delete(wbusy);
-    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag && !(abgegeben && text !== S.writing.trim())) kiErr.set('write', kiFail(err));
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag && !(abgegeben && text !== S.writing.trim())) kiErr.set('write', { text: kiFail(err), code: err && err.code });
   }
   if (CUR === mineKey || VIEW === 'menu') render();
+  // Inzwischen neu abgegeben (mit geändertem Text)? Dann diesen Text bewerten.
+  if (writeAgain.delete(wbusy) && VIEW === 'test' && CUR === mineKey && runTag(S) === tag && S.done.writing && !aiCurrent()) askWriting();
 }
 
 async function askPlan(btn) {

@@ -336,7 +336,7 @@ function textZahlen(text) {
 // Falsch geschriebene -ed-Formen (stoped, tryed): als falsche Verbform zählen? (Entscheidung des Vaters: ja)
 const ED_SCHREIBUNG_IST_VERBFEHLER = true;
 const ED_REGEL = ED_SCHREIBUNG_IST_VERBFEHLER
-  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Nach „Fast richtig – guter Versuch!“ höchstens 2 kurze Sätze. Ausnahmen: pay → paid, say → said, lay → laid – das sind falsch gebildete Formen, kein „Fast richtig“. Die Regeln: Ein einzelner Vokalbuchstabe + ein Konsonant am Ende, Silbe betont → verdoppeln (stop → stopped, plan → planned); nicht bei zwei Vokalen (look → looked, rain → rained), nicht bei w/x/y (showed, fixed), nicht bei unbetontem Ende (visit → visited). Endet das Verb auf stummes e, nur -d (like → liked, hope → hoped). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig. Im warum nur die Regel, die zum Wort passt, in Kindersprache (z. B. „kurzes Wort, kurzer Laut, ein Mitlaut am Ende → Mitlaut doppelt (stop → stopped). Bei langen Wörtern wie visit oder happen nicht.“).'
+  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Nach „Fast richtig – guter Versuch!“ höchstens 2 kurze Sätze. Ausnahmen: pay → paid, say → said, lay → laid – das sind falsch gebildete Formen, kein „Fast richtig“. Die Regeln: Ein einzelner Vokalbuchstabe + ein Konsonant am Ende, Silbe betont → verdoppeln (stop → stopped, plan → planned); nicht bei zwei Vokalen (look → looked, rain → rained), nicht bei w/x/y (showed, fixed), nicht bei unbetontem Ende (visit → visited). Endet das Verb auf stummes e, nur -d (like → liked, hope → hoped). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig. Im warum nur die Regel, die zum Wort passt, in Kindersprache (z. B. „Kurzer, betonter Laut am Ende und nur ein Mitlaut → Mitlaut doppelt (stop → stopped). Wird das Ende nicht betont, nicht (visit → visited).“).'
   : 'Richtig gebildet, nur falsch geschrieben (stoped) ist Rechtschreibung, keine falsche Verbform.';
 // derselbe Schalter für den Satz bei rechtschreibung
 const ED_RS = ED_SCHREIBUNG_IST_VERBFEHLER
@@ -457,7 +457,9 @@ function bewertung(o, text) {
     if (typeof x !== 'string') return '';
     const s = x.replace(/\s+/g, ' ').trim();
     if (s.length <= n) return s;
-    const cut = s.slice(0, n - 1), i = cut.lastIndexOf(' ');
+    let cut = s.slice(0, n - 1);
+    if (/[\uD800-\uDBFF]$/.test(cut)) cut = cut.slice(0, -1);   // kein halbes Emoji
+    const i = cut.lastIndexOf(' ');
     return (i > n / 2 ? cut.slice(0, i) : cut).replace(/[\s,;:–-]+$/, '') + '…';
   };
   // Lob nur zu Kriterien, die am Ende mehr als 1 Punkt haben (alte Antworten: einfache Texte)

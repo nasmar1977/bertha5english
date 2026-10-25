@@ -156,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.3
+**Version:** 2.34.4
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -205,6 +205,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.4 (25.10.2026)
+- Zwei Delta-Prüfberichte zu 2.34.3. **Logik**: Neu abgegeben, während die Bewertung noch läuft (`writeAgain`) →
+  danach genau eine Bewertung des neuen Texts. Artefakt fragt bei `aiCurrent()` nicht (Knopf ausgeblendet wie online).
+  Online nach Tageslimit/„weg“ kein Wiederholen-Knopf, nur bei belegt, Zeit und Fehler (`kiErr` mit Typ). `kurzText`
+  zerschneidet kein Surrogatpaar.
+- **Anzeige**: „(vorläufig)“ nur bei ≥ 30 Wörtern und grundsätzlich verfügbarer KI – in Abgabezeile, Ergebnisseite
+  (mit Hinweis unter der Note) und Menü-Kachel; ohne KI „(Selbsteinschätzung)“. Punktesprung-Satz nach der KI-Bewertung
+  einer abgegebenen Geschichte. Nach „Ja, abgeben“ mit Auto-Bewertung Scroll zum Warte-Kasten. Online Fehler- und
+  Bewertungskasten zusammen. Artefakt: eigene Meldung, wenn Claude nicht bewerten konnte. „🤖 Nochmal versuchen“.
+  Rückfrage, wenn die KI da, aber gerade nicht erreichbar ist. Neues Kindersprache-Beispiel in der ED-Regel.
 
 ### Version 2.34.3 (25.10.2026)
 - **KI-Bewertung bei der Abgabe** (Wunsch des Vaters): „Ja, abgeben“ bei Writing startet die KI-Bewertung
