@@ -336,8 +336,12 @@ function textZahlen(text) {
 // Falsch geschriebene -ed-Formen (stoped, tryed): als falsche Verbform zählen? (Entscheidung des Vaters: ja)
 const ED_SCHREIBUNG_IST_VERBFEHLER = true;
 const ED_REGEL = ED_SCHREIBUNG_IST_VERBFEHLER
-  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Die Regel: stop → stopped, plan → planned: kurzer, betonter Vokal + genau ein Konsonant am Ende → verdoppeln (nicht bei w, x, y: showed, fixed; nicht bei visit → visited). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig.'
+  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Ausnahmen: pay → paid, say → said, lay → laid – das sind falsch gebildete Formen, kein „Fast richtig“. Die Regeln: Ein einzelner Vokalbuchstabe + ein Konsonant am Ende, Silbe betont → verdoppeln (stop → stopped, plan → planned); nicht bei zwei Vokalen (look → looked, rain → rained), nicht bei w/x/y (showed, fixed), nicht bei unbetontem Ende (visit → visited). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig. Im warum nur die Regel, die zum Wort passt, in Kindersprache (z. B. „kurzer Laut, ein Mitlaut am Ende → Mitlaut doppelt“).'
   : 'Richtig gebildet, nur falsch geschrieben (stoped) ist Rechtschreibung, keine falsche Verbform.';
+// derselbe Schalter für den Satz bei rechtschreibung
+const ED_RS = ED_SCHREIBUNG_IST_VERBFEHLER
+  ? 'Nur falsch geschriebene -ed-Formen gehören zu falsche_verbformen; andere Tippfehler in richtigen Verbformen (siad, thougt, swiming) sind Rechtschreibung.'
+  : 'Auch falsch geschriebene -ed-Formen (stoped, tryed) und andere Tippfehler in richtigen Verbformen (siad, thougt, swiming) sind Rechtschreibung.';
 
 // Die fünf Schreibaufgaben der Arbeiten A–E mit einer Kurzzeile zum Lesetext (gegen
 // Nacherzählungen) und dem Titel für den Lernplan. Die Seite schickt nur den Buchstaben;
@@ -370,8 +374,9 @@ Sei bei Satzzeichen und Wortstellung nicht streng – so wie in der Schule. Wich
 Zähle zuerst, die Seite rechnet daraus selbst:
 - falsche_verbformen: jede falsche Verbform in der Erzählung einzeln (dasselbe Verb, gleich falsch, nur einmal). Falsch ist: falsch gebildet (goed, go statt went, didn't went, we was) oder present perfect statt simple past (we have seen → we saw). ${ED_REGEL} In direkter Rede ist jede passende Zeitform richtig (Präsens, Imperativ, will, present perfect – "Look at me!" he shouted.).
 - falsche_woerter: deutsche oder falsche Wörter und Ausdrücke, auch Präpositionen und Artikel (handy, make a walk, become statt get, at the evening). Rechtschreibfehler zählen hier nicht.
-- rechtschreibung: alle echten Rechtschreibfehler an englischen Wörtern als {falsch, richtig}, jedes Wort nur einmal, höchstens 10. Ohne deutsche Wörter. Nur falsch geschriebene -ed-Formen gehören zu falsche_verbformen; andere Tippfehler in richtigen Verbformen (siad, thougt, swiming) sind Rechtschreibung. Amerikanische Schreibung (color, favorite, mom, traveled) ist kein Fehler.
-- thema_verfehlt: true nur, wenn die Geschichte nichts mit der Aufgabe zu tun hat, nicht auf Englisch ist oder den Lesetext nacherzählt. Ein gewöhnlicher Tag zu Hause (z. B. Computerspiel am Wochenende) hat nichts mit der Aufgabe zu tun – es sei denn, das Thema der Aufgabe passiert darin. Passt sie nur teilweise, ist das kein verfehltes Thema – dann ziehst du nur bei wwww ab. Nacherzählung heißt: Namen der Figuren aus dem Lesetext und gleicher Ablauf; eine ähnliche Idee mit eigenen Figuren ist erlaubt.
+- rechtschreibung: alle echten Rechtschreibfehler an englischen Wörtern als {falsch, richtig}, jedes Wort nur einmal, höchstens 10. Ohne deutsche Wörter. ${ED_RS} Amerikanische Schreibung (color, favorite, mom, traveled) ist kein Fehler.
+- thema_verfehlt: true nur, wenn die Geschichte nichts mit der Aufgabe zu tun hat, nicht auf Englisch ist oder den Lesetext nacherzählt. Ein gewöhnlicher Tag zu Hause (z. B. Computerspiel am Wochenende) hat nichts mit der Aufgabe zu tun – es sei denn, das Thema der Aufgabe passiert darin. Passt sie nur teilweise, ist das kein verfehltes Thema – dann ist thema_teilweise true und wwww höchstens 2.
+- thema_teilweise: true, wenn die Geschichte nur teilweise zur Aufgabe passt. Nacherzählung heißt: Namen der Figuren aus dem Lesetext und gleicher Ablauf; eine ähnliche Idee mit eigenen Figuren ist erlaubt.
 
 Bewerte dann sechs Kriterien nach der Checkliste aus dem Schulbuch, jedes mit 0 bis 3 Punkten. Wende die Grenzen aus den Zählfeldern selbst an, bevor du Kriterien, Lob und Tipps schreibst:
 - wwww: Who? What? Where? When? (Personen, was passiert, Ort, Zeitpunkt). 3 = alle vier, und When ist konkret; 2 = drei davon oder When ungenau; 1 = eins oder zwei; 0 = keins. Konkret sind z. B. Last summer, On Monday, in the evening, in the summer holidays, in the Easter holidays. Nur „in the holidays“ ist ungenau.
@@ -389,8 +394,8 @@ Die Länge bewertest du nicht und gibst dazu keinen Tipp; das macht die Seite se
 
 So schreibst du die Rückmeldung – einfaches, korrektes Deutsch in kurzen Sätzen, kindgerecht:
 - lob: höchstens 2 konkrete Stärken, jede als {kriterium, text}: kriterium ist eines von wwww, rahmen, past, adjektive, connectives, speech; text enthält ein kurzes Zitat aus dem Text. Lobe nur Kriterien mit mindestens 2 Punkten.
-- fehler: nur echte Fehler, nie Sätze, die schon richtig sind; höchstens 5. Zuerst – falls nötig – der Eintrag „gehört nicht zur Geschichte“, dann – wenn thema_verfehlt true ist – ein Eintrag mit warum "Thema verfehlt: …". Danach in dieser Reihenfolge: falsche Verb- und Zeitformen; deutsche oder falsche Wörter und Ausdrücke, auch Präpositionen und Artikel; abgebrochene Sätze oder fehlende Wörter; Rechtschreibung (auch: I immer groß). Gleiche Fehlerart fasst du in einem Eintrag zusammen (original "go … eat", besser "went … ate") – außer -ed-Schreibfehlern, die einen eigenen Eintrag bekommen. Ganz am Ende – nur wenn noch Platz ist – darf ein einziger, freundlicher Hinweis stehen: zur Wortstellung, wenn das Verb vor dem Subjekt steht („Then went we“ → „Then we went“), sonst zu Satzzeichen bei direkter Rede. Je original (Stelle aus dem Text), besser (korrigiert), warum (kurze Regel). Keine Fehler: leer.
-- tipps: jeder Tipp als {kriterium, text}. Tipp 1 gilt dem schwächsten Kriterium, Tipp 2 dem zweitschwächsten. Keine Tipps zu Kriterien mit 3 Punkten. Haben alle Kriterien 3 Punkte, gibst du genau einen Tipp für noch mehr Abwechslung. Jeder Tipp enthält ein englisches Beispiel, das zu dieser Geschichte passt; direkte Rede darin immer mit doppelten Anführungszeichen und den Satzzeichen innerhalb ("We are lost!" Tim shouted.).`;
+- fehler: nur echte Fehler, nie Sätze, die schon richtig sind; höchstens 5. Zuerst – falls nötig – der Eintrag „gehört nicht zur Geschichte“, dann – wenn thema_verfehlt true ist – ein Eintrag mit warum "Thema verfehlt: …". Danach in dieser Reihenfolge: falsche Verb- und Zeitformen; deutsche oder falsche Wörter und Ausdrücke, auch Präpositionen und Artikel; abgebrochene Sätze oder fehlende Wörter; Rechtschreibung (auch: I immer groß). Gleiche Fehlerart fasst du in einem Eintrag zusammen (original "go … eat", besser "went … ate") – außer -ed-Schreibfehlern, die einen eigenen Eintrag bekommen. Ganz am Ende – nur wenn noch Platz ist – darf ein einziger, freundlicher Hinweis stehen: zur Wortstellung, wenn das Verb vor dem Subjekt steht („Then went we“ → „Then we went“), sonst zu Satzzeichen bei direkter Rede. Je original (Stelle aus dem Text), besser (korrigiert), warum (kurze Regel, höchstens 2 kurze Sätze). Keine Fehler: leer.
+- tipps: jeder Tipp als {kriterium, text}. Tipp 1 gilt dem schwächsten Kriterium, Tipp 2 dem zweitschwächsten. Keine Tipps zu Kriterien mit 3 Punkten. Haben alle Kriterien 3 Punkte, gibst du genau einen Tipp für noch mehr Abwechslung. Ist adjektive wegen deutscher oder falscher Wörter gedeckelt, gilt der Tipp den richtigen englischen Wörtern (Beispiel aus dem Text). Jeder Tipp enthält ein englisches Beispiel, das zu dieser Geschichte passt; direkte Rede darin immer mit doppelten Anführungszeichen und den Satzzeichen innerhalb ("We are lost!" Tim shouted.).`;
 
 // Kindertext für die KI: Trennlinien aus - oder = weg, < und > maskiert, damit niemand
 // mit „-----“ oder „</kindertext>“ aus dem Text ausbrechen kann. (Gleich in Worker und Artefakt.)
@@ -405,6 +410,7 @@ const TEXT_SCHEMA = {
     type: 'OBJECT',
     properties: {
         thema_verfehlt:     { type: 'BOOLEAN' },
+        thema_teilweise:    { type: 'BOOLEAN' },
         falsche_verbformen: { type: 'INTEGER', minimum: 0 },
         falsche_woerter:    { type: 'INTEGER', minimum: 0 },
         rechtschreibung: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
@@ -418,8 +424,8 @@ const TEXT_SCHEMA = {
         tipps: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
             kriterium: { type: 'STRING', enum: KRITERIEN }, text: { type: 'STRING' } }, required: ['kriterium', 'text'] } },
     },
-    required: ['thema_verfehlt', 'falsche_verbformen', 'falsche_woerter', 'rechtschreibung', 'kriterien', 'lob', 'fehler', 'tipps'],
-    propertyOrdering: ['thema_verfehlt', 'falsche_verbformen', 'falsche_woerter', 'rechtschreibung', 'kriterien', 'lob', 'fehler', 'tipps'],
+    required: ['thema_verfehlt', 'thema_teilweise', 'falsche_verbformen', 'falsche_woerter', 'rechtschreibung', 'kriterien', 'lob', 'fehler', 'tipps'],
+    propertyOrdering: ['thema_verfehlt', 'thema_teilweise', 'falsche_verbformen', 'falsche_woerter', 'rechtschreibung', 'kriterien', 'lob', 'fehler', 'tipps'],
 };
 
 // Auswertung der KI-Antwort – wörtlich gleich in Worker und Artefakt. Die Punkte rechnet
@@ -439,6 +445,7 @@ function bewertung(o, text) {
   const themaVerfehlt = o.thema_verfehlt === true;
   if (verbformen !== null) k.past = Math.min(k.past, verbformen <= 1 ? 3 : verbformen <= 3 ? 2 : 1);
   if (falscheWoerter !== null) k.adjektive = Math.min(k.adjektive, falscheWoerter >= 6 ? 1 : falscheWoerter >= 3 ? 2 : 3);
+  if (o.thema_teilweise === true) k.wwww = Math.min(k.wwww, 2);   // fehlt das Feld (alte Antwort): nichts
   if (themaVerfehlt) KRITERIEN.forEach(n => { k[n] = Math.min(k[n], 1); });
   const z = textZahlen(String(text || '').slice(0, 4000));
   if (!z.zitat) k.speech = Math.min(k.speech, 1);
@@ -453,7 +460,8 @@ function bewertung(o, text) {
     else if (l && typeof l === 'object' && KRITERIEN.includes(l.kriterium) && k[l.kriterium] > 1 && kurzText(l.text, 300)) lob.push(kurzText(l.text, 300));
   }
   const fehler = (Array.isArray(o.fehler) ? o.fehler : []).filter(f => f && typeof f === 'object')
-    .map(f => ({ original: kurzText(f.original, 200), besser: kurzText(f.besser, 200), warum: kurzText(f.warum, 200) }))
+    .map(f => ({ original: kurzText(f.original, 200), besser: kurzText(f.besser, 200),
+      warum: kurzText(f.warum, /^\s*fast richtig/i.test(String(f.warum || '')) ? 280 : 200) }))
     .filter(f => f.original || f.besser || f.warum);
   if (themaVerfehlt && !fehler.some(f => /^thema verfehlt/i.test(f.warum))) {
     const pos = fehler.length && /gehört nicht zur geschichte/i.test(fehler[0].warum) ? 1 : 0;

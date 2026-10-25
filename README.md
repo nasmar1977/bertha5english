@@ -156,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.1
+**Version:** 2.34.2
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -206,12 +206,23 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.34.2 (25.10.2026)
+- **Selbstpunkte eingefroren**: Bei der Abgabe von Writing speichert die Seite `S.selfPts`; ohne gültige KI-Bewertung
+  gilt dieser Wert. Schon abgegebene Geschichten ohne `selfPts` werden einmalig mit der Zählung bis 2.33.5
+  (`writingStatsV1`) eingefroren – ihre Punkte ändern sich nicht. „Weiterschreiben“ verwirft den Wert.
+- **Lernstand**: geschafft = letzter Durchgang fehlerfrei und (≥ 3 Aufgaben oder die letzten zwei fehlerfrei);
+  hartnäckig = nicht geschafft, Fehler in ≥ 2 Durchgängen und (Quote der letzten 3 unter 80 % oder Fehler in 2 der
+  letzten 3) – für Fertigkeiten und Muster gleich. Lesen-connectives ab 3 Punkten richtig. Leer abgegebene Teile zählen
+  nicht. irreg_ed nicht mehr bei bloßer Grundform. „Wörter zum Üben“ zählt jedes Wort einmal.
+- **Bewertung**: `thema_teilweise` (wwww ≤ 2), ED-Regel mit Ausnahmen (paid, said, laid) und Verdopplung über
+  Buchstaben, Kindersprache im warum (≤ 2 Sätze; bei „Fast richtig“ bis 280 Zeichen), Rechtschreib-Satz aus demselben
+  Schalter (`ED_RS`), Tipp zu richtigen englischen Wörtern bei gedeckeltem adjektive.
+
 ### Version 2.34.1 (25.10.2026)
 - Zwei Prüfberichte zu 2.33.6/2.34.0 und ein Claude-Lauf mit 5 Probetexten (alle im Sollbereich) eingearbeitet.
 - **Lernstand**: Geschichte nur mit KI-Kriterien vollständig, sonst nur connectives (unter 2 = Fehler, wie im
   Deckel) und direkte Rede – keine Selbst-Haken. Hartnäckig zusätzlich nur bei Quote unter 80 % oder Fehlern in 2 der
-  letzten 3 Durchgänge; geschafft erst ab 3 Aufgaben im letzten Durchgang und nur, wenn er fehlerfrei war (auch für
-  Muster). Muster: did + Vergangenheit auch in W-Fragen; Zeitangabe nur, wenn sie am Ende/Anfang richtig wäre;
+  letzten 3 Durchgänge; geschafft nur, wenn der letzte Durchgang fehlerfrei war (Feinschliff der Schwellen in 2.34.2). Muster: did + Vergangenheit auch in W-Fragen; Zeitangabe nur, wenn sie am Ende/Anfang richtig wäre;
   „did/didn't + be – richtig: was/were“ (nicht nach „to“). Rechtschreibung als „📝 Wörter zum Üben“.
 - **Bewertung**: -ed-Schreibfehler eigener Fehler-Eintrag, nur dort „Fast richtig – guter Versuch!“; genauere
   Verdopplungs-/y-Regel; Tippfehler in richtigen Verbformen und amerikanische Schreibung als Rechtschreibung bzw.
