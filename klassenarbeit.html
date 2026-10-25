@@ -155,6 +155,20 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
 .confirm-box .warn { color: #9b2c2c; font-weight: 600; }
 .confirm-box .row { display: flex; flex-wrap: wrap; gap: 8px; }
 
+/* Rechtschreibung üben */
+.spell-box { margin-top: 12px; background: #f3f7ff; border: 2px solid #c9d8f5; border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
+.spell-list { margin: 0; padding-left: 1.2em; }
+.spell-list del { color: var(--bad); }
+.spell-list ins { color: var(--good); text-decoration: none; font-weight: 600; }
+.spell-word { font-family: var(--font-display); font-size: 2rem; font-weight: 800; letter-spacing: .05em; overflow-wrap: anywhere; }
+.spell-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.spell-slot { font: inherit; font-weight: 700; min-width: 2.1em; height: 2.4em; display: inline-grid; place-items: center; background: #fff;
+  border: 0; border-bottom: 3px solid var(--accent); border-radius: 8px 8px 0 0; color: var(--ink); }
+.spell-slot.filled { cursor: pointer; background: var(--accent); color: #fff; }
+.spell-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.spell-ok { color: var(--good); font-weight: 700; }
+.spell-no { color: var(--bad); font-weight: 700; }
+
 /* Lesetext */
 .story { background: #fbfdf7; border: 2px dashed #b7dcc2; border-radius: 14px; padding: 14px 16px; line-height: 1.9; }
 .story h4 { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 6px; }
@@ -549,6 +563,7 @@ const STORIES = {
   A: {
     title: 'A day to remember', theme: '🧗 Klettern in Wales',
     lesetext: 'Emma, ihr kleiner Bruder Max und Gruppenleiter Mr Hughes klettern in Wales; Max stürzt vom Felsen und verletzt sich am Arm.',
+    thema: 'jedes besondere Erlebnis oder Abenteuer in den Ferien, auf einer Reise oder einem Ausflug',
     paras: [
       '[[Last summer]] Emma and her family went to Wales on holiday. [[At first]] Emma was bored because it rained on Monday, Tuesday and Wednesday. But [[on Thursday]] the sun came out, and the family went on a [[climbing trip]] with a group.',
       'The [[group leader]], Mr Hughes, was a tall, friendly man. First he showed them how to climb. Then they climbed up a high rock. Emma\'s little brother Max was very excited. "Look at me! I\'m a [[mountain goat]]!" he shouted.',
@@ -582,6 +597,7 @@ const STORIES = {
   B: {
     title: 'A windy day at the seaside', theme: '🏖️ Am Meer in Brighton',
     lesetext: 'Ben und Lily am Strand von Brighton; der Wind weht Lilys Hut ins Meer, eine Rettungsschwimmerin holt ihn zurück.',
+    thema: 'ein Tag am Meer, am Strand oder an einem See, an dem etwas schiefging',
     paras: [
       '[[Last August]] Ben and his [[best friend]] Lily went to Brighton with Ben\'s parents. [[At first]] the sun was hot, so the two friends built a big [[sand castle]] near the water. Ben\'s dad bought ice creams for everybody.',
       'Then the wind came. It was very strong, and it blew Lily\'s new hat into the sea. "My hat! My beautiful hat!" Lily shouted. Ben ran into the cold water, but the waves were too high for him.',
@@ -615,6 +631,7 @@ const STORIES = {
   C: {
     title: 'Rain at the campsite', theme: '⛺ Zeltlager im Lake District',
     lesetext: 'Sophies Klasse zeltet mit Mrs Patel im Lake District; nachts kommt Wasser aus dem Fluss in das Zelt von Sophie und Mia.',
+    thema: 'ein Zeltausflug oder Camping in den Ferien, bei dem etwas Spannendes passierte',
     paras: [
       '[[Last summer]] Sophie\'s class went on a [[camping trip]] to the [[Lake District]]. The [[group leader]], Mrs Patel, showed the children how to put up their tents. First Sophie and her friend Mia chose a place near a small river.',
       'Then they collected wood for a fire, and Mrs Patel made hot chocolate for everybody. When it got dark, they told scary stories. Mia was scared, but Sophie laughed. "It\'s only a story!" she said.',
@@ -648,6 +665,7 @@ const STORIES = {
   D: {
     title: 'Lost in London', theme: '🚇 Verlaufen in London',
     lesetext: 'Jack verliert auf dem Camden Market in London seine Mutter und seine Schwester Amy; eine Verkäuferin im Musikladen ruft die Mutter an.',
+    thema: 'jedes Verlaufen, auch in der eigenen Stadt',
     paras: [
       '[[Last Easter]] Jack visited London with his mum and his little sister Amy. [[On Monday]] they went to [[Camden Market]]. It was very busy, and there were lots of interesting shops.',
       'Jack wanted to see the old guitars in a [[music shop]], so he went inside. When he came out again, his mum and Amy weren\'t there. [[At first]] he looked for them, but he couldn\'t find them. Jack was scared.',
@@ -681,6 +699,7 @@ const STORIES = {
   E: {
     title: 'The storm', theme: '⛵ Bootsausflug im Sturm',
     lesetext: 'Hannah und ihr Opa geraten bei einem Bootsausflug auf einem See in Schottland in einen Sturm und rudern zurück ans Ufer.',
+    thema: 'ein Bootsausflug, den man nicht vergisst (auch Fähre, Kanu oder Tretboot)',
     paras: [
       '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. They both wore [[life jackets]]. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
       'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
@@ -715,7 +734,6 @@ const STORIES = {
 let STORY_KEY = 'A', STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
 const counts = k => CONNECTIVES.includes(k) || ACCEPT_TOO.includes(k);
 
-const WRITE_CONNECTIVES = ['first', 'at first', 'then', 'after that', 'next', 'later', 'because', 'but', 'so', 'suddenly', 'finally', 'in the end', 'when'];
 
 // Teile mit Punkten. Die Reihenfolge ist die Linie.
 const SECTIONS = [
@@ -934,6 +952,8 @@ function applyFrozen(t, seed) {
       applyFiltered(t, seed, keep);
       const neu = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
       bad.forEach(L => { pk[L] = neu[L].map(it => it.id); });
+      if ((pk.v || 1) < 2 && !S.done.vocab && !bad.includes('VOCAB')) recheckVocab(t, seed, pk);
+      pk.v = 2;
       return;
     }
   }
@@ -1438,20 +1458,36 @@ function renderReading(sec) {
     submitBar('reading', 'Lesen');
 }
 
+// Zählregeln für Geschichten – wörtlich gleich in Worker, Online-Seite und Artefakt.
+const ZAEHL_CONNECTIVES = ['first', 'at first', 'then', 'after that', 'next', 'later', 'because', 'but', 'so', 'suddenly', 'finally',
+  'in the end', 'when', 'after', 'before', 'while', 'at last', 'one day', "that's why"];
+// „so“ als Verbinder: nach Satzzeichen, Zeilenanfang, Anführungszeichen oder „and“ – nicht „so bad“;
+// ohne Komma vor einem Satzanfang (so we …, so Mum …)
+const SO_VERBINDER = /(^|[.!?,;:\n"“„]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/im;
+const SO_VOR_SATZ = /\bso\s+(i|we|he|she|they|it|the|my|our|his|her|you|a|an|their|that|there|everybody|nobody|mum|dad|grandpa|grandma)\b/i;
+const SO_VOR_NAME = /\bso\s+[A-Z][a-z]/;
+// direkte Rede in einfachen Anführungszeichen, auch mit Apostroph darin ('Don't worry,' he said.)
+const ZITAT_ASCII = /(^|\s)'(?:[^'\n]|'(?=[a-z]))+?'(?=[\s.,!?;:]|$)/i;
+const ZITAT_TYPO = /‘(?:[^’\n]|’(?=[a-z]))+?’/i;
+function textZahlen(text) {
+  const orig = String(text || '');
+  const roh = orig.replace(/[’]/g, "'");
+  const t = ' ' + roh.toLowerCase().replace(/[^a-z' ]+/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const woerter = (roh.match(/[A-Za-zÄÖÜäöüß]+(?:'[A-Za-z]+)*/g) || []).length;
+  const connList = ZAEHL_CONNECTIVES.filter(c =>
+    c === 'first' ? / first /.test(t.replace(/ at first /g, ' ')) :          // „at first“ nicht doppelt
+    c === 'after' ? / after /.test(t.replace(/ after that /g, ' ')) :       // „after that“ nicht doppelt
+    c === 'so' ? (SO_VERBINDER.test(roh) || SO_VOR_SATZ.test(roh) || SO_VOR_NAME.test(roh)) :
+    t.includes(' ' + c + ' '));
+  const typo = ZITAT_TYPO.test(orig), ascii = ZITAT_ASCII.test(roh);
+  const zitat = /["“”„].{2,}["“”]/.test(roh) || typo || ascii;
+  const zitatPunkt = /["“„][^"”“]{2,}[.,!?]["”“]/.test(roh) || typo || ascii;
+  return { woerter, conn: connList.length, connList, zitat, zitatPunkt };
+}
+// Für die Seite: dieselben Zahlen unter den gewohnten Namen
 function writingStats(text) {
-  const raw = String(text || '').replace(/[’]/g, "'");
-  const t = ' ' + raw.toLowerCase().replace(/[^a-z' ]+/g, ' ').replace(/\s+/g, ' ') + ' ';
-  const words = (raw.match(/[A-Za-zÄÖÜäöüß']+/g) || []).length;
-  const conn = WRITE_CONNECTIVES.filter(c => c === 'first'
-    ? / first /.test(t.replace(/ at first /g, ' '))           // „at first“ nicht doppelt zählen
-    : c === 'so'                                               // „so“ nur als Satzverbinder, nicht „so bad“
-    ? (/(^|[.!?,;:\n"“„]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/im.test(raw) || /\bso\s+(i|we|he|she|they|it|the|my|our|his|her)\b/i.test(raw))
-    : t.includes(' ' + c + ' '));
-  // direkte Rede: auch mit einfachen Anführungszeichen ('Help!' I shouted.) – wie im Worker
-  const ascii = /(^|\s)'[^'\n]{2,}[.,!?]'(?=\s|$)/.test(raw);
-  const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || '')) || ascii;
-  const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || '')) || ascii;
-  return { words, conn, speech, speechPunct };
+  const z = textZahlen(text);
+  return { words: z.woerter, conn: z.connList, speech: z.zitat, speechPunct: z.zitatPunkt };
 }
 
 function renderWriting(sec) {
@@ -1466,7 +1502,7 @@ function renderWriting(sec) {
     aiHtml = `<div class="wf">
       <div class="row"><b>${aiCurrent() ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.` : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.'}</b></div>
       ${(ai.lob || []).length ? `<div class="row"><b>👍 Das ist gut:</b><ul>${ai.lob.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
-      ${(ai.fehler || []).length ? `<div class="row"><b>✏️ Verbessere:</b><ul>${ai.fehler.map(f => `<li><del>${esc(f.original || '')}</del> → <ins>${esc(f.besser || '')}</ins>${f.warum ? ' – ' + esc(f.warum) : ''}</li>`).join('')}</ul></div>` : ''}
+      ${(ai.fehler || []).length ? `<div class="row"><b>✏️ Verbessere:</b><ul>${ai.fehler.map(f => `<li>${f.original ? `<del>${esc(f.original)}</del> → ` : ''}${f.besser ? `<ins>${esc(f.besser)}</ins>` : ''}${f.warum ? (f.original || f.besser ? ' – ' : '') + esc(f.warum) : ''}</li>`).join('')}</ul></div>` : ''}
       ${(ai.tipps || []).length ? `<div class="row"><b>💡 Nächstes Mal:</b><ul>${ai.tipps.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
     </div>`;
   }
@@ -1486,7 +1522,7 @@ function renderWriting(sec) {
           ? `<label><input type="checkbox" disabled ${(c.k === 'conn' ? st.conn.length >= 3 : st.speech) ? 'checked' : ''}> ${esc(c.t)} <small style="color:var(--muted)">– zählt die Seite selbst</small></label>`
           : `<label><input type="checkbox" data-self="${c.k}" ${S.self[c.k] ? 'checked' : ''} ${done ? 'disabled' : ''}> ${esc(c.t)}</label>`).join('')}
       </div>
-      ${aiHtml}
+      ${aiHtml}${spellBox()}
       ${kiOn() && !done && !waiting ? `<div style="margin-top:12px">
         <button type="button" class="btn claude" id="ki-write" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
         <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
@@ -1694,6 +1730,7 @@ document.addEventListener('click', async e => {
     if (k === 'writing' || partEmpty(k)) { S.done[k] = false; save(); render(); }
     return;
   }
+  if (spellClick(b)) return;
   if (b.dataset.why) { askWhy(b.dataset.why, b.dataset.kind, b); return; }
   if (b.hasAttribute('data-claude-write')) { askWriting(); return; }
   if (b.hasAttribute('data-plan')) { askPlan(b); return; }
@@ -1763,6 +1800,8 @@ async function askWriting() {
       lob: Array.isArray(r.lob) ? r.lob.filter(x => typeof x === 'string').slice(0, 3) : [],
       fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
+      rechtschreibung: Array.isArray(r.rechtschreibung)
+        ? r.rechtschreibung.filter(x => x && typeof x.falsch === 'string' && typeof x.richtig === 'string' && /^[A-Za-z][A-Za-z'-]*$/.test(x.richtig)).slice(0, 10) : [],
     };
     writeBusy.delete(wbusy);
     // Eine ältere Antwort überschreibt keine gültige Bewertung des jetzigen Texts.
@@ -1793,6 +1832,7 @@ async function askPlan(btn) {
   if (mr.pts < 4) zeilen.push(`Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
   if (S.writeAi && Array.isArray(S.writeAi.fehler)) S.writeAi.fehler.slice(0, 3)
     .forEach(f => zeilen.push(`Text: ${cut(f.original)} → ${cut(f.besser)}`));
+  if (spellList().length) zeilen.push('Diese Wörter kann das Kind üben: ' + spellList().map(x => x.richtig).join(', '));
   try {
     const r = await kiFrage('lernplan', {
       story: STORY_KEY,
@@ -1808,6 +1848,125 @@ async function askPlan(btn) {
   }
   if (VIEW === 'menu' || CUR === mineKey) render();
 }
+
+// ---------------------------------------------------------------------------
+// Rechtschreibung üben – nur nach einer KI-Bewertung, zählt nicht für die Arbeit.
+// Stand in S.spell: { words, i, phase: zeigen|legen|geprueft|ende, ok[], cur{tiles, placed}, fertig }
+// ---------------------------------------------------------------------------
+function spellList() { const ai = S.writeAi; return ai && Array.isArray(ai.rechtschreibung) ? ai.rechtschreibung : []; }
+function spellBox() {
+  const list = spellList(), sp = S.spell;
+  if (sp && !sp.fertig && Array.isArray(sp.words) && sp.words.length) return spellCard();
+  if (!list.length) return '';
+  const zuletzt = sp && sp.fertig ? `<span>Zuletzt geübt: <b>${sp.richtig} von ${sp.anzahl}</b> richtig.</span>` : '';
+  return `<div class="spell-box"><span><b>📝 Rechtschreibung:</b> Hier zählt sie nicht. Wenn bei dir in der Schule Rechtschreibung mitzählt, würden sich noch ${list.length} ${list.length === 1 ? 'Fehler' : 'Fehler'} auf die Note auswirken.</span>
+    <ul class="spell-list">${list.map(x => `<li><del>${esc(x.falsch)}</del> → <ins>${esc(x.richtig)}</ins></li>`).join('')}</ul>${zuletzt}
+    <div class="spell-row"><button type="button" class="btn small" id="spell-start" data-spell-start>✏️ Diese Wörter üben</button></div></div>`;
+}
+function spellMix(word) {
+  const tiles = word.split('');
+  for (let n = 0; n < 5; n++) {
+    for (let i = tiles.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [tiles[i], tiles[j]] = [tiles[j], tiles[i]]; }
+    if (tiles.join('') !== word || new Set(tiles).size < 2) break;
+  }
+  return tiles;
+}
+function spellBegin(words) {
+  S.spell = { words, i: 0, phase: 'zeigen', ok: [], cur: { tiles: spellMix(words[0]), placed: [] }, fertig: false };
+  save(); render(); spellTimer();
+}
+// 3 Sekunden anschauen, dann verdeckt legen (oder früher mit „Los“)
+function spellTimer() {
+  const sp = S.spell, marke = sp && sp.words.join('|') + ':' + sp.i;
+  setTimeout(() => {
+    const now = S.spell;
+    if (now && now.phase === 'zeigen' && now.words.join('|') + ':' + now.i === marke) { now.phase = 'legen'; save(); render(); }
+  }, 3000);
+}
+function spellCard() {
+  const sp = S.spell, n = sp.words.length;
+  if (sp.phase === 'ende') {
+    const r = sp.ok.filter(Boolean).length, falsch = sp.words.filter((_, i) => !sp.ok[i]);
+    return `<div class="spell-box"><span><b>✏️ Fertig geübt:</b> ${r} von ${n} richtig.</span>
+      <div class="spell-row">${falsch.length ? '<button type="button" class="btn small" id="spell-again" data-spell-again>🔁 Nochmal die falschen üben</button>' : ''}
+      <button type="button" class="btn small ghost" id="spell-close" data-spell-close>Fertig</button></div></div>`;
+  }
+  const w = sp.words[sp.i], c = sp.cur, kopf = `<b>✏️ Wort ${sp.i + 1} von ${n}</b>`;
+  if (sp.phase === 'zeigen') {
+    return `<div class="spell-box">${kopf}<span>Schau dir das Wort an:</span><div class="spell-word">${esc(w)}</div>
+      <div class="spell-row"><button type="button" class="btn small" id="spell-go" data-spell-go>Los</button></div></div>`;
+  }
+  const fertigGelegt = sp.phase === 'geprueft';
+  const slots = w.split('').map((_, k) => {
+    const ti = c.placed[k];
+    if (ti === undefined) return '<span class="spell-slot"></span>';
+    return fertigGelegt ? `<span class="spell-slot filled">${esc(c.tiles[ti])}</span>`
+      : `<button type="button" class="spell-slot filled" data-spell-back="${k}" aria-label="${esc(c.tiles[ti])} zurücklegen">${esc(c.tiles[ti])}</button>`;
+  }).join('');
+  if (fertigGelegt) {
+    const ok = sp.ok[sp.i];
+    return `<div class="spell-box">${kopf}<div class="spell-slots">${slots}</div>
+      <span class="${ok ? 'spell-ok' : 'spell-no'}">${ok ? '✓ richtig' : `✗ So schreibt man es: <b>${esc(w)}</b>`}</span>
+      <div class="spell-row"><button type="button" class="btn small" id="spell-next" data-spell-next>${sp.i + 1 < n ? 'Weiter →' : 'Ergebnis'}</button></div></div>`;
+  }
+  const pool = c.tiles.map((ch, ti) => c.placed.includes(ti) ? `<span class="tile ghost-tile">${esc(ch)}</span>`
+    : `<button type="button" class="tile" data-spell-tile="${ti}">${esc(ch)}</button>`).join('');
+  return `<div class="spell-box">${kopf}<span>Leg das Wort aus den Buchstaben (Tastatur geht auch):</span>
+    <div class="spell-slots">${slots}</div><div class="tile-pool">${pool}</div>
+    <div class="spell-row"><button type="button" class="btn small" id="spell-check" data-spell-check ${c.placed.length < w.length ? 'disabled' : ''}>Prüfen</button>
+    <button type="button" class="btn small ghost" id="spell-sol" data-spell-sol>Lösung zeigen</button></div></div>`;
+}
+function spellPlace(ti) {
+  const sp = S.spell, c = sp.cur, w = sp.words[sp.i];
+  if (c.placed.includes(ti) || c.placed.length >= w.length) return;
+  c.placed.push(ti); save(); render();
+}
+function spellCheck(zeigen) {
+  const sp = S.spell, c = sp.cur, w = sp.words[sp.i];
+  sp.ok[sp.i] = !zeigen && c.placed.map(ti => c.tiles[ti]).join('') === w;
+  // „Lösung zeigen“: das Wort richtig in die Felder legen
+  if (zeigen) { const frei = c.tiles.map((_, ti) => ti); c.placed = w.split('').map(ch => frei.splice(frei.findIndex(ti => c.tiles[ti] === ch), 1)[0]); }
+  sp.phase = 'geprueft'; save(); render();
+}
+function spellNext() {
+  const sp = S.spell;
+  if (sp.i + 1 < sp.words.length) { sp.i++; sp.phase = 'zeigen'; sp.cur = { tiles: spellMix(sp.words[sp.i]), placed: [] }; save(); render(); spellTimer(); }
+  else { sp.phase = 'ende'; save(); render(); }
+}
+function spellClick(b) {
+  const sp = S.spell;
+  if (b.hasAttribute('data-spell-start')) { spellBegin(spellList().map(x => x.richtig)); return true; }
+  if (!sp) return false;
+  if (b.hasAttribute('data-spell-go')) { sp.phase = 'legen'; save(); render(); return true; }
+  if (b.dataset.spellTile !== undefined) { spellPlace(+b.dataset.spellTile); return true; }
+  if (b.dataset.spellBack !== undefined) { sp.cur.placed.splice(+b.dataset.spellBack, 1); save(); render(); return true; }
+  if (b.hasAttribute('data-spell-check')) { spellCheck(false); return true; }
+  if (b.hasAttribute('data-spell-sol')) { spellCheck(true); return true; }
+  if (b.hasAttribute('data-spell-next')) { spellNext(); return true; }
+  if (b.hasAttribute('data-spell-again')) { spellBegin(sp.words.filter((_, i) => !sp.ok[i])); return true; }
+  if (b.hasAttribute('data-spell-close')) {
+    S.spell = { fertig: true, richtig: sp.ok.filter(Boolean).length, anzahl: sp.words.length }; save(); render(); return true;
+  }
+  return false;
+}
+// Tastatur: Buchstaben legen (Groß/klein egal, die Kachel bringt die richtige Form mit),
+// Rücktaste nimmt den letzten zurück, Enter prüft bzw. geht weiter.
+document.addEventListener('keydown', e => {
+  const sp = S.spell;
+  if (!sp || sp.fertig || !Array.isArray(sp.words) || VIEW !== 'test' || S.at !== 'writing') return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (sp.phase === 'zeigen' && e.key === 'Enter') { e.preventDefault(); sp.phase = 'legen'; save(); render(); return; }
+  if (sp.phase === 'geprueft' && e.key === 'Enter') { e.preventDefault(); spellNext(); return; }
+  if (sp.phase !== 'legen') return;
+  const c = sp.cur, w = sp.words[sp.i];
+  if (e.key === 'Backspace') { e.preventDefault(); c.placed.pop(); save(); render(); return; }
+  if (e.key === 'Enter') { e.preventDefault(); if (c.placed.length === w.length) spellCheck(false); return; }
+  if (e.key.length === 1) {
+    const key = e.key.replace(/[’]/g, "'").toLowerCase();
+    const ti = c.tiles.findIndex((ch, i) => ch.toLowerCase() === key && !c.placed.includes(i));
+    if (ti >= 0) { e.preventDefault(); spellPlace(ti); }
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Uhr

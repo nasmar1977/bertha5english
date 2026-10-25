@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.5
+**Version:** 2.33.6
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -203,6 +203,25 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.33.6 (25.10.2026)
+- **Strukturierte Bewertung** (Anlass: echter Gemini-Lauf, Flash-Lite hielt Regeln nicht ein). Schema mit
+  `thema_verfehlt`, `falsche_verbformen`, `falsche_woerter`, `rechtschreibung[{falsch, richtig}]`,
+  `lob[{kriterium, text}]`; `bewertung()` – wörtlich gleich in Worker und Artefakt – setzt past aus der Zahl der
+  Verbfehler (0–1 → 3, 2–3 → 2, > 3 → 1, nie über den KI-Wert), adjektive ≤ 2 ab 3 / ≤ 1 ab 6 falschen Wörtern,
+  bei Thema verfehlt alle ≤ 1 und den „Thema verfehlt“-Eintrag, verwirft Lob zu Kriterien ≤ 1 und setzt die
+  Längen-Tipps selbst (< 80 / > 150 Wörter). Fehlen die Felder, gilt das alte Verhalten.
+- **-ed-Schreibung** (stoped, tryed) zählt als Verbform, freundlich formuliert (`ED_SCHREIBUNG_IST_VERBFEHLER`).
+- **Rechtschreibung sichtbar und übbar**: Kasten nach der KI-Bewertung (zählt nicht), Übung mit Buchstabenkacheln
+  (anschauen 3 s, legen, Tastatur, Lösung zeigen, „Nochmal die falschen“), Stand in `S.spell`. Der Lernplan nennt
+  die Wörter.
+- **Regelblock**: Thema je Aufgabe (`thema`), Nacherzählung = Figurennamen und gleicher Ablauf, „in the holiday“
+  nur als Zeitangabe falsch, Injection nur bei Sätzen, die die Bewertung beeinflussen wollen, speech ohne
+  Satzzeichen-Abzug; Lernplan: Wortstellung/Satzzeichen kein Übungspunkt.
+- **Zählregeln** (`textZahlen()`, wörtlich gleich an allen drei Stellen): einfache Anführungszeichen mit Apostroph,
+  Wortzahl mit Apostroph-Wörtern, „so Mum/so Tim“ als Verbinder, neue connectives (after, before, while, at last,
+  one day, that's why) – kann bei der Selbsteinschätzung nur mehr Punkte geben.
+- Nachprüfung der Vokabeln auch im Zweig „Liste fehlt im Vorrat“.
 
 ### Version 2.33.5 (25.10.2026)
 - **Regelblock nach Probetext-Lauf und Prüfbericht** (wörtlich gleich in Worker `textAnweisung` und Artefakt):
