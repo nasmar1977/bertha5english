@@ -1867,6 +1867,9 @@
         .theme1-card {
             background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
         }
+        .klassenarbeit-card {
+            background: linear-gradient(135deg, #ffe29f 0%, #ffa99f 100%);
+        }
 
         .vh-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
         .vh-group { margin-bottom: 20px; }
@@ -2861,6 +2864,15 @@
                 <div class="module-icon">🏕️</div>
                 <div class="module-title">6. Klasse · Theme 1</div>
                 <div class="module-info">Back to Camden Town · 66 Vokabeln + Vokabelheft</div>
+            </div>
+
+            <!-- Gabel: eigene Seite, eigener Speicher (klassenarbeit.html) -->
+            <div class="module-card klassenarbeit-card" role="link" tabindex="0"
+                 onclick="location.href='klassenarbeit.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='klassenarbeit.html'">
+                <div class="module-icon">📝</div>
+                <div class="module-title">Klassenarbeit üben</div>
+                <div class="module-info">Back to Camden Town · Simple past, Satzbau, Lesen, Schreiben</div>
             </div>
 
             <div class="module-card" onclick="selectEnglishTheme('theme2')">
@@ -7086,9 +7098,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.31.4';
+        const APP_VERSION = '2.32.0';
 
         const changelogEntries = [
+            {
+                version: '2.32.0',
+                date: '25.10.2026',
+                items: [
+                    'Neu unter Englisch: <b>📝 Klassenarbeit üben</b> – eine ganze Probe-Arbeit zu <i>Back to Camden Town</i> mit Wortschatz, Simple past, Satzbau-Puzzle, Lesetext und eigener Geschichte. Am Ende gibt es Punkte und eine Übungsnote.',
+                    'Die KI erklärt dir Fehler, sagt dir, ob deine andere Lösung auch stimmt, liest deine Geschichte und macht dir einen Lernplan.',
+                    'Mit <b>„🔀 Neue Arbeit“</b> bekommst du andere Aufgaben.',
+                ]
+            },
             {
                 version: '2.31.4',
                 date: '20.10.2026',

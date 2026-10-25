@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Klassenarbeit üben · Back to Camden Town</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+/* Layout: eine Londoner U-Bahn-Linie oben, jede Station ist ein Teil der Arbeit; darunter eine Karte pro Aufgabe. Bewusst nur helles Thema. */
+:root {
+  color-scheme: light;
+  --sky: #eaf4ff;
+  --paper: #ffffff;
+  --ink: #1d2340;
+  --muted: #5b6488;
+  --line-red: #e32017;     /* Central line   – Wortschatz */
+  --line-blue: #0098d4;    /* Victoria line  – Grammatik  */
+  --line-green: #00873b;   /* District line  – Lesen      */
+  --line-orange: #ee7c0e;  /* Overground     – Schreiben  */
+  --line-purple: #6950a1;  /* Elizabeth line – Ergebnis   */
+  --line-pink: #d0477f;    /* Hammersmith & City (kräftiger) – Satzbau */
+  --good: #13a35a;
+  --good-bg: #e3f8ec;
+  --bad: #d93a3a;
+  --bad-bg: #fdeaea;
+  --claude: #c2622f;
+  --claude-bg: #fff1e8;
+  --rule: #d6e2f3;
+  --font-display: "Baloo 2", "Comic Sans MS", system-ui, sans-serif;
+  --font-body: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --accent: var(--line-red);
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--sky);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-inline: 16px;
+  padding-block: 0 48px;
+  background-image: radial-gradient(circle at 12% 8%, #fff7c2 0 90px, transparent 91px),
+                    radial-gradient(circle at 92% 30%, #ffe0ef 0 70px, transparent 71px);
+  background-attachment: fixed;
+}
+.wrap { max-width: 860px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+header.top { padding-block: 20px 6px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.roundel { display: flex; align-items: center; gap: 12px; }
+.roundel .ring { width: 54px; height: 54px; border-radius: 50%; border: 9px solid var(--line-red); position: relative; flex: none; background: var(--paper); }
+.roundel .ring::after { content: ""; position: absolute; left: -16px; right: -16px; top: 50%; height: 13px; transform: translateY(-50%); background: var(--line-blue); border-radius: 2px; }
+.roundel h1 { font-size: 1.75rem; font-weight: 800; }
+.roundel p { margin: 0; color: var(--muted); font-size: .92rem; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { background: var(--paper); border: 2px solid var(--rule); border-radius: 999px; padding: 4px 12px; font-size: .9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip b { font-family: var(--font-display); font-size: 1.05rem; }
+
+/* U-Bahn-Linie */
+nav.line { position: relative; margin-block: 18px 22px; padding: 14px 4px 4px; overflow-x: auto; }
+nav.line ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(54px, 1fr)); position: relative; min-width: 340px; }
+nav.line ol::before { content: ""; position: absolute; left: 8%; right: 8%; top: 15px; height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, var(--line-red) 0 20%, var(--line-blue) 20% 40%, var(--line-pink) 40% 60%, var(--line-green) 60% 80%, var(--line-orange) 80%); }
+nav.line button { all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; text-align: center; }
+nav.line .dot { width: 38px; height: 38px; border-radius: 50%; background: var(--paper); border: 6px solid var(--c); display: grid; place-items: center; font-weight: 700; font-family: var(--font-display); font-size: .95rem; transition: transform .15s; }
+nav.line .lbl { font-family: var(--font-display); font-weight: 700; font-size: .95rem; line-height: 1.1; }
+nav.line .sub { font-size: .72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.line button[aria-current="true"] .dot { background: var(--c); color: #fff; transform: scale(1.15); }
+nav.line button.done .dot::after { content: "✓"; color: inherit; }
+nav.line button:focus-visible .dot { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* Station-Kopf */
+.station-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.sign { background: var(--accent); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 1.45rem; padding: 4px 18px; border-radius: 10px; box-shadow: 0 4px 0 rgba(0,0,0,.15); }
+.station-head p { margin: 0; color: var(--muted); }
+
+.card { background: var(--paper); border-radius: 18px; padding: 18px 18px 16px; margin-bottom: 16px; border: 2px solid var(--rule); }
+.card h3 { font-size: 1.25rem; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.card h3 .pts { font-family: var(--font-body); font-size: .85rem; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.task { margin: 4px 0 14px; color: var(--muted); font-size: .95rem; }
+.task em { color: var(--ink); font-style: normal; font-weight: 600; }
+
+.items { display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: 2em minmax(0, 1fr); gap: 6px 8px; align-items: start; padding: 8px 10px; border-radius: 12px; }
+.item .n { font-family: var(--font-display); font-weight: 700; color: var(--accent); padding-top: 6px; }
+.item .body { min-width: 0; display: grid; gap: 6px; }
+.item .q { font-weight: 500; }
+.item .q small { color: var(--muted); font-weight: 400; }
+.item.ok { background: var(--good-bg); }
+.item.no { background: var(--bad-bg); }
+.inline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+input[type="text"], textarea, select {
+  font: inherit; color: var(--ink); background: #f7faff; border: 2px solid var(--rule); border-radius: 10px; padding: 7px 10px; min-width: 0; max-width: 100%;
+}
+input[type="text"] { width: 100%; }
+.inline input[type="text"] { width: auto; flex: 1 1 10em; }
+input[type="text"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
+input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--ink); background: transparent; border-style: dashed; }
+.fb { font-size: .92rem; }
+.fb .right { color: var(--good); font-weight: 600; }
+.fb .wrong { color: var(--bad); font-weight: 600; }
+.fb .sol { font-weight: 600; }
+
+.btn { font: inherit; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; cursor: pointer; border: none; border-radius: 12px; padding: 9px 18px; background: var(--accent); color: #fff; box-shadow: 0 4px 0 rgba(0,0,0,.18); transition: transform .08s; }
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.btn.ghost { background: var(--paper); color: var(--ink); border: 2px solid var(--rule); box-shadow: none; }
+.btn.small { font-size: .88rem; padding: 4px 10px; border-radius: 9px; box-shadow: none; }
+.btn.claude { background: var(--claude-bg); color: var(--claude); border: 2px solid #f3c9ad; box-shadow: none; }
+.btn[disabled] { opacity: .55; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 6px; }
+.actions .note { color: var(--muted); font-size: .9rem; }
+
+.claude-box { background: var(--claude-bg); border: 2px solid #f3c9ad; border-radius: 12px; padding: 8px 12px; font-size: .92rem; }
+.claude-box::before { content: "🤖 KI: "; font-weight: 600; color: var(--claude); }
+.claude-box.wait { color: var(--muted); }
+
+.tip { margin: -4px 0 12px; font-size: .9rem; }
+.tip summary { cursor: pointer; color: var(--accent); font-weight: 600; width: fit-content; }
+.tip[open] { background: #fffbe6; border: 2px dashed #f1d36b; border-radius: 12px; padding: 8px 12px; }
+.grid-de { color: var(--muted); min-width: 9.5em; }
+
+/* Satzbau */
+.sentence-line { min-height: 48px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-bottom: 3px solid var(--accent); }
+.sentence-line .hint { color: var(--muted); font-size: .9rem; }
+.sentence-line .end { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.tile-pool { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 6px; }
+.tile { font: inherit; font-weight: 500; cursor: pointer; border: 2px solid var(--accent); background: #fff; color: var(--ink); border-radius: 10px; padding: 5px 12px; box-shadow: 0 3px 0 rgba(0,0,0,.12); }
+.tile.placed { background: var(--accent); color: #fff; }
+.tile:disabled { cursor: default; box-shadow: none; }
+.tile:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.ghost-tile { border-style: dashed; color: transparent; box-shadow: none; cursor: default; user-select: none; }
+
+/* Lesetext */
+.story { background: #fbfdf7; border: 2px dashed #b7dcc2; border-radius: 14px; padding: 14px 16px; line-height: 1.9; }
+.story h4 { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 6px; }
+.story p { margin: 0 0 10px; }
+.w { border-radius: 6px; padding: 1px 2px; }
+.markable .w { cursor: pointer; }
+.markable .w:hover { background: #e5f3ea; }
+.w.mark { background: #ffd84d; box-shadow: 0 0 0 2px #e4b800 inset; }
+.w.mark.good { background: #b9f0cf; box-shadow: 0 0 0 2px var(--good) inset; }
+.w.mark.badm { background: #ffc9c9; box-shadow: 0 0 0 2px var(--bad) inset; text-decoration: line-through; }
+.w.missed { box-shadow: 0 0 0 2px var(--good) inset; }
+
+.tf { display: flex; gap: 6px; flex-wrap: wrap; }
+.tf label, .mc label { display: inline-flex; align-items: center; gap: 6px; border: 2px solid var(--rule); border-radius: 10px; padding: 4px 10px; cursor: pointer; background: #f7faff; }
+.tf input, .mc input { accent-color: var(--accent); }
+.mc { display: grid; gap: 6px; }
+.mc label { display: flex; }
+.mc label.is-sol, .tf label.is-sol { border-color: var(--good); background: var(--good-bg); }
+
+/* Schreiben */
+textarea { width: 100%; min-height: 230px; line-height: 1.6; resize: vertical; }
+.meter { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 10px; }
+.meter span { border-radius: 999px; padding: 3px 11px; font-size: .86rem; background: #f1f4fa; border: 2px solid var(--rule); font-variant-numeric: tabular-nums; }
+.meter span.on { background: var(--good-bg); border-color: #9fdcb8; }
+.helpers { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-block: 10px; }
+.helpers div { background: #fff7ee; border-radius: 12px; padding: 8px 12px; font-size: .9rem; }
+.helpers b { font-family: var(--font-display); font-size: 1rem; display: block; }
+.selfcheck { display: grid; gap: 6px; margin-block: 8px; }
+.selfcheck label { display: flex; gap: 8px; align-items: flex-start; }
+.wf { display: grid; gap: 8px; margin-top: 12px; }
+.wf .row { background: #f7faff; border-radius: 10px; padding: 8px 12px; }
+.wf .row b { font-family: var(--font-display); }
+.wf del { color: var(--bad); }
+.wf ins { color: var(--good); text-decoration: none; font-weight: 600; }
+
+/* Ergebnis */
+.result-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; font-variant-numeric: tabular-nums; }
+.result-grid .bar { grid-column: 1 / -1; height: 10px; background: #edf1f8; border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+.result-grid .bar i { display: block; height: 100%; border-radius: 6px; }
+.grade { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
+.grade .big { font-family: var(--font-display); font-weight: 800; font-size: 4rem; line-height: 1; width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--line-purple); border: 6px solid #fff; box-shadow: 0 0 0 6px var(--line-purple); }
+.scale { font-size: .82rem; color: var(--muted); }
+
+[hidden] { display: none !important; }
+@media (max-width: 520px) {
+  .roundel h1 { font-size: 1.4rem; }
+  nav.line .lbl { font-size: .74rem; }
+  nav.line .dot { width: 32px; height: 32px; border-width: 5px; }
+  nav.line ol::before { top: 12px; }
+  .card { padding: 14px 12px; }
+  .item { grid-template-columns: 1.6em minmax(0, 1fr); padding: 6px 4px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Grundgerüst (im Artefakt kam das vom Rahmen) */
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+.backlink { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font: 600 .95rem var(--font-body); color: var(--ink); text-decoration: none; background: var(--paper); border: 2px solid var(--rule); border-radius: 999px; padding: 5px 14px; }
+.backlink:hover, .backlink:focus-visible { border-color: var(--line-blue); outline: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="backlink" href="index.html">← Zurück zum Vokabeltrainer</a>
+  <header class="top">
+    <div class="roundel">
+      <div class="ring" aria-hidden="true"></div>
+      <div>
+        <h1>Back to Camden Town</h1>
+        <p>Probe-Klassenarbeit Englisch · Klasse 6 · Simple past, school rules, holidays</p>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip">⏱ <b id="clock">0:00</b></span>
+      <span class="chip">⭐ <b id="total">0</b> / <span id="max">0</span> Punkte</span>
+    </div>
+  </header>
+
+  <nav class="line" aria-label="Teile der Arbeit"><ol id="stations"></ol></nav>
+
+  <main id="main"></main>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Inhalt der Arbeit
+// ---------------------------------------------------------------------------
+let VOCAB = [
+  { id: 'v1',  de: 'der Unfall',                   en: ['accident', 'an accident'] },
+  { id: 'v2',  de: 'plötzlich',                    en: ['suddenly'] },
+  { id: 'v3',  de: 'die Strafe, die Bestrafung',   en: ['punishment', 'a punishment'] },
+  { id: 'v4',  de: 'klettern',                     en: ['climb', 'climb up'] },
+  { id: 'v5',  de: 'die Nachricht',                en: ['message', 'news'] },
+  { id: 'v6',  de: 'ausschalten',                  en: ['switch off', 'turn off'] },
+  { id: 'v7',  de: 'sich erinnern',                en: ['remember'] },
+  { id: 'v8',  de: 'gelangweilt',                  en: ['bored'] },
+  { id: 'v9',  de: 'das Abenteuer',                en: ['adventure', 'an adventure'] },
+  { id: 'v10', de: 'der Schulleiter / die Schulleiterin', en: ['head teacher', 'headteacher', 'head-teacher', 'headmaster', 'headmistress', 'principal'] },
+  { id: 'v11', de: 'dürfen',                       en: ['may', 'can', 'be allowed to'] },
+  { id: 'v12', de: 'der Ärger, die Schwierigkeiten', en: ['trouble'] },
+];
+
+let IRREG = [   // wie das Raster im Arbeitsblatt: German | infinitive | simple past
+  { id: 'i1',  de: 'verbringen, ausgeben', inf: 'spend', en: ['spent'] },
+  { id: 'i2',  de: 'verlieren',  inf: 'lose',   en: ['lost'] },
+  { id: 'i3',  de: 'erzählen',   inf: 'tell',   en: ['told'] },
+  { id: 'i4',  de: 'kaufen',     inf: 'buy',    en: ['bought'] },
+  { id: 'i5',  de: 'denken',     inf: 'think',  en: ['thought'] },
+  { id: 'i6',  de: 'bringen',    inf: 'bring',  en: ['brought'] },
+  { id: 'i7',  de: 'sprechen',   inf: 'speak',  en: ['spoke'] },
+  { id: 'i8',  de: 'treffen',    inf: 'meet',   en: ['met'] },
+  { id: 'i9',  de: '(aus)wählen', inf: 'choose', en: ['chose'] },
+  { id: 'i10', de: 'fallen',     inf: 'fall',   en: ['fell'] },
+];
+
+let GAPS = [
+  { id: 'g1', pre: 'Last summer we', verb: 'go', post: 'to Scotland.', en: ['went'] },
+  { id: 'g2', pre: 'We', verb: 'stay', post: 'in a small hotel near the sea.', en: ['stayed'] },
+  { id: 'g4', pre: 'My sister', verb: 'take', post: 'a lot of photos.', en: ['took'] },
+  { id: 'g5', pre: 'In the evening we', verb: 'be', post: 'very tired.', en: ['were'] },
+  { id: 'g6', pre: 'I', verb: 'send', post: 'a message to my best friend.', en: ['sent'] },
+];
+
+let NEG = [
+  { id: 'n1', s: 'Mrs Edwards took the phone away.',  en: ["mrs edwards didn't take the phone away", "mrs edwards didn't take away the phone"] },
+  { id: 'n2', s: 'Mr Jackson read the messages.',      en: ["mr jackson didn't read the messages"] },
+  { id: 'n3', s: 'Lena switched off her phone.',       en: ["lena didn't switch off her phone", "lena didn't switch her phone off"] },
+  { id: 'n4', s: 'The students were quiet.',           en: ["the students weren't quiet"] },
+  { id: 'n5', s: 'The head teacher was angry.',        en: ["the head teacher wasn't angry", "the headteacher wasn't angry"] },
+];
+
+let QUEST = [
+  { id: 'q1', s: 'Sam recorded the lesson.',                 en: ['did sam record the lesson'] },
+  { id: 'q2', s: 'Mrs Edwards listened to the recording.',   en: ['did mrs edwards listen to the recording'] },
+  { id: 'q3', s: 'They called the parents.',                 en: ['did they call the parents'] },
+  { id: 'q4', s: 'Ben was in the office.',                   en: ['was ben in the office'] },
+  { id: 'q5', s: 'where / you / go / last summer', words: true, en: ['where did you go last summer'] },
+];
+
+let TRANS = [   // Wortstellung: Subjekt – Verb – Objekt – Ort – Zeit
+  { id: 'r1', de: 'Wir waren letzten Sommer in Schottland.',  en: ['we were in scotland last summer', 'last summer we were in scotland', 'we went to scotland last summer', 'last summer we went to scotland'] },
+  { id: 'r2', de: 'Meine Schwester kaufte gestern ein Buch.', en: ['my sister bought a book yesterday', 'yesterday my sister bought a book'] },
+  { id: 'r3', de: 'Er traf seine Freunde nach der Schule.',   en: ['he met his friends after school', 'after school he met his friends', 'he met with his friends after school', 'after school he met with his friends', 'he met up with his friends after school', 'after school he met up with his friends'] },
+];
+
+let SHORT = [
+  { id: 's1', q: 'Did Mrs Edwards take the phone away?', yn: 'Yes,', en: ['she did'] },
+  { id: 's2', q: 'Did Mr Jackson read the messages?',    yn: 'No,',  en: ["he didn't"] },
+  { id: 's4', q: 'Was Mrs Brown angry?',                 yn: 'No,',  en: ["she wasn't"] },
+  { id: 's5', q: 'Were you bored at break?',         yn: 'Yes,', en: ['i was', 'we were'] },
+];
+
+// [[…]] = ein Klick-Baustein aus mehreren Wörtern.
+
+// ---------------------------------------------------------------------------
+// Weitere Aufgaben für Varianten. Variante 0 ist die erste Arbeit – genau die
+// Aufgaben oben, in dieser Reihenfolge. Andere Varianten mischen aus beidem.
+// ---------------------------------------------------------------------------
+const VOCAB_EXTRA = [
+  { id: 'v13', de: 'das Krankenhaus',              en: ['hospital'] },
+  { id: 'v14', de: 'verletzt',                     en: ['hurt', 'injured'] },
+  { id: 'v15', de: 'stark, kräftig',               en: ['strong'] },
+  { id: 'v16', de: 'dunkel',                       en: ['dark'] },
+  { id: 'v17', de: 'ziehen',                       en: ['pull'], verb: true },
+  { id: 'v18', de: 'stoßen, schieben, drücken',    en: ['push'], verb: true },
+  { id: 'v19', de: 'das Flugzeug',                 en: ['plane', 'aeroplane', 'airplane'] },
+  { id: 'v20', de: 'der Zug',                      en: ['train'] },
+  { id: 'v21', de: 'nervig, ärgerlich',            en: ['annoying'] },
+  { id: 'v22', de: 'ernst',                        en: ['serious'] },
+  { id: 'v23', de: 'das Sekretariat (in der Schule)', en: ['office', 'school office'] },
+  { id: 'v24', de: 'aufnehmen, aufzeichnen',       en: ['record'], verb: true },
+  { id: 'v25', de: 'krank',                        en: ['ill', 'sick'] },
+  { id: 'v26', de: '(be)strafen',                  en: ['punish'], verb: true },
+  { id: 'v27', de: 'zustimmen',                    en: ['agree'], verb: true },
+  { id: 'v28', de: 'der Fels, der Stein',          en: ['rock', 'stone'] },
+  { id: 'v29', de: 'hoch (ein hoher Fels)',        en: ['high'] },
+  { id: 'v30', de: 'schiefgehen',                  en: ['go wrong'], verb: true },
+  { id: 'v31', de: 'alles',                        en: ['everything', 'all'] },
+  { id: 'v32', de: 'beide',                        en: ['both'] },
+];
+const IRREG_EXTRA = [
+  { id: 'i11', de: 'finden',     inf: 'find',  en: ['found'] },
+  { id: 'i12', de: 'nehmen',     inf: 'take',  en: ['took'] },
+  { id: 'i13', de: 'gehen',      inf: 'go',    en: ['went'] },
+  { id: 'i14', de: 'sehen',      inf: 'see',   en: ['saw'] },
+  { id: 'i15', de: 'bekommen',   inf: 'get',   en: ['got'] },
+  { id: 'i16', de: 'geben',      inf: 'give',  en: ['gave'] },
+  { id: 'i17', de: 'tun, machen', inf: 'do',   en: ['did'] },
+  { id: 'i18', de: 'haben',      inf: 'have',  en: ['had'] },
+  { id: 'i19', de: 'machen, herstellen', inf: 'make', en: ['made'] },
+  { id: 'i20', de: 'lesen',      inf: 'read',  en: ['read'] },
+  { id: 'i21', de: 'schicken',   inf: 'send',  en: ['sent'] },
+  { id: 'i22', de: 'sagen',      inf: 'say',   en: ['said'] },
+  { id: 'i23', de: 'verletzen, wehtun', inf: 'hurt', en: ['hurt'] },
+  { id: 'i24', de: '(zer)brechen', inf: 'break', en: ['broke'] },
+  { id: 'i25', de: 'sein (beide Formen)', inf: 'be', en: ['was/were', 'was / were', 'was were', 'was or were', 'was and were', 'were/was', 'were / was', 'were was'] },
+];
+const GAPS_EXTRA = [
+  { id: 'g7',  pre: 'Yesterday Mia', verb: 'find', post: 'her lost phone in the garden.', en: ['found'] },
+  { id: 'g8',  pre: 'Our guide', verb: 'tell', post: 'us about the old castle.', en: ['told'] },
+  { id: 'g9',  pre: 'We', verb: 'visit', post: 'an old castle in Wales.', en: ['visited'] },
+  { id: 'g10', pre: 'My little brother', verb: 'cry', post: 'because he was tired.', en: ['cried'] },
+  { id: 'g11', pre: 'The bus', verb: 'stop', post: 'in front of our hotel.', en: ['stopped'] },
+  { id: 'g12', pre: 'Our guide', verb: 'give', post: 'us a map of the town.', en: ['gave'] },
+];
+const NEG_EXTRA = [
+  { id: 'n6',  s: 'Tom broke a window.',                  en: ["tom didn't break a window"], sol: "Tom didn't break a window." },
+  { id: 'n7',  s: 'We had a break after the test.',       en: ["we didn't have a break after the test"], sol: "We didn't have a break after the test." },
+  { id: 'n8',  s: 'The lesson was boring.',               en: ["the lesson wasn't boring"], sol: "The lesson wasn't boring." },
+  { id: 'n9',  s: 'Mia sent a message in the lesson.',    en: ["mia didn't send a message in the lesson"], sol: "Mia didn't send a message in the lesson." },
+  { id: 'n10', s: 'My parents were angry.',               en: ["my parents weren't angry"], sol: "My parents weren't angry." },
+];
+const QUEST_EXTRA = [
+  { id: 'q6',  s: 'Tom went to the head teacher.',        en: ['did tom go to the head teacher', 'did tom go to the headteacher'], sol: 'Did Tom go to the head teacher?' },
+  { id: 'q7',  s: 'The students were bored.',             en: ['were the students bored'], sol: 'Were the students bored?' },
+  { id: 'q8',  s: 'Lisa lost her phone.',                 en: ['did lisa lose her phone'], sol: 'Did Lisa lose her phone?' },
+  { id: 'q9',  s: 'what / you / do / last weekend', words: true, en: ['what did you do last weekend'], sol: 'What did you do last weekend?' },
+  { id: 'q10', s: 'when / the lesson / start / this morning', words: true, en: ['when did the lesson start this morning'], sol: 'When did the lesson start this morning?' },
+  { id: 'q11', s: 'where / you / be / yesterday', words: true, en: ['where were you yesterday'], sol: 'Where were you yesterday?' },
+];
+const SHORT_EXTRA = [
+  { id: 's6', q: 'Did you see the accident?',             yn: 'No,',  en: ["i didn't", "we didn't"], sol: "I didn't." },
+  { id: 's7', q: 'Was the lesson interesting?',           yn: 'Yes,', en: ['it was'], sol: 'it was.' },
+  { id: 's8', q: 'Did Tom and Lisa climb the rock?',      yn: 'Yes,', en: ['they did'], sol: 'they did.' },
+  { id: 's9', q: 'Were your parents angry?',              yn: 'No,',  en: ["they weren't"], sol: "they weren't." },
+];
+const TRANS_EXTRA = [
+  { id: 'r4', de: 'Ich sah gestern einen Unfall.',             en: ['i saw an accident yesterday', 'yesterday i saw an accident'], sol: 'I saw an accident yesterday.' },
+  { id: 'r5', de: 'Wir trafen unsere Lehrerin im Park.',       en: ['we met our teacher in the park', 'we met with our teacher in the park', 'we met up with our teacher in the park'], sol: 'We met our teacher in the park.' },
+  { id: 'r6', de: 'Meine Eltern kauften letzten Sommer ein neues Auto.', en: ['my parents bought a new car last summer', 'last summer my parents bought a new car'], sol: 'My parents bought a new car last summer.' },
+];
+
+// Satzbau: Satzglieder liegen durcheinander. `c` = Bausteine, `en` = erlaubte Reihenfolgen.
+const ORDER_POOL = [
+  { id: 'o1',  c: ['bought', 'a new phone', 'Tom', 'yesterday'], end: '.',
+    en: ['tom bought a new phone yesterday', 'yesterday tom bought a new phone'], sol: 'Tom bought a new phone yesterday.' },
+  { id: 'o2',  c: ['met', 'on Saturday', 'we', 'at the station', 'our friends'], end: '.',
+    en: ['we met our friends at the station on saturday', 'on saturday we met our friends at the station'], sol: 'We met our friends at the station on Saturday.' },
+  { id: 'o3',  c: ['did', 'what', 'buy', 'your mum', 'at the market'], end: '?',
+    en: ['what did your mum buy at the market'], sol: 'What did your mum buy at the market?' },
+  { id: 'o4',  c: ['break', "didn't", 'Ben', 'the school rules'], end: '.',
+    en: ["ben didn't break the school rules"], sol: "Ben didn't break the school rules." },
+  { id: 'o5',  c: ['was', 'in the office', 'the head teacher', 'yesterday'], end: '?',
+    en: ['was the head teacher in the office yesterday'], sol: 'Was the head teacher in the office yesterday?' },
+  { id: 'o6',  c: ['took away', 'Mrs Edwards', "Lisa's phone", 'in the lesson'], end: '.',
+    en: ["mrs edwards took away lisa's phone in the lesson", "in the lesson mrs edwards took away lisa's phone"], sol: "Mrs Edwards took away Lisa's phone in the lesson." },
+  { id: 'o7',  c: ['did', 'the parents', 'Mr Jackson', 'call'], end: '?',
+    en: ['did mr jackson call the parents', 'did the parents call mr jackson'], sol: 'Did Mr Jackson call the parents?' },
+  { id: 'o8',  c: ['climbed', 'a high rock', 'my brother', 'last weekend'], end: '.',
+    en: ['my brother climbed a high rock last weekend', 'last weekend my brother climbed a high rock'], sol: 'My brother climbed a high rock last weekend.' },
+  { id: 'o9',  c: ["weren't", 'in the classroom', 'the students', 'after school'], end: '.',
+    en: ["the students weren't in the classroom after school", "after school the students weren't in the classroom"], sol: "The students weren't in the classroom after school." },
+  { id: 'o10', c: ['what', 'see', 'in London', 'did', 'you'], end: '?',
+    en: ['what did you see in london'], sol: 'What did you see in London?' },
+];
+let ORDER = [];
+let ALL_TYPED = {};
+
+// Lesetext
+const STORY_TITLE = 'A day to remember';
+const STORY = [
+  '[[Last summer]] Emma and her family went to Wales on holiday. [[At first]] Emma was bored because it rained on Monday, Tuesday and Wednesday. But [[on Thursday]] the sun came out, and the family went on a [[climbing trip]] with a group.',
+  'The [[group leader]], Mr Hughes, was a tall, friendly man. First he showed them how to climb. Then they climbed up a high rock. Emma\'s little brother Max was very excited. "Look at me! I\'m a [[mountain goat]]!" he shouted.',
+  'Suddenly Max fell. He hurt his arm. Emma was scared, but Mr Hughes stayed calm. "Don\'t worry. It isn\'t serious," he said. [[After that]] he drove Max to hospital.',
+  'Max didn\'t break his arm, but he had to wear a bandage for a week. [[In the evening]] the family ate pizza and laughed about the adventure. "That was the best day of the holiday!" Max said.',
+];
+const CONNECTIVES = ['at first', 'because', 'but', 'first', 'then', 'suddenly', 'after that', 'so', 'when'];
+// Zählen auch, wenn markiert, werden nach der Abgabe aber nicht als Lösung gezeigt
+// („and“ verbindet oft nur Wörter; Zeitangaben lernen manche Kinder als „time connectives“).
+const ACCEPT_TOO = ['and', 'last summer', 'on thursday', 'in the evening'];
+const counts = k => CONNECTIVES.includes(k) || ACCEPT_TOO.includes(k);
+
+const TF = [
+  { id: 't1', s: 'It rained every day of the holiday.', a: false },
+  { id: 't2', s: 'Mr Hughes was the group leader.',     a: true  },
+  { id: 't3', s: 'Max broke his arm.',                  a: false },
+  { id: 't4', s: 'The family ate pizza in the evening.', a: true },
+];
+
+const ADJ = [
+  { id: 'a1', pre: 'Emma was', post: 'because it rained for three days.', opts: ['bored', 'strong', 'high'], a: 'bored' },
+  { id: 'a2', pre: 'They climbed up a', post: 'rock.', opts: ['stupid', 'high', 'ill'], a: 'high' },
+  { id: 'a3', pre: 'Max was very', post: 'when he climbed.', opts: ['excited', 'unfriendly', 'dark'], a: 'excited' },
+  { id: 'a4', pre: 'Mr Hughes said, "It isn\'t', post: '."', opts: ['interesting', 'serious', 'annoying'], a: 'serious' },
+];
+
+const SPEECH = [
+  { id: 'd1', opts: ['"Look at me!" he shouted.', '"Look at me! he shouted."', 'Look at me! "he shouted."'], a: 0 },
+  { id: 'd2', opts: ['Mr Hughes said "Don\'t worry".', 'Mr Hughes said, "Don\'t worry."', 'Mr Hughes said, Don\'t worry."'], a: 1 },
+  { id: 'd3', opts: ['"It isn\'t serious." he said.', '"It isn\'t serious" he said.', '"It isn\'t serious," he said.'], a: 2 },
+  { id: 'd4', opts: ['"Can I climb too"? asked Emma.', '"Can I climb too?" asked Emma.', '"Can I climb too?," asked Emma.'], a: 1 },
+];
+
+const WRITE_CONNECTIVES = ['first', 'at first', 'then', 'after that', 'next', 'later', 'because', 'but', 'so', 'suddenly', 'finally', 'in the end', 'when'];
+
+// Teile mit Punkten. Die Reihenfolge ist die Linie.
+const SECTIONS = [
+  { key: 'vocab',   name: 'Words',    color: 'var(--line-red)',    sub: 'Wortschatz' },
+  { key: 'grammar', name: 'Grammar',  color: 'var(--line-blue)',   sub: 'Simple past' },
+  { key: 'order',   name: 'Puzzle',   color: 'var(--line-pink)',   sub: 'Satzbau' },
+  { key: 'reading', name: 'Reading',  color: 'var(--line-green)',  sub: 'Lesen' },
+  { key: 'writing', name: 'Writing',  color: 'var(--line-orange)', sub: 'Schreiben' },
+  { key: 'result',  name: 'Result',   color: 'var(--line-purple)', sub: 'Auswertung' },
+];
+const WRITING_MAX = 18;
+// Checkliste aus dem Buch („Make sure you …“) – je 3 Punkte
+const CHECK = [
+  { k: 'wfragen', auto: false, t: 'Who? What? Where? When? – Meine Geschichte beantwortet alle vier Fragen.' },
+  { k: 'rahmen',  auto: false, t: 'Title, interesting first sentence, interesting last sentence.' },
+  { k: 'past',    auto: false, t: 'Ich habe das simple past benutzt.' },
+  { k: 'adj',     auto: false, t: 'Adjectives (exciting, scary, annoying …) machen sie bunt.' },
+  { k: 'conn',    auto: true,  t: 'Connectives (but, when, because …)' },
+  { k: 'speech',  auto: true,  t: 'Direct speech ("Help!" I shouted.)' },
+];
+let MAX = {};
+
+// ---------------------------------------------------------------------------
+// Zustand (nur in diesem Browser, für "später weitermachen")
+// ---------------------------------------------------------------------------
+const STORE = 'klassenarbeit-camden-v1';
+const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), at: 'vocab' });
+let S = fresh();
+try { const raw = localStorage.getItem(STORE); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch (e) {}
+if (S.writeAi && S.writeAi.wait) S.writeAi = null;   // Seite wurde während einer KI-Anfrage neu geladen
+
+// Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
+// Aufgaben beim Neuladen gleich bleiben. Ohne seed (= 0) die erste Arbeit.
+const BASE = { VOCAB, IRREG, GAPS, NEG, QUEST, TRANS, SHORT };
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+function shuffled(list, r) {
+  const a = list.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function hash(str) { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; }
+function applyVariant() {
+  const seed = S.seed || 0;
+  const r = seed ? rng(seed) : null;
+  const pick = (base, extra, n) => r ? shuffled(base.concat(extra), r).slice(0, n) : base.slice(0, n);
+  VOCAB = pick(BASE.VOCAB, VOCAB_EXTRA, 12);
+  IRREG = pick(BASE.IRREG, IRREG_EXTRA, 10);
+  GAPS  = pick(BASE.GAPS, GAPS_EXTRA, 5);
+  NEG   = pick(BASE.NEG, NEG_EXTRA, 5);
+  QUEST = pick(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), 4)
+            .concat(pick(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), 1));
+  SHORT = pick(BASE.SHORT, SHORT_EXTRA, 4);
+  TRANS = pick(BASE.TRANS, TRANS_EXTRA, 3);
+  ORDER = pick(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), 5);
+  ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
+  MAX = {
+    vocab: VOCAB.length,
+    grammar: IRREG.length + GAPS.length + NEG.length + QUEST.length + SHORT.length + TRANS.length * 2,
+    order: ORDER.length,
+    reading: TF.length + 4 + ADJ.length + SPEECH.length,
+    writing: WRITING_MAX,
+  };
+}
+applyVariant();
+// Bausteine einer Satzbau-Aufgabe in fester, gemischter Reihenfolge (nie schon richtig)
+function orderTiles(it) {
+  const r = rng(hash(it.id) ^ (S.seed || 0));
+  let idx = shuffled(it.c.map((_, i) => i), r);
+  const sentence = ix => norm(ix.map(i => it.c[i]).join(' '));
+  for (let k = 0; k < it.c.length && it.en.includes(sentence(idx)); k++) idx.push(idx.shift());
+  return idx;
+}
+function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+
+// ---------------------------------------------------------------------------
+// KI (optional – ohne KI funktioniert alles, nur ohne Erklärungen)
+// Die Fragen gehen an den Worker der App (Gemini). Er zählt pro Gerät und Tag;
+// die Geräte-ID ist dieselbe wie im Vokabeltrainer.
+// ---------------------------------------------------------------------------
+const KI_API = 'https://bertha-presence.marcator.workers.dev/';
+const DEVICE_KEY = 'vokabelGeraeteId';
+function myDeviceId() {
+  let id = '';
+  try { id = localStorage.getItem(DEVICE_KEY) || ''; } catch (e) {}
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    try { localStorage.setItem(DEVICE_KEY, id); } catch (e) {}
+  }
+  return id;
+}
+// 'aus' bis der Worker sich gemeldet hat; 'weg' nach 429/503 (für diese Sitzung).
+let kiStatus = 'aus';
+const kiOn = () => kiStatus === 'an' && navigator.onLine !== false;
+// Prüfen, ob der Worker die Klassenarbeit-Routen kennt – ohne eine Frage zu
+// verbrauchen: Ohne Aufgabe antwortet er mit 400, bevor er zählt.
+(async () => {
+  try {
+    const r = await fetch(KI_API + 'pruefen', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: myDeviceId() }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 400 && /aufgabe/.test(d.fehler || '')) { kiStatus = 'an'; render(); }
+  } catch (e) {}
+})();
+async function kiFrage(route, body, ms) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(KI_API + route, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ id: myDeviceId() }, body)), signal: ctl.signal });
+    if (r.status === 429 || r.status === 503) { kiStatus = 'weg'; throw { code: 'weg', status: r.status }; }
+    if (!r.ok) throw { code: 'fehler' };
+    return await r.json();
+  } catch (e) {
+    // Eigene Fehler tragen code als Text; DOMException (Abbruch) hat eine Zahl.
+    throw (e && typeof e.code === 'string') ? e : { code: e && e.name === 'AbortError' ? 'zeit' : 'fehler' };
+  } finally {
+    clearTimeout(t);
+  }
+}
+function kiFail(e) {
+  if (e && e.code === 'weg') return e.status === 429
+    ? 'Die KI hat heute genug Fragen beantwortet. Morgen geht es wieder.'
+    : 'KI heute nicht verfügbar.';
+  if (e && e.code === 'zeit') return 'Die KI hat zu lange gebraucht. Probier es noch einmal.';
+  return 'Das hat nicht geklappt. Probier es noch einmal.';
+}
+
+// ---------------------------------------------------------------------------
+// Hilfen
+// ---------------------------------------------------------------------------
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function norm(s) {
+  return String(s || '').toLowerCase()
+    .replace(/[’‘`´]/g, "'")
+    .replace(/\b(mrs|mr|ms)\./g, '$1')            // „Mrs. Edwards“ (amerikanisch) zählt auch
+    .replace(/\bdid not\b/g, "didn't").replace(/\bwas not\b/g, "wasn't").replace(/\bwere not\b/g, "weren't")
+    .replace(/^[\s"„“]+|[\s"“”]+$/g, '').replace(/[.!?,;:]+\s*$/g, '')
+    .replace(/,/g, '')                               // „Last summer, we …“ – das Komma ist kein Fehler
+    .replace(/\s+/g, ' ').trim();
+}
+// Vokabeln: „a/an/the/to“ davor ist egal.
+const bare = s => s.replace(/^(a|an|the|to) /, '');
+function isRight(val, list, it) {
+  let v = norm(val);
+  if (it && it.id && it.id[0] === 'v') return list.map(bare).includes(bare(v));
+  // Kurzantwort ganz ausgeschrieben („Yes, she did“) zählt – aber nur mit dem richtigen Yes/No.
+  if (it && it.yn) { const yn = it.yn.toLowerCase().replace(',', ''); v = v.replace(new RegExp('^' + yn + ' '), ''); }
+  return list.includes(v);
+}
+const capital = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Wie wird eine Lösung angezeigt?
+function showSol(item, kind) {
+  if (item.sol) return item.sol;
+  const first = item.en[0];
+  if (kind === 'trans') return capital(first).replace(/\bscotland\b/, 'Scotland') + '.';
+  if (kind === 'neg' || kind === 'quest') {
+    let t = capital(first).replace(/\bmrs\b/g, 'Mrs').replace(/\bmr\b/g, 'Mr').replace(/\bsam\b/g, 'Sam').replace(/\bben\b/g, 'Ben')
+      .replace(/\blena\b/g, 'Lena').replace(/\bedwards\b/g, 'Edwards').replace(/\bjackson\b/g, 'Jackson');
+    return t + (kind === 'quest' ? '?' : '.');
+  }
+  if (kind === 'short') return (first === 'i was' ? 'I was' : first) + '.';
+  return (kind === 'vocab' && (['v4', 'v6', 'v7'].includes(item.id) || item.verb)) ? 'to ' + first : first;
+}
+
+// ---------------------------------------------------------------------------
+// Punkte
+// ---------------------------------------------------------------------------
+function typedPoints(list, w = 1) {
+  return list.reduce((p, it) => p + ((isRight(S.answers[it.id], it.en, it) || S.claudeOk[it.id]) ? w : 0), 0);
+}
+function markResult() {
+  const tokens = storyTokens();
+  const goodKeys = new Set(); let bad = 0;   // viermal „and“ zählt nur einmal
+  S.marks.forEach(i => { const t = tokens.find(x => x.i === i); if (!t) return; counts(t.key) ? goodKeys.add(t.key) : bad++; });
+  const good = goodKeys.size;
+  return { good, bad, pts: Math.max(0, Math.min(4, good) - bad) };
+}
+const aiCurrent = () => S.writeAi && typeof S.writeAi.punkte === 'number' && S.writeAi.text === S.writing.trim();
+function writingPoints() {
+  if (aiCurrent()) return Math.max(0, Math.min(WRITING_MAX, Math.round(S.writeAi.punkte)));
+  return writingSelfPoints();
+}
+function writingSelfPoints() {
+  const st = writingStats(S.writing);
+  if (st.words < 30) return 0;
+  let p = 0;
+  p += st.conn.length >= 3 ? 3 : st.conn.length;
+  if (st.speech) p += st.speechPunct ? 3 : 1;
+  ['wfragen', 'rahmen', 'past', 'adj'].forEach(k => { if (S.self[k]) p += 2; });   // Selbsteinschätzung zählt etwas weniger
+  if (st.words < 80) p = Math.round(p * 0.75);   // zu kurz
+  return Math.min(WRITING_MAX, p);
+}
+function points(key) {
+  if (!S.done[key]) return 0;
+  if (key === 'vocab') return typedPoints(VOCAB);
+  if (key === 'grammar') return typedPoints(IRREG) + typedPoints(GAPS) + typedPoints(NEG) + typedPoints(QUEST) + typedPoints(SHORT) + typedPoints(TRANS, 2);
+  if (key === 'order') return typedPoints(ORDER);
+  if (key === 'reading') {
+    const tf = TF.reduce((p, t) => p + (S.answers[t.id] === String(t.a) ? 1 : 0), 0);
+    const adj = ADJ.reduce((p, t) => p + (S.answers[t.id] === t.a ? 1 : 0), 0);
+    const sp = SPEECH.reduce((p, t) => p + (S.answers[t.id] === String(t.a) ? 1 : 0), 0);
+    return tf + markResult().pts + adj + sp;
+  }
+  if (key === 'writing') return writingPoints();
+  return 0;
+}
+const PARTS = ['vocab', 'grammar', 'order', 'reading', 'writing'];
+const totalMax = () => PARTS.reduce((p, k) => p + MAX[k], 0);
+const total = () => PARTS.reduce((p, k) => p + points(k), 0);
+function grade(pct) {
+  if (pct >= 0.92) return ['1', 'sehr gut'];
+  if (pct >= 0.81) return ['2', 'gut'];
+  if (pct >= 0.67) return ['3', 'befriedigend'];
+  if (pct >= 0.50) return ['4', 'ausreichend'];
+  if (pct >= 0.25) return ['5', 'mangelhaft'];
+  return ['6', 'ungenügend'];
+}
+
+// ---------------------------------------------------------------------------
+// Darstellung
+// ---------------------------------------------------------------------------
+function renderStations() {
+  $('#stations').innerHTML = SECTIONS.map((s, i) => {
+    const sub = s.key === 'result' ? 'Note' : (S.done[s.key] ? points(s.key) + ' / ' + MAX[s.key] : MAX[s.key] + ' P.');
+    return `<li><button type="button" data-go="${s.key}" style="--c:${s.color}" aria-current="${S.at === s.key}" class="${S.done[s.key] ? 'done' : ''}">
+      <span class="dot">${S.done[s.key] ? '' : i + 1}</span><span class="lbl">${s.name}</span><span class="sub">${sub}</span></button></li>`;
+  }).join('');
+}
+
+function head(sec, text) {
+  return `<div class="station-head"><span class="sign">${sec.name}</span><p>${text}</p></div>`;
+}
+
+// Eine getippte Aufgabe (Vokabel, Verbform, Satz)
+function typedItem(it, n, kind, promptHtml, opts = {}) {
+  const done = S.done[opts.section];
+  const val = S.answers[it.id] || '';
+  const ok = isRight(val, it.en, it);
+  const cOk = S.claudeOk[it.id];
+  const cls = done ? ((ok || cOk) ? 'ok' : 'no') : '';
+  const input = `<input type="text" id="in-${it.id}" data-ans="${it.id}" value="${esc(val)}" autocomplete="off" autocapitalize="off" spellcheck="false" ${done ? 'disabled' : ''} placeholder="${opts.ph || ''}">`;
+  let fb = '';
+  if (done) {
+    if (ok) fb = '<span class="right">✓ richtig</span>';
+    else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
+    else {
+      fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(showSol(it, kind))}</span>`;
+      if (kiOn() && val.trim()) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
+    }
+  }
+  const ai = S.answers['ai-' + it.id] ? `<div class="claude-box">${esc(S.answers['ai-' + it.id])}</div>` : '';
+  const body = opts.inline
+    ? `<div class="inline">${promptHtml.replace('%INPUT%', input)}</div>`
+    : `<div class="q">${promptHtml}</div>${input}`;
+  return `<div class="item ${cls}"><span class="n">${n}</span><div class="body">${body}${done ? `<div class="fb">${fb}</div>` : ''}${ai}</div></div>`;
+}
+
+function submitBar(key, label) {
+  if (S.done[key]) {
+    return `<div class="actions"><span class="note">Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>.</span>
+      ${next(key)}</div>`;
+  }
+  return `<div class="actions"><span class="note">Du kannst alles noch ändern, bis du abgibst.</span>
+    <button type="button" class="btn" data-submit="${key}">✔ ${label} abgeben</button></div>`;
+}
+function next(key) {
+  const i = SECTIONS.findIndex(s => s.key === key);
+  const n = SECTIONS[i + 1];
+  return n ? `<button type="button" class="btn" style="background:${n.color}" data-go="${n.key}">Weiter zu ${n.name} →</button>` : '';
+}
+
+function renderVocab(sec) {
+  return head(sec, 'Was heißt das auf Englisch? Bei Verben darfst du „to“ davor schreiben.') +
+    `<div class="card"><h3>A · Vocabulary <span class="pts">${MAX.vocab} Punkte</span></h3>
+     <p class="task">Schreib das englische Wort. Achte auf die <em>Rechtschreibung</em>.</p>
+     <div class="items">${VOCAB.map((v, i) => typedItem(v, i + 1, 'vocab', esc(v.de), { section: 'vocab' })).join('')}</div></div>` +
+    submitBar('vocab', 'Wortschatz');
+}
+
+// Merkhilfen wie im Heft – aufklappbar, damit man es erst selbst versucht.
+const tip = (txt) => `<details class="tip"><summary>💡 Merkhilfe aus dem Heft</summary>${txt}</details>`;
+function renderGrammar(sec) {
+  const g = 'grammar';
+  return head(sec, 'Simple past: Aussagen, Verneinungen, Fragen und Kurzantworten.') +
+    `<div class="card"><h3>B1 · Irregular verbs <span class="pts">${IRREG.length} Punkte</span></h3>
+      <p class="task">Complete the grid: Wie heißt die <em>simple past</em>-Form?</p>
+      <div class="items">${IRREG.map((v, i) => typedItem(v, i + 1, 'irreg', `<span class="grid-de">${esc(v.de)}</span> <b>${esc(v.inf)}</b> → %INPUT%`, { section: g, inline: true })).join('')}</div></div>
+    <div class="card"><h3>B2 · Positive statements <span class="pts">${GAPS.length} Punkte</span></h3>
+      <p class="task">Setz das Verb in Klammern ins <em>simple past</em>.</p>
+      <div class="items">${GAPS.map((v, i) => typedItem(v, i + 1, 'gap', `${esc(v.pre)} %INPUT% <small>(${esc(v.verb)})</small> ${esc(v.post)}`, { section: g, inline: true })).join('')}</div></div>
+    <div class="card"><h3>B3 · Negative statements <span class="pts">${NEG.length} Punkte</span></h3>
+      <p class="task">Schreib die ganzen Sätze <em>verneint</em> auf (mit <em>didn't</em>, <em>wasn't</em> oder <em>weren't</em>) – mit den Namen wie im Satz.</p>
+      ${tip('<b>didn\'t</b> (did not) + Verb im <b>Infinitiv</b>: We didn\'t climb the rock. · Bei <i>be</i>: <b>wasn\'t / weren\'t</b>.')}
+      <div class="items">${NEG.map((v, i) => typedItem(v, i + 1, 'neg', esc(v.s), { section: g, ph: 'Schreib den ganzen Satz …' })).join('')}</div></div>
+    <div class="card"><h3>B4 · Questions <span class="pts">${QUEST.length} Punkte</span></h3>
+      <p class="task">Mach aus Satz 1–4 eine <em>Ja/Nein-Frage</em> (Did …? / Was …? / Were …?). Bei Nummer 5 baust du eine Frage aus den Wörtern.</p>
+      ${tip('<b>Did</b> + subject + infinitive: <i>Did he use his phone?</i><br>question word + <b>did</b> + subject + infinitive: <i>What did she buy?</i><br>Mit <i>be</i>: <b>Was/Were</b> + subject: <i>Were you in London?</i>')}
+      <div class="items">${QUEST.map((v, i) => typedItem(v, i + 1, 'quest', v.words ? `<small>Wörter:</small> ${esc(v.s)}` : esc(v.s), { section: g, ph: 'Schreib die Frage …' })).join('')}</div></div>
+    <div class="card"><h3>B5 · Short answers <span class="pts">${SHORT.length} Punkte</span></h3>
+      <p class="task">Ergänze die <em>Kurzantwort</em>.</p>
+      ${tip('Yes, they <b>did</b>. / No, I <b>didn\'t</b>. · Yes, he <b>was</b>. / No, they <b>weren\'t</b>.')}
+      <div class="items">${SHORT.map((v, i) => typedItem(v, i + 1, 'short', `${esc(v.q)}<br>${esc(v.yn)} %INPUT%`, { section: g, inline: true, ph: '…' })).join('')}</div></div>` +
+    `<div class="card"><h3>B6 · Translate <span class="pts">${TRANS.length * 2} Punkte (je 2)</span></h3>
+      <p class="task">Übersetze ins Englische. Benutze das <em>simple past</em> und achte auf die <em>Wortstellung</em>.</p>
+      ${tip('Englisch: <b>Wer – tut – was – wo – wann</b>. <i>He read a book yesterday.</i> (nicht: <s>He read yesterday a book.</s>) · <i>We played football in the park on Monday.</i> (nicht: <s>We played on Monday football in the park.</s>)')}
+      <div class="items">${TRANS.map((v, i) => typedItem(v, i + 1, 'trans', esc(v.de), { section: g, ph: 'Schreib den englischen Satz …' })).join('')}</div></div>` +
+    submitBar(g, 'Grammatik');
+}
+
+function renderOrder(sec) {
+  const done = S.done.order;
+  const rows = ORDER.map((it, n) => {
+    const placed = S.order[it.id] || [];
+    const tiles = orderTiles(it);
+    const val = S.answers[it.id] || '';
+    const ok = isRight(val, it.en, it), cOk = S.claudeOk[it.id];
+    const line = placed.length
+      ? placed.map((ci, pos) => `<button type="button" class="tile placed" ${done ? 'disabled' : ''} data-oplaced="${it.id}:${pos}">${esc(it.c[ci])}</button>`).join('') + `<span class="end">${it.end}</span>`
+      : `<span class="hint">Tippe die Bausteine in der richtigen Reihenfolge an …</span>`;
+    const pool = tiles.map(ci => placed.includes(ci) ? `<span class="tile ghost-tile">${esc(it.c[ci])}</span>`
+      : `<button type="button" class="tile" ${done ? 'disabled' : ''} data-otile="${it.id}:${ci}">${esc(it.c[ci])}</button>`).join('');
+    let fb = '';
+    if (done) {
+      if (ok) fb = '<span class="right">✓ richtig</span>';
+      else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
+      else {
+        fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(it.sol)}</span>`;
+        if (kiOn() && val.trim()) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="order">🤖 Warum? / Stimmt meins auch?</button>`;
+      }
+    }
+    const ai = S.answers['ai-' + it.id] ? `<div class="claude-box">${esc(S.answers['ai-' + it.id])}</div>` : '';
+    return `<div class="item ${done ? ((ok || cOk) ? 'ok' : 'no') : ''}"><span class="n">${n + 1}</span><div class="body">
+      <div class="sentence-line">${line}</div>
+      ${done ? '' : `<div class="tile-pool">${pool}</div>`}
+      ${done ? `<div class="fb">${fb}</div>` : ''}${ai}</div></div>`;
+  }).join('');
+  return head(sec, 'Satzbau: Die Satzglieder sind durcheinandergeraten.') +
+    `<div class="card"><h3>Word order <span class="pts">${MAX.order} Punkte</span></h3>
+      <p class="task">Tippe die Bausteine in der <em>richtigen Reihenfolge</em> an. Ein Tipp auf einen gelegten Baustein legt ihn zurück. Den großen Anfangsbuchstaben musst du nicht beachten.</p>
+      ${tip('Aussage: <b>Wer – tut – was – wo – wann</b>.<br>Frage: (Fragewort) + <b>did</b> + wer + Verb im Infinitiv … / <b>Was/Were</b> + wer …<br>Verneinung: wer + <b>didn\'t</b> + Verb im Infinitiv …')}
+      <div class="items">${rows}</div></div>` + submitBar('order', 'Satzbau');
+}
+
+function storyTokens() {
+  const out = []; let i = 0;
+  STORY.forEach((p, pi) => {
+    p.split(/(\[\[[^\]]+\]\]|\s+)/).forEach(part => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) { out.push({ p: pi, space: true }); return; }
+      const multi = part.match(/^\[\[(.+)\]\]$/);
+      const word = multi ? multi[1] : part;
+      const m = word.match(/^(["“]?)(.*?)([.,!?"”]*)$/);
+      out.push({ p: pi, i: i++, pre: m[1], txt: m[2], post: m[3], key: m[2].toLowerCase() });
+    });
+  });
+  return out;
+}
+function renderStory(markable) {
+  const tokens = storyTokens();
+  const done = S.done.reading;
+  const paras = STORY.map((_, pi) => tokens.filter(t => t.p === pi).map(t => {
+    if (t.space) return ' ';
+    let cls = 'w';
+    const marked = S.marks.includes(t.i);
+    if (marked) cls += ' mark' + (done ? (counts(t.key) ? ' good' : ' badm') : '');
+    else if (done && CONNECTIVES.includes(t.key)) cls += ' missed';
+    return `${esc(t.pre)}<span class="${cls}" data-tok="${t.i}">${esc(t.txt)}</span>${esc(t.post)}`;
+  }).join('')).map(p => `<p>${p}</p>`).join('');
+  return `<div class="story ${markable && !done ? 'markable' : ''}"><h4>${STORY_TITLE}</h4>${paras}</div>`;
+}
+
+function radio(id, value, label, done, correct) {
+  const checked = S.answers[id] === String(value);
+  return `<label class="${done && correct ? 'is-sol' : ''}"><input type="radio" name="${id}" value="${value}" data-ans="${id}" ${checked ? 'checked' : ''} ${done ? 'disabled' : ''}> ${label}</label>`;
+}
+function choiceRow(id, n, inner, ok, done, solText) {
+  return `<div class="item ${done ? (ok ? 'ok' : 'no') : ''}"><span class="n">${n}</span><div class="body">${inner}
+    ${done ? `<div class="fb">${ok ? '<span class="right">✓ richtig</span>' : `<span class="wrong">✗</span> Lösung: <span class="sol">${solText}</span>`}</div>` : ''}</div></div>`;
+}
+
+function renderReading(sec) {
+  const done = S.done.reading;
+  const mr = markResult();
+  return head(sec, 'Lies die Geschichte genau. Alle vier Aufgaben gehören zu diesem Text.') +
+    `<div class="card"><h3>C1 · Connectives <span class="pts">4 Punkte</span></h3>
+      <p class="task">Tippe im Text auf <em>4 verschiedene connectives</em> – Wörter, die Sätze verbinden oder die Reihenfolge zeigen (wie <em>so</em> oder <em>finally</em>). Manche Bausteine bestehen aus zwei oder drei Wörtern. Ein falsch markiertes Wort kostet einen Punkt.</p>
+      ${renderStory(true)}
+      <p class="task" style="margin:10px 0 0">${done
+        ? `Richtig markiert: <b>${mr.good}</b> · falsch markiert: <b>${mr.bad}</b> → <b>${mr.pts} Punkte</b>. Grün umrandet: weitere connectives im Text.`
+        : `Markiert: <b>${S.marks.length}</b>. Nochmal tippen hebt die Markierung auf.`}</p></div>
+    <div class="card"><h3>C2 · True or false? <span class="pts">${TF.length} Punkte</span></h3>
+      <p class="task">Stimmt das laut Text?</p>
+      <div class="items">${TF.map((t, i) => choiceRow(t.id, i + 1,
+        `<div class="q">${esc(t.s)}</div><div class="tf">${radio(t.id, true, 'true', done, t.a === true)}${radio(t.id, false, 'false', done, t.a === false)}</div>`,
+        S.answers[t.id] === String(t.a), done, t.a ? 'true' : 'false')).join('')}</div></div>
+    <div class="card"><h3>C3 · Adjectives <span class="pts">${ADJ.length} Punkte</span></h3>
+      <p class="task">Welches <em>adjective</em> passt zur Geschichte?</p>
+      <div class="items">${ADJ.map((t, i) => choiceRow(t.id, i + 1,
+        `<div class="inline">${esc(t.pre)} <select data-ans="${t.id}" id="in-${t.id}" ${done ? 'disabled' : ''}><option value="">…</option>${t.opts.map(o => `<option ${S.answers[t.id] === o ? 'selected' : ''}>${o}</option>`).join('')}</select> ${esc(t.post)}</div>`,
+        S.answers[t.id] === t.a, done, esc(t.a))).join('')}</div></div>
+    <div class="card"><h3>C4 · Direct speech <span class="pts">${SPEECH.length} Punkte</span></h3>
+      <p class="task">Welcher Satz hat die <em>richtigen Satzzeichen</em>?</p>
+      <div class="items">${SPEECH.map((t, i) => choiceRow(t.id, i + 1,
+        `<div class="mc">${t.opts.map((o, j) => radio(t.id, j, esc(o), done, j === t.a)).join('')}</div>`,
+        S.answers[t.id] === String(t.a), done, esc(t.opts[t.a]))).join('')}</div></div>` +
+    submitBar('reading', 'Lesen');
+}
+
+function writingStats(text) {
+  const raw = String(text || '').replace(/[’]/g, "'");
+  const t = ' ' + raw.toLowerCase().replace(/[^a-z' ]+/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const words = (raw.match(/[A-Za-zÄÖÜäöüß']+/g) || []).length;
+  const conn = WRITE_CONNECTIVES.filter(c => c === 'first'
+    ? / first /.test(t.replace(/ at first /g, ' '))           // „at first“ nicht doppelt zählen
+    : t.includes(' ' + c + ' '));
+  const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
+  const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
+  return { words, conn, speech, speechPunct };
+}
+
+function renderWriting(sec) {
+  const done = S.done.writing;
+  const st = writingStats(S.writing);
+  const ai = S.writeAi;
+  let aiHtml = '';
+  if (ai && ai.err) aiHtml = `<div class="claude-box">${esc(ai.err)}</div>`;
+  else if (ai && ai.wait) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
+  else if (ai) {
+    aiHtml = `<div class="wf">
+      <div class="row"><b>${aiCurrent() ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.` : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.'}</b></div>
+      ${(ai.lob || []).length ? `<div class="row"><b>👍 Das ist gut:</b><ul>${ai.lob.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+      ${(ai.fehler || []).length ? `<div class="row"><b>✏️ Verbessere:</b><ul>${ai.fehler.map(f => `<li><del>${esc(f.original || '')}</del> → <ins>${esc(f.besser || '')}</ins>${f.warum ? ' – ' + esc(f.warum) : ''}</li>`).join('')}</ul></div>` : ''}
+      ${(ai.tipps || []).length ? `<div class="row"><b>💡 Nächstes Mal:</b><ul>${ai.tipps.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+    </div>`;
+  }
+  return head(sec, 'Schreib eine eigene Geschichte. Nimm dir dafür Zeit.') +
+    `<div class="card"><h3>D · My holiday adventure <span class="pts">${WRITING_MAX} Punkte</span></h3>
+      <p class="task">Schreib eine Abenteuergeschichte aus den Ferien – echt oder ausgedacht.<br>Write a story about a <em>holiday adventure</em> (real or invented). Give it a <em>title</em>. Write <em>80–120 words</em> in the <em>simple past</em>. Use <em>connectives</em>, <em>adjectives</em> and <em>direct speech</em> ("…").</p>
+      <div class="helpers">
+        <div><b>Connectives</b>but, when, because, so, first, then, after that, suddenly, in the end</div>
+        <div><b>Adjectives</b>exciting, scary, annoying, high, dark, strong, friendly, bored, interesting</div>
+        <div><b>Useful verbs</b>went, saw, climbed, fell, jumped, shouted, said, called, laughed</div>
+      </div>
+      <textarea id="in-writing" data-ans="writing" ${done ? 'disabled' : ''} placeholder="Last summer I went to …">${esc(S.writing)}</textarea>
+      <div class="meter" id="meter">${meterHtml(st)}</div>
+      <div class="selfcheck">
+        <b style="font-family:var(--font-display)">Checklist: Make sure you … <small style="font-family:var(--font-body);font-weight:400;color:var(--muted)">(wie im Buch)</small></b>
+        ${CHECK.map(c => c.auto
+          ? `<label><input type="checkbox" disabled ${(c.k === 'conn' ? st.conn.length >= 3 : st.speech) ? 'checked' : ''}> ${esc(c.t)} <small style="color:var(--muted)">– zählt die Seite selbst</small></label>`
+          : `<label><input type="checkbox" data-self="${c.k}" ${S.self[c.k] ? 'checked' : ''} ${done ? 'disabled' : ''}> ${esc(c.t)}</label>`).join('')}
+      </div>
+      ${aiHtml}
+      ${kiOn() && !done && !(ai && ai.wait) ? `<div style="margin-top:12px"><button type="button" class="btn claude" data-claude-write ${st.words < 30 ? 'disabled' : ''}>🤖 KI, lies meine Geschichte</button>
+        <span class="note" style="color:var(--muted);font-size:.88rem">${st.words < 30 ? 'Ab 30 Wörtern.' : (ai && !ai.err ? 'Du kannst verbessern und nochmal fragen.' : 'Die KI gibt Tipps und vergibt die Punkte.')}</span></div>` : ''}
+      ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
+    </div>` +
+    submitBar('writing', 'Text');
+}
+function meterHtml(st) {
+  return `<span class="${st.words >= 80 ? 'on' : ''}">📝 ${st.words} Wörter</span>
+    <span class="${st.conn.length >= 3 ? 'on' : ''}">🔗 ${st.conn.length} connectives${st.conn.length ? ': ' + esc(st.conn.join(', ')) : ''}</span>
+    <span class="${st.speech ? 'on' : ''}">💬 direct speech ${st.speech ? '✓' : '–'}</span>`;
+}
+
+function renderResult(sec) {
+  const parts = SECTIONS.filter(s => s.key !== 'result');
+  const t = total(), m = totalMax();
+  const allDone = parts.every(s => S.done[s.key]);
+  const pc = Math.floor(t / m * 100);
+  const [note, word] = grade(pc / 100);
+  return head(sec, allDone ? 'Fertig! So hast du abgeschnitten.' : 'Hier siehst du deine Punkte, sobald du einen Teil abgegeben hast.') +
+    `<div class="card"><h3>Punkte</h3>
+      <div class="result-grid" style="margin-top:10px">
+        ${parts.map(s => `<span>${s.name} <small style="color:var(--muted)">${s.sub}</small></span><b>${S.done[s.key] ? points(s.key) : '–'} / ${MAX[s.key]}</b>
+          <div class="bar"><i style="width:${S.done[s.key] ? Math.round(points(s.key) / MAX[s.key] * 100) : 0}%;background:${s.color}"></i></div>`).join('')}
+        <span><b>Gesamt</b></span><b>${t} / ${m}</b>
+      </div>
+      ${allDone ? `<div class="grade"><div class="big">${note}</div><div><b style="font-family:var(--font-display);font-size:1.4rem">Übungsnote: ${word}</b><br>
+        <span class="scale">${pc} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrkraft kann anders bewerten.</span></div></div>` :
+        `<p class="task" style="margin-top:12px">Noch offen: ${parts.filter(s => !S.done[s.key]).map(s => `<button type="button" class="btn small ghost" data-go="${s.key}">${s.name}</button>`).join(' ')}</p>`}
+    </div>
+    ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
+      <p class="task">Die KI schaut auf deine Fehler und sagt dir, was du bis zur Arbeit noch üben solltest.</p>
+      ${S.answers.plan ? `<div class="claude-box">${esc(S.answers.plan)}</div>` : ''}
+      <button type="button" class="btn claude" data-plan style="margin-top:8px">🤖 Was soll ich noch üben?</button></div>` : ''}
+    <div class="card"><h3>Nochmal?</h3>
+      <p class="task">Eine neue Arbeit mischt andere Aufgaben aus einem größeren Vorrat (der Lesetext bleibt gleich). Deine jetzigen Antworten werden dabei gelöscht.</p>
+      <button type="button" class="btn ghost" data-reset>🔀 Neue Arbeit mit anderen Aufgaben</button>
+      <span id="reset-confirm" hidden> Sicher? <button type="button" class="btn small" data-reset-yes style="background:var(--bad)">Ja, alles löschen</button></span>
+    </div>`;
+}
+
+function render() {
+  const sec = SECTIONS.find(s => s.key === S.at) || SECTIONS[0];
+  document.documentElement.style.setProperty('--accent', sec.color);
+  renderStations();
+  const fn = { vocab: renderVocab, grammar: renderGrammar, order: renderOrder, reading: renderReading, writing: renderWriting, result: renderResult }[sec.key];
+  $('#main').innerHTML = fn(sec);
+  $('#total').textContent = total();
+  $('#max').textContent = totalMax();
+}
+
+// ---------------------------------------------------------------------------
+// Eingaben
+// ---------------------------------------------------------------------------
+document.addEventListener('input', e => {
+  const id = e.target.dataset.ans;
+  if (!id) return;
+  if (id === 'writing') {
+    S.writing = e.target.value;
+    $('#meter').innerHTML = meterHtml(writingStats(S.writing));
+    const wb = document.querySelector('[data-claude-write]');   // Knopf erst ab 30 Wörtern
+    if (wb) wb.disabled = writingStats(S.writing).words < 30;
+  } else {
+    S.answers[id] = e.target.value;
+  }
+  save();
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.self) { S.self[t.dataset.self] = t.checked; save(); return; }
+  if (t.dataset.ans && (t.type === 'radio' || t.tagName === 'SELECT')) { S.answers[t.dataset.ans] = t.value; save(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+  const inputs = [...document.querySelectorAll('input[type="text"]:not(:disabled)')];
+  const i = inputs.indexOf(e.target);
+  if (i >= 0 && inputs[i + 1]) { e.preventDefault(); inputs[i + 1].focus(); }
+});
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button, .w');
+  if (!b) return;
+  if (b.dataset.go) { S.at = b.dataset.go; save(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (b.dataset.tok !== undefined && b.closest('.markable')) {
+    const i = +b.dataset.tok;
+    S.marks = S.marks.includes(i) ? S.marks.filter(x => x !== i) : [...S.marks, i];
+    save(); render(); return;
+  }
+  if (b.dataset.otile || b.dataset.oplaced) {
+    const [id, x] = (b.dataset.otile || b.dataset.oplaced).split(':');
+    const it = ORDER.find(o => o.id === id);
+    const placed = (S.order[id] || []).slice();
+    if (b.dataset.otile) placed.push(+x); else placed.splice(+x, 1);
+    S.order[id] = placed;
+    S.answers[id] = placed.map(i => it.c[i]).join(' ');
+    save(); render(); return;
+  }
+  if (b.dataset.submit) {
+    S.done[b.dataset.submit] = true; save(); render();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); return;
+  }
+  if (b.dataset.why) { askWhy(b.dataset.why, b.dataset.kind, b); return; }
+  if (b.hasAttribute('data-claude-write')) { askWriting(); return; }
+  if (b.hasAttribute('data-plan')) { askPlan(b); return; }
+  if (b.hasAttribute('data-reset')) { $('#reset-confirm').hidden = false; return; }
+  if (b.hasAttribute('data-reset-yes')) {
+    S = fresh(); S.seed = 1 + Math.floor(Math.random() * 2147483646);
+    applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
+  }
+});
+
+// ---------------------------------------------------------------------------
+// KI-Fragen
+// ---------------------------------------------------------------------------
+function taskText(kind, it) {
+  return {
+    vocab: `Übersetze ins Englische: "${it.de}"`,
+    irreg: `Simple-past-Form von "to ${it.inf}"`,
+    gap: `Setze das Verb "${it.verb}" im simple past ein: "${it.pre} ___ ${it.post}"`,
+    neg: `Verneine den Satz im simple past: "${it.s}"`,
+    quest: it.words ? `Bilde eine Frage im simple past aus den Wörtern: "${it.s}"` : `Bilde eine Ja/Nein-Frage im simple past zu: "${it.s}"`,
+    short: `Kurzantwort auf "${it.q}" – beginnt mit "${it.yn}"`,
+    trans: `Übersetze ins Englische, im simple past, mit richtiger Wortstellung: "${it.de}"`,
+    order: `Bringe diese Satzglieder in die richtige Reihenfolge (alle müssen benutzt werden): ${it.c ? it.c.map(x => '"' + x + '"').join(', ') : ''}`,
+  }[kind];
+}
+async function askWhy(id, kind, btn) {
+  if (!kiOn()) return;
+  const it = ALL_TYPED[kind].find(x => x.id === id);
+  btn.disabled = true;
+  btn.textContent = '🤖 denkt nach …';
+  try {
+    const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung: showSol(it, kind), antwort: S.answers[id] || '' }, 20000);
+    S.answers['ai-' + id] = String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.';
+    if (r && r.richtig === true) S.claudeOk[id] = true;
+  } catch (err) {
+    S.answers['ai-' + id] = kiFail(err);
+  }
+  save(); render();
+}
+
+async function askWriting() {
+  if (!kiOn()) return;
+  const text = S.writing.trim();
+  S.writeAi = { wait: true }; render();
+  try {
+    const r = await kiFrage('text', { text }, 45000);
+    S.writeAi = {
+      text,
+      punkte: Number(r && r.punkte),
+      lob: Array.isArray(r && r.lob) ? r.lob.slice(0, 3).map(String) : [],
+      fehler: Array.isArray(r && r.fehler) ? r.fehler.slice(0, 6).filter(f => f && typeof f === 'object') : [],
+      tipps: Array.isArray(r && r.tipps) ? r.tipps.slice(0, 3).map(String) : [],
+    };
+    if (!isFinite(S.writeAi.punkte)) S.writeAi.punkte = null;
+  } catch (err) {
+    S.writeAi = { err: kiFail(err) };
+  }
+  save(); render();
+}
+
+async function askPlan(btn) {
+  if (!kiOn()) return;
+  btn.disabled = true; btn.textContent = '🤖 denkt nach …';
+  const wrong = [];
+  Object.entries(ALL_TYPED).forEach(([kind, list]) => list.forEach(it => {
+    if (!isRight(S.answers[it.id], it.en, it) && !S.claudeOk[it.id]) wrong.push(`${taskText(kind, it)} – Kind: "${S.answers[it.id] || '(leer)'}", richtig: "${showSol(it, kind)}"`);
+  }));
+  TF.forEach(t => { if (S.answers[t.id] !== String(t.a)) wrong.push(`Lesen true/false: "${t.s}"`); });
+  ADJ.forEach(t => { if (S.answers[t.id] !== t.a) wrong.push(`Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`); });
+  SPEECH.forEach(t => { if (S.answers[t.id] !== String(t.a)) wrong.push(`Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`); });
+  const mr = markResult();
+  if (mr.pts < 4) wrong.push(`Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
+  try {
+    const r = await kiFrage('lernplan', {
+      ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
+      fehler: wrong.slice(0, 40).join('\n'),
+    }, 30000);
+    S.answers.plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+  } catch (err) {
+    S.answers.plan = kiFail(err);
+  }
+  save(); render();
+}
+
+// ---------------------------------------------------------------------------
+// Uhr
+// ---------------------------------------------------------------------------
+function tick() {
+  const s = Math.max(0, Math.floor((Date.now() - S.start) / 1000));
+  $('#clock').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+setInterval(tick, 1000);
+tick();
+render();
+</script>
+
+</body>
+</html>

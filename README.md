@@ -21,6 +21,12 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   Gegenstelle: Cloudflare Worker + D1, siehe [`worker/README.md`](worker/README.md).
 
 ### 🇬🇧 Englisch
+- **📝 Klassenarbeit üben** (`klassenarbeit.html`, Kachel unter den Themen): Probe-Arbeit zu Theme 1 nach den
+  Themen der echten Arbeit — Wortschatz, Simple past (Verbraster, Lücken, Verneinung, Fragen, Short answers,
+  Übersetzen mit Wortstellung), Satzbau-Puzzle, Lesetext (connectives, true/false, adjectives, direct speech),
+  Geschichte „Holiday adventure“ nach der Buch-Checkliste. Punkte und Übungsnote; Varianten über einen
+  Seed (`🔀 Neue Arbeit`, Seed 0 = Grundarbeit). KI über den Worker (`/pruefen`, `/text`, `/lernplan`),
+  Knöpfe nur, wenn der Worker die Routen kennt. Eigener Speicher `klassenarbeit-camden-v1`, gleiche Geräte-ID
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
 - Multiple-Choice-Modus (EN→DE): 5 Optionen mit kuratierten Distraktoren
 - Zufällige Modus-Zuweisung pro Wort in jeder Runde — außer bei Einträgen mit Klammern,
@@ -145,7 +151,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.31.4
+**Version:** 2.32.0
 **Datum:** 19.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -171,6 +177,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | Pfad | Inhalt |
 |---|---|
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
+| `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
 
@@ -193,6 +200,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.32.0 (25.10.2026)
+- **Klassenarbeit üben** als eigene Seite `klassenarbeit.html`, Kachel in der Englisch-Themenauswahl.
+  Inhalt aus dem geprüften Claude-Artefakt (drei Prüfrunden mit je zwei unabhängigen Agenten);
+  die Claude-Aufrufe sind durch den Worker ersetzt.
+- **Worker**: neue Routen `/pruefen` (stimmt diese Antwort auch?), `/text` (Geschichte, 6×3-Raster der
+  Buch-Checkliste) und `/lernplan`. Gleiche Zähltabelle und Tageslimits wie `/korrektur`.
+  Der neue Worker-Code muss im Cloudflare-Dashboard eingesetzt werden; bis dahin läuft die Seite ohne KI.
 
 ### Version 2.31.4 (20.10.2026)
 - **„Lösung zeigen“ erklärt statt zu wiederholen**: Das Wort steht schon in den Feldern, darunter kommt jetzt

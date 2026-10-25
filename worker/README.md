@@ -176,6 +176,30 @@ Richtig ist eine Antwort wie `{"ok":false,"korrigiert":"…","erklaerung":"…",
 | `limit` (429) | Tageslimit erreicht (40 pro Gerät, 400 insgesamt) |
 | `name fehlt` (400) | Der alte Code läuft noch, K3 fehlt |
 
+## Klassenarbeit: `/pruefen`, `/text`, `/lernplan`
+
+Für `klassenarbeit.html`. Gleicher Schlüssel, gleiche Zähltabelle `korrektur`,
+gleiches Tageslimit (40 Fragen pro Gerät **über alle Routen zusammen**, 400 insgesamt).
+Nach dem Einsetzen des neuen Codes (K3) prüfen:
+
+```bash
+curl -s -X POST https://bertha-presence.marcator.workers.dev/pruefen \
+  -H 'Content-Type: application/json' \
+  -d '{"id":"testgeraet-1234","aufgabe":"Verneine den Satz im simple past: \"Tom went home.\"","loesung":"Tom didn'"'"'t go home.","antwort":"Tom did not go home"}'
+```
+
+Erwartet: `{"richtig":true,"erklaerung":"…","rest":…}`. Kommt `name fehlt` (400), läuft noch der alte Code.
+
+| Route | schickt | bekommt |
+|---|---|---|
+| `/pruefen` | `id, aufgabe, loesung, antwort` | `richtig, erklaerung, rest` |
+| `/text` | `id, text` (ab 20 Wörtern) | `punkte` 0–18, `lob[]`, `fehler[{original, besser, warum}]`, `tipps[]`, `rest` |
+| `/lernplan` | `id, ergebnis, fehler` (Text) | `plan, rest` |
+
+Die Seite fragt beim Laden `/pruefen` nur mit `id` an. Der neue Code antwortet
+`aufgabe, loesung und antwort nötig` (400), **ohne** zu zählen. Erst dann zeigt sie
+die KI-Knöpfe. Bei 429/503 verschwinden die Knöpfe für die Sitzung.
+
 ## Was die KI bekommt
 
 Den deutschen Satz, die Musterlösung und die Antwort des Kindes, mehr nicht. Kein
