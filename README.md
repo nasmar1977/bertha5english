@@ -151,7 +151,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.32.1
+**Version:** 2.32.2
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -200,6 +200,10 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.32.2 (25.10.2026)
+- **Klassenarbeit, Satzbau**: Jede Zeile trägt die Satzart („❓ Frage“, „🚫 Verneinung“, „💬 Aussage“, aus `end`
+  bzw. `n't` abgeleitet). Fragen haben eine gelbe Zeile und ein großes „?“, das schon vor dem ersten Baustein steht.
 
 ### Version 2.32.1 (25.10.2026)
 - Zwei unabhängige Prüfberichte zu 2.32.0 eingearbeitet.

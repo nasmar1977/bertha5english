@@ -121,7 +121,12 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
 /* Satzbau */
 .sentence-line { min-height: 48px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-bottom: 3px solid var(--accent); }
 .sentence-line .hint { color: var(--muted); font-size: .9rem; }
-.sentence-line .end { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.sentence-line .end { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-left: auto; }
+.sentence-line.frage { border-bottom-color: #f2a900; background: #fff8e1; border-radius: 10px 10px 0 0; }
+.sentence-line.frage .end { font-size: 2rem; line-height: 1; color: #e08a00; }
+.satzart { justify-self: start; width: fit-content; font-size: .82rem; font-weight: 600; border-radius: 999px; padding: 2px 10px; background: #eef2fb; color: var(--muted); }
+.satzart.frage { background: #ffe9a8; color: #7a4d00; }
+.satzart.nein { background: #fde2e2; color: #9b2c2c; }
 .tile-pool { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 6px; }
 .tile { font: inherit; font-weight: 500; cursor: pointer; border: 2px solid var(--accent); background: #fff; color: var(--ink); border-radius: 10px; padding: 5px 12px; box-shadow: 0 3px 0 rgba(0,0,0,.12); }
 .tile.placed { background: var(--accent); color: #fff; }
@@ -777,9 +782,13 @@ function renderOrder(sec) {
     const tiles = orderTiles(it);
     const val = S.answers[it.id] || '';
     const ok = isRight(val, it.en, it), cOk = S.claudeOk[it.id];
-    const line = placed.length
-      ? placed.map((ci, pos) => `<button type="button" class="tile placed" ${done ? 'disabled' : ''} data-oplaced="${it.id}:${pos}">${esc(it.c[ci])}</button>`).join('') + `<span class="end">${it.end}</span>`
-      : `<span class="hint">Tippe die Bausteine in der richtigen Reihenfolge an …</span>`;
+    // Satzart sichtbar machen: Fragen bekommen Etikett, Farbe und ein großes „?“ am Zeilenende.
+    const art = it.end === '?' ? 'frage' : it.c.some(x => /n't$/.test(x)) ? 'nein' : 'aussage';
+    const label = { frage: '❓ Frage', nein: '🚫 Verneinung', aussage: '💬 Aussage' }[art];
+    const line = (placed.length
+      ? placed.map((ci, pos) => `<button type="button" class="tile placed" ${done ? 'disabled' : ''} data-oplaced="${it.id}:${pos}">${esc(it.c[ci])}</button>`).join('')
+      : `<span class="hint">${art === 'frage' ? 'Bau eine Frage …' : 'Tippe die Bausteine an …'}</span>`)
+      + `<span class="end">${it.end}</span>`;
     const pool = tiles.map(ci => placed.includes(ci) ? `<span class="tile ghost-tile">${esc(it.c[ci])}</span>`
       : `<button type="button" class="tile" ${done ? 'disabled' : ''} data-otile="${it.id}:${ci}">${esc(it.c[ci])}</button>`).join('');
     let fb = '';
@@ -793,7 +802,8 @@ function renderOrder(sec) {
     }
     const ai = kiBox(it.id);
     return `<div class="item ${done ? ((ok || cOk) ? 'ok' : 'no') : ''}"><span class="n">${n + 1}</span><div class="body">
-      <div class="sentence-line">${line}</div>
+      <span class="satzart ${art}">${label}</span>
+      <div class="sentence-line ${art}">${line}</div>
       ${done ? '' : `<div class="tile-pool">${pool}</div>`}
       ${done ? `<div class="fb">${fb}</div>` : ''}${ai}</div></div>`;
   }).join('');
