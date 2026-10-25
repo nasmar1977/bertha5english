@@ -72,6 +72,12 @@ function json(daten, status = 200) {
 const KORR_PRO_GERAET = 40;    // Aufrufe pro Gerät und Tag
 const KORR_GESAMT     = 400;   // Aufrufe aller Geräte pro Tag (Gratis-Stufe hat mehr)
 const KORR_MODELL     = 'gemini-3.1-flash-lite';
+// Ist das Hauptmodell überlastet (503/500/504) oder im Minutenlimit (429),
+// fragt der Worker einmal dieses zweite Modell. Ein Alias, den Google immer
+// auf ein aktuelles Flash-Modell zeigen lässt – andere Kapazität als Flash-Lite.
+// Überschreibbar mit der Variablen GEMINI_FALLBACK (leer = kein zweiter Versuch).
+const KORR_ERSATZ     = 'gemini-flash-latest';
+const UEBERLASTET = new Set([429, 500, 503, 504]);
 
 const KORR_ANWEISUNG = `Du prüfst Übersetzungen eines Kindes (6. Klasse Gymnasium in Deutschland, zweites Englischjahr).
 Du bekommst einen deutschen Satz, eine Musterlösung und die englische Übersetzung des Kindes.
@@ -135,35 +141,11 @@ async function korrektur(body, env) {
     }
     if (eigene > KORR_PRO_GERAET || alle > KORR_GESAMT) return json({ fehler: 'limit' }, 429);
 
-    const modell = env.GEMINI_MODEL || KORR_MODELL;
-    let antwortKI;
-    try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modell}:generateContent`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
-            body: JSON.stringify({
-                system_instruction: { parts: [{ text: KORR_ANWEISUNG }] },
-                contents: [{ role: 'user', parts: [{ text:
-                    'Deutscher Satz: ' + de + '\nMusterlösung: ' + loesung + '\nÜbersetzung des Kindes: ' + antwort }] }],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 1024,
-                    responseMimeType: 'application/json',
-                    responseSchema: KORR_SCHEMA,
-                    // Gemini 3 denkt sonst ausgiebig nach: 5–8 s statt 1–2 s.
-                    ...(modell.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'minimal' } } : {}),
-                },
-            }),
-        });
-        // Gemini-Minutenlimit, nicht unser Tageslimit: die App soll es später nochmal versuchen.
-        if (r.status === 429) return json({ fehler: 'ki-belegt' }, 503);
-        const daten = await r.json();
-        if (!r.ok) return json({ fehler: 'ki', status: r.status }, 502);
-        const text = (daten.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
-        antwortKI = JSON.parse(text);
-    } catch (e) {
-        return json({ fehler: 'ki' }, 502);
-    }
+    const g = await frageGemini(env, KORR_ANWEISUNG,
+        'Deutscher Satz: ' + de + '\nMusterlösung: ' + loesung + '\nÜbersetzung des Kindes: ' + antwort,
+        KORR_SCHEMA, 1024, 0.1);
+    if (g.antwort) return g.antwort;
+    const antwortKI = g.obj;
     if (typeof antwortKI.ok !== 'boolean') return json({ fehler: 'ki' }, 502);
 
     // Gelegentlich alte Zählzeilen wegräumen.
@@ -206,36 +188,51 @@ async function zaehle(id, env) {
 }
 
 // Eine Frage an Gemini mit erzwungener JSON-Antwort. Gibt { obj } zurück
-// oder eine fertige Fehlerantwort ({ antwort }). Ein 429 von Gemini ist das
-// Minutenlimit, nicht unser Tageslimit: als 503 „ki-belegt“ melden.
-async function frageGemini(env, anweisung, text, schema, maxTokens) {
-    const modell = env.GEMINI_MODEL || KORR_MODELL;
-    try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modell}:generateContent`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
-            body: JSON.stringify({
-                system_instruction: { parts: [{ text: anweisung }] },
-                contents: [{ role: 'user', parts: [{ text }] }],
-                generationConfig: {
-                    temperature: 0.2,
-                    maxOutputTokens: maxTokens,
-                    responseMimeType: 'application/json',
-                    responseSchema: schema,
-                    ...(modell.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'minimal' } } : {}),
-                },
-            }),
-        });
-        if (r.status === 429) return { antwort: json({ fehler: 'ki-belegt' }, 503) };
-        const daten = await r.json();
-        if (!r.ok) return { antwort: json({ fehler: 'ki', status: r.status }, 502) };
-        const roh = (daten.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
-        const obj = JSON.parse(roh);
-        if (!obj || typeof obj !== 'object') return { antwort: json({ fehler: 'ki' }, 502) };
-        return { obj };
-    } catch (e) {
-        return { antwort: json({ fehler: 'ki' }, 502) };
+// oder eine fertige Fehlerantwort ({ antwort }). Überlastung oder Minutenlimit
+// beim Hauptmodell: einmal das Ersatzmodell fragen. Scheitern beide daran,
+// melden wir 503 „ki-belegt“ – die Seite sagt dann „gleich nochmal versuchen“.
+// Gezählt wird vorher genau einmal, der zweite Versuch kostet das Kind nichts.
+async function frageGemini(env, anweisung, text, schema, maxTokens, temperatur = 0.2) {
+    const haupt = env.GEMINI_MODEL || KORR_MODELL;
+    const ersatz = env.GEMINI_FALLBACK !== undefined ? String(env.GEMINI_FALLBACK).trim() : KORR_ERSATZ;
+    const modelle = ersatz && ersatz !== haupt ? [haupt, ersatz] : [haupt];
+    let belegt = false;
+    for (const modell of modelle) {
+        let r;
+        try {
+            r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modell}:generateContent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_KEY },
+                body: JSON.stringify({
+                    system_instruction: { parts: [{ text: anweisung }] },
+                    contents: [{ role: 'user', parts: [{ text }] }],
+                    generationConfig: {
+                        temperature: temperatur,
+                        maxOutputTokens: maxTokens,
+                        responseMimeType: 'application/json',
+                        responseSchema: schema,
+                        // Gemini 3 denkt sonst ausgiebig nach: 5–8 s statt 1–2 s.
+                        ...(modell.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'minimal' } } : {}),
+                    },
+                }),
+            });
+        } catch (e) {
+            belegt = true;          // Netzfehler zu Google: wie Überlastung behandeln
+            continue;
+        }
+        if (UEBERLASTET.has(r.status)) { belegt = true; continue; }
+        try {
+            const daten = await r.json();
+            if (!r.ok) return { antwort: json({ fehler: 'ki', status: r.status, modell }, 502) };
+            const roh = (daten.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
+            const obj = JSON.parse(roh);
+            if (!obj || typeof obj !== 'object') return { antwort: json({ fehler: 'ki' }, 502) };
+            return { obj };
+        } catch (e) {
+            return { antwort: json({ fehler: 'ki' }, 502) };
+        }
     }
+    return { antwort: json({ fehler: belegt ? 'ki-belegt' : 'ki' }, belegt ? 503 : 502) };
 }
 
 function gueltigeId(roh) {

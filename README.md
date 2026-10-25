@@ -151,7 +151,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.32.2
+**Version:** 2.32.3
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -200,6 +200,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.32.3 (25.10.2026)
+- **Worker**: Antwortet `gemini-3.1-flash-lite` mit 503/500/504 oder 429, fragt `frageGemini` einmal das Ersatzmodell
+  `gemini-flash-latest` (überschreibbar mit `GEMINI_FALLBACK`, leer = aus). Gezählt wird einmal. Scheitern beide,
+  kommt 503 `ki-belegt` („gleich nochmal“). `/korrektur` läuft jetzt auch über `frageGemini`. Anlass: Google meldete
+  am 25.10. dauerhaft 503 für Flash-Lite.
 
 ### Version 2.32.2 (25.10.2026)
 - **Klassenarbeit, Satzbau**: Jede Zeile trägt die Satzart („❓ Frage“, „🚫 Verneinung“, „💬 Aussage“, aus `end`

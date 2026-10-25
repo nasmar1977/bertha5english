@@ -147,6 +147,13 @@ Im Worker: **Settings → Variables and Secrets → Add**
 
 **Deploy** bzw. **Save**.
 
+Ist das Hauptmodell überlastet (Google antwortet 503/500/504) oder im
+Minutenlimit (429), fragt der Worker einmal ein Ersatzmodell
+(`gemini-flash-latest`, ein Alias auf das jeweils aktuelle Flash-Modell mit
+eigener Kapazität). Gezählt wird nur einmal. Mit der *Text*-Variable
+`GEMINI_FALLBACK` lässt sich ein anderes Ersatzmodell eintragen; leer heißt
+„kein zweiter Versuch“.
+
 Optional als *Text*-Variable `GEMINI_MODEL`, falls Google
 `gemini-3.1-flash-lite` einmal abschaltet. Dann lässt sich das Modell ohne
 neuen Code tauschen. (Im Oktober 2026 nötig gewesen: `gemini-2.5-flash-lite`
@@ -174,7 +181,7 @@ Richtig ist eine Antwort wie `{"ok":false,"korrigiert":"…","erklaerung":"…",
 | `ki` (502), `status` 402 | Kein Guthaben: Bezahlstufe ohne Prepaid-Guthaben in AI Studio |
 | `ki` (502), sonst | Gemini lehnt ab, z. B. Schlüssel falsch |
 | `limit` (429) | Tageslimit erreicht (40 pro Gerät, 400 insgesamt) |
-| `ki-belegt` (503) | Gemini-Minutenlimit (Gratis-Stufe), gleich nochmal versuchen |
+| `ki-belegt` (503) | Hauptmodell **und** Ersatzmodell überlastet (Google-503/500/504) oder im Minutenlimit (429) – gleich nochmal versuchen |
 | `name fehlt` (400) | Der alte Code läuft noch, K3 fehlt |
 
 ## Klassenarbeit: `/pruefen`, `/text`, `/lernplan`
