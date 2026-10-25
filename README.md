@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.3
+**Version:** 2.33.4
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -203,6 +203,31 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.33.4 (25.10.2026)
+- **Schreib-Bewertung nach Schul-Maßstab** (Vorgabe: nicht zu streng bei Satzzeichen und Reihenfolge). Ein Regelblock,
+  wörtlich gleich im Worker (`textAnweisung`) und im Artefakt (`askWriting`): Satzzeichen bei direkter Rede kosten
+  keine Punkte (speech: 3 lebendig/mehrfach, 2 einmal sauber, 1 ansatzweise, 0 fehlt); ungewöhnliche, verständliche
+  Wortstellung in der Geschichte kostet nichts (B6 und Satzbau bleiben streng); Fehler-Reihenfolge Verbformen →
+  deutsche Wörter → fehlende Wörter → Rechtschreibung → höchstens ein Satzzeichen-Hinweis am Ende; present perfect in
+  der Erzählung ist ein Fehler, in direkter Rede jede passende Zeitform richtig; past ≤ 1 erst bei > 3 falschen
+  Formen oder Präsens-Erzählung; rahmen ohne Titel ≤ 2; nur „in the holidays“ → wwww ≤ 2; Thema verfehlt bzw. nur
+  Lesetext nacherzählt → je ≤ 1; Längen-Tipp ab 150 Wörtern.
+- **Aufgabe pro Arbeit an den Worker**: Die Seite schickt `story` (A–E), der Worker hat die fünf Aufgabentexte selbst
+  (`TEXT_AUFGABEN`, kein Freitext, unbekannt → A). Aufgabe C: „…an exciting camping trip in the holidays…“.
+- **Schutz im Prompt**: Trennlinien aus `-`/`=` entfernt, Text in `<kindertext>…</kindertext>`, `<`/`>` maskiert
+  (`kinderText()`, gleich in Worker und Artefakt). Verlangt der Text Punkte oder neue Regeln: erster Fehler
+  „gehört nicht zur Geschichte“, rahmen ≤ 1.
+- **„so“** zählt an allen drei Stellen (Seite, Artefakt, Worker) nur als Verbinder – auch nach Doppelpunkt,
+  Zeilenanfang oder Anführungszeichen. Ohne KI-Bewertung kann die vorläufige Schreib-Punktzahl schon abgegebener
+  Texte dadurch um 1 sinken.
+- **Verräter, B–E und Zufall**: Vokabeln werden jetzt auch gegen Endungen am ersten Wort einer Wendung (switched off,
+  went wrong), gegen unregelmäßige Vergangenheit (fell, sent, went) und gegen alle nach einer Abgabe sichtbaren
+  Lösungen geprüft. Gemessen: B–E und 5000 Zufallsarbeiten ohne Fund, auch gegen die Lösungen nach Teilabgabe.
+  Überschneidung zwischen B–E: BC 21, BD 21, BE 24, CD 24, CE 13, DE 19; mit A jeweils 0. Arbeit A bleibt unverändert.
+- Artefakt: `kriterienPunkte()` nimmt nur echte Zahlen und denselben Text (max. 4000 Zeichen) wie der Worker – auf 40
+  Zufallseingaben gleich. Laufende Anfragen sind pro Runde gesperrt (`busyKey` mit `runTag`), auch der Lernplan.
+  Fehlt eine Aufgaben-ID im Vorrat, wird nur diese Liste neu gewählt. Lesetext E Absatz 3 umgestellt.
 
 ### Version 2.33.3 (25.10.2026)
 - **Schreib-Bewertung nach Testlauf nachgeschärft** (5 Probetexte von stark bis Thema verfehlt, je 2× durch Gemini

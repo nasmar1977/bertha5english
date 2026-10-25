@@ -639,8 +639,8 @@ const STORIES = {
       { id: 'dc4', opts: ['"Where is my torch"? asked Mrs Patel.', '"Where is my torch?" asked Mrs Patel.', '"Where is my torch?," asked Mrs Patel.'], a: 1 },
     ],
     write: { title: 'Our camping trip', de: 'Schreib eine Geschichte über einen Zeltausflug in den Ferien, bei dem etwas Aufregendes passierte – echt oder ausgedacht.',
-             en: 'Write a story about a <em>camping trip in the holidays</em> where something exciting happened (real or invented).',
-             prompt: 'Write a story about a camping trip in the holidays where something exciting happened (real or invented).', ph: 'Last summer we went camping …' },
+             en: 'Write a story about an <em>exciting camping trip in the holidays</em> (real or invented).',
+             prompt: 'Write a story about an exciting camping trip in the holidays (real or invented).', ph: 'Last summer we went camping …' },
   },
   D: {
     title: 'Lost in London', theme: '🚇 Verlaufen in London',
@@ -679,7 +679,7 @@ const STORIES = {
     paras: [
       '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. They both wore [[life jackets]]. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
       'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
-      'Hannah was scared, but she was brave. "Help me, please!" Grandpa shouted. Hannah helped him to row, and the boat slowly came back to the shore.',
+      '"Help me, please!" Grandpa shouted. Hannah was scared, but she was brave. She helped him to row, and the boat slowly came back to the shore.',
       '[[Half an hour later]] they were safe in Grandpa\'s [[little house]]. They were wet, so they drank hot tea by the fire. "You were really brave today," Grandpa said. Hannah laughed. "That was a boat trip I will never forget!"',
     ],
     conn: CONN_ALL,
@@ -707,7 +707,7 @@ const STORIES = {
              prompt: 'Write a story: "A boat trip I will never forget" (real or invented).', ph: 'Last summer I went on a boat trip …' },
   },
 };
-let STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
+let STORY_KEY = 'A', STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
 const counts = k => CONNECTIVES.includes(k) || ACCEPT_TOO.includes(k);
 
 const WRITE_CONNECTIVES = ['first', 'at first', 'then', 'after that', 'next', 'later', 'because', 'but', 'so', 'suddenly', 'finally', 'in the end', 'when'];
@@ -786,7 +786,8 @@ let S = readState(CUR) || newState(CUR);
 // Nur für diese Sitzung: KI-Fehlermeldungen (je Aufgabe, 'write', 'plan') und „liest gerade“.
 const kiErr = new Map();
 // Laufende Anfragen dieser Sitzung (Arbeit:Aufgabe bzw. Arbeit) – kein Doppelklick
-const kiBusy = new Set(), writeBusy = new Set();
+const kiBusy = new Set(), writeBusy = new Set(), planBusy = new Set();
+const busyKey = (...x) => [CUR, runTag(S), ...x].join(':');
 
 // Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
 // Aufgaben beim Neuladen gleich bleiben. Ohne seed (= 0) die erste Arbeit.
@@ -816,11 +817,25 @@ function split(base, pool, n, slot, salt) {
 const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const plainText = x => String(x).toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z' ]+/g, ' ');
 const wordIn = (w, text) => new RegExp("(^|[^a-z'])" + escRe(w) + "(?=[^a-z']|$)").test(text);
-// Vokabel: auch mit Endung (punished, agreed, rocks), aber nicht als Wortanfang (rocket)
-const stemIn = (w, text) => new RegExp("(^|[^a-z'])" + escRe(w) + "(?=ed[^a-z']|d[^a-z']|s[^a-z']|es[^a-z']|ing[^a-z']|ed$|d$|s$|es$|ing$|[^a-z']|$)").test(text);
-const verraten = (v, text) => v.en.some(e => stemIn(e.replace(/^(a|an|the|to) /, ''), text));
 const forms = it => it.en.flatMap(e => e.split(/[\s\/]+/)).filter(w => w && !['or', 'and'].includes(w));
 const PAST = new Set([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE].flatMap(forms));
+// Unregelmäßige Vergangenheit aus allen Verbraster-Vorräten (fall → fell, go → went)
+const PAST_OF = new Map([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE].map(i => [i.inf, forms(i)]));
+// Vokabel verraten? Auch mit Endung (punished, agreed, rocks) – bei Wendungen am ersten
+// Wort (switched off, went wrong) – und in unregelmäßiger Vergangenheit (fell, sent);
+// nicht als bloßer Wortanfang (rock ≠ rocket).
+function stemIn(phrase, text) {
+  const [first, ...rest] = phrase.split(' ');
+  const firsts = [escRe(first) + '(?:ed|d|s|es|ing)?', ...(PAST_OF.get(first) || []).map(escRe)];
+  const tail = rest.map(w => '\\s+' + escRe(w)).join('');
+  return new RegExp("(^|[^a-z'])(?:" + firsts.join('|') + ')' + tail + "(?=[^a-z']|$)").test(text);
+}
+const verraten = (v, text) => v.en.some(e => stemIn(e.replace(/^(a|an|the|to) /, ''), text));
+// Was nach einer Abgabe sichtbar wird: die Lösungen der anderen Teile
+function solutionText() {
+  return plainText([NEG.map(x => showSol(x, 'neg')), QUEST.map(x => showSol(x, 'quest')), SHORT.map(x => showSol(x, 'short')),
+    TRANS.map(x => showSol(x, 'trans')), ORDER.map(x => x.sol), IRREG.map(x => x.en), GAPS.map(x => x.en)].flat(3).join(' '));
+}
 // Kernverb(en) einer Übersetzung: Vergangenheitsformen außer was/were/had/did
 const transVerbs = it => (it.sol || it.en[0]).toLowerCase().match(/[a-z']+/g)
   .filter(w => !['was', 'were', 'had', 'did'].includes(w) && (PAST.has(w) || /ed$/.test(w)));
@@ -837,7 +852,8 @@ function renderedText() {
   return plainText(html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ') + ' ' + WRITE_TASK.ph + ' ' + document.title);
 }
 function applyStory(t, key) {
-  const st = STORIES[key || (t.random ? (STORIES[S.story] ? S.story : 'A') : t.story)];
+  STORY_KEY = key || (t.random ? (STORIES[S.story] ? S.story : 'A') : t.story);
+  const st = STORIES[STORY_KEY];
   STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
   TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
 }
@@ -878,9 +894,19 @@ function applyFrozen(t, seed) {
   if (pk && pk.v === 1) {
     const byId = poolById();
     const lists = {};
-    const ok = PICK_LISTS.every(L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).every(Boolean));
-    if (ok && STORIES[pk.story]) {
+    const okL = L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).length > 0 && lists[L].every(Boolean);
+    const bad = PICK_LISTS.filter(L => !okL(L));
+    if (STORIES[pk.story] && !bad.length) {
       ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = lists);
+      applyStory(t, pk.story);
+      return;
+    }
+    if (STORIES[pk.story] && bad.length < PICK_LISTS.length) {
+      // Fehlt im Vorrat eine ID, nur diese Liste neu wählen – der Rest bleibt, wie er war.
+      applyFiltered(t, seed);
+      const neu = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
+      PICK_LISTS.forEach(L => { if (!bad.includes(L)) neu[L] = lists[L]; else pk[L] = neu[L].map(it => it.id); });
+      ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = neu);
       applyStory(t, pk.story);
       return;
     }
@@ -915,7 +941,7 @@ function applyFiltered(t, seed) {
     if (verbs.has(g.verb) || forms(g).some(w => wordIn(w, text) || taken.has(w)) || [...taken].some(w => wordIn(w, satz))) continue;
     GAPS.push(g); verbs.add(g.verb); forms(g).forEach(w => taken.add(w)); text += ' ' + satz;
   }
-  text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' '));
+  text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText();
   VOCAB = full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
 }
 function finishVariant() {
@@ -1138,7 +1164,7 @@ function head(sec, text) {
 
 // „Warum? / Stimmt meins auch?“ – solange gefragt wird, ausgegraut
 function whyBtn(id, kind) {
-  return kiBusy.has(CUR + ':' + id)
+  return kiBusy.has(busyKey(id))
     ? ' <button type="button" class="btn small claude" disabled>🤖 denkt nach …</button>'
     : ` <button type="button" class="btn small claude" data-why="${id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
 }
@@ -1376,7 +1402,7 @@ function writingStats(text) {
   const conn = WRITE_CONNECTIVES.filter(c => c === 'first'
     ? / first /.test(t.replace(/ at first /g, ' '))           // „at first“ nicht doppelt zählen
     : c === 'so'                                               // „so“ nur als Satzverbinder, nicht „so bad“
-    ? /(^|[.!?,;]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/i.test(raw)
+    ? /(^|[.!?,;:\n"“„]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/im.test(raw)
     : t.includes(' ' + c + ' '));
   const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
   const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
@@ -1388,7 +1414,7 @@ function renderWriting(sec) {
   const st = writingStats(S.writing);
   const ai = S.writeAi;
   let aiHtml = '';
-  const waiting = writeBusy.has(CUR);
+  const waiting = writeBusy.has(busyKey());
   if (waiting) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
   else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
   if (ai && !waiting) {
@@ -1455,7 +1481,7 @@ function renderResult(sec) {
     ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
       <p class="task">Die KI schaut auf deine Fehler und sagt dir, was du bis zur Arbeit noch üben solltest.</p>
       ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
-      <button type="button" class="btn claude" data-plan style="margin-top:8px">🤖 Was soll ich noch üben?</button></div>` : ''}
+      <button type="button" class="btn claude" data-plan style="margin-top:8px" ${planBusy.has(busyKey()) ? 'disabled' : ''}>${planBusy.has(busyKey()) ? '🤖 denkt nach …' : '🤖 Was soll ich noch üben?'}</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
       <p class="task">${allDone ? `„Neu beginnen“ löscht deine Antworten in ${testName(CUR)}, die Aufgaben bleiben gleich. Du kennst jetzt die Lösungen – für eine echte Probe nimm lieber eine andere Arbeit oder die Zufallsarbeit.` : 'Wenn alle Teile abgegeben sind, kannst du diese Arbeit noch einmal von vorn schreiben.'}${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ''}</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
@@ -1656,7 +1682,7 @@ function taskText(kind, it) {
   }[kind];
 }
 async function askWhy(id, kind, btn) {
-  const busy = CUR + ':' + id;
+  const busy = busyKey(id);
   if (!kiOn() || S.ai[id] || kiBusy.has(busy)) return;
   const it = ALL_TYPED[kind].find(x => x.id === id);
   const mineKey = CUR, tag = runTag(S);
@@ -1679,11 +1705,11 @@ async function askWhy(id, kind, btn) {
 async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
-  const mineKey = CUR, tag = runTag(S);
-  if (writeBusy.has(mineKey)) return;
-  writeBusy.add(mineKey); kiErr.delete('write'); render();
+  const mineKey = CUR, tag = runTag(S), wbusy = busyKey();
+  if (writeBusy.has(wbusy)) return;
+  writeBusy.add(wbusy); kiErr.delete('write'); render();
   try {
-    const r = await kiFrage('text', { text }, 45000);
+    const r = await kiFrage('text', { text, story: STORY_KEY }, 45000);
     const punkte = Number(r && r.punkte);
     if (!isFinite(punkte)) throw { code: 'fehler' };
     const res = {
@@ -1693,20 +1719,21 @@ async function askWriting() {
       fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
     };
-    writeBusy.delete(mineKey);
+    writeBusy.delete(wbusy);
     // Eine ältere Antwort überschreibt keine gültige Bewertung des jetzigen Texts.
     applyFor(mineKey, st => { if (runTag(st) !== tag || (st.writeAi && typeof st.writeAi.punkte === 'number' && st.writeAi.text === st.writing.trim() && res.text !== st.writing.trim())) return false; st.writeAi = res; });
   } catch (err) {
-    writeBusy.delete(mineKey);
+    writeBusy.delete(wbusy);
     if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) kiErr.set('write', kiFail(err));
   }
   if (CUR === mineKey || VIEW === 'menu') render();
 }
 
 async function askPlan(btn) {
-  if (!kiOn()) return;
-  btn.disabled = true; btn.textContent = '🤖 denkt nach …';
+  const pbusy = busyKey();
+  if (!kiOn() || planBusy.has(pbusy)) return;
   const mineKey = CUR, tag = runTag(S);
+  planBusy.add(pbusy); render();
   kiErr.delete('plan');
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
@@ -1727,10 +1754,13 @@ async function askPlan(btn) {
       fehler: zeilen.join('\n'),
     }, 30000);
     const plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+    planBusy.delete(pbusy);
     applyFor(mineKey, st => { if (runTag(st) !== tag) return false; st.answers.plan = plan; });
   } catch (err) {
-    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) { kiErr.set('plan', kiFail(err)); render(); }
+    planBusy.delete(pbusy);
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) kiErr.set('plan', kiFail(err));
   }
+  if (VIEW === 'menu' || CUR === mineKey) render();
 }
 
 // ---------------------------------------------------------------------------
