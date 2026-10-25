@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.1
+**Version:** 2.33.2
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -204,12 +204,30 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.33.2 (25.10.2026)
+- Zwei weitere Prüfberichte eingearbeitet.
+- **In den Arbeiten B–E und der Zufallsarbeit verrät keine Aufgabe die Lösung einer anderen.** Erst werden Lesetext,
+  Sätze, Kurzantworten und Bausteine gewählt; dann Übersetzungen, Verbraster, Lücken und Vokabeln gegen den
+  gerenderten Text aller Stationen (inkl. Merkhilfen, Hilfe-Kästen, Checkliste, Aufgabentexten, `renderedText()`).
+  Vokabeln mit Endung (agreed, punished), aber nicht als Wortanfang (rocket). Geprüft: B–E und 5000 Zufallsarbeiten
+  ohne Fund. **Arbeit A bleibt bewusst unverändert** (laufende Stände, auch früher gemischte Seeds).
+- **Auswahl eingefroren**: B–E und Zufall speichern beim ersten Öffnen ihre Aufgaben-IDs und den Lesetext (`S.pick`);
+  spätere Vorratsänderungen verschieben nichts mehr.
+- Überschneidung zwischen B–E (von 49 Aufgaben): BC 21, BD 20, BE 23, CD 25, CE 12, DE 17; mit A jeweils 0.
+- **KI-Races**: Antworten tragen ein Kennzeichen der Runde (`runTag`) und landen nie in einem Neubeginn; „Warum?“ und
+  „lies meine Geschichte“ sind während der Anfrage gesperrt (`kiBusy`, `writeBusy`); eine ältere Text-Antwort
+  überschreibt keine gültige Bewertung des aktuellen Texts; Fokus und Cursor bleiben beim Neuzeichnen. Artefakt:
+  `plausibel()` wie online.
+- **Uhr** wird bei jedem Neuzeichnen angezeigt und beim Wegklicken/Schließen gespeichert.
+- Inhalt: C „Mia wasn't sure about that!“ (statt „didn't agree“, das v46 verriet), E „helped him to row“, Varianten
+  (railway station, in a tent, the kids, breaktime, dumb), Schreibaufgabe C „…camping trip in the holidays…“.
+
 ### Version 2.33.1 (25.10.2026)
 - Zwei Prüfberichte zu 2.33.0 eingearbeitet.
 - **KI-Antworten ohne Datenverlust**: `applyFor(arbeit, fn)` spielt nur die Änderung ein – in die offene Arbeit
   oder in den gespeicherten Stand einer anderen (auch bei offenem Menü). `writeWait` gilt pro Arbeit.
-- **Verräter gefiltert** (nur B–E und Zufall; A und alte Seeds unverändert): Keine Vokabel, deren Lösung schon auf
-  dem Blatt steht (Verbraster, Lücken, Sätze, Bausteine, Lesetext), kein Verb in Raster und Lücke zugleich.
+- **Verräter gefiltert, erster Schritt** (nur B–E und Zufall): Vokabeln gegen Raster, Lücken, Sätze, Bausteine und
+  Lesetext; kein Verb in Raster und Lücke zugleich. Vollständig erst mit 2.33.2.
 - **Neu beginnen** nur nach kompletter Abgabe, mit Hinweis auf die bekannten Lösungen; im Menü „2. Durchgang“.
 - **Alte Stände**: schon abgegebene Teile gelten als gesehen (`revealed`), kein Zurücknehmen; Writing bleibt offen.
 - **Uhr** zählt nur bei offener, sichtbarer Arbeit (`elapsed`). Rückfrage verschwindet beim Stationswechsel.

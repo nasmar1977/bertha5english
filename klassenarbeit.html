@@ -427,10 +427,10 @@ const VOCAB_MORE = [
   { id: 'v36', de: '(aus)wählen',                  en: ['choose', 'pick', 'select'], verb: true },
   { id: 'v37', de: 'planen',                       en: ['plan'], verb: true },
   { id: 'v38', de: 'interessant',                  en: ['interesting'] },
-  { id: 'v39', de: 'die Pause (in der Schule)',    en: ['break', 'break time', 'playtime'] },
+  { id: 'v39', de: 'die Pause (in der Schule)',    en: ['break', 'break time', 'breaktime', 'playtime'] },
   { id: 'v40', de: 'unfreundlich',                 en: ['unfriendly'] },
   { id: 'v41', de: '(an)rufen',                    en: ['call', 'phone', 'ring'], verb: true },
-  { id: 'v42', de: 'dumm, blöd',                   en: ['stupid', 'silly'] },
+  { id: 'v42', de: 'dumm, blöd',                   en: ['stupid', 'silly', 'dumb'] },
   { id: 'v43', de: 'verlassen, weggehen',          en: ['leave', 'go away'], verb: true },
   { id: 'v44', de: 'vorbereiten',                  en: ['prepare'], verb: true },
   { id: 'v45', de: 'die Präsentation',             en: ['presentation'] },
@@ -506,12 +506,12 @@ const TRANS_MORE = [
   { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake', 'we went swimming in the lake last week', 'last week we went swimming in the lake'], sol: 'We swam in the lake last week.' },
   { id: 'r8',  de: 'Tom verlor gestern sein Handy.',         en: ['tom lost his phone yesterday', 'yesterday tom lost his phone', 'tom lost his mobile yesterday', 'yesterday tom lost his mobile', 'tom lost his mobile phone yesterday', 'yesterday tom lost his mobile phone'], sol: 'Tom lost his phone yesterday.' },
   { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza', 'we had pizza in the evening', 'in the evening we had pizza'], sol: 'We ate pizza in the evening.' },
-  { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['i met my friend at the station', 'i met my friend at the train station', 'i met my girlfriend at the station', 'i met my girlfriend at the train station',
-        'i met up with my friend at the station', 'i met up with my friend at the train station', 'i met up with my girlfriend at the station', 'i met up with my girlfriend at the train station'], sol: 'I met my friend at the station.' },
+  { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['met', 'met up with'].flatMap(v => ['friend', 'girlfriend'].flatMap(f => ['station', 'train station', 'railway station']
+        .map(o => `i ${v} my ${f} at the ${o}`))), sol: 'I met my friend at the station.' },
   { id: 'r11', de: 'Meine Schwester schrieb gestern eine Postkarte.', en: ['my sister wrote a postcard yesterday', 'yesterday my sister wrote a postcard'], sol: 'My sister wrote a postcard yesterday.' },
-  { id: 'r12', de: 'Mein Bruder schlief gestern im Zelt.',  en: ['my brother slept in the tent yesterday', 'yesterday my brother slept in the tent'], sol: 'My brother slept in the tent yesterday.' },
+  { id: 'r12', de: 'Mein Bruder schlief gestern im Zelt.',  en: ['my brother slept in the tent yesterday', 'yesterday my brother slept in the tent', 'my brother slept in a tent yesterday', 'yesterday my brother slept in a tent'], sol: 'My brother slept in the tent yesterday.' },
   { id: 'r13', de: 'Wir besuchten letzten Sommer London.',  en: ['we visited london last summer', 'last summer we visited london', 'we went to london last summer', 'last summer we went to london'], sol: 'We visited London last summer.' },
-  { id: 'r14', de: 'Die Kinder spielten nach der Schule Fußball.', en: ['the children played football after school', 'after school the children played football'], sol: 'The children played football after school.' },
+  { id: 'r14', de: 'Die Kinder spielten nach der Schule Fußball.', en: ['the children played football after school', 'after school the children played football', 'the kids played football after school', 'after school the kids played football'], sol: 'The children played football after school.' },
   { id: 'r15', de: 'Ich sah am Freitag einen Film.',        en: ['i saw a film on friday', 'on friday i saw a film', 'i watched a film on friday', 'on friday i watched a film',
         'i saw a movie on friday', 'on friday i saw a movie', 'i watched a movie on friday', 'on friday i watched a movie'], sol: 'I saw a film on Friday.' },
 ];
@@ -616,7 +616,7 @@ const STORIES = {
       '[[Last summer]] Sophie\'s class went on a [[camping trip]] to the [[Lake District]]. The [[group leader]], Mrs Patel, showed the children how to put up their tents. First Sophie and her friend Mia chose a place near a small river.',
       'Then they collected wood for a fire, and Mrs Patel made hot chocolate for everybody. When it got dark, they told scary stories. Mia was scared, but Sophie laughed. "It\'s only a story!" she said.',
       '[[In the night]] it rained and rained. Suddenly Sophie woke up because her [[sleeping bag]] was wet. Water from the river was in the tent! "Help! Our tent is in the river!" Mia shouted. Mrs Patel came with a torch and helped the girls.',
-      'So the girls slept in the big tent with Mrs Patel. [[The next morning]] the sun was out again. "That was the best night of the trip," Sophie said. Mia didn\'t agree!',
+      'So the girls slept in the big tent with Mrs Patel. [[The next morning]] the sun was out again. "That was the best night of the trip," Sophie said. Mia wasn\'t sure about that!',
     ],
     conn: CONN_ALL,
     accept: ['and', 'last summer', 'in the night', 'the next morning'],
@@ -639,8 +639,8 @@ const STORIES = {
       { id: 'dc4', opts: ['"Where is my torch"? asked Mrs Patel.', '"Where is my torch?" asked Mrs Patel.', '"Where is my torch?," asked Mrs Patel.'], a: 1 },
     ],
     write: { title: 'Our camping trip', de: 'Schreib eine Geschichte über einen Zeltausflug in den Ferien, bei dem etwas Aufregendes passierte – echt oder ausgedacht.',
-             en: 'Write a story: <em>Our camping trip</em> – something exciting happened on a camping trip in the holidays (real or invented).',
-             prompt: 'Write a story: "Our camping trip" – something exciting happened on a camping trip in the holidays (real or invented).', ph: 'Last summer we went camping …' },
+             en: 'Write a story about a <em>camping trip in the holidays</em> where something exciting happened (real or invented).',
+             prompt: 'Write a story about a camping trip in the holidays where something exciting happened (real or invented).', ph: 'Last summer we went camping …' },
   },
   D: {
     title: 'Lost in London', theme: '🚇 Verlaufen in London',
@@ -679,7 +679,7 @@ const STORIES = {
     paras: [
       '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. They both wore [[life jackets]]. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
       'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
-      'Hannah was scared, but she was brave. "Help me, please!" Grandpa shouted. Hannah helped him with the oars, and the boat slowly came back to the shore.',
+      'Hannah was scared, but she was brave. "Help me, please!" Grandpa shouted. Hannah helped him to row, and the boat slowly came back to the shore.',
       '[[Half an hour later]] they were safe in Grandpa\'s [[little house]]. They were wet, so they drank hot tea by the fire. "You were really brave today," Grandpa said. Hannah laughed. "That was a boat trip I will never forget!"',
     ],
     conn: CONN_ALL,
@@ -785,7 +785,8 @@ try {
 let S = readState(CUR) || newState(CUR);
 // Nur für diese Sitzung: KI-Fehlermeldungen (je Aufgabe, 'write', 'plan') und „liest gerade“.
 const kiErr = new Map();
-let writeWait = null;   // Arbeit, deren Text gerade bewertet wird
+// Laufende Anfragen dieser Sitzung (Arbeit:Aufgabe bzw. Arbeit) – kein Doppelklick
+const kiBusy = new Set(), writeBusy = new Set();
 
 // Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
 // Aufgaben beim Neuladen gleich bleiben. Ohne seed (= 0) die erste Arbeit.
@@ -809,32 +810,47 @@ function split(base, pool, n, slot, salt) {
   const rest = shuffled(ex.filter((_, i) => i % 4 !== slot), rng(hash('fill-' + salt + slot)));
   return mine.concat(rest, base).slice(0, n);
 }
-// Kommt die Lösung einer Vokabel schon anderswo auf demselben Blatt vor (Verbraster,
-// Lücke, Satz, Baustein, Lesetext), verrät sie sich: dann die nächste aus dem Vorrat.
+// Verrät eine Aufgabe die Lösung einer anderen? Geprüft wird gegen alles, was auf dem
+// Blatt steht – auch Merkhilfen, Hilfe-Kästen, Checkliste und Aufgabentexte: dafür die
+// Stationen mit den schon gewählten Aufgaben einmal „trocken“ rendern.
 const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-function sheetText() {
-  return [IRREG.map(i => i.inf), GAPS.map(g => [g.pre, g.verb, g.post]), NEG.map(n => n.s), QUEST.map(q => q.s),
-    SHORT.map(x => x.q), ORDER.map(o => o.c), STORY.map(x => x.replace(/\[\[|\]\]/g, '')), TF.map(x => x.s),
-    ADJ.map(a => [a.pre, a.post, a.opts]), SPEECH.map(x => x.opts)]
-    .flat(3).join(' ').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z' ]+/g, ' ');
+const plainText = x => String(x).toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z' ]+/g, ' ');
+const wordIn = (w, text) => new RegExp("(^|[^a-z'])" + escRe(w) + "(?=[^a-z']|$)").test(text);
+// Vokabel: auch mit Endung (punished, agreed, rocks), aber nicht als Wortanfang (rocket)
+const stemIn = (w, text) => new RegExp("(^|[^a-z'])" + escRe(w) + "(?=ed[^a-z']|d[^a-z']|s[^a-z']|es[^a-z']|ing[^a-z']|ed$|d$|s$|es$|ing$|[^a-z']|$)").test(text);
+const verraten = (v, text) => v.en.some(e => stemIn(e.replace(/^(a|an|the|to) /, ''), text));
+const forms = it => it.en.flatMap(e => e.split(/[\s\/]+/)).filter(w => w && !['or', 'and'].includes(w));
+const PAST = new Set([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE].flatMap(forms));
+// Kernverb(en) einer Übersetzung: Vergangenheitsformen außer was/were/had/did
+const transVerbs = it => (it.sol || it.en[0]).toLowerCase().match(/[a-z']+/g)
+  .filter(w => !['was', 'were', 'had', 'did'].includes(w) && (PAST.has(w) || /ed$/.test(w)));
+function renderedText() {
+  const keep = { S, MAX, ALL_TYPED, confirming };
+  S = fresh(); confirming = null;
+  MAX = { vocab: 0, grammar: 0, order: 0, reading: 0, writing: WRITING_MAX };
+  ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
+  let html = '';
+  try {
+    const fns = { vocab: renderVocab, grammar: renderGrammar, order: renderOrder, reading: renderReading, writing: renderWriting };
+    html = SECTIONS.filter(x => fns[x.key]).map(x => fns[x.key](x)).join(' ');
+  } finally { ({ S, MAX, ALL_TYPED, confirming } = keep); }
+  return plainText(html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ') + ' ' + WRITE_TASK.ph + ' ' + document.title);
 }
-const verraten = (v, text) => v.en.some(e => new RegExp('(^|[^a-z\'])' + escRe(e.replace(/^(a|an|the|to) /, ''))).test(text));
-function applyStory(t) {
-  const st = STORIES[t.random ? (STORIES[S.story] ? S.story : 'A') : t.story];
+function applyStory(t, key) {
+  const st = STORIES[key || (t.random ? (STORIES[S.story] ? S.story : 'A') : t.story)];
   STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
   TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
 }
 function applyVariant() {
   const t = TESTS[CUR] || TESTS.A;
   const seed = S.seed || 0;
-  if (t.slot !== undefined || t.random) { applyFiltered(t, seed); return finishVariant(); }
+  if (t.slot !== undefined || t.random) { applyFrozen(t, seed); return finishVariant(); }
+  // Arbeit A: unverändert – Seed 0 = Grundarbeit; eine früher gemischte A nur aus dem
+  // alten Vorrat, in derselben Reihenfolge der Aufrufe, damit sie gleich bleibt.
   let pick;
-  if (t.slot !== undefined) pick = (base, extra, more, n, salt) => split(base, extra.concat(more), n, t.slot, salt);
-  else if (seed) {
-    // Zufall: Arbeit Z mischt aus allem; eine früher gemischte Arbeit A nur aus dem
-    // alten Vorrat – dieselbe Reihenfolge der Aufrufe, damit sie gleich bleibt.
+  if (seed) {
     const r = rng(seed);
-    pick = (base, extra, more, n) => shuffled(base.concat(extra, t.random ? more : []), r).slice(0, n);
+    pick = (base, extra, more, n) => shuffled(base.concat(extra), r).slice(0, n);
   } else pick = (base, extra, more, n) => base.slice(0, n);
   VOCAB = pick(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 12, 'vocab');
   IRREG = pick(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 10, 'irreg');
@@ -848,23 +864,58 @@ function applyVariant() {
   applyStory(t);
   finishVariant();
 }
-// B–E und Zufall: erst alles außer Vokabeln wählen, Verbraster und Lücken ohne
-// doppeltes Verb, dann die Vokabeln, die sich auf dem Blatt nicht selbst verraten.
+// B–E und Zufall: Die Auswahl wird beim ersten Öffnen im Stand eingefroren (S.pick),
+// damit spätere Änderungen am Vorrat nichts mehr verschieben.
+const PICK_LISTS = ['VOCAB', 'IRREG', 'GAPS', 'NEG', 'QUEST', 'SHORT', 'TRANS', 'ORDER'];
+function poolById() {
+  const all = [BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, BASE.IRREG, IRREG_EXTRA, IRREG_MORE, BASE.GAPS, GAPS_EXTRA, GAPS_MORE,
+    BASE.NEG, NEG_EXTRA, NEG_MORE, BASE.QUEST, QUEST_EXTRA, QUEST_MORE, BASE.SHORT, SHORT_EXTRA, SHORT_MORE,
+    BASE.TRANS, TRANS_EXTRA, TRANS_MORE, ORDER_POOL, ORDER_MORE].flat();
+  return new Map(all.map(it => [it.id, it]));
+}
+function applyFrozen(t, seed) {
+  const pk = S.pick;
+  if (pk && pk.v === 1) {
+    const byId = poolById();
+    const lists = {};
+    const ok = PICK_LISTS.every(L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).every(Boolean));
+    if (ok && STORIES[pk.story]) {
+      ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = lists);
+      applyStory(t, pk.story);
+      return;
+    }
+  }
+  applyFiltered(t, seed);
+  S.pick = { v: 1, story: t.random ? (STORIES[S.story] ? S.story : 'A') : t.story };
+  PICK_LISTS.forEach(L => { S.pick[L] = ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER })[L].map(it => it.id); });
+}
+// B–E und Zufall, neue Auswahl: erst Lesetext, Sätze, Kurzantworten und Bausteine
+// festlegen; dann Übersetzungen, Verbraster, Lücken und Vokabeln so wählen, dass keine
+// ihre Lösung irgendwo auf dem Blatt wiederfindet.
 function applyFiltered(t, seed) {
   const r = t.random ? rng(seed || 1) : null;
   const full = (base, extra, more, salt) => t.random
     ? shuffled(base.concat(extra, more), r) : split(base, extra.concat(more), Infinity, t.slot, salt);
-  IRREG = full(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 'irreg').slice(0, 10);
-  const verbs = new Set(IRREG.map(i => i.inf));
-  GAPS  = full(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 'gaps').filter(g => !verbs.has(g.verb)).slice(0, 5);
+  applyStory(t);
+  VOCAB = []; IRREG = []; GAPS = []; TRANS = [];
   NEG   = full(BASE.NEG, NEG_EXTRA, NEG_MORE, 'neg').slice(0, 5);
   QUEST = full(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), QUEST_MORE.filter(q => !q.words), 'quest').slice(0, 4)
             .concat(full(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), QUEST_MORE.filter(q => q.words), 'questw').slice(0, 1));
   SHORT = full(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 'short').slice(0, 4);
-  TRANS = full(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 'trans').slice(0, 3);
   ORDER = full(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 'order').slice(0, 5);
-  applyStory(t);
-  const text = sheetText();
+  let text = renderedText();
+  TRANS = full(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 'trans').filter(it => !transVerbs(it).some(w => wordIn(w, text))).slice(0, 3);
+  IRREG = full(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 'irreg').filter(i => !forms(i).some(w => wordIn(w, text))).slice(0, 10);
+  // Lückensätze dürfen weder Raster- noch Übersetzungsformen enthalten (z. B. „her lost phone“ neben „verlor“)
+  const taken = new Set(IRREG.flatMap(forms).concat(TRANS.flatMap(transVerbs))), verbs = new Set(IRREG.map(i => i.inf));
+  GAPS = [];
+  for (const g of full(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 'gaps')) {
+    if (GAPS.length === 5) break;
+    const satz = plainText(g.pre + ' ' + g.post);
+    if (verbs.has(g.verb) || forms(g).some(w => wordIn(w, text) || taken.has(w)) || [...taken].some(w => wordIn(w, satz))) continue;
+    GAPS.push(g); verbs.add(g.verb); forms(g).forEach(w => taken.add(w)); text += ' ' + satz;
+  }
+  text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' '));
   VOCAB = full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
 }
 function finishVariant() {
@@ -877,7 +928,6 @@ function finishVariant() {
     writing: WRITING_MAX,
   };
 }
-applyVariant();
 // Bausteine einer Satzbau-Aufgabe in fester, gemischter Reihenfolge (nie schon richtig)
 function orderTiles(it) {
   const r = rng(hash(it.id) ^ (S.seed || 0));
@@ -889,16 +939,16 @@ function orderTiles(it) {
 function saveMeta() { try { localStorage.setItem(META_KEY, JSON.stringify({ cur: CUR, view: VIEW })); } catch (e) {} }
 // Im Menü wird kein Stand angelegt – erst, wenn eine Arbeit geöffnet ist.
 function save() { if (VIEW === 'test') writeState(CUR, S); saveMeta(); }
-// Eine KI-Antwort kommt evtl. erst, wenn das Kind schon in einer anderen Arbeit ist:
-// dann in den Stand der Arbeit schreiben, aus der gefragt wurde.
 // Eine KI-Antwort kommt evtl. erst, wenn das Kind in einer anderen Arbeit oder im Menü
 // ist. Dann nur die Änderung in den gespeicherten Stand jener Arbeit einspielen – nie
 // ein altes Objekt zurückschreiben, sonst gingen inzwischen getippte Antworten verloren.
+// fn gibt false zurück, wenn die Antwort nicht mehr passt (neue Runde, neuer Text).
+const runTag = st => (st.round || 1) + ':' + (st.seed || 0) + ':' + st.start;
 function applyFor(k, fn) {
-  if (VIEW === 'test' && k === CUR) { fn(S); save(); render(); return; }
+  if (VIEW === 'test' && k === CUR) { if (fn(S) !== false) { save(); render(); } return; }
   const st = readState(k);
-  if (!st) return;
-  fn(st); writeState(k, st);
+  if (!st || fn(st) === false) return;
+  writeState(k, st);
   if (k === CUR) S = st;          // im Menü: der Stand im Speicher ist der neue
   if (VIEW === 'menu') render();  // nie mitten ins Tippen einer anderen Arbeit rendern
 }
@@ -1086,6 +1136,12 @@ function head(sec, text) {
   return `<div class="station-head"><span class="sign">${sec.name}</span><p>${text}</p></div>`;
 }
 
+// „Warum? / Stimmt meins auch?“ – solange gefragt wird, ausgegraut
+function whyBtn(id, kind) {
+  return kiBusy.has(CUR + ':' + id)
+    ? ' <button type="button" class="btn small claude" disabled>🤖 denkt nach …</button>'
+    : ` <button type="button" class="btn small claude" data-why="${id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
+}
 // Eine getippte Aufgabe (Vokabel, Verbform, Satz)
 function typedItem(it, n, kind, promptHtml, opts = {}) {
   const done = S.done[opts.section];
@@ -1102,7 +1158,7 @@ function typedItem(it, n, kind, promptHtml, opts = {}) {
     else if (!rv) fb = '<span class="wrong">–</span> nicht bearbeitet';
     else {
       fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(showSol(it, kind))}</span>`;
-      if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
+      if (kiOn() && val.trim() && !S.ai[it.id]) fb += whyBtn(it.id, kind);
     }
   }
   const ai = kiBox(it.id);
@@ -1231,7 +1287,7 @@ function renderOrder(sec) {
       else if (!reveal('order')) fb = '<span class="wrong">–</span> nicht bearbeitet';
       else {
         fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(it.sol)}</span>`;
-        if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="order">🤖 Warum? / Stimmt meins auch?</button>`;
+        if (kiOn() && val.trim() && !S.ai[it.id]) fb += whyBtn(it.id, 'order');
       }
     }
     const ai = kiBox(it.id);
@@ -1330,7 +1386,7 @@ function renderWriting(sec) {
   const st = writingStats(S.writing);
   const ai = S.writeAi;
   let aiHtml = '';
-  const waiting = writeWait === CUR;
+  const waiting = writeBusy.has(CUR);
   if (waiting) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
   else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
   if (ai && !waiting) {
@@ -1462,6 +1518,18 @@ function showMenu() {
 }
 
 function render() {
+  // Kommt eine Antwort, während getippt wird: Fokus und Cursor behalten
+  const ae = document.activeElement, fid = ae && ae.id;
+  let sel = null;
+  try { if (ae && typeof ae.selectionStart === 'number') sel = [ae.selectionStart, ae.selectionEnd]; } catch (e) {}
+  draw();
+  const el = fid && document.getElementById(fid);
+  if (el && el !== document.activeElement) {
+    el.focus({ preventScroll: true });
+    try { if (sel) el.setSelectionRange(sel[0], sel[1]); } catch (e) {}
+  }
+}
+function draw() {
   const inMenu = VIEW === 'menu';
   document.querySelector('nav.line').hidden = inMenu;
   ['chip-clock', 'chip-total', 'chip-menu', 'chip-test'].forEach(id => { $('#' + id).hidden = inMenu; });
@@ -1471,6 +1539,7 @@ function render() {
     return;
   }
   $('#chip-test').textContent = TESTS[CUR].random ? '🎲 Zufallsarbeit' : 'Arbeit ' + CUR;
+  showClock();
   const sec = SECTIONS.find(s => s.key === S.at) || SECTIONS[0];
   document.documentElement.style.setProperty('--accent', sec.color);
   renderStations();
@@ -1558,7 +1627,7 @@ document.addEventListener('click', async e => {
   if (b.hasAttribute('data-reset')) { $('#reset-confirm').hidden = false; return; }
   if (b.hasAttribute('data-reset-yes')) {
     // Gleiche Aufgaben: seed und Lesetext bleiben, nur die Antworten gehen.
-    S = Object.assign(fresh(), { seed: S.seed, story: S.story, round: (S.round || 1) + 1 });
+    S = Object.assign(fresh(), { seed: S.seed, story: S.story, pick: S.pick, round: (S.round || 1) + 1 });
     confirming = null; if (typeof kiErr !== 'undefined') kiErr.clear();
     applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
   }
@@ -1585,28 +1654,32 @@ function taskText(kind, it) {
   }[kind];
 }
 async function askWhy(id, kind, btn) {
-  if (!kiOn() || S.ai[id]) return;
+  const busy = CUR + ':' + id;
+  if (!kiOn() || S.ai[id] || kiBusy.has(busy)) return;
   const it = ALL_TYPED[kind].find(x => x.id === id);
-  const mineKey = CUR;
+  const mineKey = CUR, tag = runTag(S);
   const antwort = S.answers[id] || '', loesung = showSol(it, kind);
-  btn.disabled = true;
-  btn.textContent = '🤖 denkt nach …';
   kiErr.delete(id);
+  kiBusy.add(busy); render();
   try {
     const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung, antwort }, 20000);
     const richtig = !!(r && r.richtig === true && plausibel(antwort, loesung));
     const erkl = String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.';
-    applyFor(mineKey, st => { st.ai[id] = { richtig, erklaerung: erkl }; if (richtig) st.claudeOk[id] = true; });
+    kiBusy.delete(busy);
+    applyFor(mineKey, st => { if (runTag(st) !== tag) return false; st.ai[id] = { richtig, erklaerung: erkl }; if (richtig) st.claudeOk[id] = true; });
   } catch (err) {
-    if (VIEW === 'test' && CUR === mineKey) { kiErr.set(id, kiFail(err)); render(); }
+    kiBusy.delete(busy);
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) kiErr.set(id, kiFail(err));
   }
+  if (VIEW === 'menu' || CUR === mineKey) render();
 }
 
 async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
-  const mineKey = CUR;
-  writeWait = CUR; kiErr.delete('write'); render();
+  const mineKey = CUR, tag = runTag(S);
+  if (writeBusy.has(mineKey)) return;
+  writeBusy.add(mineKey); kiErr.delete('write'); render();
   try {
     const r = await kiFrage('text', { text }, 45000);
     const punkte = Number(r && r.punkte);
@@ -1618,19 +1691,20 @@ async function askWriting() {
       fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
     };
-    if (writeWait === mineKey) writeWait = null;
-    applyFor(mineKey, st => { st.writeAi = res; });
+    writeBusy.delete(mineKey);
+    // Eine ältere Antwort überschreibt keine gültige Bewertung des jetzigen Texts.
+    applyFor(mineKey, st => { if (runTag(st) !== tag || (st.writeAi && typeof st.writeAi.punkte === 'number' && st.writeAi.text === st.writing.trim() && res.text !== st.writing.trim())) return false; st.writeAi = res; });
   } catch (err) {
-    if (writeWait === mineKey) writeWait = null;
-    if (VIEW === 'test' && CUR === mineKey) kiErr.set('write', kiFail(err));
-    if (CUR === mineKey || VIEW === 'menu') render();
+    writeBusy.delete(mineKey);
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) kiErr.set('write', kiFail(err));
   }
+  if (CUR === mineKey || VIEW === 'menu') render();
 }
 
 async function askPlan(btn) {
   if (!kiOn()) return;
   btn.disabled = true; btn.textContent = '🤖 denkt nach …';
-  const mineKey = CUR;
+  const mineKey = CUR, tag = runTag(S);
   kiErr.delete('plan');
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
@@ -1651,9 +1725,9 @@ async function askPlan(btn) {
       fehler: zeilen.join('\n'),
     }, 30000);
     const plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
-    applyFor(mineKey, st => { st.answers.plan = plan; });
+    applyFor(mineKey, st => { if (runTag(st) !== tag) return false; st.answers.plan = plan; });
   } catch (err) {
-    if (VIEW === 'test' && CUR === mineKey) { kiErr.set('plan', kiFail(err)); render(); }
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) { kiErr.set('plan', kiFail(err)); render(); }
   }
 }
 
@@ -1668,10 +1742,17 @@ function tick() {
   lastTick = now;
   if (VIEW !== 'test') return;
   if (!document.hidden) S.elapsed = (S.elapsed || 0) + dt;
+  showClock();
+  if (Math.floor(S.elapsed || 0) % 15 === 0 && !document.hidden) save();
+}
+function showClock() {
   const s = Math.floor(S.elapsed || 0);
   $('#clock').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-  if (s % 15 === 0 && !document.hidden) save();
 }
+// Beim Wegklicken oder Schließen die gezählte Zeit sichern
+document.addEventListener('visibilitychange', () => { lastTick = Date.now(); save(); });
+window.addEventListener('pagehide', () => save());
+applyVariant();
 setInterval(tick, 1000);
 tick();
 render();
