@@ -29,7 +29,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   Writing lässt sich wieder öffnen, komplett leer abgegebene Teile auch (Lösungen bleiben dann verborgen). KI über
   den Worker (`/pruefen`, `/text`, `/lernplan`), Knöpfe nur, wenn der Worker die Routen kennt. Speicher pro Arbeit:
   A `klassenarbeit-camden-v1` (der alte Schlüssel), B–E und Zufall `klassenarbeit-camden-v1-B` … `-Z`, dazu
-  `klassenarbeit-camden-v1-meta` (zuletzt geöffnete Arbeit); gleiche Geräte-ID wie der Trainer.
+  `klassenarbeit-camden-v1-meta` (zuletzt geöffnete Arbeit), `-T` (Training), `-verlauf` (frühere Durchgänge und
+  Trainings für den Lernstand) und `-gesamtplan` (zuletzt geschriebener Gesamt-Lernplan); gleiche Geräte-ID wie der
+  Trainer. Im Menü zeigt „📈 Mein Lernstand“ alle Arbeiten zusammen, „🎯 Training“ übt die hartnäckigen Fehler.
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
 - Multiple-Choice-Modus (EN→DE): 5 Optionen mit kuratierten Distraktoren
 - Zufällige Modus-Zuweisung pro Wort in jeder Runde — außer bei Einträgen mit Klammern,
@@ -154,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.0
+**Version:** 2.34.1
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -204,6 +206,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.34.1 (25.10.2026)
+- Zwei Prüfberichte zu 2.33.6/2.34.0 und ein Claude-Lauf mit 5 Probetexten (alle im Sollbereich) eingearbeitet.
+- **Lernstand**: Geschichte nur mit KI-Kriterien vollständig, sonst nur connectives (unter 2 = Fehler, wie im
+  Deckel) und direkte Rede – keine Selbst-Haken. Hartnäckig zusätzlich nur bei Quote unter 80 % oder Fehlern in 2 der
+  letzten 3 Durchgänge; geschafft erst ab 3 Aufgaben im letzten Durchgang und nur, wenn er fehlerfrei war (auch für
+  Muster). Muster: did + Vergangenheit auch in W-Fragen; Zeitangabe nur, wenn sie am Ende/Anfang richtig wäre;
+  „did/didn't + be – richtig: was/were“ (nicht nach „to“). Rechtschreibung als „📝 Wörter zum Üben“.
+- **Bewertung**: -ed-Schreibfehler eigener Fehler-Eintrag, nur dort „Fast richtig – guter Versuch!“; genauere
+  Verdopplungs-/y-Regel; Tippfehler in richtigen Verbformen und amerikanische Schreibung als Rechtschreibung bzw.
+  kein Fehler; adjektive-Grenze im Prompt; teilweise passendes Thema nur bei wwww; Thema C erweitert. Tipps als
+  {kriterium, text}, Tipps zu Kriterien mit 3 Punkten verwirft der Code (außer alle 3).
+- **Rechtschreib-Kasten** „In der Schule würde sich das auswirken: N Fehler“ (ab 10: „10 oder mehr“); geübt werden
+  nur Wörter ab 2 Zeichen; 300 ms Sperre nach dem Prüfen; nach Neuladen läuft „anschauen“ weiter.
+- **Gesamt-Lernplan**: Übersicht in `<uebersicht>` (maskiert), Rechtschreibung höchstens ein Punkt, -ed freundlich;
+  Worker verlangt einen Text.
+
 ### Version 2.34.0 (25.10.2026)
 - **📈 Mein Lernstand** (Klassenarbeit, nur im Browser): Ergebnisse aller abgegebenen Teile aus A–E, Zufallsarbeit,
   früheren Durchgängen (`…-verlauf`, beim Neubeginn archiviert) und Trainings, je Fertigkeit (Wörter, unregelmäßige
@@ -214,7 +232,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
   vorgegebenen Satz stammt bzw. echt unregelmäßig ist), was/were statt did, unregelmäßiges Verb mit -ed (je Verb),
   Zeitangabe zwischen Verb und Objekt, Kurzantwort mit falschem Hilfsverb/Pronomen, Rechtschreibwort mehrfach,
   Geschichten-Kriterium ≤ 1 mehrfach. Lieber unerkannt als falsch erkannt.
-- **🤖 Gesamt-Lernplan**: verdichtete Übersicht (≤ 2500 Zeichen, keine Einzelantworten außer ≤ 2 Beispielen) an
+- **🤖 Gesamt-Lernplan**: verdichtete Übersicht (≤ 2500 Zeichen, keine Einzelantworten außer ≤ 2 Beispielen je Baustelle) an
   den Worker (`/lernplan` mit `modus: 'gesamt'`, gleiche Zählung) bzw. an Claude; gespeichert mit Datenstand,
   „aktualisieren“ bei neuen Abgaben.
 - **🎯 Training**: 8–12 Aufgaben zu den hartnäckigen Fertigkeiten, bevorzugt aus keiner Arbeit, sonst früher

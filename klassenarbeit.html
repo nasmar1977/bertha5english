@@ -648,7 +648,7 @@ const STORIES = {
   C: {
     title: 'Rain at the campsite', theme: '⛺ Zeltlager im Lake District',
     lesetext: 'Sophies Klasse zeltet mit Mrs Patel im Lake District; nachts kommt Wasser aus dem Fluss in das Zelt von Sophie und Mia.',
-    thema: 'ein Zeltausflug oder Camping in den Ferien, bei dem etwas Spannendes passierte',
+    thema: 'Zelten oder Camping (Ferien, Klassenfahrt, auch im Garten), bei dem etwas Spannendes passierte',
     paras: [
       '[[Last summer]] Sophie\'s class went on a [[camping trip]] to the [[Lake District]]. The [[group leader]], Mrs Patel, showed the children how to put up their tents. First Sophie and her friend Mia chose a place near a small river.',
       'Then they collected wood for a fire, and Mrs Patel made hot chocolate for everybody. When it got dark, they told scary stories. Mia was scared, but Sophie laughed. "It\'s only a story!" she said.',
@@ -1902,10 +1902,15 @@ function spellBox() {
   if (sp && !sp.fertig && Array.isArray(sp.words) && sp.words.length) return spellCard();
   if (!list.length) return '';
   const zuletzt = sp && sp.fertig ? `<span>Zuletzt geübt: <b>${sp.richtig} von ${sp.anzahl}</b> richtig.</span>` : '';
-  return `<div class="spell-box"><span><b>📝 Rechtschreibung:</b> Hier zählt sie nicht. Wenn bei dir in der Schule Rechtschreibung mitzählt, würden sich noch ${list.length} ${list.length === 1 ? 'Fehler' : 'Fehler'} auf die Note auswirken.</span>
+  const zahl = list.length >= 10 ? '10 oder mehr Fehler' : list.length + ' Fehler';
+  const ueben = spellWords(list.map(x => x.richtig));
+  return `<div class="spell-box"><span><b>📝 Rechtschreibung:</b> Hier zählt sie nicht. In der Schule würde sich das auswirken: ${zahl}.</span>
     <ul class="spell-list">${list.map(x => `<li><del>${esc(x.falsch)}</del> → <ins>${esc(x.richtig)}</ins></li>`).join('')}</ul>${zuletzt}
-    <div class="spell-row"><button type="button" class="btn small" id="spell-start" data-spell-start>✏️ Diese Wörter üben</button></div></div>`;
+    ${ueben.length ? '<div class="spell-row"><button type="button" class="btn small" id="spell-start" data-spell-start>✏️ Diese Wörter üben</button></div>' : ''}</div>`;
 }
+// Üben nur mit Wörtern ab 2 Zeichen („I“ bleibt im Kasten, legen lohnt nicht)
+const spellWords = list => [...new Set(list)].filter(w => w.length >= 2);
+let spellSperre = 0, spellTimerMarke = null;
 function spellMix(word) {
   const tiles = word.split('');
   for (let n = 0; n < 5; n++) {
@@ -1920,10 +1925,13 @@ function spellBegin(words) {
 }
 // 3 Sekunden anschauen, dann verdeckt legen (oder früher mit „Los“)
 function spellTimer() {
-  const sp = S.spell, marke = sp && sp.words.join('|') + ':' + sp.i;
+  const sp = S.spell, marke = sp && sp.words.join('|') + ':' + sp.i + ':' + CUR;
+  if (!sp || spellTimerMarke === marke) return;
+  spellTimerMarke = marke;
   setTimeout(() => {
+    if (spellTimerMarke === marke) spellTimerMarke = null;
     const now = S.spell;
-    if (now && now.phase === 'zeigen' && now.words.join('|') + ':' + now.i === marke) { now.phase = 'legen'; save(); render(); }
+    if (now && now.phase === 'zeigen' && now.words.join('|') + ':' + now.i + ':' + CUR === marke) { now.phase = 'legen'; save(); render(); }
   }, 3000);
 }
 function spellCard() {
@@ -1936,6 +1944,7 @@ function spellCard() {
   }
   const w = sp.words[sp.i], c = sp.cur, kopf = `<b>✏️ Wort ${sp.i + 1} von ${n}</b>`;
   if (sp.phase === 'zeigen') {
+    setTimeout(spellTimer, 0);
     return `<div class="spell-box">${kopf}<span>Schau dir das Wort an:</span><div class="spell-word">${esc(w)}</div>
       <div class="spell-row"><button type="button" class="btn small" id="spell-go" data-spell-go>Los</button></div></div>`;
   }
@@ -1969,7 +1978,8 @@ function spellCheck(zeigen) {
   sp.ok[sp.i] = !zeigen && c.placed.map(ti => c.tiles[ti]).join('') === w;
   // „Lösung zeigen“: das Wort richtig in die Felder legen
   if (zeigen) { const frei = c.tiles.map((_, ti) => ti); c.placed = w.split('').map(ch => frei.splice(frei.findIndex(ti => c.tiles[ti] === ch), 1)[0]); }
-  sp.phase = 'geprueft'; save(); render();
+  sp.phase = 'geprueft'; spellSperre = Date.now() + 300;   // kein versehentlicher Doppelklick auf „Weiter“
+  save(); render();
 }
 function spellNext() {
   const sp = S.spell;
@@ -1978,7 +1988,8 @@ function spellNext() {
 }
 function spellClick(b) {
   const sp = S.spell;
-  if (b.hasAttribute('data-spell-start')) { spellBegin(spellList().map(x => x.richtig)); return true; }
+  if (b.hasAttribute('data-spell-start')) { const w = spellWords(spellList().map(x => x.richtig)); if (w.length) spellBegin(w); return true; }
+  if (Date.now() < spellSperre && (b.hasAttribute('data-spell-next') || b.hasAttribute('data-spell-check') || b.hasAttribute('data-spell-sol'))) return true;
   if (!sp) return false;
   if (b.hasAttribute('data-spell-go')) { sp.phase = 'legen'; save(); render(); return true; }
   if (b.dataset.spellTile !== undefined) { spellPlace(+b.dataset.spellTile); return true; }
@@ -1999,7 +2010,7 @@ document.addEventListener('keydown', e => {
   if (!sp || sp.fertig || !Array.isArray(sp.words) || VIEW !== 'test' || S.at !== 'writing') return;
   if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
   if (sp.phase === 'zeigen' && e.key === 'Enter') { e.preventDefault(); sp.phase = 'legen'; save(); render(); return; }
-  if (sp.phase === 'geprueft' && e.key === 'Enter') { e.preventDefault(); spellNext(); return; }
+  if (sp.phase === 'geprueft' && e.key === 'Enter') { e.preventDefault(); if (Date.now() >= spellSperre) spellNext(); return; }
   if (sp.phase !== 'legen') return;
   const c = sp.cur, w = sp.words[sp.i];
   if (e.key === 'Backspace') { e.preventDefault(); c.placed.pop(); save(); render(); return; }
@@ -2041,8 +2052,8 @@ function muster(kind, it, antwort) {
   const a = norm(antwort);
   if (!a) return null;
   const w = a.split(' ');
-  if ((kind === 'neg' || kind === 'quest') && (/\bdidn't be\b/.test(a) || (w[0] === 'did' && w.includes('be'))))
-    return { key: 'did_be', label: 'was/were statt did' };
+  if ((kind === 'neg' || kind === 'quest') && w.some((x, i) => x === 'be' && w[i - 1] !== 'to' && (w[i - 1] === "didn't" || (kind === 'quest' && w.slice(0, i).includes('did')))))
+    return { key: 'did_be', label: "did/didn't + be – richtig: was/were" };
   // didn't/did + Vergangenheit: an der Stelle, an der die Antwort von der Lösung abweicht,
   // steht die Vergangenheitsform genau des Verbs, das dort in der Grundform stehen müsste
   if (kind === 'neg' || kind === 'quest') {
@@ -2051,7 +2062,7 @@ function muster(kind, it, antwort) {
       if (l.length !== w.length) return false;
       const i = l.findIndex((x, j) => x !== w[j]);
       return i > 0 && l.slice(i + 1).join(' ') === w.slice(i + 1).join(' ') && vergangenheitVon(l[i], w[i])
-        && (kind === 'neg' ? l[i - 1] === "didn't" : l[0] === 'did')
+        && (kind === 'neg' ? l[i - 1] === "didn't" : l.indexOf('did') >= 0 && l.indexOf('did') < i)   // auch W-Fragen
         // und die Form stammt aus dem vorgegebenen Satz (abgeschrieben) bzw. ist eine echte unregelmäßige Form
         && (it.s && !it.words ? plainText(it.s).split(/\s+/).includes(w[i]) : (PAST_OF.get(l[i]) || []).includes(w[i]));
     });
@@ -2063,8 +2074,13 @@ function muster(kind, it, antwort) {
     if (!it.en.some(e => regel.includes(e)) && regel.includes(a)) return { key: 'irreg_ed', verb: inf, label: 'unregelmäßiges Verb mit -ed' };
   }
   if (kind === 'trans') {
-    const m = a.match(ZEIT_RE), mitte = x => { const z = x.match(ZEIT_RE); return z && !x.startsWith(z[0]) && !x.endsWith(z[0]); };
-    if (m && mitte(a) && !it.en.some(mitte)) return { key: 'trans_time', label: 'Zeitangabe zwischen Verb und Objekt' };
+    // nur, wenn die Antwort mit der Zeitangabe am Ende oder Anfang richtig wäre
+    const m = a.match(ZEIT_RE);
+    if (m && !a.startsWith(m[0]) && !a.endsWith(m[0])) {
+      const rest = a.replace(m[0], ' ').replace(/\s+/g, ' ').trim();
+      if ([rest + ' ' + m[0], m[0] + ' ' + rest].some(x => isRight(x, it.en, it)))
+        return { key: 'trans_time', label: 'Zeitangabe an der falschen Stelle (ans Ende oder an den Anfang)' };
+    }
   }
   if (kind === 'short') {
     const hilf = x => (x.match(/\b(didn't|did|wasn't|was|weren't|were)\b/) || [])[1];
@@ -2104,11 +2120,13 @@ function collectRun(k, st) {
     if (k !== 'T' && st.done.writing) {
       const ai = st.writeAi, text = String(st.writing || '').trim();
       const kr = ai && ai.kriterien && ai.text === text ? ai.kriterien : null;
-      const ws = writingStats(text), sf = st.self || {};
-      const selbst = { wwww: sf.wfragen ? 2 : 1, rahmen: sf.rahmen ? 2 : 1, past: sf.past ? 2 : 1, adjektive: sf.adj ? 2 : 1,
-                       connectives: ws.conn.length >= 3 ? 2 : 1, speech: ws.speech ? 2 : 1 };
-      ['wwww', 'rahmen', 'past', 'adjektive', 'connectives', 'speech'].forEach(n => {
-        const v = kr && typeof kr[n] === 'number' ? kr[n] : selbst[n];
+      const ws = writingStats(text);
+      // Mit KI-Kriterien alle sechs; sonst nur, was die Seite selbst zählt (connectives, direkte Rede) –
+      // Selbst-Haken gehen nicht in den Lernstand. Grenze wie im Deckel: unter 2 connectives = Fehler.
+      const werte = kr ? Object.fromEntries(['wwww', 'rahmen', 'past', 'adjektive', 'connectives', 'speech']
+          .filter(n => typeof kr[n] === 'number').map(n => [n, kr[n]]))
+        : { connectives: ws.conn.length >= 2 ? 2 : 1, speech: ws.speech ? 2 : 1 };
+      Object.entries(werte).forEach(([n, v]) => {
         add('w_' + n, 'writing', v >= 2, null, null, v <= 1 ? { key: 'write:' + n, label: SKILL_LABEL['w_' + n] } : null);
       });
       (ai && ai.text === text && Array.isArray(ai.rechtschreibung) ? ai.rechtschreibung : []).forEach(r =>
@@ -2152,14 +2170,18 @@ function lernstand(runs) {
     const fehlerRuns = liste.filter(r => r.ok < r.n);
     const letzte = liste[liste.length - 1];
     s.liste = liste;
-    s.geschafft = s.skill !== 'spelling' && !!letzte && letzte.ok === letzte.n && fehlerRuns.length > 0;
-    s.hart = !s.geschafft && fehlerRuns.length >= 2;
+    // Geschafft erst, wenn der letzte Durchgang mindestens 3 Aufgaben dazu hatte
+    s.geschafft = s.skill !== 'spelling' && !!letzte && letzte.n >= 3 && letzte.ok === letzte.n && fehlerRuns.length > 0;
+    // Hartnäckig: Fehler in ≥ 2 Durchgängen UND (Quote unter 80 % ODER Fehler in 2 der letzten 3)
+    s.letzteDrei = liste.slice(-3);
+    s.hart = !s.geschafft && fehlerRuns.length >= 2 && (s.ok / s.n < 0.8 || s.letzteDrei.filter(r => r.ok < r.n).length >= 2);
     s.letzte = letzte;
   });
   Object.values(mu).forEach(p => {
     const s = skills[p.skill];
-    p.geschafft = !!s.letzte && !p.runs.has(s.letzte.ri) && p.skill !== 'spelling';
-    p.hart = !p.geschafft && p.runs.size >= 2;
+    p.geschafft = !!s.letzte && s.letzte.n >= 3 && s.letzte.ok === s.letzte.n && !p.runs.has(s.letzte.ri) && p.skill !== 'spelling';
+    p.hart = !p.geschafft && p.runs.size >= 2
+      && (p.skill === 'spelling' || s.ok / s.n < 0.8 || s.letzteDrei.filter(r => p.runs.has(r.ri)).length >= 2);
     const verben = Object.entries(p.verben).filter(([, r]) => r.size >= 2).map(([v]) => v);
     if (verben.length) p.label += ' (' + verben.join(', ') + ')';
   });
@@ -2197,6 +2219,7 @@ function lernstandHtml() {
     : '<p class="task" style="margin:0">Noch keine hartnäckigen Fehler – stark!</p>';
   const zeilen = SKILLS.filter(([k]) => ls.skills[k]).map(([k, l]) => {
     const s = ls.skills[k];
+    if (k === 'spelling') return `<span>📝 Wörter zum Üben</span><span class="quote">${s.n}</span><div class="mks"></div>`;
     const marker = s.liste.map(r => `<span class="mk ${r.ok === r.n ? 'ok' : 'no'}">${esc(r.label)} ${r.ok === r.n ? '✓' : '✗'}</span>`).join('');
     const quote = k === 'spelling' ? `${s.n} Wort${s.n === 1 ? '' : 'e'}` : Math.round(s.ok / s.n * 100) + ' %';
     return `<span>${esc(l)}</span><span class="quote">${quote}</span><div class="mks">${marker}</div>`;
@@ -2256,7 +2279,7 @@ function startTraining() {
   const ziel = tp.kinds.length ? tp.kinds : [];
   const proArt = Math.max(2, Math.min(4, Math.ceil(12 / Math.max(1, ziel.length))));
   const wahl = { vocab: [], irreg: [], gap: [], neg: [], quest: [], short: [], trans: [] };
-  let text = menuText(), anzahl = 0;
+  let text = menuText() + ' ' + plainText(tp.woerter.join(' ')), anzahl = 0;
   const nimm = (kind, kandidaten, max) => {
     for (const it of kandidaten) {
       if (wahl[kind].length >= max || anzahl >= 12) break;
@@ -2283,7 +2306,8 @@ function startTraining() {
   S = Object.assign(fresh(), { at: 'writing', training: true });
   S.pick = { v: 2, story: 'A', VOCAB: wahl.vocab.map(x => x.id), IRREG: wahl.irreg.map(x => x.id), GAPS: wahl.gap.map(x => x.id),
     NEG: wahl.neg.map(x => x.id), QUEST: wahl.quest.map(x => x.id), SHORT: wahl.short.map(x => x.id), TRANS: wahl.trans.map(x => x.id), ORDER: [] };
-  if (tp.woerter.length) S.spell = { words: tp.woerter, i: 0, phase: 'zeigen', ok: [], cur: { tiles: spellMix(tp.woerter[0]), placed: [] }, fertig: false };
+  const tw = spellWords(tp.woerter);
+  if (tw.length) S.spell = { words: tw, i: 0, phase: 'zeigen', ok: [], cur: { tiles: spellMix(tw[0]), placed: [] }, fertig: false };
   if (typeof kiErr !== 'undefined') kiErr.clear();
   applyVariant(); save(); render(); window.scrollTo({ top: 0 });
   if (S.spell) spellTimer();
