@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.4
+**Version:** 2.33.5
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -204,6 +204,24 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.33.5 (25.10.2026)
+- **Regelblock nach Probetext-Lauf und Prüfbericht** (wörtlich gleich in Worker `textAnweisung` und Artefakt):
+  Themenregel (besonderes Erlebnis in Ferien/Reise/Ausflug; gewöhnlicher Tag zu Hause verfehlt das Thema),
+  Nacherzählung nur bei weitgehend übernommenen Figuren und Handlung – dazu je Arbeit eine Kurzzeile zum Lesetext
+  (`TEXT_AUFGABEN[x].lesetext` = `STORIES[x].lesetext`); Anker für wwww, rahmen, past (Verbformfehler vs.
+  Rechtschreibung), adjektive/connectives („kleine Fehler“ = falsch eingesetzt; mehrere deutsche/falsche Wörter → ≤ 2),
+  speech 2 = einmal eingesetzt; „in the holiday“ → „in the holidays“/„on holiday“, Sommer-/Osterferien sind konkret;
+  Fehler-Reihenfolge mit „gehört nicht zur Geschichte“ vor „Thema verfehlt“ und Präpositionen/Artikeln an Platz 2;
+  Hinweis zur Wortstellung (Verb vor Subjekt) vor Satzzeichen; Tipps: schwächstes, zweitschwächstes Kriterium, bei
+  18/18 genau ein Tipp; Figurenrede gilt nicht als Anweisung.
+- **Die Seite zählt mit**: Anzahl verschiedener connectives und ob Anführungszeichen vorkommen gehen mit an die KI.
+  Einfache ASCII-Anführungszeichen zählen als direkte Rede, „so we/the/…“ als Verbinder (Seite, Artefakt, Worker).
+- **Lernplan** nennt den Titel der Schreibaufgabe der Arbeit (Worker: `story`, `planAnweisung`).
+- **Schon geöffnete Arbeiten (2.33.4)**: Ihre Vokabelauswahl wird einmal nachgeprüft, solange der Vokabelteil offen
+  ist (`pick.v` 1 → 2); nur Vokabeln, die sich verraten, werden ersetzt. Die Menütitel (z. B. „A day to remember“)
+  zählen jetzt mit. Markierungen im Lesetext tragen eine Textversion (`tv`); Stände ohne Marke stammen aus 2.33.4.
+- `applyFiltered(t, seed, keep)` wählt nur die fehlenden Listen neu; feste ids für die KI-Knöpfe (Fokus bleibt).
+
 ### Version 2.33.4 (25.10.2026)
 - **Schreib-Bewertung nach Schul-Maßstab** (Vorgabe: nicht zu streng bei Satzzeichen und Reihenfolge). Ein Regelblock,
   wörtlich gleich im Worker (`textAnweisung`) und im Artefakt (`askWriting`): Satzzeichen bei direkter Rede kosten
@@ -218,12 +236,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Schutz im Prompt**: Trennlinien aus `-`/`=` entfernt, Text in `<kindertext>…</kindertext>`, `<`/`>` maskiert
   (`kinderText()`, gleich in Worker und Artefakt). Verlangt der Text Punkte oder neue Regeln: erster Fehler
   „gehört nicht zur Geschichte“, rahmen ≤ 1.
-- **„so“** zählt an allen drei Stellen (Seite, Artefakt, Worker) nur als Verbinder – auch nach Doppelpunkt,
-  Zeilenanfang oder Anführungszeichen. Ohne KI-Bewertung kann die vorläufige Schreib-Punktzahl schon abgegebener
-  Texte dadurch um 1 sinken.
+- **„so“** zählt an allen drei Stellen (Seite, Artefakt, Worker) als Verbinder jetzt auch nach Doppelpunkt,
+  Zeilenanfang oder Anführungszeichen – das kann nur mehr Punkte geben.
 - **Verräter, B–E und Zufall**: Vokabeln werden jetzt auch gegen Endungen am ersten Wort einer Wendung (switched off,
   went wrong), gegen unregelmäßige Vergangenheit (fell, sent, went) und gegen alle nach einer Abgabe sichtbaren
-  Lösungen geprüft. Gemessen: B–E und 5000 Zufallsarbeiten ohne Fund, auch gegen die Lösungen nach Teilabgabe.
+  Lösungen geprüft. Gemessen für neu geöffnete Arbeiten: B–E und 5000 Zufallsarbeiten ohne Fund, auch gegen die
+  Lösungen nach Teilabgabe (schon geöffnete Arbeiten prüft erst 2.33.5 nach).
   Überschneidung zwischen B–E: BC 21, BD 21, BE 24, CD 24, CE 13, DE 19; mit A jeweils 0. Arbeit A bleibt unverändert.
 - Artefakt: `kriterienPunkte()` nimmt nur echte Zahlen und denselben Text (max. 4000 Zeichen) wie der Worker – auf 40
   Zufallseingaben gleich. Laufende Anfragen sind pro Runde gesperrt (`busyKey` mit `runTag`), auch der Lernplan.
@@ -237,7 +255,8 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
   Lob nur mit Zitat und nicht aus schwachen Kriterien, Tipps zum schwächsten Kriterium mit englischem Beispiel.
   Die Wortzahl wird mitgegeben (die KI zählt nicht selbst; > 150 Wörter → Tipp).
 - **„so“ zählt nur als Verbinder** (Satzanfang, nach Komma oder „and“), nicht in „not so bad“ – in `writingStats()`
-  und im Worker (`textZahlen`).
+  und im Worker (`textZahlen`). Ohne KI-Bewertung kann die vorläufige Schreib-Punktzahl schon abgegebener Texte
+  dadurch um 1 sinken.
 
 ### Version 2.33.2 (25.10.2026)
 - Zwei weitere Prüfberichte eingearbeitet.

@@ -202,7 +202,7 @@ Erwartet: `{"richtig":true,"erklaerung":"…","rest":…}`. Kommt `name fehlt` (
 |---|---|---|
 | `/pruefen` | `id, aufgabe, loesung, antwort` | `richtig, erklaerung, rest` |
 | `/text` | `id, text` (ab 20 Wörtern), optional `story` (`A`–`E`, sonst A) | `punkte` 0–18, `kriterien{wwww, rahmen, past, adjektive, connectives, speech}`, `lob[]`, `fehler[{original, besser, warum}]`, `tipps[]`, `rest` |
-| `/lernplan` | `id, ergebnis, fehler` (Text) | `plan, rest` |
+| `/lernplan` | `id, ergebnis, fehler` (Text), optional `story` (Titel der Schreibaufgabe) | `plan, rest` |
 
 Die Seite fragt beim Laden `/pruefen` nur mit `id` an. Der neue Code antwortet
 `aufgabe, loesung und antwort nötig` (400), **ohne** zu zählen. Erst dann zeigt sie

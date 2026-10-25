@@ -548,6 +548,7 @@ const WRITE_REST = 'Give it a <em>title</em>. Write <em>80–120 words</em> in t
 const STORIES = {
   A: {
     title: 'A day to remember', theme: '🧗 Klettern in Wales',
+    lesetext: 'Emma, ihr kleiner Bruder Max und Gruppenleiter Mr Hughes klettern in Wales; Max stürzt vom Felsen und verletzt sich am Arm.',
     paras: [
       '[[Last summer]] Emma and her family went to Wales on holiday. [[At first]] Emma was bored because it rained on Monday, Tuesday and Wednesday. But [[on Thursday]] the sun came out, and the family went on a [[climbing trip]] with a group.',
       'The [[group leader]], Mr Hughes, was a tall, friendly man. First he showed them how to climb. Then they climbed up a high rock. Emma\'s little brother Max was very excited. "Look at me! I\'m a [[mountain goat]]!" he shouted.',
@@ -580,6 +581,7 @@ const STORIES = {
   },
   B: {
     title: 'A windy day at the seaside', theme: '🏖️ Am Meer in Brighton',
+    lesetext: 'Ben und Lily am Strand von Brighton; der Wind weht Lilys Hut ins Meer, eine Rettungsschwimmerin holt ihn zurück.',
     paras: [
       '[[Last August]] Ben and his [[best friend]] Lily went to Brighton with Ben\'s parents. [[At first]] the sun was hot, so the two friends built a big [[sand castle]] near the water. Ben\'s dad bought ice creams for everybody.',
       'Then the wind came. It was very strong, and it blew Lily\'s new hat into the sea. "My hat! My beautiful hat!" Lily shouted. Ben ran into the cold water, but the waves were too high for him.',
@@ -612,6 +614,7 @@ const STORIES = {
   },
   C: {
     title: 'Rain at the campsite', theme: '⛺ Zeltlager im Lake District',
+    lesetext: 'Sophies Klasse zeltet mit Mrs Patel im Lake District; nachts kommt Wasser aus dem Fluss in das Zelt von Sophie und Mia.',
     paras: [
       '[[Last summer]] Sophie\'s class went on a [[camping trip]] to the [[Lake District]]. The [[group leader]], Mrs Patel, showed the children how to put up their tents. First Sophie and her friend Mia chose a place near a small river.',
       'Then they collected wood for a fire, and Mrs Patel made hot chocolate for everybody. When it got dark, they told scary stories. Mia was scared, but Sophie laughed. "It\'s only a story!" she said.',
@@ -644,6 +647,7 @@ const STORIES = {
   },
   D: {
     title: 'Lost in London', theme: '🚇 Verlaufen in London',
+    lesetext: 'Jack verliert auf dem Camden Market in London seine Mutter und seine Schwester Amy; eine Verkäuferin im Musikladen ruft die Mutter an.',
     paras: [
       '[[Last Easter]] Jack visited London with his mum and his little sister Amy. [[On Monday]] they went to [[Camden Market]]. It was very busy, and there were lots of interesting shops.',
       'Jack wanted to see the old guitars in a [[music shop]], so he went inside. When he came out again, his mum and Amy weren\'t there. [[At first]] he looked for them, but he couldn\'t find them. Jack was scared.',
@@ -676,6 +680,7 @@ const STORIES = {
   },
   E: {
     title: 'The storm', theme: '⛵ Bootsausflug im Sturm',
+    lesetext: 'Hannah und ihr Opa geraten bei einem Bootsausflug auf einem See in Schottland in einen Sturm und rudern zurück ans Ufer.',
     paras: [
       '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. They both wore [[life jackets]]. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
       'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
@@ -738,7 +743,7 @@ let MAX = {};
 // ---------------------------------------------------------------------------
 // Arbeit A behält den alten Schlüssel; B–E und Z hängen -B … an.
 const STORE = 'klassenarbeit-camden-v1';
-const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), elapsed: 0, revealed: {}, round: 1, v: 2, at: 'vocab' });
+const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), elapsed: 0, revealed: {}, round: 1, v: 2, tv: 2, at: 'vocab' });
 // Arbeiten: A = die erste (feste Originalaufgaben), B–E feste eigene Aufgaben und
 // Lesetexte, Z = Zufallsarbeit. Jede Arbeit hat ihren eigenen Speicherstand.
 const TESTS = {
@@ -758,6 +763,7 @@ function readState(k) {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     const st = Object.assign(fresh(), parsed);
+    if (typeof parsed.tv !== 'number') st.tv = TEXT_VERSION;   // ohne Marke: Stand aus 2.33.4
     if (!parsed.v) {
       // Stand von vor dem Menü: Wer einen Teil schon abgegeben hat, hat die Lösungen
       // gesehen – kein „Abgabe zurücknehmen“, auch wenn er leer war. Writing bleibt offen.
@@ -765,8 +771,25 @@ function readState(k) {
       st.v = 2;
     }
     if (st.writeAi && (st.writeAi.wait || st.writeAi.err)) st.writeAi = null;
+    if (typeof parsed.tv === 'number' && parsed.tv < TEXT_VERSION) migrateMarks(st, k);
     return st;
   } catch (e) { return null; }
+}
+// Textversion der Lesetexte: Markierungen im Lesetext sind Token-Indizes. Ändert sich
+// ein Text, rechnet MARK_REMAP alte Indizes um. Stände ohne Marke stammen aus 2.33.4
+// (= Version 2); 2.33.0–2.33.3 waren nie veröffentlicht. Version 1 → 2: Lesetext E,
+// Absatz 3 umgestellt (alt 84–90 → 89–95, alt 91–95 → 84–88).
+const TEXT_VERSION = 2;
+const MARK_REMAP = {
+  1: { E: { 84: 89, 85: 90, 86: 91, 87: 92, 88: 93, 89: 94, 90: 95, 91: 84, 92: 85, 93: 86, 94: 87, 95: 88 } },
+};
+function migrateMarks(st, k) {
+  const story = TESTS[k].random ? ((st.pick && st.pick.story) || st.story) : TESTS[k].story;
+  for (let v = st.tv || TEXT_VERSION; v < TEXT_VERSION; v++) {
+    const m = (MARK_REMAP[v] || {})[story];
+    if (m) st.marks = st.marks.map(i => (i in m ? m[i] : i));
+  }
+  st.tv = TEXT_VERSION;
 }
 function newState(k) {
   const st = fresh();
@@ -831,6 +854,8 @@ function stemIn(phrase, text) {
   return new RegExp("(^|[^a-z'])(?:" + firsts.join('|') + ')' + tail + "(?=[^a-z']|$)").test(text);
 }
 const verraten = (v, text) => v.en.some(e => stemIn(e.replace(/^(a|an|the|to) /, ''), text));
+// Im Menü sichtbar: die Titel aller Lesetexte („A day to remember“ verrät remember)
+const menuText = () => plainText(Object.values(STORIES).map(x => x.title).join(' ') + ' Zufallsarbeit');
 // Was nach einer Abgabe sichtbar wird: die Lösungen der anderen Teile
 function solutionText() {
   return plainText([NEG.map(x => showSol(x, 'neg')), QUEST.map(x => showSol(x, 'quest')), SHORT.map(x => showSol(x, 'short')),
@@ -891,7 +916,7 @@ function poolById() {
 }
 function applyFrozen(t, seed) {
   const pk = S.pick;
-  if (pk && pk.v === 1) {
+  if (pk && pk.v >= 1) {
     const byId = poolById();
     const lists = {};
     const okL = L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).length > 0 && lists[L].every(Boolean);
@@ -899,50 +924,68 @@ function applyFrozen(t, seed) {
     if (STORIES[pk.story] && !bad.length) {
       ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = lists);
       applyStory(t, pk.story);
+      if (pk.v < 2) { if (!S.done.vocab) recheckVocab(t, seed, pk); pk.v = 2; }
       return;
     }
     if (STORIES[pk.story] && bad.length < PICK_LISTS.length) {
       // Fehlt im Vorrat eine ID, nur diese Liste neu wählen – der Rest bleibt, wie er war.
-      applyFiltered(t, seed);
+      const keep = { story: pk.story };
+      PICK_LISTS.forEach(L => { if (!bad.includes(L)) keep[L] = lists[L]; });
+      applyFiltered(t, seed, keep);
       const neu = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
-      PICK_LISTS.forEach(L => { if (!bad.includes(L)) neu[L] = lists[L]; else pk[L] = neu[L].map(it => it.id); });
-      ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = neu);
-      applyStory(t, pk.story);
+      bad.forEach(L => { pk[L] = neu[L].map(it => it.id); });
       return;
     }
   }
   applyFiltered(t, seed);
-  S.pick = { v: 1, story: t.random ? (STORIES[S.story] ? S.story : 'A') : t.story };
+  S.pick = { v: 2, story: STORY_KEY };
   PICK_LISTS.forEach(L => { S.pick[L] = ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER })[L].map(it => it.id); });
+}
+// Auswahl aus 2.33.4 (pick.v 1) einmal nachprüfen, solange der Vokabelteil offen ist: Nur
+// Vokabeln, die sich jetzt verraten, werden aus dem Vorrat ersetzt – alles andere bleibt.
+function recheckVocab(t, seed, pk) {
+  const text = renderedText() + ' ' + solutionText() + ' ' + menuText();
+  const bad = new Set(VOCAB.filter(v => verraten(v, text)).map(v => v.id));
+  if (!bad.size) return;
+  const have = new Set(VOCAB.map(v => v.id));
+  const pool = t.random
+    ? shuffled(BASE.VOCAB.concat(VOCAB_EXTRA, VOCAB_MORE), rng(((seed || 1) ^ hash('ersatz')) >>> 0))
+    : split(BASE.VOCAB, VOCAB_EXTRA.concat(VOCAB_MORE), Infinity, t.slot, 'vocab');
+  const ersatz = pool.filter(v => !have.has(v.id) && !verraten(v, text));
+  VOCAB = VOCAB.map(v => bad.has(v.id) && ersatz.length ? ersatz.shift() : v);
+  pk.VOCAB = VOCAB.map(v => v.id);
 }
 // B–E und Zufall, neue Auswahl: erst Lesetext, Sätze, Kurzantworten und Bausteine
 // festlegen; dann Übersetzungen, Verbraster, Lücken und Vokabeln so wählen, dass keine
 // ihre Lösung irgendwo auf dem Blatt wiederfindet.
-function applyFiltered(t, seed) {
+// keep: Listen, die bleiben sollen (eingefrorene Auswahl) – gewählt wird nur der Rest,
+// und die Filter laufen auf den behaltenen Listen.
+function applyFiltered(t, seed, keep = {}) {
   const r = t.random ? rng(seed || 1) : null;
   const full = (base, extra, more, salt) => t.random
     ? shuffled(base.concat(extra, more), r) : split(base, extra.concat(more), Infinity, t.slot, salt);
-  applyStory(t);
+  applyStory(t, keep.story);
   VOCAB = []; IRREG = []; GAPS = []; TRANS = [];
-  NEG   = full(BASE.NEG, NEG_EXTRA, NEG_MORE, 'neg').slice(0, 5);
-  QUEST = full(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), QUEST_MORE.filter(q => !q.words), 'quest').slice(0, 4)
+  NEG   = keep.NEG || full(BASE.NEG, NEG_EXTRA, NEG_MORE, 'neg').slice(0, 5);
+  QUEST = keep.QUEST || full(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), QUEST_MORE.filter(q => !q.words), 'quest').slice(0, 4)
             .concat(full(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), QUEST_MORE.filter(q => q.words), 'questw').slice(0, 1));
-  SHORT = full(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 'short').slice(0, 4);
-  ORDER = full(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 'order').slice(0, 5);
+  SHORT = keep.SHORT || full(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 'short').slice(0, 4);
+  ORDER = keep.ORDER || full(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 'order').slice(0, 5);
   let text = renderedText();
-  TRANS = full(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 'trans').filter(it => !transVerbs(it).some(w => wordIn(w, text))).slice(0, 3);
-  IRREG = full(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 'irreg').filter(i => !forms(i).some(w => wordIn(w, text))).slice(0, 10);
+  TRANS = keep.TRANS || full(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 'trans').filter(it => !transVerbs(it).some(w => wordIn(w, text))).slice(0, 3);
+  IRREG = keep.IRREG || full(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 'irreg').filter(i => !forms(i).some(w => wordIn(w, text))).slice(0, 10);
   // Lückensätze dürfen weder Raster- noch Übersetzungsformen enthalten (z. B. „her lost phone“ neben „verlor“)
   const taken = new Set(IRREG.flatMap(forms).concat(TRANS.flatMap(transVerbs))), verbs = new Set(IRREG.map(i => i.inf));
   GAPS = [];
-  for (const g of full(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 'gaps')) {
+  if (keep.GAPS) keep.GAPS.forEach(g => { GAPS.push(g); verbs.add(g.verb); forms(g).forEach(w => taken.add(w)); text += ' ' + plainText(g.pre + ' ' + g.post); });
+  else for (const g of full(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 'gaps')) {
     if (GAPS.length === 5) break;
     const satz = plainText(g.pre + ' ' + g.post);
     if (verbs.has(g.verb) || forms(g).some(w => wordIn(w, text) || taken.has(w)) || [...taken].some(w => wordIn(w, satz))) continue;
     GAPS.push(g); verbs.add(g.verb); forms(g).forEach(w => taken.add(w)); text += ' ' + satz;
   }
-  text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText();
-  VOCAB = full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
+  text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText() + ' ' + menuText();
+  VOCAB = keep.VOCAB || full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
 }
 function finishVariant() {
   ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
@@ -1165,8 +1208,8 @@ function head(sec, text) {
 // „Warum? / Stimmt meins auch?“ – solange gefragt wird, ausgegraut
 function whyBtn(id, kind) {
   return kiBusy.has(busyKey(id))
-    ? ' <button type="button" class="btn small claude" disabled>🤖 denkt nach …</button>'
-    : ` <button type="button" class="btn small claude" data-why="${id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
+    ? ` <button type="button" class="btn small claude" id="why-${id}" disabled>🤖 denkt nach …</button>`
+    : ` <button type="button" class="btn small claude" id="why-${id}" data-why="${id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
 }
 // Eine getippte Aufgabe (Vokabel, Verbform, Satz)
 function typedItem(it, n, kind, promptHtml, opts = {}) {
@@ -1402,10 +1445,12 @@ function writingStats(text) {
   const conn = WRITE_CONNECTIVES.filter(c => c === 'first'
     ? / first /.test(t.replace(/ at first /g, ' '))           // „at first“ nicht doppelt zählen
     : c === 'so'                                               // „so“ nur als Satzverbinder, nicht „so bad“
-    ? /(^|[.!?,;:\n"“„]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/im.test(raw)
+    ? (/(^|[.!?,;:\n"“„]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/im.test(raw) || /\bso\s+(i|we|he|she|they|it|the|my|our|his|her)\b/i.test(raw))
     : t.includes(' ' + c + ' '));
-  const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
-  const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
+  // direkte Rede: auch mit einfachen Anführungszeichen ('Help!' I shouted.) – wie im Worker
+  const ascii = /(^|\s)'[^'\n]{2,}[.,!?]'(?=\s|$)/.test(raw);
+  const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || '')) || ascii;
+  const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || '')) || ascii;
   return { words, conn, speech, speechPunct };
 }
 
@@ -1443,7 +1488,7 @@ function renderWriting(sec) {
       </div>
       ${aiHtml}
       ${kiOn() && !done && !waiting ? `<div style="margin-top:12px">
-        <button type="button" class="btn claude" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
+        <button type="button" class="btn claude" id="ki-write" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
         <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
       ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
     </div>` +
@@ -1481,7 +1526,7 @@ function renderResult(sec) {
     ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
       <p class="task">Die KI schaut auf deine Fehler und sagt dir, was du bis zur Arbeit noch üben solltest.</p>
       ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
-      <button type="button" class="btn claude" data-plan style="margin-top:8px" ${planBusy.has(busyKey()) ? 'disabled' : ''}>${planBusy.has(busyKey()) ? '🤖 denkt nach …' : '🤖 Was soll ich noch üben?'}</button></div>` : ''}
+      <button type="button" class="btn claude" id="ki-plan" data-plan style="margin-top:8px" ${planBusy.has(busyKey()) ? 'disabled' : ''}>${planBusy.has(busyKey()) ? '🤖 denkt nach …' : '🤖 Was soll ich noch üben?'}</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
       <p class="task">${allDone ? `„Neu beginnen“ löscht deine Antworten in ${testName(CUR)}, die Aufgaben bleiben gleich. Du kennst jetzt die Lösungen – für eine echte Probe nimm lieber eine andere Arbeit oder die Zufallsarbeit.` : 'Wenn alle Teile abgegeben sind, kannst du diese Arbeit noch einmal von vorn schreiben.'}${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ''}</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
@@ -1733,8 +1778,8 @@ async function askPlan(btn) {
   const pbusy = busyKey();
   if (!kiOn() || planBusy.has(pbusy)) return;
   const mineKey = CUR, tag = runTag(S);
-  planBusy.add(pbusy); render();
   kiErr.delete('plan');
+  planBusy.add(pbusy); render();
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
   const teil = (liste) => zeilen.push(...liste.slice(0, 5));   // je Teil höchstens 5 Zeilen
@@ -1750,6 +1795,7 @@ async function askPlan(btn) {
     .forEach(f => zeilen.push(`Text: ${cut(f.original)} → ${cut(f.besser)}`));
   try {
     const r = await kiFrage('lernplan', {
+      story: STORY_KEY,
       ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
       fehler: zeilen.join('\n'),
     }, 30000);
