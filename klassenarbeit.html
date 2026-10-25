@@ -759,7 +759,7 @@ function renderGrammar(sec) {
       <div class="items">${SHORT.map((v, i) => typedItem(v, i + 1, 'short', `${esc(v.q)}<br>${esc(v.yn)} %INPUT%`, { section: g, inline: true, ph: '…' })).join('')}</div></div>` +
     `<div class="card"><h3>B6 · Translate <span class="pts">${TRANS.length * 2} Punkte (je 2)</span></h3>
       <p class="task">Übersetze ins Englische. Benutze das <em>simple past</em> und achte auf die <em>Wortstellung</em>.</p>
-      ${tip('Englisch: <b>Wer – tut – was – wo – wann</b>. <i>He read a book yesterday.</i> (nicht: <s>He read yesterday a book.</s>) · <i>We played football in the park on Monday.</i> (nicht: <s>We played on Monday football in the park.</s>)')}
+      ${tip('Englisch: <b>Wer – tut – was – wo – wann</b>. Die Zeit darf auch ganz <b>vorn</b> stehen (<i>Yesterday he read a book.</i>), aber nie zwischen Verb und Objekt. <i>He read a book yesterday.</i> (nicht: <s>He read yesterday a book.</s>) · <i>We played football in the park on Monday.</i> (nicht: <s>We played on Monday football in the park.</s>)')}
       <div class="items">${TRANS.map((v, i) => typedItem(v, i + 1, 'trans', esc(v.de), { section: g, ph: 'Schreib den englischen Satz …' })).join('')}</div></div>` +
     submitBar(g, 'Grammatik');
 }
