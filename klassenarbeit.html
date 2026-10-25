@@ -1375,6 +1375,8 @@ function writingStats(text) {
   const words = (raw.match(/[A-Za-zÄÖÜäöüß']+/g) || []).length;
   const conn = WRITE_CONNECTIVES.filter(c => c === 'first'
     ? / first /.test(t.replace(/ at first /g, ' '))           // „at first“ nicht doppelt zählen
+    : c === 'so'                                               // „so“ nur als Satzverbinder, nicht „so bad“
+    ? /(^|[.!?,;]\s*|\band\s+)so\b(?!\s+(much|many|bad|good|big|cool|nice|happy|sad|scared|tired|hot|cold|long|fast|slow|very)\b)/i.test(raw)
     : t.includes(' ' + c + ' '));
   const speech = /["“”„].{2,}["“”]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));
   const speechPunct = /["“„][^"”“]{2,}[.,!?]["”“]/.test(raw) || /‘[^’]{2,}[.,!?]’/.test(String(text || ''));

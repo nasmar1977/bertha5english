@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.2
+**Version:** 2.33.3
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -203,6 +203,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.33.3 (25.10.2026)
+- **Schreib-Bewertung nach Testlauf nachgeschärft** (5 Probetexte von stark bis Thema verfehlt, je 2× durch Gemini
+  und die Artefakt-Anweisung durch Claude, verglichen mit einer Lehrer-Erwartung): `TEXT_ANWEISUNG` nennt
+  Stufen-Grenzen (When konkret, ohne Titel ≤ 1, mehrere Verbfehler ≤ 1, Doppelpunkt nach Sprechverb ≤ 2),
+  „Thema verfehlt“ als ersten Fehler, nur echte Fehler in fester Reihenfolge, gleiche Fehlerart zusammengefasst,
+  Lob nur mit Zitat und nicht aus schwachen Kriterien, Tipps zum schwächsten Kriterium mit englischem Beispiel.
+  Die Wortzahl wird mitgegeben (die KI zählt nicht selbst; > 150 Wörter → Tipp).
+- **„so“ zählt nur als Verbinder** (Satzanfang, nach Komma oder „and“), nicht in „not so bad“ – in `writingStats()`
+  und im Worker (`textZahlen`).
 
 ### Version 2.33.2 (25.10.2026)
 - Zwei weitere Prüfberichte eingearbeitet.
