@@ -25,7 +25,9 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   Themen der echten Arbeit — Wortschatz, Simple past (Verbraster, Lücken, Verneinung, Fragen, Short answers,
   Übersetzen mit Wortstellung), Satzbau-Puzzle, Lesetext (connectives, true/false, adjectives, direct speech),
   Geschichte „Holiday adventure“ nach der Buch-Checkliste. Punkte und Übungsnote; Varianten über einen
-  Seed (`🔀 Neue Arbeit`, Seed 0 = Grundarbeit). KI über den Worker (`/pruefen`, `/text`, `/lernplan`),
+  Startmenü mit Arbeit A–E (feste, sich nicht mit A überschneidende Aufgaben, je eigener Lesetext und eigene
+  Schreibaufgabe) und Zufallsarbeit, eigener Stand pro Arbeit (A = alter Schlüssel). Abgabe mit Rückfrage;
+  Writing lässt sich wieder öffnen, leer abgegebene Teile auch (Lösungen bleiben dann verborgen). KI über den Worker (`/pruefen`, `/text`, `/lernplan`),
   Knöpfe nur, wenn der Worker die Routen kennt. Eigener Speicher `klassenarbeit-camden-v1`, gleiche Geräte-ID
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
 - Multiple-Choice-Modus (EN→DE): 5 Optionen mit kuratierten Distraktoren
@@ -151,7 +153,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.32.3
+**Version:** 2.33.0
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -200,6 +202,20 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.33.0 (25.10.2026)
+- **Klassenarbeit – Menü mit Arbeit A–E und Zufallsarbeit.** A bleibt die bisherige Arbeit (Speicher
+  `klassenarbeit-camden-v1`, auch eine früher gemischte A mit Seed behält ihre Aufgaben). B–E haben feste Aufgaben:
+  Der Vorrat ohne A wird fest gemischt und reihum verteilt (`split()`), A kommt in B–E nicht vor; zwischen B–E
+  überschneiden sich 9–13 von 49 Aufgaben. Vorrat aufgestockt (`*_MORE`, die alten `*_EXTRA` bleiben unverändert).
+  Neue Lesetexte mit TF/ADJ/SPEECH und Schreibaufgabe: B Brighton, C Zeltlager, D Camden Market, E Sturm (`STORIES`).
+  Z mischt aus allem und wählt einen der fünf Texte. Eigener Stand pro Arbeit (`-B` … `-Z`), dazu `-meta` mit der
+  zuletzt geöffneten Arbeit. KI-Antworten landen in der Arbeit, aus der gefragt wurde (`saveFor`).
+- **Abgabe mit Rückfrage** („Wirklich abgeben?“, leere Aufgaben bzw. Wortzahl werden genannt). **Writing** lässt sich
+  mit „✏️ Weiterschreiben“ wieder öffnen (auch bei schon abgegebenen Ständen). Ein komplett leer abgegebener Teil
+  zeigt keine Lösungen und bietet „Abgabe zurücknehmen“ an. Andere Teile bleiben nach der Abgabe endgültig.
+- Online geht an `/text` weiterhin nur der Text: Alle fünf Schreibaufgaben sind Ferienabenteuer und passen zur
+  festen Aufgabe in `TEXT_ANWEISUNG`; ein vorangestellter Aufgabensatz würde mitgezählt (Wortzahl, Titel).
 
 ### Version 2.32.3 (25.10.2026)
 - **Worker**: Antwortet `gemini-3.1-flash-lite` mit 503/500/504 oder 429, fragt `frageGemini` einmal das Ersatzmodell

@@ -134,6 +134,27 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
 .tile:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .ghost-tile { border-style: dashed; color: transparent; box-shadow: none; cursor: default; user-select: none; }
 
+/* Menü: Arbeiten A–E und Zufall */
+.chip-btn { font: inherit; cursor: pointer; color: var(--ink); }
+.chip-btn:hover, .chip-btn:focus-visible { border-color: var(--line-purple); outline: none; }
+.menu-intro { margin: 18px 0 14px; color: var(--muted); }
+.menu-intro h2 { font-size: 1.6rem; color: var(--ink); margin-bottom: 4px; }
+.tests { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.test-tile { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center;
+  background: var(--paper); border: 2px solid var(--rule); border-radius: 18px; padding: 14px 16px; box-shadow: 0 4px 0 rgba(0,0,0,.06); }
+.test-tile:hover, .test-tile:focus-visible { border-color: var(--c); }
+.test-tile .letter { grid-row: span 3; width: 54px; height: 54px; border-radius: 50%; border: 7px solid var(--c); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; background: #fff; }
+.test-tile .t-title { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.2; }
+.test-tile .t-theme { font-size: .88rem; color: var(--muted); }
+.test-tile .t-state { font-size: .85rem; font-weight: 600; width: fit-content; border-radius: 999px; padding: 1px 10px; background: #eef2fb; color: var(--muted); }
+.test-tile .t-state.started { background: #fff1c9; color: #7a4d00; }
+.test-tile .t-state.finished { background: var(--good-bg); color: #116b3b; }
+.test-tile.current { border-color: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent); }
+.confirm-box { background: #fff8e1; border: 2px solid #f2c94c; border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; width: 100%; }
+.confirm-box .warn { color: #9b2c2c; font-weight: 600; }
+.confirm-box .row { display: flex; flex-wrap: wrap; gap: 8px; }
+
 /* Lesetext */
 .story { background: #fbfdf7; border: 2px dashed #b7dcc2; border-radius: 14px; padding: 14px 16px; line-height: 1.9; }
 .story h4 { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 6px; }
@@ -209,8 +230,10 @@ img { max-width: 100%; }
       </div>
     </div>
     <div class="chips">
-      <span class="chip">⏱ <b id="clock">0:00</b></span>
-      <span class="chip">⭐ <b id="total">0</b> / <span id="max">0</span> Punkte</span>
+      <button type="button" class="chip chip-btn" data-menu id="chip-menu">☰ Arbeiten</button>
+      <span class="chip" id="chip-test"></span>
+      <span class="chip" id="chip-clock">⏱ <b id="clock">0:00</b></span>
+      <span class="chip" id="chip-total">⭐ <b id="total">0</b> / <span id="max">0</span> Punkte</span>
     </div>
   </header>
 
@@ -391,43 +414,287 @@ const ORDER_POOL = [
   { id: 'o10', c: ['what', 'see', 'in London', 'did', 'you'], end: '?',
     en: ['what did you see in london'], sol: 'What did you see in London?' },
 ];
+
+// ---------------------------------------------------------------------------
+// Vorrat für die Arbeiten B–E und die Zufallsarbeit. Die alten *_EXTRA-Listen
+// bleiben unverändert, damit eine schon gemischte Arbeit A (seed ≠ 0) dieselben
+// Aufgaben behält; Neues kommt nur hier dazu.
+// ---------------------------------------------------------------------------
+const VOCAB_MORE = [
+  { id: 'v33', de: 'springen',                     en: ['jump'], verb: true },
+  { id: 'v34', de: 'der Leiter / die Leiterin (einer Gruppe)', en: ['leader', 'group leader'] },
+  { id: 'v35', de: 'zeigen',                       en: ['show'], verb: true },
+  { id: 'v36', de: '(aus)wählen',                  en: ['choose'], verb: true },
+  { id: 'v37', de: 'planen',                       en: ['plan'], verb: true },
+  { id: 'v38', de: 'interessant',                  en: ['interesting'] },
+  { id: 'v39', de: 'die Pause (in der Schule)',    en: ['break', 'break time'] },
+  { id: 'v40', de: 'unfreundlich',                 en: ['unfriendly'] },
+  { id: 'v41', de: '(an)rufen',                    en: ['call', 'phone', 'ring'], verb: true },
+  { id: 'v42', de: 'dumm, blöd',                   en: ['stupid'] },
+  { id: 'v43', de: 'verlassen, weggehen',          en: ['leave'], verb: true },
+  { id: 'v44', de: 'vorbereiten',                  en: ['prepare'], verb: true },
+  { id: 'v45', de: 'die Präsentation',             en: ['presentation'] },
+  { id: 'v46', de: 'nicht einverstanden sein',     en: ['disagree'], verb: true },
+  { id: 'v47', de: '(um)fallen, stürzen',          en: ['fall', 'fall down', 'fall over'], verb: true },
+  { id: 'v48', de: '(zu)schicken',                 en: ['send'], verb: true },
+  { id: 'v49', de: 'die Gruppe',                   en: ['group'] },
+  { id: 'v50', de: 'willkommen',                   en: ['welcome'] },
+  { id: 'v51', de: 'hinunter, herunter',           en: ['down'] },
+  { id: 'v52', de: 'die meisten',                  en: ['most'] },
+];
+const IRREG_MORE = [
+  { id: 'i26', de: 'kommen',     inf: 'come',  en: ['came'] },
+  { id: 'i27', de: 'schreiben',  inf: 'write', en: ['wrote'] },
+  { id: 'i28', de: 'essen',      inf: 'eat',   en: ['ate'] },
+  { id: 'i29', de: 'trinken',    inf: 'drink', en: ['drank'] },
+  { id: 'i30', de: 'rennen',     inf: 'run',   en: ['ran'] },
+  { id: 'i31', de: 'schwimmen',  inf: 'swim',  en: ['swam'] },
+  { id: 'i32', de: 'sitzen',     inf: 'sit',   en: ['sat'] },
+  { id: 'i33', de: 'schlafen',   inf: 'sleep', en: ['slept'] },
+  { id: 'i34', de: 'fliegen',    inf: 'fly',   en: ['flew'] },
+  { id: 'i35', de: 'gewinnen',   inf: 'win',   en: ['won'] },
+  { id: 'i36', de: 'tragen (Kleidung)', inf: 'wear', en: ['wore'] },
+  { id: 'i37', de: 'fahren (ein Auto)', inf: 'drive', en: ['drove'] },
+  { id: 'i38', de: 'verlassen, weggehen', inf: 'leave', en: ['left'] },
+  { id: 'i39', de: 'fühlen',     inf: 'feel',  en: ['felt'] },
+  { id: 'i40', de: 'wissen, kennen', inf: 'know', en: ['knew'] },
+];
+const GAPS_MORE = [
+  { id: 'g13', pre: 'On Monday my dad', verb: 'plan', post: 'a long walk.', en: ['planned'] },
+  { id: 'g14', pre: 'We', verb: 'try', post: 'fish and chips for the first time.', en: ['tried'] },
+  { id: 'g15', pre: 'The children', verb: 'swim', post: 'in the lake every morning.', en: ['swam'] },
+  { id: 'g16', pre: 'Mum', verb: 'drive', post: 'us to the beach.', en: ['drove'] },
+  { id: 'g17', pre: 'I', verb: 'write', post: 'a postcard to my grandma.', en: ['wrote'] },
+  { id: 'g18', pre: 'My brother', verb: 'lose', post: 'his sunglasses at the pool.', en: ['lost'] },
+  { id: 'g19', pre: 'We', verb: 'eat', post: 'ice cream every day.', en: ['ate'] },
+  { id: 'g20', pre: 'The plane', verb: 'land', post: 'in Edinburgh at ten o\'clock.', en: ['landed'] },
+  { id: 'g21', pre: 'The waiter', verb: 'bring', post: 'us our pizza.', en: ['brought'] },
+  { id: 'g22', pre: 'It', verb: 'be', post: 'very hot in Spain.', en: ['was'] },
+];
+const NEG_MORE = [
+  { id: 'n11', s: 'We went to the beach.',                en: ["we didn't go to the beach"], sol: "We didn't go to the beach." },
+  { id: 'n12', s: 'Max fell off his bike.',               en: ["max didn't fall off his bike"], sol: "Max didn't fall off his bike." },
+  { id: 'n13', s: 'The teacher saw the message.',         en: ["the teacher didn't see the message"], sol: "The teacher didn't see the message." },
+  { id: 'n14', s: 'I was in the office.',                 en: ["i wasn't in the office"], sol: "I wasn't in the office." },
+  { id: 'n15', s: 'They climbed the high rock.',          en: ["they didn't climb the high rock"], sol: "They didn't climb the high rock." },
+  { id: 'n16', s: 'Emma remembered the school rules.',    en: ["emma didn't remember the school rules"], sol: "Emma didn't remember the school rules." },
+  { id: 'n17', s: 'The children were in the classroom.',  en: ["the children weren't in the classroom"], sol: "The children weren't in the classroom." },
+];
+const QUEST_MORE = [
+  { id: 'q12', s: 'Max fell off the rock.',               en: ['did max fall off the rock'], sol: 'Did Max fall off the rock?' },
+  { id: 'q13', s: 'Your parents were at home.',           en: ['were your parents at home'], sol: 'Were your parents at home?' },
+  { id: 'q14', s: 'Mia switched off her phone.',          en: ['did mia switch off her phone', 'did mia switch her phone off'], sol: 'Did Mia switch off her phone?' },
+  { id: 'q15', s: 'The head teacher punished Tom.',       en: ['did the head teacher punish tom', 'did the headteacher punish tom'], sol: 'Did the head teacher punish Tom?' },
+  { id: 'q16', s: 'It was cold in Wales.',                en: ['was it cold in wales'], sol: 'Was it cold in Wales?' },
+  { id: 'q17', s: 'who / you / meet / at the station', words: true, en: ['who did you meet at the station'], sol: 'Who did you meet at the station?' },
+];
+const SHORT_MORE = [
+  { id: 's10', q: 'Did Lisa find her phone?',             yn: 'Yes,', en: ['she did'], sol: 'she did.' },
+  { id: 's11', q: 'Did the students break the rules?',    yn: 'No,',  en: ["they didn't"], sol: "they didn't." },
+  { id: 's12', q: 'Was the hotel nice?',                  yn: 'Yes,', en: ['it was'], sol: 'it was.' },
+  { id: 's13', q: 'Did your dad drive to Scotland?',      yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
+];
+const TRANS_MORE = [
+  { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake'], sol: 'We swam in the lake last week.' },
+  { id: 'r8',  de: 'Tom verlor gestern sein Handy.',         en: ['tom lost his phone yesterday', 'yesterday tom lost his phone', 'tom lost his mobile yesterday', 'yesterday tom lost his mobile', 'tom lost his mobile phone yesterday', 'yesterday tom lost his mobile phone'], sol: 'Tom lost his phone yesterday.' },
+  { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza'], sol: 'We ate pizza in the evening.' },
+  { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['i met my friend at the station', 'i met my friend at the train station', 'i met my girlfriend at the station'], sol: 'I met my friend at the station.' },
+  { id: 'r11', de: 'Meine Schwester schrieb gestern eine Postkarte.', en: ['my sister wrote a postcard yesterday', 'yesterday my sister wrote a postcard'], sol: 'My sister wrote a postcard yesterday.' },
+];
+const ORDER_MORE = [
+  { id: 'o11', c: ['swam', 'in the sea', 'we', 'every day'], end: '.',
+    en: ['we swam in the sea every day', 'every day we swam in the sea'], sol: 'We swam in the sea every day.' },
+  { id: 'o12', c: ['did', 'where', 'stay', 'your family'], end: '?',
+    en: ['where did your family stay'], sol: 'Where did your family stay?' },
+  { id: 'o13', c: ["didn't", 'my phone', 'I', 'switch off'], end: '.',
+    en: ["i didn't switch off my phone"], sol: "I didn't switch off my phone." },
+  { id: 'o14', c: ['were', 'at the beach', 'your friends', 'yesterday'], end: '?',
+    en: ['were your friends at the beach yesterday'], sol: 'Were your friends at the beach yesterday?' },
+  { id: 'o15', c: ['found', 'in the garden', 'Mia', 'her phone'], end: '.',
+    en: ['mia found her phone in the garden'], sol: 'Mia found her phone in the garden.' },
+  { id: 'o16', c: ['when', 'did', 'the train', 'leave'], end: '?',
+    en: ['when did the train leave'], sol: 'When did the train leave?' },
+  { id: 'o17', c: ["wasn't", 'very friendly', 'the waiter'], end: '.',
+    en: ["the waiter wasn't very friendly"], sol: "The waiter wasn't very friendly." },
+  { id: 'o18', c: ['bought', 'for my mum', 'I', 'a postcard'], end: '.',
+    en: ['i bought a postcard for my mum'], sol: 'I bought a postcard for my mum.' },
+];
 let ORDER = [];
 let ALL_TYPED = {};
 
-// Lesetext
-const STORY_TITLE = 'A day to remember';
-const STORY = [
-  '[[Last summer]] Emma and her family went to Wales on holiday. [[At first]] Emma was bored because it rained on Monday, Tuesday and Wednesday. But [[on Thursday]] the sun came out, and the family went on a [[climbing trip]] with a group.',
-  'The [[group leader]], Mr Hughes, was a tall, friendly man. First he showed them how to climb. Then they climbed up a high rock. Emma\'s little brother Max was very excited. "Look at me! I\'m a [[mountain goat]]!" he shouted.',
-  'Suddenly Max fell. He hurt his arm. Emma was scared, but Mr Hughes stayed calm. "Don\'t worry. It isn\'t serious," he said. [[After that]] he drove Max to hospital.',
-  'Max didn\'t break his arm, but he had to wear a bandage for a week. [[In the evening]] the family ate pizza and laughed about the adventure. "That was the best day of the holiday!" Max said.',
-];
-const CONNECTIVES = ['at first', 'because', 'but', 'first', 'then', 'suddenly', 'after that', 'so', 'when'];
-// Zählen auch, wenn markiert, werden nach der Abgabe aber nicht als Lösung gezeigt
-// („and“ verbindet oft nur Wörter; Zeitangaben lernen manche Kinder als „time connectives“).
-const ACCEPT_TOO = ['and', 'last summer', 'on thursday', 'in the evening'];
+// ---------------------------------------------------------------------------
+// Lesetexte – einer pro Arbeit. [[…]] = ein Klick-Baustein aus mehreren Wörtern.
+// conn: echte connectives (werden nach der Abgabe als Lösung gezeigt);
+// accept: zählen auch, werden aber nicht als Lösung gezeigt („and“ verbindet oft
+// nur Wörter; Zeitangaben lernen manche Kinder als „time connectives“).
+// IDs je Geschichte eigen (t1/tb1/tc1 …), damit Antworten nie kollidieren.
+// ---------------------------------------------------------------------------
+const CONN_ALL = ['at first', 'because', 'but', 'first', 'then', 'suddenly', 'after that', 'so', 'when', 'finally', 'in the end', 'later'];
+const WRITE_REST = 'Give it a <em>title</em>. Write <em>80–120 words</em> in the <em>simple past</em>. Use <em>connectives</em>, <em>adjectives</em> and <em>direct speech</em> ("…").';
+const STORIES = {
+  A: {
+    title: 'A day to remember', theme: '🧗 Klettern in Wales',
+    paras: [
+      '[[Last summer]] Emma and her family went to Wales on holiday. [[At first]] Emma was bored because it rained on Monday, Tuesday and Wednesday. But [[on Thursday]] the sun came out, and the family went on a [[climbing trip]] with a group.',
+      'The [[group leader]], Mr Hughes, was a tall, friendly man. First he showed them how to climb. Then they climbed up a high rock. Emma\'s little brother Max was very excited. "Look at me! I\'m a [[mountain goat]]!" he shouted.',
+      'Suddenly Max fell. He hurt his arm. Emma was scared, but Mr Hughes stayed calm. "Don\'t worry. It isn\'t serious," he said. [[After that]] he drove Max to hospital.',
+      'Max didn\'t break his arm, but he had to wear a bandage for a week. [[In the evening]] the family ate pizza and laughed about the adventure. "That was the best day of the holiday!" Max said.',
+    ],
+    conn: ['at first', 'because', 'but', 'first', 'then', 'suddenly', 'after that', 'so', 'when'],
+    accept: ['and', 'last summer', 'on thursday', 'in the evening'],
+    tf: [
+      { id: 't1', s: 'It rained every day of the holiday.', a: false },
+      { id: 't2', s: 'Mr Hughes was the group leader.',     a: true  },
+      { id: 't3', s: 'Max broke his arm.',                  a: false },
+      { id: 't4', s: 'The family ate pizza in the evening.', a: true },
+    ],
+    adj: [
+      { id: 'a1', pre: 'Emma was', post: 'because it rained for three days.', opts: ['bored', 'strong', 'high'], a: 'bored' },
+      { id: 'a2', pre: 'They climbed up a', post: 'rock.', opts: ['stupid', 'high', 'ill'], a: 'high' },
+      { id: 'a3', pre: 'Max was very', post: 'when he climbed.', opts: ['excited', 'unfriendly', 'dark'], a: 'excited' },
+      { id: 'a4', pre: 'Mr Hughes said, "It isn\'t', post: '."', opts: ['interesting', 'serious', 'annoying'], a: 'serious' },
+    ],
+    speech: [
+      { id: 'd1', opts: ['"Look at me!" he shouted.', '"Look at me! he shouted."', 'Look at me! "he shouted."'], a: 0 },
+      { id: 'd2', opts: ['Mr Hughes said "Don\'t worry".', 'Mr Hughes said, "Don\'t worry."', 'Mr Hughes said, Don\'t worry."'], a: 1 },
+      { id: 'd3', opts: ['"It isn\'t serious." he said.', '"It isn\'t serious" he said.', '"It isn\'t serious," he said.'], a: 2 },
+      { id: 'd4', opts: ['"Can I climb too"? asked Emma.', '"Can I climb too?" asked Emma.', '"Can I climb too?," asked Emma.'], a: 1 },
+    ],
+    write: { title: 'My holiday adventure', de: 'Schreib eine Abenteuergeschichte aus den Ferien – echt oder ausgedacht.',
+             en: 'Write a story about a <em>holiday adventure</em> (real or invented).',
+             prompt: 'Write a story about a holiday adventure (real or invented).', ph: 'Last summer I went to …' },
+  },
+  B: {
+    title: 'A windy day at the seaside', theme: '🏖️ Am Meer in Brighton',
+    paras: [
+      '[[Last August]] Ben and his [[best friend]] Lily went to Brighton with Ben\'s parents. [[At first]] the sun was hot, so the two friends built a big [[sand castle]] near the water. Ben\'s dad bought ice creams for everybody.',
+      'Then the wind came. It was very strong and it pulled Lily\'s new hat into the sea. "My hat! My beautiful hat!" Lily shouted. Ben ran into the cold water, but the waves were too high for him.',
+      'Suddenly a young lifeguard jumped into the sea with a red board. She swam out and caught the hat. "Here you are," she said with a smile. Ben felt a bit stupid because he knew the beach rules.',
+      '[[After that]] the friends stayed on the beach and played football. [[In the evening]] they ate [[fish and chips]] in a small café. "That was an exciting day!" Lily said. "And my hat had an adventure too!"',
+    ],
+    conn: CONN_ALL,
+    accept: ['and', 'last august', 'in the evening'],
+    tf: [
+      { id: 'tb1', s: 'Ben and Lily went to Brighton with Ben\'s parents.', a: true },
+      { id: 'tb2', s: 'The wind pulled Ben\'s hat into the sea.',           a: false },
+      { id: 'tb3', s: 'A lifeguard caught the hat.',                        a: true },
+      { id: 'tb4', s: 'The friends ate pizza in the evening.',              a: false },
+    ],
+    adj: [
+      { id: 'ab1', pre: 'The wind was very', post: '.', opts: ['strong', 'bored', 'friendly'], a: 'strong' },
+      { id: 'ab2', pre: 'The waves were too', post: 'for Ben.', opts: ['ill', 'high', 'stupid'], a: 'high' },
+      { id: 'ab3', pre: 'Ben ran into the', post: 'water.', opts: ['hungry', 'unfriendly', 'cold'], a: 'cold' },
+      { id: 'ab4', pre: 'Lily said, "That was an', post: 'day!"', opts: ['exciting', 'angry', 'ill'], a: 'exciting' },
+    ],
+    speech: [
+      { id: 'db1', opts: ['"My hat! My beautiful hat!" Lily shouted.', '"My hat! My beautiful hat! Lily shouted."', '"My hat! My beautiful hat"! Lily shouted.'], a: 0 },
+      { id: 'db2', opts: ['"Here you are." she said with a smile.', '"Here you are," she said with a smile.', 'Here you are, "she said with a smile."'], a: 1 },
+      { id: 'db3', opts: ['Lily said "That was an exciting day"!', 'Lily said, That was an exciting day!"', 'Lily said, "That was an exciting day!"'], a: 2 },
+      { id: 'db4', opts: ['"Can we swim now?" asked Ben.', '"Can we swim now"? asked Ben.', '"Can we swim now?," asked Ben.'], a: 0 },
+    ],
+    write: { title: 'A day at the seaside that went wrong', de: 'Schreib eine Geschichte über einen Tag am Meer, an dem etwas schiefging – echt oder ausgedacht.',
+             en: 'Write a story: <em>A day at the seaside that went wrong</em> (real or invented).',
+             prompt: 'Write a story: "A day at the seaside that went wrong" (real or invented).', ph: 'Last summer we went to the beach …' },
+  },
+  C: {
+    title: 'Rain at the campsite', theme: '⛺ Zeltlager im Lake District',
+    paras: [
+      '[[Last summer]] Sophie\'s class went on a [[camping trip]] to the [[Lake District]]. The [[group leader]], Mrs Patel, showed the children how to put up their tents. First Sophie and her friend Mia chose a place near a small river.',
+      'Then they collected wood for a fire, and Mrs Patel made hot chocolate for everybody. When it got dark, they told scary stories. Mia was scared, but Sophie laughed. "It\'s only a story!" she said.',
+      '[[In the night]] it rained and rained. Suddenly Sophie woke up because her [[sleeping bag]] was wet. Water from the river was in the tent! "Help! Our tent is in the river!" Mia shouted. Mrs Patel came with a torch and helped the girls.',
+      'So the girls slept in the big tent with Mrs Patel. [[The next morning]] the sun was out again. "That was the best night of the trip," Sophie said. Mia didn\'t agree!',
+    ],
+    conn: CONN_ALL,
+    accept: ['and', 'last summer', 'in the night', 'the next morning'],
+    tf: [
+      { id: 'tc1', s: 'Mrs Patel was the group leader.',              a: true },
+      { id: 'tc2', s: 'Sophie was scared of the stories.',            a: false },
+      { id: 'tc3', s: 'It rained in the night.',                      a: true },
+      { id: 'tc4', s: 'After the rain the girls slept in their own tent.', a: false },
+    ],
+    adj: [
+      { id: 'ac1', pre: 'They told', post: 'stories.', opts: ['scary', 'strong', 'ill'], a: 'scary' },
+      { id: 'ac2', pre: 'Sophie\'s sleeping bag was', post: '.', opts: ['bored', 'wet', 'friendly'], a: 'wet' },
+      { id: 'ac3', pre: 'Mrs Patel made', post: 'chocolate for everybody.', opts: ['high', 'stupid', 'hot'], a: 'hot' },
+      { id: 'ac4', pre: 'Mia was', post: 'when they told the stories.', opts: ['scared', 'strong', 'high'], a: 'scared' },
+    ],
+    speech: [
+      { id: 'dc1', opts: ['"It\'s only a story"! she said.', '"It\'s only a story!" she said.', '"It\'s only a story! she said."'], a: 1 },
+      { id: 'dc2', opts: ['Mia shouted, "Help! Our tent is in the river!"', 'Mia shouted "Help! Our tent is in the river"!', 'Mia shouted, Help! "Our tent is in the river!"'], a: 0 },
+      { id: 'dc3', opts: ['"That was the best night of the trip." Sophie said.', '"That was the best night of the trip" Sophie said.', '"That was the best night of the trip," Sophie said.'], a: 2 },
+      { id: 'dc4', opts: ['"Where is my torch"? asked Mrs Patel.', '"Where is my torch?" asked Mrs Patel.', '"Where is my torch?," asked Mrs Patel.'], a: 1 },
+    ],
+    write: { title: 'Our camping trip', de: 'Schreib eine Geschichte über einen Zeltausflug, bei dem etwas Aufregendes passierte – echt oder ausgedacht.',
+             en: 'Write a story: <em>Our camping trip</em> (real or invented).',
+             prompt: 'Write a story: "Our camping trip" (real or invented).', ph: 'Last summer we went camping …' },
+  },
+  D: {
+    title: 'Lost in London', theme: '🚇 Verlaufen in London',
+    paras: [
+      '[[Last Easter]] Jack visited London with his mum and his little sister Amy. [[On Monday]] they went to [[Camden Market]]. It was very busy, and there were lots of interesting shops.',
+      'Jack wanted to see the old guitars in a [[music shop]], so he went inside. When he came out again, his mum and Amy weren\'t there. [[At first]] he looked for them, but he couldn\'t find them. Jack was scared.',
+      'Then he remembered his mum\'s rule: "If you get lost, stay where you are and ask for help." So he went back into the music shop. The [[shop assistant]] was very friendly. She called Jack\'s mum on her phone.',
+      '[[Ten minutes later]] his mum and Amy arrived. "There you are!" his mum said. "I was very worried!" Jack hugged her. [[After that]] they didn\'t leave each other for the rest of the day.',
+    ],
+    conn: CONN_ALL,
+    accept: ['and', 'last easter', 'on monday', 'ten minutes later', 'if'],
+    tf: [
+      { id: 'td1', s: 'Jack went to London with his dad.',                 a: false },
+      { id: 'td2', s: 'Jack went into a music shop.',                      a: true },
+      { id: 'td3', s: 'Jack\'s mum and Amy waited in front of the shop.',  a: false },
+      { id: 'td4', s: 'A shop assistant called Jack\'s mum.',              a: true },
+    ],
+    adj: [
+      { id: 'ad1', pre: 'Camden Market was very', post: '.', opts: ['busy', 'ill', 'bored'], a: 'busy' },
+      { id: 'ad2', pre: 'There were lots of', post: 'shops.', opts: ['hungry', 'interesting', 'angry'], a: 'interesting' },
+      { id: 'ad3', pre: 'The shop assistant was very', post: '.', opts: ['dark', 'high', 'friendly'], a: 'friendly' },
+      { id: 'ad4', pre: 'When Jack couldn\'t find his family, he was', post: '.', opts: ['scared', 'high', 'dark'], a: 'scared' },
+    ],
+    speech: [
+      { id: 'dd1', opts: ['"There you are!" his mum said.', '"There you are"! his mum said.', '"There you are! his mum said."'], a: 0 },
+      { id: 'dd2', opts: ['His mum said "I was very worried"!', 'His mum said, "I was very worried!"', 'His mum said, I was very worried!"'], a: 1 },
+      { id: 'dd3', opts: ['"Can I help you"? asked the shop assistant.', '"Can I help you?," asked the shop assistant.', '"Can I help you?" asked the shop assistant.'], a: 2 },
+      { id: 'dd4', opts: ['"I\'m lost," said Jack.', '"I\'m lost." said Jack.', '"I\'m lost" said Jack.'], a: 0 },
+    ],
+    write: { title: 'Lost in London', de: 'Schreib eine Geschichte: Du hast dich in London verlaufen – ausgedacht oder echt.',
+             en: 'Write a story: <em>Lost in London</em> (real or invented).',
+             prompt: 'Write a story: "Lost in London" (real or invented).', ph: 'Last year I visited London …' },
+  },
+  E: {
+    title: 'The storm', theme: '⛵ Bootsausflug im Sturm',
+    paras: [
+      '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
+      'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
+      'Hannah was scared, but she was brave. She gave Grandpa the [[life jackets]], and they both put them on. "Help me, please!" Grandpa shouted. Hannah pulled hard with him, and the boat slowly came back to the shore.',
+      '[[Half an hour later]] they were safe in Grandpa\'s [[little house]]. They were wet, so they drank hot tea by the fire. "You were really brave today," Grandpa said. Hannah laughed. "That was a boat trip I will never forget!"',
+    ],
+    conn: CONN_ALL,
+    accept: ['and', 'last october', 'half an hour later'],
+    tf: [
+      { id: 'te1', s: 'Hannah went on the boat trip with her grandpa.', a: true },
+      { id: 'te2', s: 'The weather was bad all day.',                   a: false },
+      { id: 'te3', s: 'They put on life jackets.',                      a: true },
+      { id: 'te4', s: 'They drank cold lemonade by the fire.',          a: false },
+    ],
+    adj: [
+      { id: 'ae1', pre: 'At first the water was', post: '.', opts: ['calm', 'angry', 'hungry'], a: 'calm' },
+      { id: 'ae2', pre: 'Then the sky got', post: '.', opts: ['friendly', 'dark', 'interesting'], a: 'dark' },
+      { id: 'ae3', pre: 'The boat moved up and down on the', post: 'waves.', opts: ['bored', 'stupid', 'high'], a: 'high' },
+      { id: 'ae4', pre: '"You were really', post: 'today," Grandpa said.', opts: ['brave', 'dark', 'high'], a: 'brave' },
+    ],
+    speech: [
+      { id: 'de1', opts: ['Grandpa said "We must go back now".', 'Grandpa said, "We must go back now."', 'Grandpa said, We must go back now."'], a: 1 },
+      { id: 'de2', opts: ['"You were really brave today," Grandpa said.', '"You were really brave today." Grandpa said.', '"You were really brave today" Grandpa said.'], a: 0 },
+      { id: 'de3', opts: ['"Is a storm coming"? asked Hannah.', '"Is a storm coming?," asked Hannah.', '"Is a storm coming?" asked Hannah.'], a: 2 },
+      { id: 'de4', opts: ['"Help me, please"! Grandpa shouted.', '"Help me, please!" Grandpa shouted.', '"Help me, please! Grandpa shouted."'], a: 1 },
+    ],
+    write: { title: 'A boat trip I will never forget', de: 'Schreib eine Geschichte über einen Bootsausflug, den du nie vergisst – echt oder ausgedacht.',
+             en: 'Write a story: <em>A boat trip I will never forget</em> (real or invented).',
+             prompt: 'Write a story: "A boat trip I will never forget" (real or invented).', ph: 'Last summer I went on a boat trip …' },
+  },
+};
+let STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
 const counts = k => CONNECTIVES.includes(k) || ACCEPT_TOO.includes(k);
-
-const TF = [
-  { id: 't1', s: 'It rained every day of the holiday.', a: false },
-  { id: 't2', s: 'Mr Hughes was the group leader.',     a: true  },
-  { id: 't3', s: 'Max broke his arm.',                  a: false },
-  { id: 't4', s: 'The family ate pizza in the evening.', a: true },
-];
-
-const ADJ = [
-  { id: 'a1', pre: 'Emma was', post: 'because it rained for three days.', opts: ['bored', 'strong', 'high'], a: 'bored' },
-  { id: 'a2', pre: 'They climbed up a', post: 'rock.', opts: ['stupid', 'high', 'ill'], a: 'high' },
-  { id: 'a3', pre: 'Max was very', post: 'when he climbed.', opts: ['excited', 'unfriendly', 'dark'], a: 'excited' },
-  { id: 'a4', pre: 'Mr Hughes said, "It isn\'t', post: '."', opts: ['interesting', 'serious', 'annoying'], a: 'serious' },
-];
-
-const SPEECH = [
-  { id: 'd1', opts: ['"Look at me!" he shouted.', '"Look at me! he shouted."', 'Look at me! "he shouted."'], a: 0 },
-  { id: 'd2', opts: ['Mr Hughes said "Don\'t worry".', 'Mr Hughes said, "Don\'t worry."', 'Mr Hughes said, Don\'t worry."'], a: 1 },
-  { id: 'd3', opts: ['"It isn\'t serious." he said.', '"It isn\'t serious" he said.', '"It isn\'t serious," he said.'], a: 2 },
-  { id: 'd4', opts: ['"Can I climb too"? asked Emma.', '"Can I climb too?" asked Emma.', '"Can I climb too?," asked Emma.'], a: 1 },
-];
 
 const WRITE_CONNECTIVES = ['first', 'at first', 'then', 'after that', 'next', 'later', 'because', 'but', 'so', 'suddenly', 'finally', 'in the end', 'when'];
 
@@ -455,11 +722,46 @@ let MAX = {};
 // ---------------------------------------------------------------------------
 // Zustand (nur in diesem Browser, für "später weitermachen")
 // ---------------------------------------------------------------------------
+// Arbeit A behält den alten Schlüssel; B–E und Z hängen -B … an.
 const STORE = 'klassenarbeit-camden-v1';
 const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), at: 'vocab' });
-let S = fresh();
-try { const raw = localStorage.getItem(STORE); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch (e) {}
-if (S.writeAi && (S.writeAi.wait || S.writeAi.err)) S.writeAi = null;
+// Arbeiten: A = die erste (feste Originalaufgaben), B–E feste eigene Aufgaben und
+// Lesetexte, Z = Zufallsarbeit. Jede Arbeit hat ihren eigenen Speicherstand.
+const TESTS = {
+  A: { story: 'A', color: 'var(--line-red)' },
+  B: { story: 'B', slot: 0, color: 'var(--line-blue)' },
+  C: { story: 'C', slot: 1, color: 'var(--line-green)' },
+  D: { story: 'D', slot: 2, color: 'var(--line-pink)' },
+  E: { story: 'E', slot: 3, color: 'var(--line-orange)' },
+  Z: { random: true, color: 'var(--line-purple)' },
+};
+const storeKey = k => k === 'A' ? STORE : STORE + '-' + k;
+const META_KEY = STORE + '-meta';
+const randSeed = () => 1 + Math.floor(Math.random() * 2147483646);
+function readState(k) {
+  try {
+    const raw = localStorage.getItem(storeKey(k));
+    if (!raw) return null;
+    const st = Object.assign(fresh(), JSON.parse(raw));
+    if (st.writeAi && (st.writeAi.wait || st.writeAi.err)) st.writeAi = null;
+    return st;
+  } catch (e) { return null; }
+}
+function newState(k) {
+  const st = fresh();
+  if (TESTS[k].random) { st.seed = randSeed(); st.story = 'ABCDE'[Math.floor(Math.random() * 5)]; }
+  return st;
+}
+function writeState(k, st) { try { localStorage.setItem(storeKey(k), JSON.stringify(st)); } catch (e) {} }
+// Zuletzt geöffnete Arbeit; ganz ohne Stand beginnt die Seite im Menü. Wer schon
+// in Arbeit A war (vor dem Menü), landet direkt wieder dort.
+let CUR = 'A', VIEW = 'menu';
+try {
+  const m = JSON.parse(localStorage.getItem(META_KEY) || 'null');
+  if (m && TESTS[m.cur]) { CUR = m.cur; VIEW = m.view === 'test' ? 'test' : 'menu'; }
+  else if (localStorage.getItem(storeKey('A'))) { CUR = 'A'; VIEW = 'test'; }
+} catch (e) {}
+let S = readState(CUR) || newState(CUR);
 // Nur für diese Sitzung: KI-Fehlermeldungen (je Aufgabe, 'write', 'plan') und „liest gerade“.
 const kiErr = new Map();
 let writeWait = false;
@@ -477,19 +779,38 @@ function shuffled(list, r) {
   return a;
 }
 function hash(str) { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; }
+// Feste Aufteilung für B–E: Der Vorrat (ohne die Aufgaben von A) wird einmal
+// fest gemischt und reihum verteilt; reicht er nicht, füllen Aufgaben der anderen
+// Arbeiten B–E auf, erst ganz zuletzt welche aus A.
+function split(base, pool, n, slot, salt) {
+  const ex = shuffled(pool, rng(hash('teil-' + salt)));
+  const mine = ex.filter((_, i) => i % 4 === slot);
+  const rest = shuffled(ex.filter((_, i) => i % 4 !== slot), rng(hash('fill-' + salt + slot)));
+  return mine.concat(rest, base).slice(0, n);
+}
 function applyVariant() {
+  const t = TESTS[CUR] || TESTS.A;
   const seed = S.seed || 0;
-  const r = seed ? rng(seed) : null;
-  const pick = (base, extra, n) => r ? shuffled(base.concat(extra), r).slice(0, n) : base.slice(0, n);
-  VOCAB = pick(BASE.VOCAB, VOCAB_EXTRA, 12);
-  IRREG = pick(BASE.IRREG, IRREG_EXTRA, 10);
-  GAPS  = pick(BASE.GAPS, GAPS_EXTRA, 5);
-  NEG   = pick(BASE.NEG, NEG_EXTRA, 5);
-  QUEST = pick(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), 4)
-            .concat(pick(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), 1));
-  SHORT = pick(BASE.SHORT, SHORT_EXTRA, 4);
-  TRANS = pick(BASE.TRANS, TRANS_EXTRA, 3);
-  ORDER = pick(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), 5);
+  let pick;
+  if (t.slot !== undefined) pick = (base, extra, more, n, salt) => split(base, extra.concat(more), n, t.slot, salt);
+  else if (seed) {
+    // Zufall: Arbeit Z mischt aus allem; eine früher gemischte Arbeit A nur aus dem
+    // alten Vorrat – dieselbe Reihenfolge der Aufrufe, damit sie gleich bleibt.
+    const r = rng(seed);
+    pick = (base, extra, more, n) => shuffled(base.concat(extra, t.random ? more : []), r).slice(0, n);
+  } else pick = (base, extra, more, n) => base.slice(0, n);
+  VOCAB = pick(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 12, 'vocab');
+  IRREG = pick(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 10, 'irreg');
+  GAPS  = pick(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 5, 'gaps');
+  NEG   = pick(BASE.NEG, NEG_EXTRA, NEG_MORE, 5, 'neg');
+  QUEST = pick(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), QUEST_MORE.filter(q => !q.words), 4, 'quest')
+            .concat(pick(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), QUEST_MORE.filter(q => q.words), 1, 'questw'));
+  SHORT = pick(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 4, 'short');
+  TRANS = pick(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 3, 'trans');
+  ORDER = pick(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 5, 'order');
+  const st = STORIES[t.random ? (STORIES[S.story] ? S.story : 'A') : t.story];
+  STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
+  TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
   ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
   MAX = {
     vocab: VOCAB.length,
@@ -508,7 +829,12 @@ function orderTiles(it) {
   for (let k = 0; k < it.c.length && it.en.includes(sentence(idx)); k++) idx.push(idx.shift());
   return idx;
 }
-function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+function saveMeta() { try { localStorage.setItem(META_KEY, JSON.stringify({ cur: CUR, view: VIEW })); } catch (e) {} }
+// Im Menü wird kein Stand angelegt – erst, wenn eine Arbeit geöffnet ist.
+function save() { if (VIEW === 'test') writeState(CUR, S); saveMeta(); }
+// Eine KI-Antwort kommt evtl. erst, wenn das Kind schon in einer anderen Arbeit ist:
+// dann in den Stand der Arbeit schreiben, aus der gefragt wurde.
+function saveFor(k, st) { if (st === S) { save(); render(); } else writeState(k, st); }
 
 // ---------------------------------------------------------------------------
 // KI (optional – ohne KI funktioniert alles, nur ohne Erklärungen)
@@ -700,11 +1026,13 @@ function typedItem(it, n, kind, promptHtml, opts = {}) {
   const ok = isRight(val, it.en, it);
   const cOk = S.claudeOk[it.id];
   const cls = done ? ((ok || cOk) ? 'ok' : 'no') : '';
+  const rv = reveal(opts.section);
   const input = `<input type="text" id="in-${it.id}" data-ans="${it.id}" value="${esc(val)}" autocomplete="off" autocapitalize="off" spellcheck="false" ${done ? 'disabled' : ''} placeholder="${opts.ph || ''}">`;
   let fb = '';
   if (done) {
     if (ok) fb = '<span class="right">✓ richtig</span>';
     else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
+    else if (!rv) fb = '<span class="wrong">–</span> nicht bearbeitet';
     else {
       fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(showSol(it, kind))}</span>`;
       if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="${kind}">🤖 Warum? / Stimmt meins auch?</button>`;
@@ -717,10 +1045,48 @@ function typedItem(it, n, kind, promptHtml, opts = {}) {
   return `<div class="item ${cls}"><span class="n">${n}</span><div class="body">${body}${done ? `<div class="fb">${fb}</div>` : ''}${ai}</div></div>`;
 }
 
+// Wie viele Aufgaben eines Teils sind noch leer – und wie viele gibt es?
+function emptyCount(key) {
+  const leer = list => list.filter(it => !String(S.answers[it.id] || '').trim()).length;
+  if (key === 'vocab') return [leer(VOCAB), VOCAB.length];
+  if (key === 'grammar') { const l = [IRREG, GAPS, NEG, QUEST, SHORT, TRANS]; return [l.reduce((p, x) => p + leer(x), 0), l.reduce((p, x) => p + x.length, 0)]; }
+  if (key === 'order') return [ORDER.filter(it => !(S.order[it.id] || []).length).length, ORDER.length];
+  if (key === 'reading') {
+    const l = [TF, ADJ, SPEECH];
+    return [l.reduce((p, x) => p + leer(x), 0) + (S.marks.length ? 0 : 1), l.reduce((p, x) => p + x.length, 0) + 1];
+  }
+  return [0, 0];
+}
+// Komplett leer abgegeben: Es gibt nichts zu verraten – Lösungen bleiben verborgen,
+// und die Abgabe lässt sich zurücknehmen.
+function partEmpty(key) { const [e, n] = emptyCount(key); return key !== 'writing' && n > 0 && e === n; }
+const reveal = key => !!S.done[key] && !partEmpty(key);
+let confirming = null;   // Teil, bei dem gerade „Wirklich abgeben?“ steht (nur Sitzung)
 function submitBar(key, label) {
   if (S.done[key]) {
-    return `<div class="actions"><span class="note">Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>.</span>
-      ${next(key)}</div>`;
+    const back = key === 'writing'
+      ? `<button type="button" class="btn ghost" data-reopen="writing">✏️ Weiterschreiben</button>`
+      : partEmpty(key) ? `<button type="button" class="btn ghost" data-reopen="${key}">↩️ Abgabe zurücknehmen</button>` : '';
+    const msg = partEmpty(key) ? 'Leer abgegeben – die Lösungen bleiben verborgen, bis du es versuchst.'
+      : `Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>.`;
+    return `<div class="actions"><span class="note">${msg}</span>
+      <span style="display:flex;flex-wrap:wrap;gap:8px">${back}${next(key)}</span></div>`;
+  }
+  if (confirming === key) {
+    let warn = '';
+    if (key === 'writing') {
+      const w = writingStats(S.writing).words;
+      if (w < 80) warn = `Du hast erst ${w} ${w === 1 ? 'Wort' : 'Wörter'} geschrieben.`;
+    } else {
+      const [e] = emptyCount(key);
+      if (e) warn = `Achtung: ${e} ${e === 1 ? 'Aufgabe ist' : 'Aufgaben sind'} noch leer.`;
+    }
+    const what = key === 'writing' ? 'Danach zählen deine Punkte. Weiterschreiben kannst du auch später noch.'
+      : 'Danach siehst du die Lösungen und kannst nichts mehr ändern.';
+    return `<div class="actions"><div class="confirm-box" role="alertdialog" aria-label="Wirklich abgeben?">
+      <span><b>Wirklich abgeben?</b> ${what}</span>${warn ? `<span class="warn">${warn}</span>` : ''}
+      <div class="row"><button type="button" class="btn" data-submit-yes="${key}">Ja, abgeben</button>
+      <button type="button" class="btn ghost" data-submit-no>Nein, weiterarbeiten</button></div></div></div>`;
   }
   return `<div class="actions"><span class="note">Du kannst alles noch ändern, bis du abgibst.</span>
     <button type="button" class="btn" data-submit="${key}">✔ ${label} abgeben</button></div>`;
@@ -795,6 +1161,7 @@ function renderOrder(sec) {
     if (done) {
       if (ok) fb = '<span class="right">✓ richtig</span>';
       else if (cOk) fb = '<span class="right">✓ von der KI als richtig erkannt</span>';
+      else if (!reveal('order')) fb = '<span class="wrong">–</span> nicht bearbeitet';
       else {
         fb = `<span class="wrong">✗</span> Lösung: <span class="sol">${esc(it.sol)}</span>`;
         if (kiOn() && val.trim() && !S.ai[it.id]) fb += ` <button type="button" class="btn small claude" data-why="${it.id}" data-kind="order">🤖 Warum? / Stimmt meins auch?</button>`;
@@ -836,7 +1203,7 @@ function renderStory(markable) {
     let cls = 'w';
     const marked = S.marks.includes(t.i);
     if (marked) cls += ' mark' + (done ? (counts(t.key) ? ' good' : ' badm') : '');
-    else if (done && CONNECTIVES.includes(t.key)) cls += ' missed';
+    else if (reveal('reading') && CONNECTIVES.includes(t.key)) cls += ' missed';
     return `${esc(t.pre)}<span class="${cls}" data-tok="${t.i}">${esc(t.txt)}</span>${esc(t.post)}`;
   }).join('')).map(p => `<p>${p}</p>`).join('');
   return `<div class="story ${markable && !done ? 'markable' : ''}"><h4>${STORY_TITLE}</h4>${paras}</div>`;
@@ -844,11 +1211,11 @@ function renderStory(markable) {
 
 function radio(id, value, label, done, correct) {
   const checked = S.answers[id] === String(value);
-  return `<label class="${done && correct ? 'is-sol' : ''}"><input type="radio" name="${id}" value="${value}" data-ans="${id}" ${checked ? 'checked' : ''} ${done ? 'disabled' : ''}> ${label}</label>`;
+  return `<label class="${done && correct && reveal('reading') ? 'is-sol' : ''}"><input type="radio" name="${id}" value="${value}" data-ans="${id}" ${checked ? 'checked' : ''} ${done ? 'disabled' : ''}> ${label}</label>`;
 }
 function choiceRow(id, n, inner, ok, done, solText) {
   return `<div class="item ${done ? (ok ? 'ok' : 'no') : ''}"><span class="n">${n}</span><div class="body">${inner}
-    ${done ? `<div class="fb">${ok ? '<span class="right">✓ richtig</span>' : `<span class="wrong">✗</span> Lösung: <span class="sol">${solText}</span>`}</div>` : ''}</div></div>`;
+    ${done ? `<div class="fb">${ok ? '<span class="right">✓ richtig</span>' : reveal('reading') ? `<span class="wrong">✗</span> Lösung: <span class="sol">${solText}</span>` : '<span class="wrong">–</span> nicht bearbeitet'}</div>` : ''}</div></div>`;
 }
 
 function renderReading(sec) {
@@ -859,7 +1226,7 @@ function renderReading(sec) {
       <p class="task">Tippe im Text auf <em>4 verschiedene connectives</em> – Wörter, die Sätze verbinden oder die Reihenfolge zeigen (wie <em>so</em> oder <em>finally</em>). Manche Bausteine bestehen aus zwei oder drei Wörtern. Ein falsch markiertes Wort kostet einen Punkt.</p>
       ${renderStory(true)}
       <p class="task" style="margin:10px 0 0">${done
-        ? `Richtig markiert: <b>${mr.good}</b> · falsch markiert: <b>${mr.bad}</b> → <b>${mr.pts} Punkte</b>. Grün umrandet: weitere connectives im Text.`
+        ? (reveal('reading') ? `Richtig markiert: <b>${mr.good}</b> · falsch markiert: <b>${mr.bad}</b> → <b>${mr.pts} Punkte</b>. Grün umrandet: weitere connectives im Text.` : 'Nichts markiert.')
         : `Markiert: <b>${S.marks.length}</b>. Nochmal tippen hebt die Markierung auf.`}</p></div>
     <div class="card"><h3>C2 · True or false? <span class="pts">${TF.length} Punkte</span></h3>
       <p class="task">Stimmt das laut Text?</p>
@@ -907,14 +1274,14 @@ function renderWriting(sec) {
     </div>`;
   }
   return head(sec, 'Schreib eine eigene Geschichte. Nimm dir dafür Zeit.') +
-    `<div class="card"><h3>D · My holiday adventure <span class="pts">${WRITING_MAX} Punkte</span></h3>
-      <p class="task">Schreib eine Abenteuergeschichte aus den Ferien – echt oder ausgedacht.<br>Write a story about a <em>holiday adventure</em> (real or invented). Give it a <em>title</em>. Write <em>80–120 words</em> in the <em>simple past</em>. Use <em>connectives</em>, <em>adjectives</em> and <em>direct speech</em> ("…").</p>
+    `<div class="card"><h3>D · ${esc(WRITE_TASK.title)} <span class="pts">${WRITING_MAX} Punkte</span></h3>
+      <p class="task">${WRITE_TASK.de}<br>${WRITE_TASK.en} ${WRITE_REST}</p>
       <div class="helpers">
         <div><b>Connectives</b>but, when, because, so, first, then, after that, suddenly, in the end</div>
         <div><b>Adjectives</b>exciting, scary, annoying, high, dark, strong, friendly, bored, interesting</div>
         <div><b>Useful verbs</b>went, saw, climbed, fell, jumped, shouted, said, called, laughed</div>
       </div>
-      <textarea id="in-writing" data-ans="writing" ${done ? 'disabled' : ''} placeholder="Last summer I went to …">${esc(S.writing)}</textarea>
+      <textarea id="in-writing" data-ans="writing" ${done ? 'disabled' : ''} placeholder="${esc(WRITE_TASK.ph)}">${esc(S.writing)}</textarea>
       <div class="meter" id="meter">${meterHtml(st)}</div>
       <div class="selfcheck">
         <b style="font-family:var(--font-display)">Checklist: Make sure you … <small style="font-family:var(--font-body);font-weight:400;color:var(--muted)">(wie im Buch)</small></b>
@@ -964,13 +1331,76 @@ function renderResult(sec) {
       ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
       <button type="button" class="btn claude" data-plan style="margin-top:8px">🤖 Was soll ich noch üben?</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
-      <p class="task">Eine neue Arbeit mischt andere Aufgaben aus einem größeren Vorrat (der Lesetext bleibt gleich). Deine jetzigen Antworten werden dabei gelöscht.</p>
-      <button type="button" class="btn ghost" data-reset>🔀 Neue Arbeit mit anderen Aufgaben</button>
-      <span id="reset-confirm" hidden> Sicher? <button type="button" class="btn small" data-reset-yes style="background:var(--bad)">Ja, alles löschen</button></span>
+      <p class="task">„Neu beginnen“ löscht deine Antworten in ${testName(CUR)} – die Aufgaben bleiben gleich.${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ' Andere Aufgaben findest du in den anderen Arbeiten.'}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <button type="button" class="btn ghost" data-reset>🔄 Diese Arbeit neu beginnen</button>
+        ${TESTS[CUR].random ? '<button type="button" class="btn ghost" data-newrandom>🎲 Neue Zufallsarbeit</button>' : ''}
+        <button type="button" class="btn" style="background:var(--line-purple)" data-menu>☰ Zu den Arbeiten</button>
+      </div>
+      <span id="reset-confirm" hidden> Sicher? <button type="button" class="btn small" data-reset-yes style="background:var(--bad)">Ja, Antworten löschen</button></span>
+      <span id="random-confirm" hidden> Sicher? Deine Zufallsarbeit wird gelöscht. <button type="button" class="btn small" data-newrandom-yes style="background:var(--bad)">Ja, neu mischen</button></span>
     </div>`;
 }
 
+const testName = k => TESTS[k].random ? 'der Zufallsarbeit' : 'Arbeit ' + k;
+function hasProgress(st) {
+  return Object.keys(st.answers).some(k => k !== 'plan' && !k.startsWith('ai-') && String(st.answers[k] || '').trim())
+    || Object.values(st.done).some(Boolean) || !!String(st.writing || '').trim() || st.marks.length > 0
+    || Object.values(st.order || {}).some(a => a && a.length);
+}
+// Stand einer Arbeit fürs Menü: kurz deren Aufgaben laden, rechnen, zurück.
+function testStatus(k) {
+  const st = readState(k);
+  const keepS = S, keepCur = CUR;
+  if (st) { S = st; CUR = k; }
+  else { S = TESTS[k].random ? Object.assign(fresh(), { story: null }) : fresh(); CUR = k; }
+  applyVariant();
+  const res = { title: TESTS[k].random && !st ? null : STORY_TITLE,
+                theme: TESTS[k].random && !st ? null : STORIES[TESTS[k].random ? (STORIES[S.story] ? S.story : 'A') : TESTS[k].story].theme };
+  if (st && hasProgress(st)) {
+    res.t = total(); res.m = totalMax(); res.all = PARTS.every(p => S.done[p]);
+    if (res.all) res.grade = grade(Math.floor(res.t / res.m * 100) / 100);
+  }
+  S = keepS; CUR = keepCur; applyVariant();
+  return res;
+}
+function renderMenu() {
+  const tiles = Object.keys(TESTS).map(k => {
+    const t = TESTS[k], st = testStatus(k);
+    const state = st.grade ? `<span class="t-state finished">✓ fertig · ${st.t}/${st.m} · Note ${st.grade[0]}</span>`
+      : st.t !== undefined ? `<span class="t-state started">angefangen · ${st.t} von ${st.m} Punkten</span>`
+      : '<span class="t-state">noch nicht begonnen</span>';
+    const title = t.random ? 'Zufallsarbeit' : esc(st.title);
+    const theme = t.random ? (st.title ? `heute: ${esc(st.title)}` : 'Aufgaben und Lesetext jedes Mal neu gemischt') : esc(st.theme);
+    return `<button type="button" class="test-tile ${k === CUR && hasProgress(S) ? 'current' : ''}" style="--c:${t.color}" data-open="${k}">
+      <span class="letter">${t.random ? '🎲' : k}</span><span class="t-title">${t.random ? '' : 'Arbeit ' + k + ' · '}${title}</span>
+      <span class="t-theme">${theme}</span>${state}</button>`;
+  }).join('');
+  return `<div class="menu-intro"><h2>Welche Arbeit schreibst du?</h2>
+      Jede Arbeit hat eigene Aufgaben und einen eigenen Lesetext. Dein Stand bleibt pro Arbeit gespeichert.</div>
+    <div class="tests">${tiles}</div>`;
+}
+function openTest(k) {
+  if (VIEW === 'test') writeState(CUR, S);
+  CUR = k; S = readState(k) || newState(k); VIEW = 'test'; confirming = null;
+  if (typeof kiErr !== 'undefined') kiErr.clear();
+  applyVariant(); save(); render(); window.scrollTo({ top: 0 });
+}
+function showMenu() {
+  if (VIEW === 'test') writeState(CUR, S);
+  VIEW = 'menu'; confirming = null; saveMeta(); render(); window.scrollTo({ top: 0 });
+}
+
 function render() {
+  const inMenu = VIEW === 'menu';
+  document.querySelector('nav.line').hidden = inMenu;
+  ['chip-clock', 'chip-total', 'chip-menu', 'chip-test'].forEach(id => { $('#' + id).hidden = inMenu; });
+  if (inMenu) {
+    document.documentElement.style.setProperty('--accent', 'var(--line-purple)');
+    $('#main').innerHTML = renderMenu();
+    return;
+  }
+  $('#chip-test').textContent = TESTS[CUR].random ? '🎲 Zufallsarbeit' : 'Arbeit ' + CUR;
   const sec = SECTIONS.find(s => s.key === S.at) || SECTIONS[0];
   document.documentElement.style.setProperty('--accent', sec.color);
   renderStations();
@@ -1037,16 +1467,34 @@ document.addEventListener('click', async e => {
     S.answers[id] = placed.map(i => it.c[i]).join(' ');
     save(); render(); return;
   }
-  if (b.dataset.submit) {
-    S.done[b.dataset.submit] = true; save(); render();
+  if (b.dataset.open) { openTest(b.dataset.open); return; }
+  if (b.hasAttribute('data-menu')) { showMenu(); return; }
+  if (b.dataset.submit) { confirming = b.dataset.submit; render(); return; }
+  if (b.hasAttribute('data-submit-no')) { confirming = null; render(); return; }
+  if (b.dataset.submitYes) {
+    confirming = null;
+    S.done[b.dataset.submitYes] = true; save(); render();
     window.scrollTo({ top: 0, behavior: 'smooth' }); return;
+  }
+  if (b.dataset.reopen) {
+    // Writing zeigt keine Lösungen; andere Teile nur, wenn sie leer abgegeben wurden.
+    const k = b.dataset.reopen;
+    if (k === 'writing' || partEmpty(k)) { S.done[k] = false; save(); render(); }
+    return;
   }
   if (b.dataset.why) { askWhy(b.dataset.why, b.dataset.kind, b); return; }
   if (b.hasAttribute('data-claude-write')) { askWriting(); return; }
   if (b.hasAttribute('data-plan')) { askPlan(b); return; }
   if (b.hasAttribute('data-reset')) { $('#reset-confirm').hidden = false; return; }
   if (b.hasAttribute('data-reset-yes')) {
-    S = fresh(); S.seed = 1 + Math.floor(Math.random() * 2147483646);
+    // Gleiche Aufgaben: seed und Lesetext bleiben, nur die Antworten gehen.
+    S = Object.assign(fresh(), { seed: S.seed, story: S.story });
+    confirming = null; if (typeof kiErr !== 'undefined') kiErr.clear();
+    applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
+  }
+  if (b.hasAttribute('data-newrandom')) { $('#random-confirm').hidden = false; return; }
+  if (b.hasAttribute('data-newrandom-yes')) {
+    S = newState(CUR); confirming = null; if (typeof kiErr !== 'undefined') kiErr.clear();
     applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
   }
 });
@@ -1069,6 +1517,7 @@ function taskText(kind, it) {
 async function askWhy(id, kind, btn) {
   if (!kiOn() || S.ai[id]) return;
   const it = ALL_TYPED[kind].find(x => x.id === id);
+  const mine = S, mineKey = CUR;
   const antwort = S.answers[id] || '', loesung = showSol(it, kind);
   btn.disabled = true;
   btn.textContent = '🤖 denkt nach …';
@@ -1076,23 +1525,24 @@ async function askWhy(id, kind, btn) {
   try {
     const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung, antwort }, 20000);
     const richtig = !!(r && r.richtig === true && plausibel(antwort, loesung));
-    S.ai[id] = { richtig, erklaerung: String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.' };
-    if (richtig) S.claudeOk[id] = true;
+    mine.ai[id] = { richtig, erklaerung: String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.' };
+    if (richtig) mine.claudeOk[id] = true;
   } catch (err) {
-    kiErr.set(id, kiFail(err));
+    if (mine === S) kiErr.set(id, kiFail(err));
   }
-  save(); render();
+  saveFor(mineKey, mine);
 }
 
 async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
+  const mine = S, mineKey = CUR;
   writeWait = true; kiErr.delete('write'); render();
   try {
     const r = await kiFrage('text', { text }, 45000);
     const punkte = Number(r && r.punkte);
     if (!isFinite(punkte)) throw { code: 'fehler' };
-    S.writeAi = {
+    mine.writeAi = {
       text,
       punkte,
       lob: Array.isArray(r.lob) ? r.lob.filter(x => typeof x === 'string').slice(0, 3) : [],
@@ -1100,15 +1550,17 @@ async function askWriting() {
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
     };
   } catch (err) {
-    kiErr.set('write', kiFail(err));
+    if (mine === S) kiErr.set('write', kiFail(err));
   }
   writeWait = false;
-  save(); render();
+  saveFor(mineKey, mine);
+  if (mine !== S) render();
 }
 
 async function askPlan(btn) {
   if (!kiOn()) return;
   btn.disabled = true; btn.textContent = '🤖 denkt nach …';
+  const mine = S, mineKey = CUR;
   kiErr.delete('plan');
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
@@ -1128,17 +1580,18 @@ async function askPlan(btn) {
       ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
       fehler: zeilen.join('\n'),
     }, 30000);
-    S.answers.plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+    mine.answers.plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
   } catch (err) {
-    kiErr.set('plan', kiFail(err));
+    if (mine === S) kiErr.set('plan', kiFail(err));
   }
-  save(); render();
+  saveFor(mineKey, mine);
 }
 
 // ---------------------------------------------------------------------------
 // Uhr
 // ---------------------------------------------------------------------------
 function tick() {
+  if (VIEW !== 'test') return;
   const s = Math.max(0, Math.floor((Date.now() - S.start) / 1000));
   $('#clock').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
 }
