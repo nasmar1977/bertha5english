@@ -154,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.6
+**Version:** 2.34.0
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -203,6 +203,23 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.0 (25.10.2026)
+- **📈 Mein Lernstand** (Klassenarbeit, nur im Browser): Ergebnisse aller abgegebenen Teile aus A–E, Zufallsarbeit,
+  früheren Durchgängen (`…-verlauf`, beim Neubeginn archiviert) und Trainings, je Fertigkeit (Wörter, unregelmäßige
+  Verben, Sätze, Verneinung, Fragen, Kurzantworten, Satzbau, Übersetzen, Lesen ×4, Geschichte ×6, Rechtschreibung)
+  mit Markern pro Arbeit und Quote. Abgabe-Zeitstempel `S.doneAt` (alte Stände nach Arbeitsreihenfolge).
+  „Hartnäckig“ = Fehler in ≥ 2 Arbeiten/Durchgängen; „Geschafft“ = früher falsch, zuletzt alles richtig.
+- **Fehlermuster ohne KI** (`muster()`): didn't + Vergangenheit, did + Vergangenheit (nur wenn die Form aus dem
+  vorgegebenen Satz stammt bzw. echt unregelmäßig ist), was/were statt did, unregelmäßiges Verb mit -ed (je Verb),
+  Zeitangabe zwischen Verb und Objekt, Kurzantwort mit falschem Hilfsverb/Pronomen, Rechtschreibwort mehrfach,
+  Geschichten-Kriterium ≤ 1 mehrfach. Lieber unerkannt als falsch erkannt.
+- **🤖 Gesamt-Lernplan**: verdichtete Übersicht (≤ 2500 Zeichen, keine Einzelantworten außer ≤ 2 Beispielen) an
+  den Worker (`/lernplan` mit `modus: 'gesamt'`, gleiche Zählung) bzw. an Claude; gespeichert mit Datenstand,
+  „aktualisieren“ bei neuen Abgaben.
+- **🎯 Training**: 8–12 Aufgaben zu den hartnäckigen Fertigkeiten, bevorzugt aus keiner Arbeit, sonst früher
+  falsche, plus Rechtschreibwörter; Verrat-Filter wie B–E; zählt nicht für Noten, fließt als „Training“ in den
+  Lernstand. Bestehende Stände, Punkte, Auswahl und Markierungen bleiben unverändert.
 
 ### Version 2.33.6 (25.10.2026)
 - **Strukturierte Bewertung** (Anlass: echter Gemini-Lauf, Flash-Lite hielt Regeln nicht ein). Schema mit
