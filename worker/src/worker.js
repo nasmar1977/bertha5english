@@ -336,7 +336,7 @@ function textZahlen(text) {
 // Falsch geschriebene -ed-Formen (stoped, tryed): als falsche Verbform zählen? (Entscheidung des Vaters: ja)
 const ED_SCHREIBUNG_IST_VERBFEHLER = true;
 const ED_REGEL = ED_SCHREIBUNG_IST_VERBFEHLER
-  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Ausnahmen: pay → paid, say → said, lay → laid – das sind falsch gebildete Formen, kein „Fast richtig“. Die Regeln: Ein einzelner Vokalbuchstabe + ein Konsonant am Ende, Silbe betont → verdoppeln (stop → stopped, plan → planned); nicht bei zwei Vokalen (look → looked, rain → rained), nicht bei w/x/y (showed, fixed), nicht bei unbetontem Ende (visit → visited). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig. Im warum nur die Regel, die zum Wort passt, in Kindersprache (z. B. „kurzer Laut, ein Mitlaut am Ende → Mitlaut doppelt“).'
+  ? 'Falsch geschriebene -ed-Formen (stoped, tryed, planed) zählst du als falsche Verbform. Für sie schreibst du einen eigenen Eintrag in "fehler" (nicht mit anderen Verbfehlern zusammengefasst); nur dort beginnt warum mit „Fast richtig – guter Versuch!“ – nie bei falsch gebildeten Formen (sayed, goed) oder present perfect. Nach „Fast richtig – guter Versuch!“ höchstens 2 kurze Sätze. Ausnahmen: pay → paid, say → said, lay → laid – das sind falsch gebildete Formen, kein „Fast richtig“. Die Regeln: Ein einzelner Vokalbuchstabe + ein Konsonant am Ende, Silbe betont → verdoppeln (stop → stopped, plan → planned); nicht bei zwei Vokalen (look → looked, rain → rained), nicht bei w/x/y (showed, fixed), nicht bei unbetontem Ende (visit → visited). Endet das Verb auf stummes e, nur -d (like → liked, hope → hoped). try → tried: Konsonant + y → ied; Vokal + y bleibt (play → played). travelled und traveled sind beide richtig. Im warum nur die Regel, die zum Wort passt, in Kindersprache (z. B. „kurzes Wort, kurzer Laut, ein Mitlaut am Ende → Mitlaut doppelt (stop → stopped). Bei langen Wörtern wie visit oder happen nicht.“).'
   : 'Richtig gebildet, nur falsch geschrieben (stoped) ist Rechtschreibung, keine falsche Verbform.';
 // derselbe Schalter für den Satz bei rechtschreibung
 const ED_RS = ED_SCHREIBUNG_IST_VERBFEHLER
@@ -375,8 +375,8 @@ Zähle zuerst, die Seite rechnet daraus selbst:
 - falsche_verbformen: jede falsche Verbform in der Erzählung einzeln (dasselbe Verb, gleich falsch, nur einmal). Falsch ist: falsch gebildet (goed, go statt went, didn't went, we was) oder present perfect statt simple past (we have seen → we saw). ${ED_REGEL} In direkter Rede ist jede passende Zeitform richtig (Präsens, Imperativ, will, present perfect – "Look at me!" he shouted.).
 - falsche_woerter: deutsche oder falsche Wörter und Ausdrücke, auch Präpositionen und Artikel (handy, make a walk, become statt get, at the evening). Rechtschreibfehler zählen hier nicht.
 - rechtschreibung: alle echten Rechtschreibfehler an englischen Wörtern als {falsch, richtig}, jedes Wort nur einmal, höchstens 10. Ohne deutsche Wörter. ${ED_RS} Amerikanische Schreibung (color, favorite, mom, traveled) ist kein Fehler.
-- thema_verfehlt: true nur, wenn die Geschichte nichts mit der Aufgabe zu tun hat, nicht auf Englisch ist oder den Lesetext nacherzählt. Ein gewöhnlicher Tag zu Hause (z. B. Computerspiel am Wochenende) hat nichts mit der Aufgabe zu tun – es sei denn, das Thema der Aufgabe passiert darin. Passt sie nur teilweise, ist das kein verfehltes Thema – dann ist thema_teilweise true und wwww höchstens 2.
-- thema_teilweise: true, wenn die Geschichte nur teilweise zur Aufgabe passt. Nacherzählung heißt: Namen der Figuren aus dem Lesetext und gleicher Ablauf; eine ähnliche Idee mit eigenen Figuren ist erlaubt.
+- thema_verfehlt: true nur, wenn die Geschichte nichts mit der Aufgabe zu tun hat, nicht auf Englisch ist oder den Lesetext nacherzählt. Ein gewöhnlicher Tag zu Hause (z. B. Computerspiel am Wochenende) hat nichts mit der Aufgabe zu tun – es sei denn, das Thema der Aufgabe passiert darin. Passt sie nur teilweise, ist das kein verfehltes Thema – dann ist thema_teilweise true und wwww höchstens 2. Nacherzählung heißt: Namen der Figuren aus dem Lesetext und gleicher Ablauf; eine ähnliche Idee mit eigenen Figuren ist erlaubt.
+- thema_teilweise: true nur, wenn das Thema der Aufgabe bloß am Rand vorkommt (z. B. in ein, zwei Sätzen) und die Geschichte sonst von etwas anderem handelt; kommt das Thema richtig vor, false. Ist thema_verfehlt true, ist thema_teilweise false.
 
 Bewerte dann sechs Kriterien nach der Checkliste aus dem Schulbuch, jedes mit 0 bis 3 Punkten. Wende die Grenzen aus den Zählfeldern selbst an, bevor du Kriterien, Lob und Tipps schreibst:
 - wwww: Who? What? Where? When? (Personen, was passiert, Ort, Zeitpunkt). 3 = alle vier, und When ist konkret; 2 = drei davon oder When ungenau; 1 = eins oder zwei; 0 = keins. Konkret sind z. B. Last summer, On Monday, in the evening, in the summer holidays, in the Easter holidays. Nur „in the holidays“ ist ungenau.
@@ -452,7 +452,14 @@ function bewertung(o, text) {
   if (z.conn < 2) k.connectives = Math.min(k.connectives, 1);
   let punkte = KRITERIEN.reduce((s, n) => s + k[n], 0);
   if (z.woerter < 80) punkte = Math.round(punkte * 0.75);
-  const kurzText = (x, n) => typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, n) : '';
+  // Kürzen an der Wortgrenze, mit „…“ (höchstens n Zeichen)
+  const kurzText = (x, n) => {
+    if (typeof x !== 'string') return '';
+    const s = x.replace(/\s+/g, ' ').trim();
+    if (s.length <= n) return s;
+    const cut = s.slice(0, n - 1), i = cut.lastIndexOf(' ');
+    return (i > n / 2 ? cut.slice(0, i) : cut).replace(/[\s,;:–-]+$/, '') + '…';
+  };
   // Lob nur zu Kriterien, die am Ende mehr als 1 Punkt haben (alte Antworten: einfache Texte)
   const lob = [];
   for (const l of Array.isArray(o.lob) ? o.lob : []) {

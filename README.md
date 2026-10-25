@@ -156,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.2
+**Version:** 2.34.3
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -205,6 +205,18 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.3 (25.10.2026)
+- **KI-Bewertung bei der Abgabe** (Wunsch des Vaters): „Ja, abgeben“ bei Writing startet die KI-Bewertung
+  automatisch, wenn KI verfügbar ist (online Worker an, im Artefakt `sample`), der Text mindestens 30 Wörter hat und
+  noch nicht bewertet ist (`aiCurrent()`, Vergleich nach trim). Der Teil ist sofort abgegeben, die eingefrorenen
+  `selfPts` gelten bis zur Antwort „(vorläufig)“. Scheitert die KI, bleiben sie, dazu „🤖 Später nochmal bewerten
+  lassen“; alte abgegebene Geschichten ohne Bewertung bekommen „🤖 Jetzt von der KI bewerten lassen“ – beides bewertet
+  den abgegebenen Text, ohne ihn zu öffnen. Keine doppelte Bewertung desselben Texts, auch nicht nach Weiterschreiben
+  ohne Änderung. „Weiterschreiben“ mit geändertem Text während der Anfrage verwirft die Antwort.
+- **Bewertung**: ED-Regel mit stummem e (like → liked), höchstens 2 kurzen Sätzen nach „Fast richtig“ und neuem
+  Kindersprache-Beispiel; „Nacherzählung heißt …“ wieder bei thema_verfehlt; thema_teilweise nur, wenn das Thema bloß am
+  Rand vorkommt. `kurzText` kürzt an der Wortgrenze mit „…“.
 
 ### Version 2.34.2 (25.10.2026)
 - **Selbstpunkte eingefroren**: Bei der Abgabe von Writing speichert die Seite `S.selfPts`; ohne gültige KI-Bewertung

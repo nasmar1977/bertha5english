@@ -1090,6 +1090,8 @@ function myDeviceId() {
 // 'aus' bis der Worker sich gemeldet hat; 'weg' nach 429/503 (für diese Sitzung).
 let kiStatus = 'aus';
 const kiOn = () => kiStatus === 'an' && navigator.onLine !== false;
+// Abgabe der Geschichte startet die KI-Bewertung – nie für einen schon bewerteten Text (aiCurrent).
+const kiAuto = () => kiOn() && !aiCurrent() && writingStats(S.writing).words >= 30;
 // Prüfen, ob der Worker die Klassenarbeit-Routen kennt – ohne eine Frage zu
 // verbrauchen: Ohne Aufgabe antwortet er mit 400, bevor er zählt.
 async function kiProbe() {
@@ -1328,7 +1330,7 @@ function submitBar(key, label) {
       ? `<button type="button" class="btn ghost" data-reopen="writing">✏️ Weiterschreiben</button>`
       : partEmpty(key) ? `<button type="button" class="btn ghost" data-reopen="${key}">↩️ Abgabe zurücknehmen</button>` : '';
     const msg = partEmpty(key) ? 'Leer abgegeben – die Lösungen bleiben verborgen, bis du es versuchst.'
-      : `Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>.`;
+      : `Abgegeben: <b>${points(key)} von ${MAX[key]} Punkten</b>${key === 'writing' && !aiCurrent() ? ' (vorläufig)' : ''}.`;
     return `<div class="actions"><span class="note">${msg}</span>
       <span style="display:flex;flex-wrap:wrap;gap:8px">${back}${next(key)}</span></div>`;
   }
@@ -1341,7 +1343,8 @@ function submitBar(key, label) {
       const [e] = emptyCount(key);
       if (e) warn = `Achtung: ${e} ${e === 1 ? 'Aufgabe ist' : 'Aufgaben sind'} noch leer.`;
     }
-    const what = key === 'writing' ? 'Danach zählen deine Punkte. Weiterschreiben kannst du auch später noch.'
+    const what = key === 'writing' ? (kiAuto() ? 'Danach liest die KI deine Geschichte und vergibt die Punkte. Weiterschreiben kannst du auch später noch.'
+      : 'Danach zählen deine Punkte. Weiterschreiben kannst du auch später noch.')
       : 'Danach siehst du die Lösungen und kannst nichts mehr ändern.';
     return `<div class="actions"><div class="confirm-box" role="alertdialog" aria-label="Wirklich abgeben?">
       <span><b>Wirklich abgeben?</b> ${what}</span>${warn ? `<span class="warn">${warn}</span>` : ''}
@@ -1544,7 +1547,7 @@ function renderWriting(sec) {
   const ai = S.writeAi;
   let aiHtml = '';
   const waiting = writeBusy.has(busyKey());
-  if (waiting) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
+  if (waiting) aiHtml = `<div class="claude-box wait">🤖 liest deinen Text … das dauert ein paar Sekunden.${done ? ' Bis dahin gelten deine Punkte vorläufig.' : ''}</div>`;
   else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
   if (ai && !waiting) {
     aiHtml = `<div class="wf">
@@ -1574,6 +1577,9 @@ function renderWriting(sec) {
       ${kiOn() && !done && !waiting ? `<div style="margin-top:12px">
         <button type="button" class="btn claude" id="ki-write" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
         <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
+      ${done && !waiting && !aiCurrent() && st.words >= 30 && (kiOn() || kiErr.has('write')) ? `<div style="margin-top:12px">
+        <button type="button" class="btn claude" data-claude-write>${kiErr.has('write') ? '🤖 Später nochmal bewerten lassen' : '🤖 Jetzt von der KI bewerten lassen'}</button>
+        <span class="note" style="color:var(--muted);font-size:.88rem">Bis dahin gelten deine Punkte vorläufig.</span></div>` : ''}
       ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
     </div>` +
     submitBar('writing', 'Text');
@@ -1783,8 +1789,10 @@ document.addEventListener('click', async e => {
     confirming = null;
     S.done[b.dataset.submitYes] = true;
     S.doneAt = Object.assign({}, S.doneAt, { [b.dataset.submitYes]: Date.now() });   // für den Lernstand
+    const auto = b.dataset.submitYes === 'writing' && kiAuto();                     // vor der Abgabe prüfen
     if (b.dataset.submitYes === 'writing') S.selfPts = writingSelfPoints();         // Punkte ohne KI einfrieren
     save(); render();
+    if (auto) askWriting();   // KI bewertet den abgegebenen Text; bis dahin gelten die selfPts vorläufig
     window.scrollTo({ top: 0, behavior: 'smooth' }); return;
   }
   if (b.dataset.reopen) {
@@ -1795,7 +1803,11 @@ document.addEventListener('click', async e => {
   }
   if (spellClick(b)) return;
   if (b.dataset.why) { askWhy(b.dataset.why, b.dataset.kind, b); return; }
-  if (b.hasAttribute('data-claude-write')) { askWriting(); return; }
+  if (b.hasAttribute('data-claude-write')) {
+    if (!kiOn() && navigator.onLine !== false) await kiProbe();   // „Später nochmal“: ist sie wieder da?
+    if (!kiOn()) { kiErr.set('write', 'Die KI ist gerade nicht erreichbar. Versuch es später nochmal.'); render(); return; }
+    askWriting(); return;
+  }
   if (b.hasAttribute('data-plan')) { askPlan(b); return; }
   if (b.hasAttribute('data-reset')) { $('#reset-confirm').hidden = false; return; }
   if (b.hasAttribute('data-reset-yes')) {
@@ -1853,7 +1865,7 @@ async function askWhy(id, kind, btn) {
 async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
-  const mineKey = CUR, tag = runTag(S), wbusy = busyKey();
+  const mineKey = CUR, tag = runTag(S), wbusy = busyKey(), abgegeben = !!S.done.writing;
   if (writeBusy.has(wbusy)) return;
   writeBusy.add(wbusy); kiErr.delete('write'); render();
   try {
@@ -1872,10 +1884,11 @@ async function askWriting() {
     };
     writeBusy.delete(wbusy);
     // Eine ältere Antwort überschreibt keine gültige Bewertung des jetzigen Texts.
-    applyFor(mineKey, st => { if (runTag(st) !== tag || (st.writeAi && typeof st.writeAi.punkte === 'number' && st.writeAi.text === st.writing.trim() && res.text !== st.writing.trim())) return false; st.writeAi = res; });
+    // Abgegebener Text: nach „Weiterschreiben“ mit geändertem Text zählt die Antwort nicht mehr.
+    applyFor(mineKey, st => { if (runTag(st) !== tag || (abgegeben && res.text !== st.writing.trim()) || (st.writeAi && typeof st.writeAi.punkte === 'number' && st.writeAi.text === st.writing.trim() && res.text !== st.writing.trim())) return false; st.writeAi = res; });
   } catch (err) {
     writeBusy.delete(wbusy);
-    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag) kiErr.set('write', kiFail(err));
+    if (VIEW === 'test' && CUR === mineKey && runTag(S) === tag && !(abgegeben && text !== S.writing.trim())) kiErr.set('write', kiFail(err));
   }
   if (CUR === mineKey || VIEW === 'menu') render();
 }
