@@ -24,11 +24,12 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **📝 Klassenarbeit üben** (`klassenarbeit.html`, Kachel unter den Themen): Probe-Arbeit zu Theme 1 nach den
   Themen der echten Arbeit — Wortschatz, Simple past (Verbraster, Lücken, Verneinung, Fragen, Short answers,
   Übersetzen mit Wortstellung), Satzbau-Puzzle, Lesetext (connectives, true/false, adjectives, direct speech),
-  Geschichte „Holiday adventure“ nach der Buch-Checkliste. Punkte und Übungsnote; Varianten über einen
-  Startmenü mit Arbeit A–E (feste, sich nicht mit A überschneidende Aufgaben, je eigener Lesetext und eigene
-  Schreibaufgabe) und Zufallsarbeit, eigener Stand pro Arbeit (A = alter Schlüssel). Abgabe mit Rückfrage;
-  Writing lässt sich wieder öffnen, leer abgegebene Teile auch (Lösungen bleiben dann verborgen). KI über den Worker (`/pruefen`, `/text`, `/lernplan`),
-  Knöpfe nur, wenn der Worker die Routen kennt. Eigener Speicher `klassenarbeit-camden-v1`, gleiche Geräte-ID
+  Geschichte nach der Buch-Checkliste. Punkte und Übungsnote; Startmenü mit Arbeit A–E (feste Aufgaben, die sich
+  nicht mit A überschneiden, je eigener Lesetext und eigene Schreibaufgabe) und Zufallsarbeit. Abgabe mit Rückfrage;
+  Writing lässt sich wieder öffnen, komplett leer abgegebene Teile auch (Lösungen bleiben dann verborgen). KI über
+  den Worker (`/pruefen`, `/text`, `/lernplan`), Knöpfe nur, wenn der Worker die Routen kennt. Speicher pro Arbeit:
+  A `klassenarbeit-camden-v1` (der alte Schlüssel), B–E und Zufall `klassenarbeit-camden-v1-B` … `-Z`, dazu
+  `klassenarbeit-camden-v1-meta` (zuletzt geöffnete Arbeit); gleiche Geräte-ID wie der Trainer.
 - Spelling-Modus (DE→EN): Buchstaben-Tiles zum englischen Wort zusammensetzen
 - Multiple-Choice-Modus (EN→DE): 5 Optionen mit kuratierten Distraktoren
 - Zufällige Modus-Zuweisung pro Wort in jeder Runde — außer bei Einträgen mit Klammern,
@@ -153,7 +154,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.33.0
+**Version:** 2.33.1
 **Datum:** 25.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -202,6 +203,19 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.33.1 (25.10.2026)
+- Zwei Prüfberichte zu 2.33.0 eingearbeitet.
+- **KI-Antworten ohne Datenverlust**: `applyFor(arbeit, fn)` spielt nur die Änderung ein – in die offene Arbeit
+  oder in den gespeicherten Stand einer anderen (auch bei offenem Menü). `writeWait` gilt pro Arbeit.
+- **Verräter gefiltert** (nur B–E und Zufall; A und alte Seeds unverändert): Keine Vokabel, deren Lösung schon auf
+  dem Blatt steht (Verbraster, Lücken, Sätze, Bausteine, Lesetext), kein Verb in Raster und Lücke zugleich.
+- **Neu beginnen** nur nach kompletter Abgabe, mit Hinweis auf die bekannten Lösungen; im Menü „2. Durchgang“.
+- **Alte Stände**: schon abgegebene Teile gelten als gesehen (`revealed`), kein Zurücknehmen; Writing bleibt offen.
+- **Uhr** zählt nur bei offener, sichtbarer Arbeit (`elapsed`). Rückfrage verschwindet beim Stationswechsel.
+- Inhalt: 8 Kurzantworten und 4 Übersetzungen mehr (jede Arbeit B–E hat eigene), Varianten ergänzt, Texte B/C/D/E
+  geschärft (Hut weggeweht, Strandregel, Schwimmwesten, Ruder), C ac4 neu, Schreibaufgabe D „The day I got lost“,
+  überall „Write your own story – don't retell the text.“
 
 ### Version 2.33.0 (25.10.2026)
 - **Klassenarbeit – Menü mit Arbeit A–E und Zufallsarbeit.** A bleibt die bisherige Arbeit (Speicher

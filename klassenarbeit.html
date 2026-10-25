@@ -424,17 +424,17 @@ const VOCAB_MORE = [
   { id: 'v33', de: 'springen',                     en: ['jump'], verb: true },
   { id: 'v34', de: 'der Leiter / die Leiterin (einer Gruppe)', en: ['leader', 'group leader'] },
   { id: 'v35', de: 'zeigen',                       en: ['show'], verb: true },
-  { id: 'v36', de: '(aus)wählen',                  en: ['choose'], verb: true },
+  { id: 'v36', de: '(aus)wählen',                  en: ['choose', 'pick', 'select'], verb: true },
   { id: 'v37', de: 'planen',                       en: ['plan'], verb: true },
   { id: 'v38', de: 'interessant',                  en: ['interesting'] },
-  { id: 'v39', de: 'die Pause (in der Schule)',    en: ['break', 'break time'] },
+  { id: 'v39', de: 'die Pause (in der Schule)',    en: ['break', 'break time', 'playtime'] },
   { id: 'v40', de: 'unfreundlich',                 en: ['unfriendly'] },
   { id: 'v41', de: '(an)rufen',                    en: ['call', 'phone', 'ring'], verb: true },
-  { id: 'v42', de: 'dumm, blöd',                   en: ['stupid'] },
-  { id: 'v43', de: 'verlassen, weggehen',          en: ['leave'], verb: true },
+  { id: 'v42', de: 'dumm, blöd',                   en: ['stupid', 'silly'] },
+  { id: 'v43', de: 'verlassen, weggehen',          en: ['leave', 'go away'], verb: true },
   { id: 'v44', de: 'vorbereiten',                  en: ['prepare'], verb: true },
   { id: 'v45', de: 'die Präsentation',             en: ['presentation'] },
-  { id: 'v46', de: 'nicht einverstanden sein',     en: ['disagree'], verb: true },
+  { id: 'v46', de: 'nicht einverstanden sein',     en: ['disagree', 'not agree', "don't agree"], verb: true },
   { id: 'v47', de: '(um)fallen, stürzen',          en: ['fall', 'fall down', 'fall over'], verb: true },
   { id: 'v48', de: '(zu)schicken',                 en: ['send'], verb: true },
   { id: 'v49', de: 'die Gruppe',                   en: ['group'] },
@@ -493,13 +493,27 @@ const SHORT_MORE = [
   { id: 's11', q: 'Did the students break the rules?',    yn: 'No,',  en: ["they didn't"], sol: "they didn't." },
   { id: 's12', q: 'Was the hotel nice?',                  yn: 'Yes,', en: ['it was'], sol: 'it was.' },
   { id: 's13', q: 'Did your dad drive to Scotland?',      yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
+  { id: 's14', q: 'Did you call your grandma?',           yn: 'Yes,', en: ['i did', 'we did'], sol: 'I did.' },
+  { id: 's15', q: 'Were the waves high?',                 yn: 'Yes,', en: ['they were'], sol: 'they were.' },
+  { id: 's16', q: 'Did Ben bring his phone?',             yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
+  { id: 's17', q: 'Was the museum interesting?',          yn: 'No,',  en: ["it wasn't"], sol: "it wasn't." },
+  { id: 's18', q: 'Did your sister swim in the sea?',     yn: 'Yes,', en: ['she did'], sol: 'she did.' },
+  { id: 's19', q: 'Were you tired after the trip?',       yn: 'No,',  en: ["i wasn't", "we weren't"], sol: "I wasn't." },
+  { id: 's20', q: 'Did the children win the game?',       yn: 'Yes,', en: ['they did'], sol: 'they did.' },
+  { id: 's21', q: 'Was Mr Hughes angry?',                 yn: 'No,',  en: ["he wasn't"], sol: "he wasn't." },
 ];
 const TRANS_MORE = [
-  { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake'], sol: 'We swam in the lake last week.' },
+  { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake', 'we went swimming in the lake last week', 'last week we went swimming in the lake'], sol: 'We swam in the lake last week.' },
   { id: 'r8',  de: 'Tom verlor gestern sein Handy.',         en: ['tom lost his phone yesterday', 'yesterday tom lost his phone', 'tom lost his mobile yesterday', 'yesterday tom lost his mobile', 'tom lost his mobile phone yesterday', 'yesterday tom lost his mobile phone'], sol: 'Tom lost his phone yesterday.' },
-  { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza'], sol: 'We ate pizza in the evening.' },
-  { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['i met my friend at the station', 'i met my friend at the train station', 'i met my girlfriend at the station'], sol: 'I met my friend at the station.' },
+  { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza', 'we had pizza in the evening', 'in the evening we had pizza'], sol: 'We ate pizza in the evening.' },
+  { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['i met my friend at the station', 'i met my friend at the train station', 'i met my girlfriend at the station', 'i met my girlfriend at the train station',
+        'i met up with my friend at the station', 'i met up with my friend at the train station', 'i met up with my girlfriend at the station', 'i met up with my girlfriend at the train station'], sol: 'I met my friend at the station.' },
   { id: 'r11', de: 'Meine Schwester schrieb gestern eine Postkarte.', en: ['my sister wrote a postcard yesterday', 'yesterday my sister wrote a postcard'], sol: 'My sister wrote a postcard yesterday.' },
+  { id: 'r12', de: 'Mein Bruder schlief gestern im Zelt.',  en: ['my brother slept in the tent yesterday', 'yesterday my brother slept in the tent'], sol: 'My brother slept in the tent yesterday.' },
+  { id: 'r13', de: 'Wir besuchten letzten Sommer London.',  en: ['we visited london last summer', 'last summer we visited london', 'we went to london last summer', 'last summer we went to london'], sol: 'We visited London last summer.' },
+  { id: 'r14', de: 'Die Kinder spielten nach der Schule Fußball.', en: ['the children played football after school', 'after school the children played football'], sol: 'The children played football after school.' },
+  { id: 'r15', de: 'Ich sah am Freitag einen Film.',        en: ['i saw a film on friday', 'on friday i saw a film', 'i watched a film on friday', 'on friday i watched a film',
+        'i saw a movie on friday', 'on friday i saw a movie', 'i watched a movie on friday', 'on friday i watched a movie'], sol: 'I saw a film on Friday.' },
 ];
 const ORDER_MORE = [
   { id: 'o11', c: ['swam', 'in the sea', 'we', 'every day'], end: '.',
@@ -511,7 +525,7 @@ const ORDER_MORE = [
   { id: 'o14', c: ['were', 'at the beach', 'your friends', 'yesterday'], end: '?',
     en: ['were your friends at the beach yesterday'], sol: 'Were your friends at the beach yesterday?' },
   { id: 'o15', c: ['found', 'in the garden', 'Mia', 'her phone'], end: '.',
-    en: ['mia found her phone in the garden'], sol: 'Mia found her phone in the garden.' },
+    en: ['mia found her phone in the garden', 'in the garden mia found her phone'], sol: 'Mia found her phone in the garden.' },
   { id: 'o16', c: ['when', 'did', 'the train', 'leave'], end: '?',
     en: ['when did the train leave'], sol: 'When did the train leave?' },
   { id: 'o17', c: ["wasn't", 'very friendly', 'the waiter'], end: '.',
@@ -568,15 +582,15 @@ const STORIES = {
     title: 'A windy day at the seaside', theme: '🏖️ Am Meer in Brighton',
     paras: [
       '[[Last August]] Ben and his [[best friend]] Lily went to Brighton with Ben\'s parents. [[At first]] the sun was hot, so the two friends built a big [[sand castle]] near the water. Ben\'s dad bought ice creams for everybody.',
-      'Then the wind came. It was very strong and it pulled Lily\'s new hat into the sea. "My hat! My beautiful hat!" Lily shouted. Ben ran into the cold water, but the waves were too high for him.',
-      'Suddenly a young lifeguard jumped into the sea with a red board. She swam out and caught the hat. "Here you are," she said with a smile. Ben felt a bit stupid because he knew the beach rules.',
+      'Then the wind came. It was very strong, and it blew Lily\'s new hat into the sea. "My hat! My beautiful hat!" Lily shouted. Ben ran into the cold water, but the waves were too high for him.',
+      'Suddenly a young lifeguard jumped into the sea with a red board. She swam out and caught the hat. "Here you are," she said with a smile. Ben felt a bit stupid because he knew the beach rule: "Don\'t go into the sea when the waves are high."',
       '[[After that]] the friends stayed on the beach and played football. [[In the evening]] they ate [[fish and chips]] in a small café. "That was an exciting day!" Lily said. "And my hat had an adventure too!"',
     ],
     conn: CONN_ALL,
     accept: ['and', 'last august', 'in the evening'],
     tf: [
       { id: 'tb1', s: 'Ben and Lily went to Brighton with Ben\'s parents.', a: true },
-      { id: 'tb2', s: 'The wind pulled Ben\'s hat into the sea.',           a: false },
+      { id: 'tb2', s: 'The wind blew Ben\'s hat into the sea.',             a: false },
       { id: 'tb3', s: 'A lifeguard caught the hat.',                        a: true },
       { id: 'tb4', s: 'The friends ate pizza in the evening.',              a: false },
     ],
@@ -610,13 +624,13 @@ const STORIES = {
       { id: 'tc1', s: 'Mrs Patel was the group leader.',              a: true },
       { id: 'tc2', s: 'Sophie was scared of the stories.',            a: false },
       { id: 'tc3', s: 'It rained in the night.',                      a: true },
-      { id: 'tc4', s: 'After the rain the girls slept in their own tent.', a: false },
+      { id: 'tc4', s: 'After the water came into the tent, the girls slept in their own tent.', a: false },
     ],
     adj: [
       { id: 'ac1', pre: 'They told', post: 'stories.', opts: ['scary', 'strong', 'ill'], a: 'scary' },
       { id: 'ac2', pre: 'Sophie\'s sleeping bag was', post: '.', opts: ['bored', 'wet', 'friendly'], a: 'wet' },
       { id: 'ac3', pre: 'Mrs Patel made', post: 'chocolate for everybody.', opts: ['high', 'stupid', 'hot'], a: 'hot' },
-      { id: 'ac4', pre: 'Mia was', post: 'when they told the stories.', opts: ['scared', 'strong', 'high'], a: 'scared' },
+      { id: 'ac4', pre: 'Sophie and Mia chose a place near a', post: 'river.', opts: ['small', 'angry', 'hungry'], a: 'small' },
     ],
     speech: [
       { id: 'dc1', opts: ['"It\'s only a story"! she said.', '"It\'s only a story!" she said.', '"It\'s only a story! she said."'], a: 1 },
@@ -624,9 +638,9 @@ const STORIES = {
       { id: 'dc3', opts: ['"That was the best night of the trip." Sophie said.', '"That was the best night of the trip" Sophie said.', '"That was the best night of the trip," Sophie said.'], a: 2 },
       { id: 'dc4', opts: ['"Where is my torch"? asked Mrs Patel.', '"Where is my torch?" asked Mrs Patel.', '"Where is my torch?," asked Mrs Patel.'], a: 1 },
     ],
-    write: { title: 'Our camping trip', de: 'Schreib eine Geschichte über einen Zeltausflug, bei dem etwas Aufregendes passierte – echt oder ausgedacht.',
-             en: 'Write a story: <em>Our camping trip</em> (real or invented).',
-             prompt: 'Write a story: "Our camping trip" (real or invented).', ph: 'Last summer we went camping …' },
+    write: { title: 'Our camping trip', de: 'Schreib eine Geschichte über einen Zeltausflug in den Ferien, bei dem etwas Aufregendes passierte – echt oder ausgedacht.',
+             en: 'Write a story: <em>Our camping trip</em> – something exciting happened on a camping trip in the holidays (real or invented).',
+             prompt: 'Write a story: "Our camping trip" – something exciting happened on a camping trip in the holidays (real or invented).', ph: 'Last summer we went camping …' },
   },
   D: {
     title: 'Lost in London', theme: '🚇 Verlaufen in London',
@@ -634,7 +648,7 @@ const STORIES = {
       '[[Last Easter]] Jack visited London with his mum and his little sister Amy. [[On Monday]] they went to [[Camden Market]]. It was very busy, and there were lots of interesting shops.',
       'Jack wanted to see the old guitars in a [[music shop]], so he went inside. When he came out again, his mum and Amy weren\'t there. [[At first]] he looked for them, but he couldn\'t find them. Jack was scared.',
       'Then he remembered his mum\'s rule: "If you get lost, stay where you are and ask for help." So he went back into the music shop. The [[shop assistant]] was very friendly. She called Jack\'s mum on her phone.',
-      '[[Ten minutes later]] his mum and Amy arrived. "There you are!" his mum said. "I was very worried!" Jack hugged her. [[After that]] they didn\'t leave each other for the rest of the day.',
+      '[[Ten minutes later]] his mum and Amy arrived. "There you are!" his mum said. "I was very worried!" Jack hugged her. [[After that]] they stayed together for the rest of the day.',
     ],
     conn: CONN_ALL,
     accept: ['and', 'last easter', 'on monday', 'ten minutes later', 'if'],
@@ -656,16 +670,16 @@ const STORIES = {
       { id: 'dd3', opts: ['"Can I help you"? asked the shop assistant.', '"Can I help you?," asked the shop assistant.', '"Can I help you?" asked the shop assistant.'], a: 2 },
       { id: 'dd4', opts: ['"I\'m lost," said Jack.', '"I\'m lost." said Jack.', '"I\'m lost" said Jack.'], a: 0 },
     ],
-    write: { title: 'Lost in London', de: 'Schreib eine Geschichte: Du hast dich in London verlaufen – ausgedacht oder echt.',
-             en: 'Write a story: <em>Lost in London</em> (real or invented).',
-             prompt: 'Write a story: "Lost in London" (real or invented).', ph: 'Last year I visited London …' },
+    write: { title: 'The day I got lost', de: 'Schreib eine Geschichte über einen Tag in den Ferien, an dem du dich verlaufen hast – echt oder ausgedacht.',
+             en: 'Write a story: <em>The day I got lost</em> (real or invented).',
+             prompt: 'Write a story: "The day I got lost" (real or invented).', ph: 'Last summer I was in a big city …' },
   },
   E: {
     title: 'The storm', theme: '⛵ Bootsausflug im Sturm',
     paras: [
-      '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
+      '[[Last October]] Hannah and her grandpa went on a [[boat trip]] on a lake in Scotland. Grandpa had a small old boat. They both wore [[life jackets]]. [[At first]] the weather was nice, and the water was calm. Hannah took lots of photos of the mountains.',
       'Then the sky got dark. Grandpa looked up and said, "We must go back now. A storm is coming." Suddenly the wind was very strong, and the rain was cold. The little boat moved up and down on the high waves.',
-      'Hannah was scared, but she was brave. She gave Grandpa the [[life jackets]], and they both put them on. "Help me, please!" Grandpa shouted. Hannah pulled hard with him, and the boat slowly came back to the shore.',
+      'Hannah was scared, but she was brave. "Help me, please!" Grandpa shouted. Hannah helped him with the oars, and the boat slowly came back to the shore.',
       '[[Half an hour later]] they were safe in Grandpa\'s [[little house]]. They were wet, so they drank hot tea by the fire. "You were really brave today," Grandpa said. Hannah laughed. "That was a boat trip I will never forget!"',
     ],
     conn: CONN_ALL,
@@ -673,7 +687,7 @@ const STORIES = {
     tf: [
       { id: 'te1', s: 'Hannah went on the boat trip with her grandpa.', a: true },
       { id: 'te2', s: 'The weather was bad all day.',                   a: false },
-      { id: 'te3', s: 'They put on life jackets.',                      a: true },
+      { id: 'te3', s: 'They wore life jackets.',                        a: true },
       { id: 'te4', s: 'They drank cold lemonade by the fire.',          a: false },
     ],
     adj: [
@@ -724,7 +738,7 @@ let MAX = {};
 // ---------------------------------------------------------------------------
 // Arbeit A behält den alten Schlüssel; B–E und Z hängen -B … an.
 const STORE = 'klassenarbeit-camden-v1';
-const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), at: 'vocab' });
+const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), elapsed: 0, revealed: {}, round: 1, v: 2, at: 'vocab' });
 // Arbeiten: A = die erste (feste Originalaufgaben), B–E feste eigene Aufgaben und
 // Lesetexte, Z = Zufallsarbeit. Jede Arbeit hat ihren eigenen Speicherstand.
 const TESTS = {
@@ -742,7 +756,14 @@ function readState(k) {
   try {
     const raw = localStorage.getItem(storeKey(k));
     if (!raw) return null;
-    const st = Object.assign(fresh(), JSON.parse(raw));
+    const parsed = JSON.parse(raw);
+    const st = Object.assign(fresh(), parsed);
+    if (!parsed.v) {
+      // Stand von vor dem Menü: Wer einen Teil schon abgegeben hat, hat die Lösungen
+      // gesehen – kein „Abgabe zurücknehmen“, auch wenn er leer war. Writing bleibt offen.
+      Object.keys(st.done).forEach(k => { if (st.done[k] && k !== 'writing') st.revealed[k] = true; });
+      st.v = 2;
+    }
     if (st.writeAi && (st.writeAi.wait || st.writeAi.err)) st.writeAi = null;
     return st;
   } catch (e) { return null; }
@@ -764,7 +785,7 @@ try {
 let S = readState(CUR) || newState(CUR);
 // Nur für diese Sitzung: KI-Fehlermeldungen (je Aufgabe, 'write', 'plan') und „liest gerade“.
 const kiErr = new Map();
-let writeWait = false;
+let writeWait = null;   // Arbeit, deren Text gerade bewertet wird
 
 // Varianten: ein Zufallsstart pro Arbeit, im Zustand gespeichert, damit die
 // Aufgaben beim Neuladen gleich bleiben. Ohne seed (= 0) die erste Arbeit.
@@ -788,9 +809,25 @@ function split(base, pool, n, slot, salt) {
   const rest = shuffled(ex.filter((_, i) => i % 4 !== slot), rng(hash('fill-' + salt + slot)));
   return mine.concat(rest, base).slice(0, n);
 }
+// Kommt die Lösung einer Vokabel schon anderswo auf demselben Blatt vor (Verbraster,
+// Lücke, Satz, Baustein, Lesetext), verrät sie sich: dann die nächste aus dem Vorrat.
+const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function sheetText() {
+  return [IRREG.map(i => i.inf), GAPS.map(g => [g.pre, g.verb, g.post]), NEG.map(n => n.s), QUEST.map(q => q.s),
+    SHORT.map(x => x.q), ORDER.map(o => o.c), STORY.map(x => x.replace(/\[\[|\]\]/g, '')), TF.map(x => x.s),
+    ADJ.map(a => [a.pre, a.post, a.opts]), SPEECH.map(x => x.opts)]
+    .flat(3).join(' ').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z' ]+/g, ' ');
+}
+const verraten = (v, text) => v.en.some(e => new RegExp('(^|[^a-z\'])' + escRe(e.replace(/^(a|an|the|to) /, ''))).test(text));
+function applyStory(t) {
+  const st = STORIES[t.random ? (STORIES[S.story] ? S.story : 'A') : t.story];
+  STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
+  TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
+}
 function applyVariant() {
   const t = TESTS[CUR] || TESTS.A;
   const seed = S.seed || 0;
+  if (t.slot !== undefined || t.random) { applyFiltered(t, seed); return finishVariant(); }
   let pick;
   if (t.slot !== undefined) pick = (base, extra, more, n, salt) => split(base, extra.concat(more), n, t.slot, salt);
   else if (seed) {
@@ -808,9 +845,29 @@ function applyVariant() {
   SHORT = pick(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 4, 'short');
   TRANS = pick(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 3, 'trans');
   ORDER = pick(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 5, 'order');
-  const st = STORIES[t.random ? (STORIES[S.story] ? S.story : 'A') : t.story];
-  STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
-  TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
+  applyStory(t);
+  finishVariant();
+}
+// B–E und Zufall: erst alles außer Vokabeln wählen, Verbraster und Lücken ohne
+// doppeltes Verb, dann die Vokabeln, die sich auf dem Blatt nicht selbst verraten.
+function applyFiltered(t, seed) {
+  const r = t.random ? rng(seed || 1) : null;
+  const full = (base, extra, more, salt) => t.random
+    ? shuffled(base.concat(extra, more), r) : split(base, extra.concat(more), Infinity, t.slot, salt);
+  IRREG = full(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 'irreg').slice(0, 10);
+  const verbs = new Set(IRREG.map(i => i.inf));
+  GAPS  = full(BASE.GAPS, GAPS_EXTRA, GAPS_MORE, 'gaps').filter(g => !verbs.has(g.verb)).slice(0, 5);
+  NEG   = full(BASE.NEG, NEG_EXTRA, NEG_MORE, 'neg').slice(0, 5);
+  QUEST = full(BASE.QUEST.filter(q => !q.words), QUEST_EXTRA.filter(q => !q.words), QUEST_MORE.filter(q => !q.words), 'quest').slice(0, 4)
+            .concat(full(BASE.QUEST.filter(q => q.words), QUEST_EXTRA.filter(q => q.words), QUEST_MORE.filter(q => q.words), 'questw').slice(0, 1));
+  SHORT = full(BASE.SHORT, SHORT_EXTRA, SHORT_MORE, 'short').slice(0, 4);
+  TRANS = full(BASE.TRANS, TRANS_EXTRA, TRANS_MORE, 'trans').slice(0, 3);
+  ORDER = full(ORDER_POOL.slice(0, 5), ORDER_POOL.slice(5), ORDER_MORE, 'order').slice(0, 5);
+  applyStory(t);
+  const text = sheetText();
+  VOCAB = full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
+}
+function finishVariant() {
   ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
   MAX = {
     vocab: VOCAB.length,
@@ -834,7 +891,17 @@ function saveMeta() { try { localStorage.setItem(META_KEY, JSON.stringify({ cur:
 function save() { if (VIEW === 'test') writeState(CUR, S); saveMeta(); }
 // Eine KI-Antwort kommt evtl. erst, wenn das Kind schon in einer anderen Arbeit ist:
 // dann in den Stand der Arbeit schreiben, aus der gefragt wurde.
-function saveFor(k, st) { if (st === S) { save(); render(); } else writeState(k, st); }
+// Eine KI-Antwort kommt evtl. erst, wenn das Kind in einer anderen Arbeit oder im Menü
+// ist. Dann nur die Änderung in den gespeicherten Stand jener Arbeit einspielen – nie
+// ein altes Objekt zurückschreiben, sonst gingen inzwischen getippte Antworten verloren.
+function applyFor(k, fn) {
+  if (VIEW === 'test' && k === CUR) { fn(S); save(); render(); return; }
+  const st = readState(k);
+  if (!st) return;
+  fn(st); writeState(k, st);
+  if (k === CUR) S = st;          // im Menü: der Stand im Speicher ist der neue
+  if (VIEW === 'menu') render();  // nie mitten ins Tippen einer anderen Arbeit rendern
+}
 
 // ---------------------------------------------------------------------------
 // KI (optional – ohne KI funktioniert alles, nur ohne Erklärungen)
@@ -1059,7 +1126,7 @@ function emptyCount(key) {
 }
 // Komplett leer abgegeben: Es gibt nichts zu verraten – Lösungen bleiben verborgen,
 // und die Abgabe lässt sich zurücknehmen.
-function partEmpty(key) { const [e, n] = emptyCount(key); return key !== 'writing' && n > 0 && e === n; }
+function partEmpty(key) { const [e, n] = emptyCount(key); return key !== 'writing' && !(S.revealed && S.revealed[key]) && n > 0 && e === n; }
 const reveal = key => !!S.done[key] && !partEmpty(key);
 let confirming = null;   // Teil, bei dem gerade „Wirklich abgeben?“ steht (nur Sitzung)
 function submitBar(key, label) {
@@ -1263,9 +1330,10 @@ function renderWriting(sec) {
   const st = writingStats(S.writing);
   const ai = S.writeAi;
   let aiHtml = '';
-  if (writeWait) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
+  const waiting = writeWait === CUR;
+  if (waiting) aiHtml = `<div class="claude-box wait">liest deinen Text … das dauert ein paar Sekunden.</div>`;
   else if (kiErr.has('write')) aiHtml = `<div class="claude-box">${esc(kiErr.get('write'))}</div>`;
-  if (ai && !writeWait) {
+  if (ai && !waiting) {
     aiHtml = `<div class="wf">
       <div class="row"><b>${aiCurrent() ? `🤖 Die KI gibt dir ${writingPoints()} von ${WRITING_MAX} Punkten.` : '🤖 Du hast den Text danach geändert. Frag die KI nochmal, damit die Punkte zählen.'}</b></div>
       ${(ai.lob || []).length ? `<div class="row"><b>👍 Das ist gut:</b><ul>${ai.lob.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
@@ -1275,7 +1343,7 @@ function renderWriting(sec) {
   }
   return head(sec, 'Schreib eine eigene Geschichte. Nimm dir dafür Zeit.') +
     `<div class="card"><h3>D · ${esc(WRITE_TASK.title)} <span class="pts">${WRITING_MAX} Punkte</span></h3>
-      <p class="task">${WRITE_TASK.de}<br>${WRITE_TASK.en} ${WRITE_REST}</p>
+      <p class="task">${WRITE_TASK.de} Erzähl nicht die Geschichte aus dem Lesetext nach – schreib deine eigene.<br>${WRITE_TASK.en} Write your own story – don't retell the text. ${WRITE_REST}</p>
       <div class="helpers">
         <div><b>Connectives</b>but, when, because, so, first, then, after that, suddenly, in the end</div>
         <div><b>Adjectives</b>exciting, scary, annoying, high, dark, strong, friendly, bored, interesting</div>
@@ -1290,7 +1358,7 @@ function renderWriting(sec) {
           : `<label><input type="checkbox" data-self="${c.k}" ${S.self[c.k] ? 'checked' : ''} ${done ? 'disabled' : ''}> ${esc(c.t)}</label>`).join('')}
       </div>
       ${aiHtml}
-      ${kiOn() && !done && !writeWait ? `<div style="margin-top:12px">
+      ${kiOn() && !done && !waiting ? `<div style="margin-top:12px">
         <button type="button" class="btn claude" data-claude-write ${st.words < 30 ? 'disabled' : ''} ${aiCurrent() ? 'hidden' : ''}>🤖 KI, lies meine Geschichte</button>
         <span class="note" id="write-note" style="color:var(--muted);font-size:.88rem">${writeNote(st)}</span></div>` : ''}
       ${!kiOn() ? `<p class="task" style="margin-top:10px">${kiStatus === 'weg' ? '🤖 KI heute nicht verfügbar. ' : ''}Ohne KI ist das eine vorläufige Selbsteinschätzung: connectives und direct speech zählt die Seite (je bis 3 Punkte), jeder eigene Haken gibt 2. Unter 30 Wörtern gibt es noch keine Punkte, unter 80 etwas weniger.</p>` : ''}
@@ -1331,9 +1399,9 @@ function renderResult(sec) {
       ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
       <button type="button" class="btn claude" data-plan style="margin-top:8px">🤖 Was soll ich noch üben?</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
-      <p class="task">„Neu beginnen“ löscht deine Antworten in ${testName(CUR)} – die Aufgaben bleiben gleich.${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ' Andere Aufgaben findest du in den anderen Arbeiten.'}</p>
+      <p class="task">${allDone ? `„Neu beginnen“ löscht deine Antworten in ${testName(CUR)}, die Aufgaben bleiben gleich. Du kennst jetzt die Lösungen – für eine echte Probe nimm lieber eine andere Arbeit oder die Zufallsarbeit.` : 'Wenn alle Teile abgegeben sind, kannst du diese Arbeit noch einmal von vorn schreiben.'}${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ''}</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <button type="button" class="btn ghost" data-reset>🔄 Diese Arbeit neu beginnen</button>
+        ${allDone ? '<button type="button" class="btn ghost" data-reset>🔄 Diese Arbeit neu beginnen</button>' : ''}
         ${TESTS[CUR].random ? '<button type="button" class="btn ghost" data-newrandom>🎲 Neue Zufallsarbeit</button>' : ''}
         <button type="button" class="btn" style="background:var(--line-purple)" data-menu>☰ Zu den Arbeiten</button>
       </div>
@@ -1357,6 +1425,7 @@ function testStatus(k) {
   applyVariant();
   const res = { title: TESTS[k].random && !st ? null : STORY_TITLE,
                 theme: TESTS[k].random && !st ? null : STORIES[TESTS[k].random ? (STORIES[S.story] ? S.story : 'A') : TESTS[k].story].theme };
+  res.round = st ? (st.round || 1) : 1;
   if (st && hasProgress(st)) {
     res.t = total(); res.m = totalMax(); res.all = PARTS.every(p => S.done[p]);
     if (res.all) res.grade = grade(Math.floor(res.t / res.m * 100) / 100);
@@ -1367,9 +1436,10 @@ function testStatus(k) {
 function renderMenu() {
   const tiles = Object.keys(TESTS).map(k => {
     const t = TESTS[k], st = testStatus(k);
-    const state = st.grade ? `<span class="t-state finished">✓ fertig · ${st.t}/${st.m} · Note ${st.grade[0]}</span>`
-      : st.t !== undefined ? `<span class="t-state started">angefangen · ${st.t} von ${st.m} Punkten</span>`
-      : '<span class="t-state">noch nicht begonnen</span>';
+    const runde = st.round > 1 ? ` · ${st.round}. Durchgang` : '';
+    const state = st.grade ? `<span class="t-state finished">✓ fertig · ${st.t}/${st.m} · Note ${st.grade[0]}${runde}</span>`
+      : st.t !== undefined ? `<span class="t-state started">angefangen · ${st.t} von ${st.m} Punkten${runde}</span>`
+      : `<span class="t-state">${st.round > 1 ? `${st.round}. Durchgang · noch leer` : 'noch nicht begonnen'}</span>`;
     const title = t.random ? 'Zufallsarbeit' : esc(st.title);
     const theme = t.random ? (st.title ? `heute: ${esc(st.title)}` : 'Aufgaben und Lesetext jedes Mal neu gemischt') : esc(st.theme);
     return `<button type="button" class="test-tile ${k === CUR && hasProgress(S) ? 'current' : ''}" style="--c:${t.color}" data-open="${k}">
@@ -1382,7 +1452,7 @@ function renderMenu() {
 }
 function openTest(k) {
   if (VIEW === 'test') writeState(CUR, S);
-  CUR = k; S = readState(k) || newState(k); VIEW = 'test'; confirming = null;
+  CUR = k; S = readState(k) || newState(k); VIEW = 'test'; confirming = null; lastTick = Date.now();
   if (typeof kiErr !== 'undefined') kiErr.clear();
   applyVariant(); save(); render(); window.scrollTo({ top: 0 });
 }
@@ -1452,7 +1522,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', async e => {
   const b = e.target.closest('button, .w');
   if (!b) return;
-  if (b.dataset.go) { S.at = b.dataset.go; save(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (b.dataset.go) { S.at = b.dataset.go; confirming = null; save(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
   if (b.dataset.tok !== undefined && b.closest('.markable')) {
     const i = +b.dataset.tok;
     S.marks = S.marks.includes(i) ? S.marks.filter(x => x !== i) : [...S.marks, i];
@@ -1488,7 +1558,7 @@ document.addEventListener('click', async e => {
   if (b.hasAttribute('data-reset')) { $('#reset-confirm').hidden = false; return; }
   if (b.hasAttribute('data-reset-yes')) {
     // Gleiche Aufgaben: seed und Lesetext bleiben, nur die Antworten gehen.
-    S = Object.assign(fresh(), { seed: S.seed, story: S.story });
+    S = Object.assign(fresh(), { seed: S.seed, story: S.story, round: (S.round || 1) + 1 });
     confirming = null; if (typeof kiErr !== 'undefined') kiErr.clear();
     applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
   }
@@ -1517,7 +1587,7 @@ function taskText(kind, it) {
 async function askWhy(id, kind, btn) {
   if (!kiOn() || S.ai[id]) return;
   const it = ALL_TYPED[kind].find(x => x.id === id);
-  const mine = S, mineKey = CUR;
+  const mineKey = CUR;
   const antwort = S.answers[id] || '', loesung = showSol(it, kind);
   btn.disabled = true;
   btn.textContent = '🤖 denkt nach …';
@@ -1525,42 +1595,42 @@ async function askWhy(id, kind, btn) {
   try {
     const r = await kiFrage('pruefen', { aufgabe: taskText(kind, it), loesung, antwort }, 20000);
     const richtig = !!(r && r.richtig === true && plausibel(antwort, loesung));
-    mine.ai[id] = { richtig, erklaerung: String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.' };
-    if (richtig) mine.claudeOk[id] = true;
+    const erkl = String(r && r.erklaerung || '').slice(0, 400) || 'Keine Erklärung bekommen.';
+    applyFor(mineKey, st => { st.ai[id] = { richtig, erklaerung: erkl }; if (richtig) st.claudeOk[id] = true; });
   } catch (err) {
-    if (mine === S) kiErr.set(id, kiFail(err));
+    if (VIEW === 'test' && CUR === mineKey) { kiErr.set(id, kiFail(err)); render(); }
   }
-  saveFor(mineKey, mine);
 }
 
 async function askWriting() {
   if (!kiOn() || aiCurrent()) return;
   const text = S.writing.trim();
-  const mine = S, mineKey = CUR;
-  writeWait = true; kiErr.delete('write'); render();
+  const mineKey = CUR;
+  writeWait = CUR; kiErr.delete('write'); render();
   try {
     const r = await kiFrage('text', { text }, 45000);
     const punkte = Number(r && r.punkte);
     if (!isFinite(punkte)) throw { code: 'fehler' };
-    mine.writeAi = {
+    const res = {
       text,
       punkte,
       lob: Array.isArray(r.lob) ? r.lob.filter(x => typeof x === 'string').slice(0, 3) : [],
       fehler: Array.isArray(r.fehler) ? r.fehler.filter(f => f && typeof f === 'object').slice(0, 6) : [],
       tipps: Array.isArray(r.tipps) ? r.tipps.filter(x => typeof x === 'string').slice(0, 3) : [],
     };
+    if (writeWait === mineKey) writeWait = null;
+    applyFor(mineKey, st => { st.writeAi = res; });
   } catch (err) {
-    if (mine === S) kiErr.set('write', kiFail(err));
+    if (writeWait === mineKey) writeWait = null;
+    if (VIEW === 'test' && CUR === mineKey) kiErr.set('write', kiFail(err));
+    if (CUR === mineKey || VIEW === 'menu') render();
   }
-  writeWait = false;
-  saveFor(mineKey, mine);
-  if (mine !== S) render();
 }
 
 async function askPlan(btn) {
   if (!kiOn()) return;
   btn.disabled = true; btn.textContent = '🤖 denkt nach …';
-  const mine = S, mineKey = CUR;
+  const mineKey = CUR;
   kiErr.delete('plan');
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
@@ -1580,20 +1650,27 @@ async function askPlan(btn) {
       ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
       fehler: zeilen.join('\n'),
     }, 30000);
-    mine.answers.plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+    const plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+    applyFor(mineKey, st => { st.answers.plan = plan; });
   } catch (err) {
-    if (mine === S) kiErr.set('plan', kiFail(err));
+    if (VIEW === 'test' && CUR === mineKey) { kiErr.set('plan', kiFail(err)); render(); }
   }
-  saveFor(mineKey, mine);
 }
 
 // ---------------------------------------------------------------------------
 // Uhr
 // ---------------------------------------------------------------------------
+// Die Uhr läuft nur, solange eine Arbeit offen und die Seite sichtbar ist; die Zeit
+// wird pro Arbeit aufsummiert (ein Sprung über 5 s – Rechner schlief – zählt nicht).
+let lastTick = Date.now();
 function tick() {
+  const now = Date.now(), dt = Math.min(5, Math.max(0, (now - lastTick) / 1000));
+  lastTick = now;
   if (VIEW !== 'test') return;
-  const s = Math.max(0, Math.floor((Date.now() - S.start) / 1000));
+  if (!document.hidden) S.elapsed = (S.elapsed || 0) + dt;
+  const s = Math.floor(S.elapsed || 0);
   $('#clock').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  if (s % 15 === 0 && !document.hidden) save();
 }
 setInterval(tick, 1000);
 tick();
