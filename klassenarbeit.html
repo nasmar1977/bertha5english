@@ -391,7 +391,6 @@ const GAPS_EXTRA = [
   { id: 'g7',  pre: 'Yesterday Mia', verb: 'find', post: 'her lost phone in the garden.', en: ['found'] },
   { id: 'g8',  pre: 'Our guide', verb: 'tell', post: 'us about the old castle.', en: ['told'] },
   { id: 'g9',  pre: 'We', verb: 'visit', post: 'an old castle in Wales.', en: ['visited'] },
-  { id: 'g10', pre: 'My little brother', verb: 'cry', post: 'because he was tired.', en: ['cried'] },
   { id: 'g11', pre: 'The bus', verb: 'stop', post: 'in front of our hotel.', en: ['stopped'] },
   { id: 'g12', pre: 'Our guide', verb: 'give', post: 'us a map of the town.', en: ['gave'] },
 ];
@@ -478,7 +477,10 @@ const GAPS_MORE = [
   { id: 'g13', pre: 'On Monday my dad', verb: 'plan', post: 'a long walk.', en: ['planned'] },
   { id: 'g14', pre: 'We', verb: 'try', post: 'fish and chips for the first time.', en: ['tried'] },
   { id: 'g18', pre: 'My brother', verb: 'lose', post: 'his sunglasses at the pool.', en: ['lost'] },
-  { id: 'g20', pre: 'The plane', verb: 'land', post: 'in Edinburgh at ten o\'clock.', en: ['landed'] },
+  { id: 'g28', pre: 'Mum', verb: 'prepare', post: 'sandwiches for the trip.', en: ['prepared'] },
+  { id: 'g29', pre: 'The dog', verb: 'jump', post: 'into the lake.', en: ['jumped'] },
+  { id: 'g30', pre: 'We', verb: 'pull', post: 'the boat onto the beach.', en: ['pulled'] },
+  { id: 'g31', pre: 'Our guide', verb: 'show', post: 'us the old harbour.', en: ['showed'] },
   { id: 'g21', pre: 'The waiter', verb: 'bring', post: 'us our pizza.', en: ['brought'] },
   { id: 'g22', pre: 'It', verb: 'be', post: 'very hot in Spain.', en: ['was'] },
   { id: 'g23', pre: 'My dad', verb: 'spend', post: 'a lot of money on souvenirs.', en: ['spent'] },
@@ -553,6 +555,9 @@ const ORDER_MORE = [
 // stehen. Sie bleiben auffindbar, damit eine schon geöffnete Arbeit dieselben Aufgaben behält,
 // und ihre Formen (swam, ate …) zählen in der Geschichte weiter als richtige Vergangenheit.
 const RETIRED = [
+  // 2.34.7: regelmäßige Verben, die nicht im Wortschatz stehen
+  { id: 'g10', pre: 'My little brother', verb: 'cry', post: 'because he was tired.', en: ['cried'] },
+  { id: 'g20', pre: 'The plane', verb: 'land', post: 'in Edinburgh at ten o\'clock.', en: ['landed'] },
   { id: 'i26', de: 'kommen',     inf: 'come',  en: ['came'] },
   { id: 'i27', de: 'schreiben',  inf: 'write', en: ['wrote'] },
   { id: 'i28', de: 'essen',      inf: 'eat',   en: ['ate'] },
@@ -958,7 +963,10 @@ function applyVariant() {
   let pick;
   if (seed) {
     const r = rng(seed);
-    pick = (base, extra, more, n) => shuffled(base.concat(extra), r).slice(0, n);
+    // Ausgemustertes heraus; in abgegebener Grammatik ohne Nachrücken (keine Strafe für Ungesehenes)
+    const zu = S.done.grammar || (S.revealed && S.revealed.grammar);
+    pick = (base, extra, more, n) => { const l = shuffled(base.concat(extra === GAPS_EXTRA ? GAPS_EXTRA_V1() : extra), r);
+      return (extra === GAPS_EXTRA && zu ? l.slice(0, n) : l).filter(it => !AUSGEMUSTERT.has(it.id)).slice(0, n); };
   } else pick = (base, extra, more, n) => base.slice(0, n);
   VOCAB = pick(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 12, 'vocab');
   IRREG = pick(BASE.IRREG, IRREG_EXTRA, IRREG_MORE, 10, 'irreg');
@@ -1021,6 +1029,8 @@ const AKTIV = () => ({ VOCAB: [BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE], IRREG: [BAS
   GAPS: [BASE.GAPS, GAPS_EXTRA, GAPS_MORE], NEG: [BASE.NEG, NEG_EXTRA, NEG_MORE], QUEST: [BASE.QUEST, QUEST_EXTRA, QUEST_MORE],
   SHORT: [BASE.SHORT, SHORT_EXTRA, SHORT_MORE], TRANS: [BASE.TRANS, TRANS_EXTRA, TRANS_MORE], ORDER: [ORDER_POOL, ORDER_MORE] });
 const AUSGEMUSTERT = new Set(RETIRED.map(it => it.id));
+// GAPS_EXTRA in der alten Reihenfolge (mit g10), damit eine früher gemischte Arbeit A gleich gemischt bleibt
+const GAPS_EXTRA_V1 = () => ['g7', 'g8', 'g9', 'g10', 'g11', 'g12'].map(id => poolById().get(id));
 let PICK_NEU = false;   // eine Auswahl wurde gerade bereinigt (Menü speichert sie dann)
 function ausgemustertErsetzen(t, seed, pk, lists) {
   if (!PICK_LISTS.some(L => (pk[L] || []).some(id => AUSGEMUSTERT.has(id)))) return false;
@@ -1069,7 +1079,7 @@ function ausgemustertErsetzen(t, seed, pk, lists) {
       }
       weg[teil] = (weg[teil] || 0) + 1;   // abgegeben (keine Strafe für Ungesehenes) oder kein Ersatz
     });
-    if (Object.keys(weg).length) pk.rtWeg = weg;
+    Object.entries(weg).forEach(([teil, n]) => { pk.rtWeg = Object.assign({}, pk.rtWeg, { [teil]: ((pk.rtWeg || {})[teil] || 0) + n }); });
     ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = ohneLoch());
   }
   // Antworten in ausgemusterten Zeilen verwerfen
@@ -1444,7 +1454,8 @@ const reveal = key => !!S.done[key] && !partEmpty(key);
 let confirming = null;   // Teil, bei dem gerade „Wirklich abgeben?“ steht (nur Sitzung)
 // Hinweis, wenn ausgemusterte Aufgaben in diesem Teil weggefallen sind (2.34.6)
 function wegHinweis(key) {
-  const n = S.pick && S.pick.rtWeg && S.pick.rtWeg[key];
+  const n = CUR === 'A' && S.seed ? (key === 'grammar' ? 5 - GAPS.length : 0)   // früher gemischte Arbeit A (ohne pick)
+    : S.pick && S.pick.rtWeg && S.pick.rtWeg[key];
   return n ? `<p class="task" style="margin-top:8px">ℹ️ ${n === 1 ? 'Eine Aufgabe' : n + ' Aufgaben'} mit Verben, die nicht auf deiner Verbliste stehen, ${n === 1 ? 'wurde' : 'wurden'} herausgenommen. ${n === 1 ? 'Sie zählt' : 'Sie zählen'} nicht mehr mit – deshalb ${n === 1 ? 'ist' : 'sind'} hier weniger Punkte möglich.</p>` : '';
 }
 function submitBar(key, label) {

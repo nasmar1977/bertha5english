@@ -156,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.6
+**Version:** 2.34.7
 **Datum:** 27.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -205,6 +205,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.7 (27.10.2026)
+- Klassenarbeit: g10 (cry) und g20 (land) nach `RETIRED` – regelmäßige Verben, die nicht im Wortschatz stehen. Ersatz
+  g28–g31 (prepare, jump, pull, show: Wortschatz-Verben, die sonst selten auf dem Blatt stehen, damit B2 voll bleibt).
+  Früher gemischte Arbeit A (seed ≠ 0) mischt weiter aus `GAPS_EXTRA_V1` (alte Reihenfolge mit g10) und nimmt
+  Ausgemustertes erst danach heraus – alle anderen Listen bleiben gleich.
+  In schon abgegebener Grammatik rückt dort nichts nach (ℹ️-Hinweis über `wegHinweis`). `rtWeg` wird addiert.
+  Zwei Prüfberichte (Inhalt: keine Befunde; Logik: gemischte A mit abgegebener Grammatik).
 
 ### Version 2.34.6 (27.10.2026)
 - Klassenarbeit: RETIRED-Aufgaben verschwinden auch aus angefangenen Arbeiten (Wunsch: „sollen NICHT mehr auftauchen“).
