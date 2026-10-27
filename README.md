@@ -156,7 +156,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.5
+**Version:** 2.34.6
 **Datum:** 27.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -205,6 +205,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.6 (27.10.2026)
+- Klassenarbeit: RETIRED-Aufgaben verschwinden auch aus angefangenen Arbeiten (Wunsch: „sollen NICHT mehr auftauchen“).
+  `ausgemustertErsetzen()` jetzt pro Aufgabe: offener Teil → Ersatz derselben Art ohne neues Leck (`verrateneLoesungen()`),
+  sonst/abgegebener Teil → Zeile fällt weg (MAX sinkt, keine Strafe für Ungesehenes). Antworten in alten Zeilen gehen
+  verloren. `pick.rt` markiert bereinigt; leere Listen dann erlaubt, leere Grammatik-Abschnitte ausgeblendet (nicht beim
+  Trocken-Rendern, `TROCKEN`), ℹ️-Hinweis `wegHinweis()` mit `pick.rtWeg`. Unberührte Teile mit Ausgemustertem ganz neu,
+  Ersatz für B–E aus dem eigenen Vorrats-Slot (`split`). Menü speichert die bereinigte Auswahl einmal (`PICK_NEU`),
+  „Neu beginnen“ wählt nach Bereinigung ganz neu, alter Gesamt-Lernplan mit ausgemusterten Formen wird verworfen.
+  Training und Lernstand-Verlauf filtern RETIRED-IDs. Zwei Prüfberichte (Logik: Regex-Klammerung/Trocken-Rendern,
+  Laufzeit Menü, Reset; UX: Hinweis, Changelog).
 
 ### Version 2.34.5 (27.10.2026)
 - Klassenarbeit: Aufgaben nur noch mit den 25 unregelmäßigen Verben der Heftliste. 28 Aufgaben mit anderen Verben

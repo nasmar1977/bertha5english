@@ -923,16 +923,17 @@ function solutionText() {
 // Kernverb(en) einer Übersetzung: Vergangenheitsformen außer was/were/had/did
 const transVerbs = it => (it.sol || it.en[0]).toLowerCase().match(/[a-z']+/g)
   .filter(w => !['was', 'were', 'had', 'did'].includes(w) && (PAST.has(w) || /ed$/.test(w)));
+let TROCKEN = false;   // renderedText(): alles rendern, auch leere Abschnitte
 function renderedText() {
-  const keep = { S, MAX, ALL_TYPED, confirming };
-  S = fresh(); confirming = null;
+  const keep = { S, MAX, ALL_TYPED, confirming, TROCKEN };
+  S = fresh(); confirming = null; TROCKEN = true;
   MAX = { vocab: 0, grammar: 0, order: 0, reading: 0, writing: WRITING_MAX };
   ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
   let html = '';
   try {
     const fns = { vocab: renderVocab, grammar: renderGrammar, order: renderOrder, reading: renderReading, writing: renderWriting };
     html = SECTIONS.filter(x => fns[x.key]).map(x => fns[x.key](x)).join(' ');
-  } finally { ({ S, MAX, ALL_TYPED, confirming } = keep); }
+  } finally { ({ S, MAX, ALL_TYPED, confirming, TROCKEN } = keep); }
   return plainText(html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ') + ' ' + WRITE_TASK.ph + ' ' + document.title);
 }
 function applyStory(t, key) {
@@ -947,7 +948,7 @@ function applyVariant() {
   if (t.training) {
     // Training: Aufgaben stehen fest im Stand (S.pick), ohne Lesetext-Bezug
     const byId = poolById(), pk = S.pick || {};
-    ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = Object.fromEntries(PICK_LISTS.map(L => [L, (pk[L] || []).map(id => byId.get(id)).filter(Boolean)])));
+    ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = Object.fromEntries(PICK_LISTS.map(L => [L, (pk[L] || []).filter(id => !AUSGEMUSTERT.has(id)).map(id => byId.get(id)).filter(Boolean)])));
     applyStory(t, 'A');
     return finishVariant();
   }
@@ -985,10 +986,10 @@ function applyFrozen(t, seed) {
   if (pk && pk.v >= 1) {
     const byId = poolById();
     const lists = {};
-    const okL = L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).length > 0 && lists[L].every(Boolean);
+    // leer ist erlaubt, wenn ausgemusterte Aufgaben in einem abgegebenen Teil weggefallen sind (2.34.6)
+    const okL = L => Array.isArray(pk[L]) && ((lists[L] = pk[L].map(id => byId.get(id))).length > 0 || pk.rt) && lists[L].every(Boolean);
     const bad = PICK_LISTS.filter(L => !okL(L));
-    // (Stände aus 2.33.4 mit pick.v 1 erst beim nächsten Öffnen, nach recheckVocab)
-    if (STORIES[pk.story] && !bad.length && pk.v >= 2 && ausgemustertErsetzen(t, seed, pk, lists)) return;
+    if (STORIES[pk.story] && !bad.length && ausgemustertErsetzen(t, seed, pk, lists)) return;
     if (STORIES[pk.story] && !bad.length) {
       ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = lists);
       applyStory(t, pk.story);
@@ -1011,27 +1012,74 @@ function applyFrozen(t, seed) {
   S.pick = { v: 2, story: STORY_KEY };
   PICK_LISTS.forEach(L => { S.pick[L] = ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER })[L].map(it => it.id); });
 }
-// Ausgemusterte Aufgaben (RETIRED) in einer schon geöffneten Arbeit ersetzen – nur in Teilen,
-// in denen das Kind noch nichts getan hat. Ist alles unberührt, wird wie neu gewählt; sonst nur
-// die betroffenen Listen, und nur, wenn danach keine Aufgabe die Lösung einer anderen verrät.
-// Klappt das nicht, bleibt die alte Auswahl (lieber ein Zusatzverb als eine verratene Lösung).
+// Ausgemusterte Aufgaben (RETIRED) aus einer schon geöffneten Arbeit entfernen (2.34.6: sie sollen
+// nirgends mehr auftauchen). Ist alles unberührt, wird wie neu gewählt. Sonst einzeln: in einem
+// abgegebenen Teil fällt die Aufgabe weg (keine Strafe für etwas Ungesehenes); in einem offenen
+// Teil kommt eine Aufgabe derselben Art an ihre Stelle, die keine Lösung auf dem Blatt verrät –
+// findet sich keine, fällt sie auch dort weg. Eine Antwort in der alten Zeile geht dabei verloren.
+const AKTIV = () => ({ VOCAB: [BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE], IRREG: [BASE.IRREG, IRREG_EXTRA, IRREG_MORE],
+  GAPS: [BASE.GAPS, GAPS_EXTRA, GAPS_MORE], NEG: [BASE.NEG, NEG_EXTRA, NEG_MORE], QUEST: [BASE.QUEST, QUEST_EXTRA, QUEST_MORE],
+  SHORT: [BASE.SHORT, SHORT_EXTRA, SHORT_MORE], TRANS: [BASE.TRANS, TRANS_EXTRA, TRANS_MORE], ORDER: [ORDER_POOL, ORDER_MORE] });
+const AUSGEMUSTERT = new Set(RETIRED.map(it => it.id));
+let PICK_NEU = false;   // eine Auswahl wurde gerade bereinigt (Menü speichert sie dann)
 function ausgemustertErsetzen(t, seed, pk, lists) {
-  const alt = new Set(RETIRED.map(it => it.id));
+  if (!PICK_LISTS.some(L => (pk[L] || []).some(id => AUSGEMUSTERT.has(id)))) return false;
   const teilVon = L => L === 'VOCAB' ? 'vocab' : L === 'ORDER' ? 'order' : 'grammar';
-  const leer = teil => !S.done[teil] && !(S.revealed && S.revealed[teil]) && PICK_LISTS.filter(L => teilVon(L) === teil).every(L =>
-    (pk[L] || []).every(id => !String(S.answers[id] || '').trim() && !(S.order && S.order[id] && S.order[id].length)
-      && !(S.ai && S.ai[id]) && !(S.claudeOk && S.claudeOk[id])));
-  const neu = PICK_LISTS.filter(L => (pk[L] || []).some(id => alt.has(id)) && leer(teilVon(L)));
-  if (!neu.length) return false;
-  const alleLeer = ['vocab', 'grammar', 'order'].every(leer);   // z. B. nach „Nochmal versuchen“: wie neu wählen
-  if (pk.alt && !alleLeer) return false;
-  const keep = { story: pk.story };
-  if (!alleLeer) PICK_LISTS.forEach(L => { if (!neu.includes(L)) keep[L] = lists[L]; });
-  applyFiltered(t, seed, keep);
-  if (verrateneLoesungen().length) { pk.alt = 1; return false; }
+  // Was das Kind in einem Teil getan hat – ohne die ausgemusterten Zeilen selbst
+  const getan = id => String(S.answers[id] || '').trim() || (S.order && S.order[id] && S.order[id].length) || (S.ai && S.ai[id]) || (S.claudeOk && S.claudeOk[id]);
+  const inhalt = (teil, auchAlt) => PICK_LISTS.filter(L => teilVon(L) === teil).some(L => (pk[L] || []).some(id => (auchAlt || !AUSGEMUSTERT.has(id)) && getan(id)));
+  const gezeigt = teil => !!(S.revealed && S.revealed[teil]);
+  const leer = teil => !inhalt(teil) && !gezeigt(teil);                       // leer abgegeben zählt als leer
+  const abgegeben = teil => gezeigt(teil) || (!!S.done[teil] && inhalt(teil, true));   // Lösungen waren schon zu sehen
+  const mitAlt = teil => PICK_LISTS.some(L => teilVon(L) === teil && (pk[L] || []).some(id => AUSGEMUSTERT.has(id)));
+  if (['vocab', 'grammar', 'order'].every(leer)) {
+    applyFiltered(t, seed, { story: pk.story });   // z. B. nach „Nochmal versuchen“: wie neu wählen
+  } else {
+    applyStory(t, pk.story);
+    let cur = Object.assign({}, lists);
+    // Unberührte Teile mit Ausgemustertem ganz neu wählen – nur, wenn danach nichts verraten wird
+    const neuTeile = ['vocab', 'grammar', 'order'].filter(teil => leer(teil) && mitAlt(teil));
+    if (neuTeile.length) {
+      const keep = { story: pk.story };
+      PICK_LISTS.forEach(L => { if (!neuTeile.includes(teilVon(L))) keep[L] = lists[L]; });
+      applyFiltered(t, seed, keep);
+      if (!verrateneLoesungen().length) cur = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
+    }
+    // Übrige Ausgemusterte: erst alle heraus, dann Platz für Platz auffüllen
+    const offen = [];
+    PICK_LISTS.forEach(L => cur[L].forEach((it, i) => { if (AUSGEMUSTERT.has(it.id)) offen.push([L, i, it]); }));
+    PICK_LISTS.forEach(L => { cur[L] = cur[L].map(it => AUSGEMUSTERT.has(it.id) ? null : it); });
+    const ohneLoch = () => { const c = {}; PICK_LISTS.forEach(L => { c[L] = cur[L].filter(Boolean); }); return c; };
+    const pruefe = () => { ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = ohneLoch()); return new Set(verrateneLoesungen()); };
+    const vorher = pruefe(), weg = {};
+    offen.forEach(([L, i, alt]) => {
+      const teil = teilVon(L);
+      if (!abgegeben(teil)) {
+        const da = new Set(PICK_LISTS.flatMap(L2 => cur[L2].filter(Boolean).map(it => it.id)));
+        const [basis, ...mehr] = AKTIV()[L];
+        // B–E: erst der eigene Teil des Vorrats (wie bei der ersten Wahl), Zufallsarbeit gemischt
+        const vorrat = t.slot !== undefined ? split(basis, mehr.flat(), Infinity, t.slot, 'ersatz-' + L)
+          : shuffled(basis.concat(...mehr), rng(hash('ersatz-' + alt.id + '-' + (seed || 0))));
+        for (const k of vorrat) {
+          if (da.has(k.id) || (L === 'QUEST' && !!k.words !== !!alt.words)) continue;
+          cur[L][i] = k;
+          if ([...pruefe()].every(id => vorher.has(id))) return;
+        }
+        cur[L][i] = null;
+      }
+      weg[teil] = (weg[teil] || 0) + 1;   // abgegeben (keine Strafe für Ungesehenes) oder kein Ersatz
+    });
+    if (Object.keys(weg).length) pk.rtWeg = weg;
+    ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = ohneLoch());
+  }
+  // Antworten in ausgemusterten Zeilen verwerfen
+  RETIRED.forEach(({ id }) => { delete S.answers[id]; if (S.order) delete S.order[id]; if (S.ai) delete S.ai[id]; if (S.claudeOk) delete S.claudeOk[id]; });
+  if ((pk.v || 1) < 2 && !S.done.vocab) recheckVocab(t, seed, pk);
   const jetzt = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
   PICK_LISTS.forEach(L => { pk[L] = jetzt[L].map(it => it.id); });
   delete pk.alt;
+  pk.v = 2; pk.rt = 1;   // ausgemustert bereinigt
+  PICK_NEU = true;
   return true;
 }
 // Verrät eine gewählte Aufgabe die Lösung einer anderen? (Gegenprobe nach einer Teil-Neuwahl)
@@ -1394,6 +1442,11 @@ function emptyCount(key) {
 function partEmpty(key) { const [e, n] = emptyCount(key); return key !== 'writing' && !(S.revealed && S.revealed[key]) && n > 0 && e === n; }
 const reveal = key => !!S.done[key] && !partEmpty(key);
 let confirming = null;   // Teil, bei dem gerade „Wirklich abgeben?“ steht (nur Sitzung)
+// Hinweis, wenn ausgemusterte Aufgaben in diesem Teil weggefallen sind (2.34.6)
+function wegHinweis(key) {
+  const n = S.pick && S.pick.rtWeg && S.pick.rtWeg[key];
+  return n ? `<p class="task" style="margin-top:8px">ℹ️ ${n === 1 ? 'Eine Aufgabe' : n + ' Aufgaben'} mit Verben, die nicht auf deiner Verbliste stehen, ${n === 1 ? 'wurde' : 'wurden'} herausgenommen. ${n === 1 ? 'Sie zählt' : 'Sie zählen'} nicht mehr mit – deshalb ${n === 1 ? 'ist' : 'sind'} hier weniger Punkte möglich.</p>` : '';
+}
 function submitBar(key, label) {
   if (S.done[key]) {
     const back = key === 'writing'
@@ -1443,7 +1496,7 @@ function renderVocab(sec) {
 const tip = (txt) => `<details class="tip"><summary>💡 Merkhilfe aus dem Heft</summary>${txt}</details>`;
 function renderGrammar(sec) {
   const g = 'grammar';
-  return head(sec, 'Simple past: Aussagen, Verneinungen, Fragen und Kurzantworten.') +
+  return (head(sec, 'Simple past: Aussagen, Verneinungen, Fragen und Kurzantworten.') +
     `<div class="card"><h3>B1 · Irregular verbs <span class="pts">${IRREG.length} Punkte</span></h3>
       <p class="task">Complete the grid: Wie heißt die <em>simple past</em>-Form?</p>
       <div class="items">${IRREG.map((v, i) => typedItem(v, i + 1, 'irreg', `<span class="grid-de">${esc(v.de)}</span> <b>${esc(v.inf)}</b> → %INPUT%`, { section: g, inline: true })).join('')}</div></div>
@@ -1465,8 +1518,10 @@ function renderGrammar(sec) {
     `<div class="card"><h3>B6 · Translate <span class="pts">${TRANS.length * 2} Punkte (je 2)</span></h3>
       <p class="task">Übersetze ins Englische. Benutze das <em>simple past</em> und achte auf die <em>Wortstellung</em>.</p>
       ${tip('Englisch: <b>Wer – tut – was – wo – wann</b>. Die Zeit darf auch ganz <b>vorn</b> stehen (<i>Yesterday he read a book.</i>), aber nie zwischen Verb und Objekt. <i>He read a book yesterday.</i> (nicht: <s>He read yesterday a book.</s>) · <i>We played football in the park on Monday.</i> (nicht: <s>We played on Monday football in the park.</s>)')}
-      <div class="items">${TRANS.map((v, i) => typedItem(v, i + 1, 'trans', esc(v.de), { section: g, ph: 'Schreib den englischen Satz …' })).join('')}</div></div>` +
-    submitBar(g, 'Grammatik');
+      <div class="items">${TRANS.map((v, i) => typedItem(v, i + 1, 'trans', esc(v.de), { section: g, ph: 'Schreib den englischen Satz …' })).join('')}</div></div>`)
+      // Abschnitte ohne Aufgaben (ausgemusterte in einem abgegebenen Teil) nicht zeigen
+      .replace(TROCKEN ? /(?!)/ : /<div class="card"><h3>B\d(?:(?!<div class="card">)[\s\S])*?<div class="items"><\/div><\/div>/g, '') +
+    wegHinweis(g) + submitBar(g, 'Grammatik');
 }
 
 // KI-Antwort (gespeichert) oder KI-Fehler (nur diese Sitzung) unter einer Aufgabe
@@ -1512,7 +1567,7 @@ function renderOrder(sec) {
     `<div class="card"><h3>Word order <span class="pts">${MAX.order} Punkte</span></h3>
       <p class="task">Tippe die Bausteine in der <em>richtigen Reihenfolge</em> an. Ein Tipp auf einen gelegten Baustein legt ihn zurück. Den großen Anfangsbuchstaben musst du nicht beachten.</p>
       ${tip('Aussage: <b>Wer – tut – was – wo – wann</b>.<br>Frage: (Fragewort) + <b>did</b> + wer + Verb im Infinitiv … / <b>Was/Were</b> + wer …<br>Verneinung: wer + <b>didn\'t</b> + Verb im Infinitiv …')}
-      <div class="items">${rows}</div></div>` + submitBar('order', 'Satzbau');
+      <div class="items">${rows}</div></div>` + wegHinweis('order') + submitBar('order', 'Satzbau');
 }
 
 function storyTokens() {
@@ -1716,7 +1771,9 @@ function testStatus(k) {
   const keepS = S, keepCur = CUR;
   if (st) { S = st; CUR = k; }
   else { S = TESTS[k].random ? Object.assign(fresh(), { story: null }) : fresh(); CUR = k; }
+  PICK_NEU = false;
   applyVariant();
+  if (st && PICK_NEU && !(VIEW === 'test' && k === keepCur)) writeState(k, st);   // bereinigte Auswahl festhalten (sonst bei jedem Menü-Bild neu)
   const res = { title: TESTS[k].random && !st ? null : STORY_TITLE,
                 theme: TESTS[k].random && !st ? null : STORIES[TESTS[k].random ? (STORIES[S.story] ? S.story : 'A') : TESTS[k].story].theme };
   res.round = st ? (st.round || 1) : 1;
@@ -1892,7 +1949,7 @@ document.addEventListener('click', async e => {
     // Gleiche Aufgaben: seed und Lesetext bleiben, nur die Antworten gehen – der alte
     // Durchgang wandert vorher in den Verlauf des Lernstands.
     archiveRun(CUR, S);
-    S = Object.assign(fresh(), { seed: S.seed, story: S.story, pick: S.pick, round: (S.round || 1) + 1 });
+    S = Object.assign(fresh(), { seed: S.seed, story: S.story, pick: S.pick && S.pick.rt ? undefined : S.pick, round: (S.round || 1) + 1 });
     confirming = null; if (typeof kiErr !== 'undefined') kiErr.clear();
     applyVariant(); save(); render(); window.scrollTo({ top: 0 }); return;
   }
@@ -2264,7 +2321,8 @@ function archiveRun(k, st) {
   writeVerlauf(v);
 }
 function lernstandRuns() {
-  const runs = readVerlauf().filter(r => r && Array.isArray(r.items));
+  const runs = readVerlauf().filter(r => r && Array.isArray(r.items))
+    .map(r => Object.assign({}, r, { items: r.items.filter(x => !(x && x.id && AUSGEMUSTERT.has(x.id))) }));
   ['A', 'B', 'C', 'D', 'E', 'Z'].forEach(k => {
     const st = k === CUR && VIEW === 'test' ? S : readState(k);
     if (st && Object.values(st.done).some(Boolean)) runs.push({ test: k, label: runLabel(k, st), items: collectRun(k, st) });
@@ -2334,7 +2392,15 @@ function lernstandText(ls) {
   return zeilen.join('\n').slice(0, 2500);
 }
 const lernstandStand = runs => runs.map(r => r.label + ':' + r.items.length + ':' + r.items.filter(x => x.ok).length).join('|');
-function readGesamt() { try { return JSON.parse(localStorage.getItem(GESAMT_KEY) || 'null'); } catch (e) { return null; } }
+function readGesamt() {
+  try {
+    const plan = JSON.parse(localStorage.getItem(GESAMT_KEY) || 'null');
+    // Pläne vor 2.34.6 (ohne v) können ausgemusterte Verben nennen (flew, swam …): dann einmal verwerfen
+    const formen = RETIRED.filter(i => i.inf).flatMap(i => [i.inf].concat(forms(i)));
+    if (plan && !plan.v && plan.text && formen.some(w => wordIn(w, plainText(plan.text)))) { localStorage.removeItem(GESAMT_KEY); return null; }
+    return plan;
+  } catch (e) { return null; }
+}
 // --- Anzeige im Menü
 function lernstandHtml() {
   const runs = lernstandRuns();
@@ -2373,7 +2439,7 @@ async function askGesamt() {
   planBusy.add('gesamt'); gesamtFehler = ''; render();
   try {
     const plan = (await gesamtFrage(text)).slice(0, 1500);
-    if (plan) try { localStorage.setItem(GESAMT_KEY, JSON.stringify({ text: plan, at: Date.now(), stand })); } catch (e) {}
+    if (plan) try { localStorage.setItem(GESAMT_KEY, JSON.stringify({ text: plan, at: Date.now(), stand, v: 2 })); } catch (e) {}
   } catch (err) {
     gesamtFehler = typeof kiFail === 'function' ? kiFail(err) : claudeFail(err);
   }
