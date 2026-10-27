@@ -473,34 +473,19 @@ const VOCAB_MORE = [
   { id: 'v51', de: 'hinunter, herunter',           en: ['down'] },
   { id: 'v52', de: 'die meisten',                  en: ['most'] },
 ];
-const IRREG_MORE = [
-  { id: 'i26', de: 'kommen',     inf: 'come',  en: ['came'] },
-  { id: 'i27', de: 'schreiben',  inf: 'write', en: ['wrote'] },
-  { id: 'i28', de: 'essen',      inf: 'eat',   en: ['ate'] },
-  { id: 'i29', de: 'trinken',    inf: 'drink', en: ['drank'] },
-  { id: 'i30', de: 'rennen',     inf: 'run',   en: ['ran'] },
-  { id: 'i31', de: 'schwimmen',  inf: 'swim',  en: ['swam'] },
-  { id: 'i32', de: 'sitzen',     inf: 'sit',   en: ['sat'] },
-  { id: 'i33', de: 'schlafen',   inf: 'sleep', en: ['slept'] },
-  { id: 'i34', de: 'fliegen',    inf: 'fly',   en: ['flew'] },
-  { id: 'i35', de: 'gewinnen',   inf: 'win',   en: ['won'] },
-  { id: 'i36', de: 'tragen (Kleidung)', inf: 'wear', en: ['wore'] },
-  { id: 'i37', de: 'fahren (ein Auto)', inf: 'drive', en: ['drove'] },
-  { id: 'i38', de: 'verlassen, weggehen', inf: 'leave', en: ['left'] },
-  { id: 'i39', de: 'fühlen',     inf: 'feel',  en: ['felt'] },
-  { id: 'i40', de: 'wissen, kennen', inf: 'know', en: ['knew'] },
-];
+const IRREG_MORE = [];   // die Verbliste der Klasse (25 Verben) ist mit BASE + EXTRA vollständig
 const GAPS_MORE = [
   { id: 'g13', pre: 'On Monday my dad', verb: 'plan', post: 'a long walk.', en: ['planned'] },
   { id: 'g14', pre: 'We', verb: 'try', post: 'fish and chips for the first time.', en: ['tried'] },
-  { id: 'g15', pre: 'The children', verb: 'swim', post: 'in the lake every morning.', en: ['swam'] },
-  { id: 'g16', pre: 'Mum', verb: 'drive', post: 'us to the beach.', en: ['drove'] },
-  { id: 'g17', pre: 'I', verb: 'write', post: 'a postcard to my grandma.', en: ['wrote'] },
   { id: 'g18', pre: 'My brother', verb: 'lose', post: 'his sunglasses at the pool.', en: ['lost'] },
-  { id: 'g19', pre: 'We', verb: 'eat', post: 'ice cream every day.', en: ['ate'] },
   { id: 'g20', pre: 'The plane', verb: 'land', post: 'in Edinburgh at ten o\'clock.', en: ['landed'] },
   { id: 'g21', pre: 'The waiter', verb: 'bring', post: 'us our pizza.', en: ['brought'] },
   { id: 'g22', pre: 'It', verb: 'be', post: 'very hot in Spain.', en: ['was'] },
+  { id: 'g23', pre: 'My dad', verb: 'spend', post: 'a lot of money on souvenirs.', en: ['spent'] },
+  { id: 'g24', pre: 'I', verb: 'think', post: 'the old castle was really scary.', en: ['thought'] },
+  { id: 'g25', pre: 'Our teacher', verb: 'speak', post: 'to the class about the school rules.', en: ['spoke'] },
+  { id: 'g26', pre: 'My little sister', verb: 'fall', post: 'into the pool.', en: ['fell'] },
+  { id: 'g27', pre: 'We', verb: 'choose', post: 'a table near the window.', en: ['chose'] },
 ];
 const NEG_MORE = [
   { id: 'n11', s: 'We went to the beach.',                en: ["we didn't go to the beach"], sol: "We didn't go to the beach." },
@@ -523,32 +508,30 @@ const SHORT_MORE = [
   { id: 's10', q: 'Did Lisa find her phone?',             yn: 'Yes,', en: ['she did'], sol: 'she did.' },
   { id: 's11', q: 'Did the students break the rules?',    yn: 'No,',  en: ["they didn't"], sol: "they didn't." },
   { id: 's12', q: 'Was the hotel nice?',                  yn: 'Yes,', en: ['it was'], sol: 'it was.' },
-  { id: 's13', q: 'Did your dad drive to Scotland?',      yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
   { id: 's14', q: 'Did you call your grandma?',           yn: 'Yes,', en: ['i did', 'we did'], sol: 'I did.' },
   { id: 's15', q: 'Were the waves high?',                 yn: 'Yes,', en: ['they were'], sol: 'they were.' },
   { id: 's16', q: 'Did Ben bring his phone?',             yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
   { id: 's17', q: 'Was the museum interesting?',          yn: 'No,',  en: ["it wasn't"], sol: "it wasn't." },
-  { id: 's18', q: 'Did your sister swim in the sea?',     yn: 'Yes,', en: ['she did'], sol: 'she did.' },
   { id: 's19', q: 'Were you tired after the trip?',       yn: 'No,',  en: ["i wasn't", "we weren't"], sol: "I wasn't." },
-  { id: 's20', q: 'Did the children win the game?',       yn: 'Yes,', en: ['they did'], sol: 'they did.' },
   { id: 's21', q: 'Was Mr Hughes angry?',                 yn: 'No,',  en: ["he wasn't"], sol: "he wasn't." },
+  { id: 's22', q: 'Did your dad buy the tickets?',        yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
+  { id: 's23', q: 'Did your friends meet you at the station?', yn: 'Yes,', en: ['they did'], sol: 'they did.' },
+  { id: 's24', q: 'Did Emma get a postcard from Spain?',  yn: 'Yes,', en: ['she did'], sol: 'she did.' },
 ];
 const TRANS_MORE = [
-  { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake', 'we went swimming in the lake last week', 'last week we went swimming in the lake'], sol: 'We swam in the lake last week.' },
   { id: 'r8',  de: 'Tom verlor gestern sein Handy.',         en: ['tom lost his phone yesterday', 'yesterday tom lost his phone', 'tom lost his mobile yesterday', 'yesterday tom lost his mobile', 'tom lost his mobile phone yesterday', 'yesterday tom lost his mobile phone'], sol: 'Tom lost his phone yesterday.' },
-  { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza', 'we had pizza in the evening', 'in the evening we had pizza'], sol: 'We ate pizza in the evening.' },
   { id: 'r10', de: 'Ich traf meine Freundin am Bahnhof.',    en: ['met', 'met up with'].flatMap(v => ['friend', 'girlfriend'].flatMap(f => ['station', 'train station', 'railway station']
         .map(o => `i ${v} my ${f} at the ${o}`))), sol: 'I met my friend at the station.' },
-  { id: 'r11', de: 'Meine Schwester schrieb gestern eine Postkarte.', en: ['my sister wrote a postcard yesterday', 'yesterday my sister wrote a postcard'], sol: 'My sister wrote a postcard yesterday.' },
-  { id: 'r12', de: 'Mein Bruder schlief gestern im Zelt.',  en: ['my brother slept in the tent yesterday', 'yesterday my brother slept in the tent', 'my brother slept in a tent yesterday', 'yesterday my brother slept in a tent'], sol: 'My brother slept in the tent yesterday.' },
   { id: 'r13', de: 'Wir besuchten letzten Sommer London.',  en: ['we visited london last summer', 'last summer we visited london', 'we went to london last summer', 'last summer we went to london'], sol: 'We visited London last summer.' },
   { id: 'r14', de: 'Die Kinder spielten nach der Schule Fußball.', en: ['the children played football after school', 'after school the children played football', 'the kids played football after school', 'after school the kids played football'], sol: 'The children played football after school.' },
   { id: 'r15', de: 'Ich sah am Freitag einen Film.',        en: ['i saw a film on friday', 'on friday i saw a film', 'i watched a film on friday', 'on friday i watched a film',
         'i saw a movie on friday', 'on friday i saw a movie', 'i watched a movie on friday', 'on friday i watched a movie'], sol: 'I saw a film on Friday.' },
+  { id: 'r16', de: 'Wir verbrachten letzten Sommer eine Woche in Wales.', en: ['a week', 'one week'].flatMap(w => [`we spent ${w} in wales last summer`, `last summer we spent ${w} in wales`]), sol: 'We spent a week in Wales last summer.' },
+  { id: 'r17', de: 'Meine Schwester fand gestern eine Muschel am Strand.', en: ['shell', 'seashell', 'sea shell'].flatMap(m => ['on', 'at'].flatMap(p => [`my sister found a ${m} ${p} the beach yesterday`, `yesterday my sister found a ${m} ${p} the beach`])), sol: 'My sister found a shell on the beach yesterday.' },
+  { id: 'r18', de: 'Ich erzählte meiner Oma am Abend eine Geschichte.', en: ['grandma', 'granny', 'grandmother', 'gran', 'nan', 'nana'].flatMap(o => [`i told my ${o} a story in the evening`, `in the evening i told my ${o} a story`, `i told a story to my ${o} in the evening`, `in the evening i told a story to my ${o}`]), sol: 'I told my grandma a story in the evening.' },
+  { id: 'r19', de: 'Mein Bruder brach sich gestern den Arm.', en: ['my brother broke his arm yesterday', 'yesterday my brother broke his arm'], sol: 'My brother broke his arm yesterday.' },
 ];
 const ORDER_MORE = [
-  { id: 'o11', c: ['swam', 'in the sea', 'we', 'every day'], end: '.',
-    en: ['we swam in the sea every day', 'every day we swam in the sea'], sol: 'We swam in the sea every day.' },
   { id: 'o12', c: ['did', 'where', 'stay', 'your family'], end: '?',
     en: ['where did your family stay'], sol: 'Where did your family stay?' },
   { id: 'o13', c: ["didn't", 'my phone', 'I', 'switch off'], end: '.',
@@ -557,12 +540,49 @@ const ORDER_MORE = [
     en: ['were your friends at the beach yesterday'], sol: 'Were your friends at the beach yesterday?' },
   { id: 'o15', c: ['found', 'in the garden', 'Mia', 'her phone'], end: '.',
     en: ['mia found her phone in the garden', 'in the garden mia found her phone'], sol: 'Mia found her phone in the garden.' },
-  { id: 'o16', c: ['when', 'did', 'the train', 'leave'], end: '?',
-    en: ['when did the train leave'], sol: 'When did the train leave?' },
   { id: 'o17', c: ["wasn't", 'very friendly', 'the waiter'], end: '.',
     en: ["the waiter wasn't very friendly"], sol: "The waiter wasn't very friendly." },
   { id: 'o18', c: ['bought', 'for my mum', 'I', 'a postcard'], end: '.',
     en: ['i bought a postcard for my mum'], sol: 'I bought a postcard for my mum.' },
+  { id: 'o19', c: ['helped', 'in the garden', 'I', 'my grandpa'], end: '.',
+    en: ['i helped my grandpa in the garden', 'in the garden i helped my grandpa'], sol: 'I helped my grandpa in the garden.' },
+  { id: 'o20', c: ['you', 'where', 'find', 'did', 'the map'], end: '?',
+    en: ['where did you find the map'], sol: 'Where did you find the map?' },
+];
+// Nicht mehr gewählt (2.34.5): Aufgaben mit Verben, die nicht auf der Verbliste der Klasse
+// stehen. Sie bleiben auffindbar, damit eine schon geöffnete Arbeit dieselben Aufgaben behält,
+// und ihre Formen (swam, ate …) zählen in der Geschichte weiter als richtige Vergangenheit.
+const RETIRED = [
+  { id: 'i26', de: 'kommen',     inf: 'come',  en: ['came'] },
+  { id: 'i27', de: 'schreiben',  inf: 'write', en: ['wrote'] },
+  { id: 'i28', de: 'essen',      inf: 'eat',   en: ['ate'] },
+  { id: 'i29', de: 'trinken',    inf: 'drink', en: ['drank'] },
+  { id: 'i30', de: 'rennen',     inf: 'run',   en: ['ran'] },
+  { id: 'i31', de: 'schwimmen',  inf: 'swim',  en: ['swam'] },
+  { id: 'i32', de: 'sitzen',     inf: 'sit',   en: ['sat'] },
+  { id: 'i33', de: 'schlafen',   inf: 'sleep', en: ['slept'] },
+  { id: 'i34', de: 'fliegen',    inf: 'fly',   en: ['flew'] },
+  { id: 'i35', de: 'gewinnen',   inf: 'win',   en: ['won'] },
+  { id: 'i36', de: 'tragen (Kleidung)', inf: 'wear', en: ['wore'] },
+  { id: 'i37', de: 'fahren (ein Auto)', inf: 'drive', en: ['drove'] },
+  { id: 'i38', de: 'verlassen, weggehen', inf: 'leave', en: ['left'] },
+  { id: 'i39', de: 'fühlen',     inf: 'feel',  en: ['felt'] },
+  { id: 'i40', de: 'wissen, kennen', inf: 'know', en: ['knew'] },
+  { id: 'g15', pre: 'The children', verb: 'swim', post: 'in the lake every morning.', en: ['swam'] },
+  { id: 'g16', pre: 'Mum', verb: 'drive', post: 'us to the beach.', en: ['drove'] },
+  { id: 'g17', pre: 'I', verb: 'write', post: 'a postcard to my grandma.', en: ['wrote'] },
+  { id: 'g19', pre: 'We', verb: 'eat', post: 'ice cream every day.', en: ['ate'] },
+  { id: 's13', q: 'Did your dad drive to Scotland?',      yn: 'No,',  en: ["he didn't"], sol: "he didn't." },
+  { id: 's18', q: 'Did your sister swim in the sea?',     yn: 'Yes,', en: ['she did'], sol: 'she did.' },
+  { id: 's20', q: 'Did the children win the game?',       yn: 'Yes,', en: ['they did'], sol: 'they did.' },
+  { id: 'r7',  de: 'Wir schwammen letzte Woche im See.',     en: ['we swam in the lake last week', 'last week we swam in the lake', 'we went swimming in the lake last week', 'last week we went swimming in the lake'], sol: 'We swam in the lake last week.' },
+  { id: 'r9',  de: 'Wir aßen am Abend Pizza.',               en: ['we ate pizza in the evening', 'in the evening we ate pizza', 'we had pizza in the evening', 'in the evening we had pizza'], sol: 'We ate pizza in the evening.' },
+  { id: 'r11', de: 'Meine Schwester schrieb gestern eine Postkarte.', en: ['my sister wrote a postcard yesterday', 'yesterday my sister wrote a postcard'], sol: 'My sister wrote a postcard yesterday.' },
+  { id: 'r12', de: 'Mein Bruder schlief gestern im Zelt.',  en: ['my brother slept in the tent yesterday', 'yesterday my brother slept in the tent', 'my brother slept in a tent yesterday', 'yesterday my brother slept in a tent'], sol: 'My brother slept in the tent yesterday.' },
+  { id: 'o11', c: ['swam', 'in the sea', 'we', 'every day'], end: '.',
+    en: ['we swam in the sea every day', 'every day we swam in the sea'], sol: 'We swam in the sea every day.' },
+  { id: 'o16', c: ['when', 'did', 'the train', 'leave'], end: '?',
+    en: ['when did the train leave'], sol: 'When did the train leave?' },
 ];
 let ORDER = [];
 let ALL_TYPED = {};
@@ -880,9 +900,9 @@ const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const plainText = x => String(x).toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z' ]+/g, ' ');
 const wordIn = (w, text) => new RegExp("(^|[^a-z'])" + escRe(w) + "(?=[^a-z']|$)").test(text);
 const forms = it => it.en.flatMap(e => e.split(/[\s\/]+/)).filter(w => w && !['or', 'and'].includes(w));
-const PAST = new Set([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE].flatMap(forms));
+const PAST = new Set([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE, ...RETIRED.filter(i => i.inf)].flatMap(forms));
 // Unregelmäßige Vergangenheit aus allen Verbraster-Vorräten (fall → fell, go → went)
-const PAST_OF = new Map([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE].map(i => [i.inf, forms(i)]));
+const PAST_OF = new Map([...BASE.IRREG, ...IRREG_EXTRA, ...IRREG_MORE, ...RETIRED.filter(i => i.inf)].map(i => [i.inf, forms(i)]));
 // Vokabel verraten? Auch mit Endung (punished, agreed, rocks) – bei Wendungen am ersten
 // Wort (switched off, went wrong) – und in unregelmäßiger Vergangenheit (fell, sent);
 // nicht als bloßer Wortanfang (rock ≠ rocket).
@@ -957,7 +977,7 @@ const PICK_LISTS = ['VOCAB', 'IRREG', 'GAPS', 'NEG', 'QUEST', 'SHORT', 'TRANS', 
 function poolById() {
   const all = [BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, BASE.IRREG, IRREG_EXTRA, IRREG_MORE, BASE.GAPS, GAPS_EXTRA, GAPS_MORE,
     BASE.NEG, NEG_EXTRA, NEG_MORE, BASE.QUEST, QUEST_EXTRA, QUEST_MORE, BASE.SHORT, SHORT_EXTRA, SHORT_MORE,
-    BASE.TRANS, TRANS_EXTRA, TRANS_MORE, ORDER_POOL, ORDER_MORE].flat();
+    BASE.TRANS, TRANS_EXTRA, TRANS_MORE, ORDER_POOL, ORDER_MORE, RETIRED].flat();
   return new Map(all.map(it => [it.id, it]));
 }
 function applyFrozen(t, seed) {
@@ -967,6 +987,8 @@ function applyFrozen(t, seed) {
     const lists = {};
     const okL = L => (lists[L] = (pk[L] || []).map(id => byId.get(id))).length > 0 && lists[L].every(Boolean);
     const bad = PICK_LISTS.filter(L => !okL(L));
+    // (Stände aus 2.33.4 mit pick.v 1 erst beim nächsten Öffnen, nach recheckVocab)
+    if (STORIES[pk.story] && !bad.length && pk.v >= 2 && ausgemustertErsetzen(t, seed, pk, lists)) return;
     if (STORIES[pk.story] && !bad.length) {
       ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER } = lists);
       applyStory(t, pk.story);
@@ -988,6 +1010,41 @@ function applyFrozen(t, seed) {
   applyFiltered(t, seed);
   S.pick = { v: 2, story: STORY_KEY };
   PICK_LISTS.forEach(L => { S.pick[L] = ({ VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER })[L].map(it => it.id); });
+}
+// Ausgemusterte Aufgaben (RETIRED) in einer schon geöffneten Arbeit ersetzen – nur in Teilen,
+// in denen das Kind noch nichts getan hat. Ist alles unberührt, wird wie neu gewählt; sonst nur
+// die betroffenen Listen, und nur, wenn danach keine Aufgabe die Lösung einer anderen verrät.
+// Klappt das nicht, bleibt die alte Auswahl (lieber ein Zusatzverb als eine verratene Lösung).
+function ausgemustertErsetzen(t, seed, pk, lists) {
+  const alt = new Set(RETIRED.map(it => it.id));
+  const teilVon = L => L === 'VOCAB' ? 'vocab' : L === 'ORDER' ? 'order' : 'grammar';
+  const leer = teil => !S.done[teil] && !(S.revealed && S.revealed[teil]) && PICK_LISTS.filter(L => teilVon(L) === teil).every(L =>
+    (pk[L] || []).every(id => !String(S.answers[id] || '').trim() && !(S.order && S.order[id] && S.order[id].length)
+      && !(S.ai && S.ai[id]) && !(S.claudeOk && S.claudeOk[id])));
+  const neu = PICK_LISTS.filter(L => (pk[L] || []).some(id => alt.has(id)) && leer(teilVon(L)));
+  if (!neu.length) return false;
+  const alleLeer = ['vocab', 'grammar', 'order'].every(leer);   // z. B. nach „Nochmal versuchen“: wie neu wählen
+  if (pk.alt && !alleLeer) return false;
+  const keep = { story: pk.story };
+  if (!alleLeer) PICK_LISTS.forEach(L => { if (!neu.includes(L)) keep[L] = lists[L]; });
+  applyFiltered(t, seed, keep);
+  if (verrateneLoesungen().length) { pk.alt = 1; return false; }
+  const jetzt = { VOCAB, IRREG, GAPS, NEG, QUEST, SHORT, TRANS, ORDER };
+  PICK_LISTS.forEach(L => { pk[L] = jetzt[L].map(it => it.id); });
+  delete pk.alt;
+  return true;
+}
+// Verrät eine gewählte Aufgabe die Lösung einer anderen? (Gegenprobe nach einer Teil-Neuwahl)
+function verrateneLoesungen() {
+  const text = renderedText(), funde = [];
+  TRANS.forEach(it => { if (transVerbs(it).some(w => wordIn(w, text))) funde.push(it.id); });
+  IRREG.forEach(i => { if (forms(i).some(w => w !== i.inf && wordIn(w, text))) funde.push(i.id); });
+  GAPS.forEach(g => { if (forms(g).some(w => w !== g.verb && wordIn(w, text)) || IRREG.some(i => i.inf === g.verb)) funde.push(g.id); });
+  const vok = VOCAB; VOCAB = [];
+  const ohneVokabeln = renderedText() + ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText() + ' ' + menuText();
+  VOCAB = vok;
+  VOCAB.forEach(v => { if (verraten(v, ohneVokabeln)) funde.push(v.id); });
+  return funde;
 }
 // Auswahl aus 2.33.4 (pick.v 1) einmal nachprüfen, solange der Vokabelteil offen ist: Nur
 // Vokabeln, die sich jetzt verraten, werden aus dem Vorrat ersetzt – alles andere bleibt.

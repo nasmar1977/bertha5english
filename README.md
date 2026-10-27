@@ -156,8 +156,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.4
-**Datum:** 25.10.2026
+**Version:** 2.34.5
+**Datum:** 27.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -205,6 +205,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.5 (27.10.2026)
+- Klassenarbeit: Aufgaben nur noch mit den 25 unregelmäßigen Verben der Heftliste. 28 Aufgaben mit anderen Verben
+  (come, write, eat, swim, drive, sleep, win, leave …) stehen in `RETIRED`: nie mehr gewählt, aber per ID auffindbar,
+  und ihre Formen zählen in der Geschichte weiter als Vergangenheit (`PAST`). Ersatz: g23–g27, s22–s24, r16–r19, o19–o20.
+- Schon geöffnete Arbeiten: `ausgemustertErsetzen()` wählt nur in unberührten Teilen neu (ganz unberührt → wie neu);
+  Gegenprobe `verrateneLoesungen()` – verrät danach eine Aufgabe eine andere, bleibt die alte Auswahl (`pick.alt`).
+- Zwei Prüfberichte (Inhalt, Logik); Leck-Test 1224 Fälle, beide Fassungen: 0 Lecks, begonnene Teile unverändert.
 
 ### Version 2.34.4 (25.10.2026)
 - Zwei Delta-Prüfberichte zu 2.34.3. **Logik**: Neu abgegeben, während die Bewertung noch läuft (`writeAgain`) →
