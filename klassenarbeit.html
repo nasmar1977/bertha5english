@@ -166,6 +166,12 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
   border: 0; border-bottom: 3px solid var(--accent); border-radius: 8px 8px 0 0; color: var(--ink); }
 .spell-slot.filled { cursor: pointer; background: var(--accent); color: #fff; }
 .spell-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.plan { display: grid; gap: 8px; margin-top: 8px; }
+.plan-lob { margin: 0; background: var(--claude-bg); border: 2px solid #f3c9ad; border-radius: 12px; padding: 8px 12px; }
+.plan-karte { background: var(--paper); border: 2px solid var(--rule); border-left: 6px solid var(--line-purple); border-radius: 12px; padding: 8px 12px; display: grid; gap: 4px; justify-items: start; }
+.plan-karte b { font-family: var(--font-display); font-size: 1.05rem; }
+.plan-karte .plan-bsp { color: var(--muted); font-style: italic; }
+.plan-karte .btn { margin-top: 4px; }
 .spell-ok { color: var(--good); font-weight: 700; }
 .spell-no { color: var(--bad); font-weight: 700; }
 
@@ -1756,7 +1762,9 @@ function renderResult(sec) {
     </div>
     ${allDone && kiOn() ? `<div class="card"><h3>Dein Lernplan</h3>
       <p class="task">Die KI schaut auf deine Fehler und sagt dir, was du bis zur Arbeit noch üben solltest.</p>
-      ${S.answers.plan || kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan') || S.answers.plan)}</div>` : ''}
+      ${kiErr.has('plan') ? `<div class="claude-box">${esc(kiErr.get('plan'))}</div>` : ''}
+      ${planLesen(S.answers.plan) ? planHtml(planLesen(S.answers.plan), spellWords(spellList().map(x => x.richtig)), true)
+        : S.answers.plan && !kiErr.has('plan') ? `<div class="claude-box">${esc(S.answers.plan)}</div>` : ''}
       <button type="button" class="btn claude" id="ki-plan" data-plan style="margin-top:8px" ${planBusy.has(busyKey()) ? 'disabled' : ''}>${planBusy.has(busyKey()) ? '🤖 denkt nach …' : '🤖 Was soll ich noch üben?'}</button></div>` : ''}
     <div class="card"><h3>Nochmal?</h3>
       <p class="task">${allDone ? `„Neu beginnen“ löscht deine Antworten in ${testName(CUR)}, die Aufgaben bleiben gleich. Du kennst jetzt die Lösungen – für eine echte Probe nimm lieber eine andere Arbeit oder die Zufallsarbeit.` : 'Wenn alle Teile abgegeben sind, kannst du diese Arbeit noch einmal von vorn schreiben.'}${TESTS[CUR].random ? ' Eine neue Zufallsarbeit mischt andere Aufgaben und einen anderen Lesetext.' : ''}</p>
@@ -1923,6 +1931,12 @@ document.addEventListener('click', async e => {
   if (b.dataset.open) { openTest(b.dataset.open); return; }
   if (b.hasAttribute('data-gesamt')) { askGesamt(); return; }
   if (b.hasAttribute('data-training')) { startTraining(); return; }
+  if (b.dataset.ueben) {
+    const kind = b.dataset.ueben;
+    const karten = b.closest('.plan');
+    startTraining({ kind, titel: b.dataset.titel || '', woerter: kind === 'woerter' ? planWoerter() : [], sichtbar: karten ? karten.textContent : '' });
+    return;
+  }
   if (b.hasAttribute('data-train-submit')) { trainingAbgeben(); return; }
   if (b.hasAttribute('data-menu')) { showMenu(); return; }
   if (b.dataset.submit) { confirming = b.dataset.submit; render(); return; }
@@ -2051,24 +2065,27 @@ async function askPlan(btn) {
   const cut = s => { s = String(s || ''); return s.length > 60 ? s.slice(0, 57) + '…' : s; };
   const zeilen = [];
   const teil = (liste) => zeilen.push(...liste.slice(0, 5));   // je Teil höchstens 5 Zeilen
+  // [Schlüssel] vorn: daraus wählt die KI das Thema einer Karte (siehe PLAN_THEMEN)
   Object.entries(ALL_TYPED).forEach(([kind, list]) => teil(list
     .filter(it => !isRight(S.answers[it.id], it.en, it) && !S.claudeOk[it.id])
-    .map(it => `${taskText(kind, it)} – Kind: "${cut(S.answers[it.id]) || '(leer)'}", richtig: "${showSol(it, kind)}"`)));
-  teil(TF.filter(t => S.answers[t.id] !== String(t.a)).map(t => `Lesen true/false: "${t.s}"`));
-  teil(ADJ.filter(t => S.answers[t.id] !== t.a).map(t => `Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`));
-  teil(SPEECH.filter(t => S.answers[t.id] !== String(t.a)).map(t => `Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`));
+    .map(it => `[${kind}] ${taskText(kind, it)} – Kind: "${cut(S.answers[it.id]) || '(leer)'}", richtig: "${showSol(it, kind)}"`)));
+  teil(TF.filter(t => S.answers[t.id] !== String(t.a)).map(t => `[lesen] Lesen true/false: "${t.s}"`));
+  teil(ADJ.filter(t => S.answers[t.id] !== t.a).map(t => `[lesen] Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`));
+  teil(SPEECH.filter(t => S.answers[t.id] !== String(t.a)).map(t => `[lesen] Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`));
   const mr = markResult();
-  if (mr.pts < 4) zeilen.push(`Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
+  if (mr.pts < 4) zeilen.push(`[lesen] Connectives im Text finden: ${mr.good} richtig, ${mr.bad} falsch markiert`);
   if (S.writeAi && Array.isArray(S.writeAi.fehler)) S.writeAi.fehler.slice(0, 3)
-    .forEach(f => zeilen.push(`Text: ${cut(f.original)} → ${cut(f.besser)}`));
-  if (spellList().length) zeilen.push('Diese Wörter kann das Kind üben: ' + spellList().map(x => x.richtig).join(', '));
+    .forEach(f => zeilen.push(`[geschichte] Text: ${cut(f.original)} → ${cut(f.besser)}`));
+  if (spellList().length) zeilen.push('[woerter] Diese Wörter kann das Kind üben: ' + spellList().map(x => x.richtig).join(', '));
   try {
     const r = await kiFrage('lernplan', {
       story: STORY_KEY,
       ergebnis: `${total()} von ${totalMax()} Punkten, davon Schreiben ${writingPoints()} von ${WRITING_MAX}`,
       fehler: zeilen.join('\n'),
     }, 30000);
-    const plan = String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
+    // Karten (Worker ab 2.34.8); ein älterer Worker schickt nur den Text
+    const k = planKarten(r);
+    const plan = k ? JSON.stringify({ v: 3, lob: k.lob, punkte: k.punkte }) : String(r && r.plan || '').slice(0, 1200) || 'Kein Lernplan bekommen.';
     planBusy.delete(pbusy);
     applyFor(mineKey, st => { if (runTag(st) !== tag) return false; st.answers.plan = plan; });
   } catch (err) {
@@ -2391,15 +2408,49 @@ function lernstand(runs) {
   const woerter = [...new Set(Object.values(mu).filter(p => p.wort).map(p => p.wort))];
   return { skills, muster: mu, baustellen, geschafft, woerter, hartAlle: hartMuster.concat(hartSkills) };
 }
+// --- Lernplan als Karten: { v: 3, lob, punkte: [{ thema, titel, regel, beispiel }] }. Pläne von vor 2.34.8
+// sind ein einziger Text und werden weiter so gezeigt. Das Thema entscheidet, was „🎯 Jetzt üben“ startet.
+const PLAN_THEMEN = ['vocab', 'irreg', 'gap', 'neg', 'quest', 'short', 'trans', 'order', 'lesen', 'geschichte', 'woerter'];
+const PLAN_ZUM_TEIL = { order: 'order', lesen: 'reading', geschichte: 'writing' };
+const planThema = skill => TRAIN_KINDS.includes(skill) || skill === 'order' ? skill : skill === 'spelling' ? 'woerter' : skill.startsWith('w_') ? 'geschichte' : 'lesen';
+// Karten prüfen und kürzen – wörtlich gleich in Worker und Artefakt.
+function planKarten(o) {
+  if (!o || typeof o !== 'object') return null;
+  const t = (x, n) => String(typeof x === 'string' ? x : '').replace(/[\u0000-\u001f*`]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
+  const lob = t(o.lob, 240);
+  const punkte = (Array.isArray(o.punkte) ? o.punkte : []).filter(p => p && typeof p === 'object')
+    .map(p => ({ thema: PLAN_THEMEN.includes(p.thema) ? p.thema : '', titel: t(p.titel, 60), regel: t(p.regel, 240), beispiel: t(p.beispiel, 160) }))
+    .filter(p => p.titel && (p.regel || p.beispiel)).slice(0, 3);
+  if (!lob && !punkte.length) return null;
+  const plan = [lob].concat(punkte.map((p, i) => `${i + 1}. ${p.titel}: ${p.regel}${p.beispiel ? ' Beispiel: ' + p.beispiel : ''}`)).filter(Boolean).join('\n');
+  return { lob, punkte, plan };
+}
+function planLesen(roh) {
+  if (typeof roh !== 'string' || roh[0] !== '{') return null;
+  try { const o = JSON.parse(roh); return o && o.v === 3 ? planKarten(o) : null; } catch (e) { return null; }
+}
+// imTest: Ergebnisseite einer Arbeit (dort führt „Nochmal ansehen“ zum Teil); woerter: was „Wörter“ üben würde
+function planHtml(k, woerter, imTest) {
+  const knopf = p => TRAIN_KINDS.includes(p.thema) || (p.thema === 'woerter' && woerter.length)
+    ? `<button type="button" class="btn small" style="background:var(--line-purple)" data-ueben="${p.thema}" data-titel="${esc(p.titel)}">🎯 Jetzt üben</button>`
+    : imTest && PLAN_ZUM_TEIL[p.thema] ? `<button type="button" class="btn small ghost" data-go="${PLAN_ZUM_TEIL[p.thema]}">👀 Nochmal ansehen</button>` : '';
+  return `<div class="plan">${k.lob ? `<p class="plan-lob">🤖 ${esc(k.lob)}</p>` : ''}${k.punkte.map((p, i) => `<div class="plan-karte">
+    <b>${i + 1}. ${esc(p.titel)}</b>${p.regel ? `<span>${esc(p.regel)}</span>` : ''}${p.beispiel ? `<span class="plan-bsp" lang="en">${esc(p.beispiel)}</span>` : ''}${knopf(p)}</div>`).join('')}</div>`;
+}
+function planWoerter() {
+  if (VIEW === 'test') return spellWords(spellList().map(x => x.richtig)).slice(0, 8);
+  const ls = lernstand(lernstandRuns()), tp = trainingPlan(ls);
+  return spellWords(tp.woerter.length ? tp.woerter : ls.woerter).slice(0, 8);
+}
 // --- Verdichtete Übersicht für den Gesamt-Lernplan (keine Einzelantworten außer ≤ 2 Beispielen)
 function lernstandText(ls) {
   const zeilen = [];
   zeilen.push('Fertigkeiten (richtig von gesamt): ' + SKILLS.filter(([k]) => ls.skills[k] && k !== 'spelling')
-    .map(([k, l]) => `${l} ${ls.skills[k].ok}/${ls.skills[k].n}`).join('; '));
-  ls.hartAlle.slice(0, 5).forEach(p => zeilen.push('Hartnäckig: ' + p.label + (p.ex && p.ex.length
+    .map(([k, l]) => `${l} [${planThema(k)}] ${ls.skills[k].ok}/${ls.skills[k].n}`).join('; '));
+  ls.hartAlle.slice(0, 5).forEach(p => zeilen.push(`Hartnäckig [${planThema(p.skill)}]: ` + p.label + (p.ex && p.ex.length
     ? ' – Beispiele: ' + p.ex.slice(0, 2).map(e => `du "${String(e.du).slice(0, 40)}" → richtig "${String(e.richtig).slice(0, 50)}"`).join('; ') : '')));
   if (ls.geschafft.length) zeilen.push('Geschafft: ' + ls.geschafft.join(', '));
-  if (ls.woerter.length) zeilen.push('Wörter zum Üben: ' + ls.woerter.slice(0, 15).join(', '));
+  if (ls.woerter.length) zeilen.push('Wörter zum Üben [woerter]: ' + ls.woerter.slice(0, 15).join(', '));
   return zeilen.join('\n').slice(0, 2500);
 }
 const lernstandStand = runs => runs.map(r => r.label + ':' + r.items.length + ':' + r.items.filter(x => x.ok).length).join('|');
@@ -2432,7 +2483,10 @@ function lernstandHtml() {
   const busy = planBusy.has('gesamt');
   const planKnopf = !kannKi ? '' : `<button type="button" class="btn claude" id="ki-gesamt" data-gesamt ${busy ? 'disabled' : ''}>${busy ? '🤖 denkt nach …'
     : plan && plan.stand === stand ? '🤖 Gesamt-Lernplan neu schreiben' : plan ? '🤖 Gesamt-Lernplan aktualisieren' : '🤖 Gesamt-Lernplan'}</button>`;
-  const planBox = plan && plan.text ? `<div class="claude-box">${esc(plan.text)}<br><small style="color:var(--muted)">Stand: ${new Date(plan.at).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })}${plan.stand !== stand ? ' – inzwischen gibt es neue Abgaben' : ''}</small></div>` : '';
+  const karten = plan && plan.karten ? planKarten(plan.karten) : null;
+  const planStand = plan ? `<small style="color:var(--muted)">Stand: ${new Date(plan.at).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })}${plan.stand !== stand ? ' – inzwischen gibt es neue Abgaben' : ''}</small>` : '';
+  const planBox = karten ? `<div>${planHtml(karten, spellWords(trainingPlan(ls).woerter.length ? trainingPlan(ls).woerter : ls.woerter), false)}${planStand}</div>`
+    : plan && plan.text ? `<div class="claude-box">${esc(plan.text)}<br>${planStand}</div>` : '';
   const err = gesamtFehler ? `<div class="claude-box">${esc(gesamtFehler)}</div>` : '';
   const training = trainingPlan(ls).total > 0
     ? '<button type="button" class="btn" style="background:var(--line-purple)" id="training-start" data-training>🎯 Übe deine hartnäckigen Fehler</button>' : '';
@@ -2449,8 +2503,10 @@ async function askGesamt() {
   const runs = lernstandRuns(), text = lernstandText(lernstand(runs)), stand = lernstandStand(runs);
   planBusy.add('gesamt'); gesamtFehler = ''; render();
   try {
-    const plan = (await gesamtFrage(text)).slice(0, 1500);
-    if (plan) try { localStorage.setItem(GESAMT_KEY, JSON.stringify({ text: plan, at: Date.now(), stand, v: 2 })); } catch (e) {}
+    const plan = await gesamtFrage(text);
+    // text zusätzlich: eine noch zwischengespeicherte ältere Seite zeigt dann wenigstens den Text
+    const daten = typeof plan !== 'string' ? { karten: plan, text: plan.plan.slice(0, 1500) } : plan.trim() ? { text: plan.slice(0, 1500) } : null;
+    if (daten) try { localStorage.setItem(GESAMT_KEY, JSON.stringify(Object.assign(daten, { at: Date.now(), stand, v: 3 }))); } catch (e) {}
   } catch (err) {
     gesamtFehler = typeof kiFail === 'function' ? kiFail(err) : claudeFail(err);
   }
@@ -2474,16 +2530,18 @@ function trainingVerrat(kind, it, text) {
   return kind === 'vocab' ? verraten(it, text) : (kind === 'irreg' || kind === 'gap') ? forms(it).some(w => wordIn(w, text))
     : kind === 'trans' ? transVerbs(it).some(w => wordIn(w, text)) : false;
 }
-function startTraining() {
+// fokus (aus einer Lernplan-Karte): { kind, titel, woerter } – nur diese Aufgabenart bzw. nur diese Wörter
+function startTraining(fokus) {
   const runs = lernstandRuns(), ls = lernstand(runs), tp = trainingPlan(ls);
+  if (fokus) tp.woerter = fokus.kind === 'woerter' ? fokus.woerter : [];
   const benutzt = new Set(), falsch = new Set();
   runs.forEach(r => r.items.forEach(x => { if (x.id) { benutzt.add(x.id); if (!x.ok) falsch.add(x.id); } }));
   ['A', 'B', 'C', 'D', 'E', 'Z'].forEach(k => { const st = readState(k); if (st && st.pick) PICK_LISTS.forEach(L => (st.pick[L] || []).forEach(id => benutzt.add(id))); });
   BASE.VOCAB.concat(BASE.IRREG, BASE.GAPS, BASE.NEG, BASE.QUEST, BASE.SHORT, BASE.TRANS).forEach(it => benutzt.add(it.id));
-  const ziel = tp.kinds.length ? tp.kinds : [];
-  const proArt = Math.max(2, Math.min(4, Math.ceil(12 / Math.max(1, ziel.length))));
+  const ziel = fokus ? [fokus.kind].filter(k => TRAIN_KINDS.includes(k)) : tp.kinds;
+  const proArt = fokus ? 8 : Math.max(2, Math.min(4, Math.ceil(12 / Math.max(1, ziel.length))));
   const wahl = { vocab: [], irreg: [], gap: [], neg: [], quest: [], short: [], trans: [] };
-  let text = menuText() + ' ' + plainText(tp.woerter.join(' ')), anzahl = 0;
+  let text = menuText() + ' ' + plainText(tp.woerter.join(' ') + ' ' + (fokus && fokus.sichtbar || '')), anzahl = 0;
   const nimm = (kind, kandidaten, max) => {
     for (const it of kandidaten) {
       if (wahl[kind].length >= max || anzahl >= 12) break;
@@ -2499,15 +2557,18 @@ function startTraining() {
   const mische = l => { const a = l.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   ziel.forEach(kind => {
     const alle = POOLS()[kind].flat().filter(it => kind !== 'quest' || !it.words || true);
-    nimm(kind, mische(alle.filter(it => !benutzt.has(it.id))).concat(mische(alle.filter(it => falsch.has(it.id)))), proArt);
+    // Mit Thema (Lernplan-Karte) zuletzt auch schon richtig gelöste, damit das Training nicht fast leer bleibt
+    nimm(kind, mische(alle.filter(it => !benutzt.has(it.id))).concat(mische(alle.filter(it => falsch.has(it.id))),
+      fokus ? mische(alle.filter(it => benutzt.has(it.id) && !falsch.has(it.id))) : []), proArt);
   });
   // mindestens 8 Aufgaben: mit den schwächsten übrigen Fertigkeiten auffüllen
   const rest = TRAIN_KINDS.filter(k => !ziel.includes(k)).sort((a, b) => {
     const q = k => ls.skills[k] ? ls.skills[k].ok / ls.skills[k].n : 1; return q(a) - q(b); });
-  for (const kind of rest) { if (anzahl >= 8) break; nimm(kind, mische(POOLS()[kind].flat().filter(it => !benutzt.has(it.id))), Math.min(3, 8 - anzahl)); }
+  for (const kind of fokus && (anzahl || tp.woerter.length) ? [] : rest) { if (anzahl >= 8) break; nimm(kind, mische(POOLS()[kind].flat().filter(it => !benutzt.has(it.id))), Math.min(3, 8 - anzahl)); }
+  if (fokus && !anzahl && !tp.woerter.length) fokus = null;   // nichts Passendes mehr: normales Training ohne Thema
   if (VIEW === 'test') writeState(CUR, S);
   CUR = 'T'; VIEW = 'test'; confirming = null;
-  S = Object.assign(fresh(), { at: 'writing', training: true });
+  S = Object.assign(fresh(), { at: 'writing', training: true }, fokus && fokus.titel ? { fokus: fokus.titel.slice(0, 60) } : {});
   S.pick = { v: 2, story: 'A', VOCAB: wahl.vocab.map(x => x.id), IRREG: wahl.irreg.map(x => x.id), GAPS: wahl.gap.map(x => x.id),
     NEG: wahl.neg.map(x => x.id), QUEST: wahl.quest.map(x => x.id), SHORT: wahl.short.map(x => x.id), TRANS: wahl.trans.map(x => x.id), ORDER: [] };
   const tw = spellWords(tp.woerter);
@@ -2535,7 +2596,7 @@ function renderTraining() {
   })).join('');
   const all = TRAIN_KINDS.flatMap(kind => (ALL_TYPED[kind] || []).map(it => [kind, it]));
   const richtig = all.filter(([, it]) => isRight(S.answers[it.id], it.en, it) || S.claudeOk[it.id]).length;
-  return `<div class="train-head"><h2>🎯 Training</h2><p class="task" style="margin:4px 0 0">Gezielt zu deinen hartnäckigen Fehlern. Zählt nicht für Noten.</p></div>
+  return `<div class="train-head"><h2>🎯 Training${S.fokus ? ': ' + esc(S.fokus) : ''}</h2><p class="task" style="margin:4px 0 0">${S.fokus ? 'Aus deinem Lernplan.' : 'Gezielt zu deinen hartnäckigen Fehlern.'} Zählt nicht für Noten.</p></div>
     ${all.length ? `<div class="card"><h3>Aufgaben <span class="pts">${all.length}</span></h3><div class="items">${items}</div>
       <div class="actions">${done ? `<span class="note"><b>${richtig} von ${all.length}</b> richtig – fließt in deinen Lernstand ein.</span>`
         : `<span class="note">Prüfen zeigt dir die Lösungen.</span><button type="button" class="btn" style="background:var(--line-purple)" data-train-submit>✔ Training prüfen</button>`}</div></div>` : ''}
@@ -2552,7 +2613,7 @@ function trainingAbgeben() {
 async function gesamtFrage(text) {
   if (!kiOn()) throw { code: 'weg' };
   const r = await kiFrage('lernplan', { modus: 'gesamt', fehler: text }, 30000);
-  return String(r && r.plan || '');
+  return planKarten(r) || String(r && r.plan || '');   // Karten, bei einem älteren Worker Text
 }
 
 // ---------------------------------------------------------------------------

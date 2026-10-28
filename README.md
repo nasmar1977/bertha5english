@@ -156,8 +156,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.7
-**Datum:** 27.10.2026
+**Version:** 2.34.8
+**Datum:** 28.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -205,6 +205,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.8 (28.10.2026)
+- Klassenarbeit: Lernplan (Ergebnis einer Arbeit und Gesamt-Lernplan im Lernstand) als Karten. Der Worker liefert
+  `{ lob, punkte: [{ thema, titel, regel, beispiel }] }` (Schema mit `PLAN_THEMEN`, höchstens 3 Punkte, geprüft von
+  `planKarten()` – wörtlich gleich in Worker, Seite und Artefakt) und zusätzlich `plan` als Text für ältere Seiten.
+  Fehlerzeilen und Lernstand-Übersicht tragen `[thema]`-Schlüssel. „🎯 Jetzt üben“ startet `startTraining(fokus)`:
+  8 Aufgaben nur dieser Art bzw. nur die Wörter; Lesen/Satzbau/Geschichte führen im Ergebnis per „👀 Nochmal ansehen“
+  zum Teil. Gespeichert als `answers.plan` = JSON mit `v: 3` bzw. Gesamtplan `{ karten, v: 3 }`; alte Text-Pläne
+  bleiben als Text sichtbar. **Worker-Update nötig für die Karten**; ohne Update zeigt die Seite weiter den Text-Plan. Kartentext zählt im
+  Fokus-Training als sichtbar (Leak-Prüfung); ohne passende Aufgaben wird es ein normales Training.
 
 ### Version 2.34.7 (27.10.2026)
 - Klassenarbeit: g10 (cry) und g20 (land) nach `RETIRED` – regelmäßige Verben, die nicht im Wortschatz stehen. Ersatz
