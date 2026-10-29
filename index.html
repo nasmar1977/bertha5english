@@ -2807,7 +2807,7 @@
             <p style="color: #666; margin-top: 10px;">Dein Vorname steht dann links in der Liste &ndash;<br>so sehen die anderen, dass du da bist.</p>
         </div>
         <div style="text-align: center; padding: 10px 20px 0;">
-            <input type="text" id="nameInput" class="name-input" maxlength="16" placeholder="Vorname" autocomplete="off" spellcheck="false">
+            <input type="text" id="nameInput" class="name-input" maxlength="16" placeholder="Vorname" autocomplete="off" spellcheck="false" data-vorschlag-ok>
             <div id="nameHint" style="color: #f5576c; font-size: 0.85em; height: 1.2em; margin-top: 6px;"></div>
             <button class="btn btn-check" onclick="saveMyName()" style="margin-top: 10px; font-size: 1.1em;">Los geht&rsquo;s</button>
             <div><span class="name-skip" onclick="skipMyName()">Lieber nicht anzeigen</span></div>
@@ -3202,7 +3202,7 @@
                 <div class="fz-gloss" id="ssGloss" style="display: none;"></div>
                 <div class="ss-label" style="margin-top: 14px;">🇬🇧 Auf Englisch</div>
                 <input type="text" class="ss-input" id="ssInput" placeholder="Schreib den Satz auf Englisch …"
-                       autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false"
+                       autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" writingsuggestions="false"
                        oninput="ssInputChanged()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); if (!ssEl('ssCheckBtn').disabled) ssCheck(); }">
                 <button class="fz-send" id="ssCheckBtn" onclick="ssCheck()" disabled>Prüfen ✓</button>
             </div>
@@ -3645,6 +3645,62 @@
     </div>
 
     <script>
+        // Selbst tippen: Wörter aus der Vorschlagsleiste der Tastatur (iPad/iPhone), Autokorrektur, Einfügen
+        // und Hineinziehen zählen nicht – sonst schreibt die Tastatur das Wort richtig, nicht das Kind.
+        // Gesperrt wird alles, was mehr als ein Zeichen auf einmal einsetzt; Android-Eingabe läuft als
+        // „Composition“ und bleibt unberührt. Felder mit data-vorschlag-ok (Vorname) sind ausgenommen.
+        (function () {
+          const vorher = new WeakMap();
+          const feld = t => t && !t.hasAttribute('data-vorschlag-ok') && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text'));
+          const zahl = s => { try { return [...new Intl.Segmenter().segment(s)].length; } catch (_) { return Array.from(s).length; } };   // Emoji zählt als eins
+          let kopiert = '';   // selbst Kopiertes/Ausgeschnittenes aus einem Feld darf wieder hinein
+          const fremd = e => {
+            const t = e.inputType, s = e.data != null ? e.data : (e.dataTransfer ? e.dataTransfer.getData('text/plain') : null);
+            if (t === 'insertFromPaste' && kopiert && s === kopiert) return false;
+            if (['insertFromPaste', 'insertFromPasteAsQuotation', 'insertFromDrop', 'insertFromYank', 'deleteByDrag'].includes(t)) return true;
+            if (t === 'insertText' || t === 'insertReplacementText') {
+              if (typeof s !== 'string') return t === 'insertReplacementText';
+              if (/^\.? $/.test(s)) return false;   // Leertaste, Doppel-Leertaste-Punkt
+              return zahl(s) > 1;                    // auch der Rest einer Wortvorhersage („e “ nach „hous“)
+            }
+            return false;
+          };
+          ['copy', 'cut'].forEach(typ => document.addEventListener(typ, e => {
+            const t = e.target;
+            if (feld(t)) kopiert = t.value.slice(t.selectionStart, t.selectionEnd);
+          }, true));
+          let hinweisTimer = null;
+          function hinweis() {
+            let el = document.getElementById('selbst-tippen');
+            if (!el) {
+              el = document.createElement('div');
+              el.id = 'selbst-tippen'; el.setAttribute('role', 'status');
+              el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;max-width:calc(100vw - 32px);'
+                + 'background:#1d2340;color:#fff;padding:10px 16px;border-radius:12px;font:600 .95rem system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);text-align:center';
+              el.textContent = '✍️ Bitte selbst tippen – Vorschläge der Tastatur und Einfügen gehen hier nicht.';
+              document.body.appendChild(el);
+            }
+            el.hidden = false;
+            clearTimeout(hinweisTimer);
+            hinweisTimer = setTimeout(() => { el.hidden = true; }, 2500);
+          }
+          document.addEventListener('beforeinput', e => {
+            if (!feld(e.target)) return;
+            vorher.set(e.target, [e.target.value, e.target.selectionStart, e.target.selectionEnd]);
+            if (fremd(e)) { e.preventDefault(); hinweis(); }
+          }, true);
+          // Falls der Browser das Abbrechen nicht zulässt: alten Text zurück, bevor die Seite ihn speichert
+          document.addEventListener('input', e => {
+            const v = vorher.get(e.target);
+            vorher.delete(e.target);   // nur einmal verwenden – nie einen älteren Stand zurückholen
+            if (!feld(e.target) || !fremd(e) || !v) return;
+            e.target.value = v[0];
+            try { e.target.setSelectionRange(v[1], v[2]); } catch (_) {}
+            e.stopImmediatePropagation();
+            hinweis();
+          }, true);
+        })();
+
         // ===================================================================
         // LATIN VOCABULARY DATA – Lektion 3
         // ===================================================================
@@ -7098,9 +7154,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.34.8';
+        const APP_VERSION = '2.34.9';
 
         const changelogEntries = [
+            {
+                version: '2.34.9',
+                date: '29.10.2026',
+                items: [
+                    '<b>Klassenarbeit üben</b>: Neu ist die <b>🔧 Wörter-Werkstatt</b>. Dort übst du die Wörter aus Theme 1, die in den Arbeiten selten vorkommen, und die, die du falsch hattest – in den Arbeiten, im Training oder im Vokabeltrainer. Jede Runde hat bis zu 10 Wörter, mal als Vokabel, mal in einem Satz. Hast du ein Wort in beiden Aufgaben richtig, sitzt es.',
+                    '<b>Selbst tippen</b>: In „Klassenarbeit üben“ und in den Tippfeldern des Vokabeltrainers zählen nur Wörter, die du selbst tippst. Vorschläge der Tastatur, Autokorrektur und Einfügen gehen dort nicht – vor allem nicht beim Writing.'
+                ]
+            },
             {
                 version: '2.34.8',
                 date: '28.10.2026',
@@ -9006,7 +9070,7 @@
                         ' aria-label="' + vhAttr(r.w) + ' — ' + (field === 'f' ? 'Formen' : 'Bedeutung') + '"' +
                         ' data-vhkey="' + vhAttr(key) + '" data-field="' + field + '"' +
                         ' value="' + vhAttr(value || '') + '"' +
-                        ' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"' +
+                        ' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false"' +
                         ' oninput="vhStoreBlank(this)" onkeydown="vhBlankKey(event, this)">';
                     paper = '<div class="vh-paper">' +
                         (expForms.length
@@ -12026,7 +12090,7 @@
                     const isBlank = rowIdx === item.blankRowIdx && col.key === item.blankKey;
                     const isLabel = col.key === 'label';
                     if (isBlank) {
-                        html += `<td class="cell-blank${isLabel ? ' row-label' : ''}"><input type="text" id="tableInput" autocomplete="off" autocapitalize="off" spellcheck="false"></td>`;
+                        html += `<td class="cell-blank${isLabel ? ' row-label' : ''}"><input type="text" id="tableInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false"></td>`;
                     } else if (val === undefined || val === null) {
                         html += `<td style="color:#484f58;">—</td>`;
                     } else {
@@ -12150,7 +12214,7 @@
             target.innerHTML = '<div class="snake-target-lat">' +
                 prefix + '<span class="snake-stem">' + item.stem + '</span>' +
                 '<input type="text" class="snake-ending-input" id="snakeEndingInput" ' +
-                'autocomplete="off" autocapitalize="off" spellcheck="false">' +
+                'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false">' +
                 suffix + '</div>' +
                 '<div class="snake-target-de">' + item.targetDe + '</div>';
             target.style.display = 'block';

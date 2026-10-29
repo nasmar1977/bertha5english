@@ -156,8 +156,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.34.8
-**Datum:** 28.10.2026
+**Version:** 2.34.9
+**Datum:** 29.10.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -205,6 +205,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.34.9 (29.10.2026)
+- Klassenarbeit: 🔧 Wörter-Werkstatt (`VIEW = 'werkstatt'`, Speicher `STORE + '-werkstatt'`, zählt nicht für Noten und
+  Lernstand). `WERK`: alle 66 fett gedruckten Theme-1-Wörter (`w` = Vokabelheft-Eintrag, `vid` = Vokabel im Teil Words)
+  mit Vokabel- und Lückensatz-Aufgabe; `WERK_SELTEN`: die 16 Wörter, die in den Arbeiten nie oder nur als Vokabel
+  vorkommen (around, go online, Britain, present + 12). Fehlerwörter aus Words in Arbeiten/Training (zuletzt falsch),
+  aus dem Vokabeltrainer (`vocabProgress` öfter falsch als richtig, ab 2×; Heft-Markierung `en-theme1|…`) und aus der
+  Werkstatt. Ein Wort sitzt, wenn es nach dem letzten Fehler einmal als Vokabel und einmal im Satz richtig war.
+  Runde: bis 10 Wörter, Fehlerwörter zuerst, dann seltene; unter 6 aufgefüllt (angefangen, nie geübt, am längsten
+  her). Leak-Prüfung zwischen den Aufgaben einer Runde; Wortlisten erst nach dem Prüfen sichtbar. Artefakt ohne
+  Vokabeltrainer-Quelle.
+- Selbst tippen (Klassenarbeit, Artefakt, Vokabeltrainer): `beforeinput` (Capture) bricht alles ab, was mehr als ein
+  Zeichen auf einmal einsetzt – `insertReplacementText` (Vorschlagsleiste/Autokorrektur), `insertText` mit mehr als
+  einem Zeichen, Einfügen, Hineinziehen; Rückfall im `input`-Event setzt den alten Text zurück, bevor die Seite
+  speichert. Android-`insertCompositionText` bleibt unberührt. Ausgenommen: Felder mit `data-vorschlag-ok`
+  (Vorname). Writing-Feld und Tippfelder zusätzlich mit `autocorrect="off"`, `spellcheck="false"`.
 
 ### Version 2.34.8 (28.10.2026)
 - Klassenarbeit: Lernplan (Ergebnis einer Arbeit und Gesamt-Lernplan im Lernstand) als Karten. Der Worker liefert

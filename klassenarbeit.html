@@ -191,6 +191,13 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
 .mk.ok { background: var(--good-bg); color: #116b3b; } .mk.no { background: var(--bad-bg); color: #9b2c2c; }
 .quote { font-variant-numeric: tabular-nums; font-weight: 700; }
 .train-head { background: #efe9fb; border: 2px solid #cbbcf0; border-radius: 14px; padding: 10px 14px; margin: 14px 0; }
+/* Wörter-Werkstatt */
+.werk-grund { font-size: .78rem; font-weight: 700; border-radius: 999px; padding: 0 8px; margin-right: 4px; white-space: nowrap; }
+.werk-grund.fehler { background: #fff4e5; color: #8a4b00; } .werk-grund.selten { background: #e6f4ea; color: #116b3b; } .werk-grund.wdh { background: #eef1f6; color: var(--muted); }
+.werk-satz input[type="text"] { flex: 0 1 11em; }
+.werk-woerter { display: flex; flex-wrap: wrap; gap: 6px; }
+.werk-woerter span { border-radius: 999px; padding: 2px 10px; font-size: .88rem; font-weight: 600; background: #eef1f6; }
+.werk-woerter .fehler { background: #fff4e5; color: #8a4b00; } .werk-woerter .sitzt { background: var(--good-bg); color: #116b3b; }
 
 /* Lesetext */
 .story { background: #fbfdf7; border: 2px dashed #b7dcc2; border-radius: 14px; padding: 14px 16px; line-height: 1.9; }
@@ -595,6 +602,85 @@ const RETIRED = [
   { id: 'o16', c: ['when', 'did', 'the train', 'leave'], end: '?',
     en: ['when did the train leave'], sol: 'When did the train leave?' },
 ];
+// ---------------------------------------------------------------------------
+// Wörter-Werkstatt: alle 66 fett gedruckten Wörter aus Theme 1 (w = Eintrag im
+// Vokabelheft, damit Markierungen und Fortschritt aus dem Vokabeltrainer passen).
+// vid = dieselbe Vokabel im Teil „Words“. Zwei Aufgaben je Wort: „wort“ (Deutsch →
+// Englisch, wie in Words) und „satz“ (Lückensatz). nurSatz: kleine Wörter, die
+// sich allein schlecht abfragen lassen.
+// ---------------------------------------------------------------------------
+const WERK = [
+  { w: 'welcome', vid: 'v50', satz: ['Hello and', 'to Camden Town!', 'willkommen', ['welcome']] },
+  { w: 'adventure', vid: 'v9', satz: ['Our night walk in the forest was a great', '.', 'Abenteuer', ['adventure']] },
+  { w: 'to send', vid: 'v48', satz: ['Yesterday Grandma', 'me a postcard from Spain.', 'schicken, simple past', ['sent']] },
+  { w: 'hospital', vid: 'v13', satz: ['My aunt is a nurse. She works at the', '.', 'Krankenhaus', ['hospital']] },
+  { w: 'hurt', vid: 'v14', satz: ['Two people were', 'in the crash, but they are OK now.', 'verletzt', ['hurt', 'injured']] },
+  { w: 'accident', vid: 'v1', satz: ['There was a car', 'in our street last night.', 'Unfall', ['accident']] },
+  { w: 'to fall', vid: 'v47', satz: ['Max', 'off his bike and cried.', 'stürzen, simple past', ['fell']] },
+  { w: 'to jump', vid: 'v33', satz: ['The cat', 'onto the kitchen table.', 'springen, simple past', ['jumped']] },
+  { w: 'rock', vid: 'v28', satz: ['We sat on a big', 'by the sea.', 'Felsen', ['rock', 'stone']] },
+  { w: 'to climb (up)', vid: 'v4', satz: ['The children', 'up the old tree.', 'klettern, simple past', ['climbed']] },
+  { w: 'leader', vid: 'v34', satz: ['Our team needs a', '. Who wants to do it?', 'Leiter/in', ['leader']] },
+  { w: 'group', vid: 'v49', satz: ['We worked in a', 'of four.', 'Gruppe', ['group']] },
+  { w: "didn't (= did not)", nurSatz: true, satz: ['I', 'like the soup, so I ate a sandwich.', 'nicht, simple past', ["didn't"]] },
+  { w: 'high', vid: 'v29', satz: ['The wall was three metres', '.', 'hoch', ['high']] },
+  { w: 'at first', de: 'zuerst, anfangs (… aber dann)', en: ['at first'], satz: ['', 'Lena was scared, but then she had fun.', 'zuerst', ['at first']] },
+  { w: 'down', vid: 'v51', satz: ['Be careful when you walk', 'the stairs!', 'hinunter', ['down']] },
+  { w: 'to show', vid: 'v35', satz: ['Our guide', 'us the old castle.', 'zeigen, simple past', ['showed']] },
+  { w: 'that', nurSatz: true, satz: ['I know', 'you like pizza.', 'dass', ['that']] },
+  { w: 'both', vid: 'v32', satz: ['Mia and Sophie', 'have a dog.', 'beide', ['both']] },
+  { w: 'everything', vid: 'v31', satz: ['I packed', ': my clothes, my phone and my book.', 'alles', ['everything']] },
+  { w: 'to go wrong', vid: 'v30', satz: ['The day started well, but then something', '.', 'schiefgehen, simple past', ['went wrong']] },
+  { w: 'suddenly', vid: 'v2', satz: ['We were in the park.', 'it started to rain.', 'plötzlich', ['suddenly']] },
+  { w: 'strong', vid: 'v15', satz: ['My dad is very', '. He can carry me.', 'stark', ['strong']] },
+  { w: 'to push', vid: 'v18', satz: ['The car stopped, so we', 'it to the garage.', 'schieben, simple past', ['pushed']] },
+  { w: 'to hurt (sb)', de: '(jdm) wehtun, (jdn) verletzen', en: ['hurt', 'injure'], satz: ['I', 'my hand when I played football.', 'verletzen, simple past', ['hurt', 'injured']] },
+  { w: 'dark', vid: 'v16', satz: ['At night the forest was very', '.', 'dunkel', ['dark']] },
+  { w: 'to pull', vid: 'v17', satz: ['My brother', 'my hair, so I shouted at him.', 'ziehen, simple past', ['pulled']] },
+  { w: 'to remember', vid: 'v7', satz: ['Do you', 'our first day at school?', 'sich erinnern', ['remember']] },
+  { w: 'to choose', vid: 'v36', satz: ['I', 'the red T-shirt, not the blue one.', 'wählen, simple past', ['chose', 'picked', 'selected']] },
+  { w: "wasn't (= was not)", nurSatz: true, satz: ['The film', 'good. It was boring.', 'war nicht', ["wasn't"]] },
+  { w: "weren't (= were not)", nurSatz: true, satz: ['My friends', 'at school yesterday.', 'waren nicht', ["weren't"]] },
+  { w: 'to plan', vid: 'v37', satz: ['Last week we', 'a party for Mum\'s birthday.', 'planen, simple past', ['planned']] },
+  { w: 'plane', vid: 'v19', satz: ['We flew to Spain on a big', '.', 'Flugzeug', ['plane', 'aeroplane', 'airplane']] },
+  { w: 'train', vid: 'v20', satz: ['We took the', 'from London to Brighton.', 'Zug', ['train']] },
+  { w: 'interesting', vid: 'v38', satz: ['The museum was really', '. I learned a lot.', 'interessant', ['interesting']] },
+  { w: 'annoying', vid: 'v21', satz: ['My little brother sings all day. It\'s so', '!', 'nervig, ärgerlich', ['annoying']] },
+  { w: 'trouble', vid: 'v12', satz: ['Tom used his phone in class, so he was in', '.', 'Ärger', ['trouble']] },
+  { w: 'may', vid: 'v11', satz: ['You', 'use a dictionary in the test.', 'dürfen', ['may', 'can', 'are allowed to']] },
+  { w: 'to switch off', vid: 'v6', satz: ['Please', 'your phones before the lesson.', 'ausschalten', ['switch off', 'turn off']] },
+  { w: 'if', nurSatz: true, satz: ['We can go to the beach', 'it\'s sunny.', 'falls', ['if']] },
+  { w: 'break', vid: 'v39', satz: ['In the', 'we played football in the playground.', 'Pause', ['break', 'break time', 'breaktime', 'playtime']] },
+  { w: 'to record', vid: 'v24', satz: ['Sam', 'the song with his phone.', 'aufnehmen, simple past', ['recorded']] },
+  { w: 'unfriendly', vid: 'v40', satz: ['The man in the shop was', '. He shouted at us.', 'unfreundlich', ['unfriendly', 'not friendly', 'not very friendly']] },
+  { w: 'to call', vid: 'v41', satz: ['Yesterday I', 'my grandma.', 'anrufen, simple past', ['called', 'phoned', 'rang']] },
+  { w: 'ill', vid: 'v25', satz: ['Emma stayed in bed because she was', '.', 'krank', ['ill', 'sick']] },
+  { w: 'office', vid: 'v23', satz: ['Please take this letter to the school', '.', 'Sekretariat', ['office']] },
+  { w: 'to break', de: '(zer)brechen, gegen eine Regel verstoßen', en: ['break'], satz: ['Tom', 'the school rules when he used his phone in class.', 'verstoßen gegen, simple past', ['broke']] },
+  { w: 'away', de: 'weg', en: ['away'], satz: ['The teacher took my phone', '.', 'weg', ['away']] },
+  { w: 'head teacher', vid: 'v10', satz: ['The', 'is the boss of the whole school.', 'Schulleiter/in', ['head teacher', 'headteacher', 'head-teacher', 'headmaster', 'headmistress', 'principal']] },
+  { w: 'punishment', vid: 'v3', satz: ['He had to stay after school as a', '.', 'Strafe', ['punishment']] },
+  { w: 'message', vid: 'v5', satz: ['Did you get my', 'on your phone?', 'Nachricht', ['message', 'text']] },
+  { w: 'stupid', vid: 'v42', satz: ['Sorry, that was a', 'idea.', 'blöd', ['stupid', 'silly', 'dumb']] },
+  { w: 'to leave', vid: 'v43', satz: ['We', 'the hotel at eight o\'clock.', 'verlassen, simple past', ['left']] },
+  { w: 'most', vid: 'v52', satz: ['', 'children in my class like football.', 'die meisten', ['most']] },
+  { w: 'to ask (for sth)', de: '(um etwas) bitten', en: ['ask for', 'ask', 'ask for sth', 'ask for something'], satz: ['I was lost, so I', 'for help.', 'bitten, simple past', ['asked']] },
+  { w: 'around', de: 'um … herum, rund um', en: ['around', 'round'], satz: ['We walked', 'the lake.', 'um … herum', ['around', 'round']] },
+  { w: 'to go online', de: 'online gehen', en: ['go online'], satz: ['After school I', 'to chat with my friends.', 'online gehen, simple past', ['went online']] },
+  { w: 'bored', vid: 'v8', satz: ['It rained all day and we were', '.', 'gelangweilt', ['bored']] },
+  { w: 'to agree', vid: 'v27', satz: ['"Pizza is the best food!" – "Yes, I', '!"', 'zustimmen', ['agree']] },
+  { w: 'to prepare', vid: 'v44', satz: ['We', 'the classroom for the party.', 'vorbereiten, simple past', ['prepared']] },
+  { w: 'presentation', vid: 'v45', satz: ['Tomorrow I have to give a', 'about London.', 'Präsentation', ['presentation']] },
+  { w: '(Great) Britain', de: 'Großbritannien', en: ['Great Britain', 'Britain'], satz: ['', 'is England, Scotland and Wales.', 'Großbritannien', ['Great Britain', 'Britain']] },
+  { w: 'to punish', vid: 'v26', satz: ['The teacher', 'the boys because they were late.', 'bestrafen, simple past', ['punished']] },
+  { w: 'to disagree', vid: 'v46', satz: ['"Football is boring." – "I', '! It\'s great!"', 'nicht einverstanden sein', ['disagree', "don't agree", 'do not agree']] },
+  { w: 'to present (sth to sb)', de: '(etwas) präsentieren', en: ['present'], satz: ['In the lesson Mia', 'her poster to the class.', 'präsentieren, simple past', ['presented']] },
+  { w: 'serious', vid: 'v22', satz: ['Don\'t laugh! This is a', 'problem.', 'ernst', ['serious']] },
+];
+// In den Arbeiten nie oder nur als Vokabel abgefragt, in keinem Satz und keinem Lesetext (Stand 2.34.9)
+const WERK_SELTEN = ['around', 'to go online', '(Great) Britain', 'to present (sth to sb)', 'welcome', 'everything', 'to push',
+  'plane', 'trouble', 'may', 'punishment', 'to leave', 'most', 'to agree', 'presentation', 'to disagree'];
+
 let ORDER = [];
 let ALL_TYPED = {};
 
@@ -871,7 +957,7 @@ function writeState(k, st) { try { localStorage.setItem(storeKey(k), JSON.string
 let CUR = 'A', VIEW = 'menu';
 try {
   const m = JSON.parse(localStorage.getItem(META_KEY) || 'null');
-  if (m && TESTS[m.cur]) { CUR = m.cur; VIEW = m.view === 'test' ? 'test' : 'menu'; }
+  if (m && TESTS[m.cur]) { CUR = m.cur; VIEW = m.view === 'test' || m.view === 'werkstatt' ? m.view : 'menu'; }
   else if (localStorage.getItem(storeKey('A'))) { CUR = 'A'; VIEW = 'test'; }
 } catch (e) {}
 let S = readState(CUR) || newState(CUR);
@@ -1423,7 +1509,7 @@ function typedItem(it, n, kind, promptHtml, opts = {}) {
   const cOk = S.claudeOk[it.id];
   const cls = done ? ((ok || cOk) ? 'ok' : 'no') : '';
   const rv = reveal(opts.section);
-  const input = `<input type="text" id="in-${it.id}" data-ans="${it.id}" value="${esc(val)}" autocomplete="off" autocapitalize="off" spellcheck="false" ${done ? 'disabled' : ''} placeholder="${opts.ph || ''}">`;
+  const input = `<input type="text" id="in-${it.id}" data-ans="${it.id}" value="${esc(val)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false" ${done ? 'disabled' : ''} placeholder="${opts.ph || ''}">`;
   let fb = '';
   if (done) {
     if (ok) fb = '<span class="right">✓ richtig</span>';
@@ -1712,7 +1798,7 @@ function renderWriting(sec) {
         <div><b>Adjectives</b>exciting, scary, annoying, high, dark, strong, friendly, bored, interesting</div>
         <div><b>Useful verbs</b>went, saw, climbed, fell, jumped, shouted, said, called, laughed</div>
       </div>
-      <textarea id="in-writing" data-ans="writing" ${done ? 'disabled' : ''} placeholder="${esc(WRITE_TASK.ph)}">${esc(S.writing)}</textarea>
+      <textarea id="in-writing" data-ans="writing" autocomplete="off" autocorrect="off" spellcheck="false" writingsuggestions="false" ${done ? 'disabled' : ''} placeholder="${esc(WRITE_TASK.ph)}">${esc(S.writing)}</textarea>
       <div class="meter" id="meter">${meterHtml(st)}</div>
       <div class="selfcheck">
         <b style="font-family:var(--font-display)">Checklist: Make sure you … <small style="font-family:var(--font-body);font-weight:400;color:var(--muted)">(wie im Buch)</small></b>
@@ -1819,7 +1905,7 @@ function renderMenu() {
   }).join('');
   return `<div class="menu-intro"><h2>Welche Arbeit schreibst du?</h2>
       Jede Arbeit hat eigene Aufgaben und einen eigenen Lesetext. Dein Stand bleibt pro Arbeit gespeichert.</div>
-    <div class="tests">${tiles}</div>${lernstandHtml()}`;
+    <div class="tests">${tiles}</div>${werkMenuHtml()}${lernstandHtml()}`;
 }
 function openTest(k) {
   if (VIEW === 'test') writeState(CUR, S);
@@ -1853,6 +1939,15 @@ function draw() {
     $('#main').innerHTML = renderMenu();
     return;
   }
+  if (VIEW === 'werkstatt') {
+    document.querySelector('nav.line').hidden = true;
+    $('#chip-clock').hidden = true; $('#chip-total').hidden = true;
+    $('#chip-test').textContent = '🔧 Werkstatt';
+    document.documentElement.style.setProperty('--accent', 'var(--line-red)');
+    if (!WK.runde) werkNeueRunde();
+    $('#main').innerHTML = renderWerkstatt();
+    return;
+  }
   if (TESTS[CUR].training) {
     document.querySelector('nav.line').hidden = true;
     $('#chip-total').hidden = true;
@@ -1876,7 +1971,67 @@ function draw() {
 // ---------------------------------------------------------------------------
 // Eingaben
 // ---------------------------------------------------------------------------
+// Selbst tippen: Wörter aus der Vorschlagsleiste der Tastatur (iPad/iPhone), Autokorrektur, Einfügen
+// und Hineinziehen zählen nicht – sonst schreibt die Tastatur das Wort richtig, nicht das Kind.
+// Gesperrt wird alles, was mehr als ein Zeichen auf einmal einsetzt; Android-Eingabe läuft als
+// „Composition“ und bleibt unberührt. Felder mit data-vorschlag-ok (Vorname) sind ausgenommen.
+(function () {
+  const vorher = new WeakMap();
+  const feld = t => t && !t.hasAttribute('data-vorschlag-ok') && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text'));
+  const zahl = s => { try { return [...new Intl.Segmenter().segment(s)].length; } catch (_) { return Array.from(s).length; } };   // Emoji zählt als eins
+  let kopiert = '';   // selbst Kopiertes/Ausgeschnittenes aus einem Feld darf wieder hinein
+  const fremd = e => {
+    const t = e.inputType, s = e.data != null ? e.data : (e.dataTransfer ? e.dataTransfer.getData('text/plain') : null);
+    if (t === 'insertFromPaste' && kopiert && s === kopiert) return false;
+    if (['insertFromPaste', 'insertFromPasteAsQuotation', 'insertFromDrop', 'insertFromYank', 'deleteByDrag'].includes(t)) return true;
+    if (t === 'insertText' || t === 'insertReplacementText') {
+      if (typeof s !== 'string') return t === 'insertReplacementText';
+      if (/^\.? $/.test(s)) return false;   // Leertaste, Doppel-Leertaste-Punkt
+      return zahl(s) > 1;                    // auch der Rest einer Wortvorhersage („e “ nach „hous“)
+    }
+    return false;
+  };
+  ['copy', 'cut'].forEach(typ => document.addEventListener(typ, e => {
+    const t = e.target;
+    if (feld(t)) kopiert = t.value.slice(t.selectionStart, t.selectionEnd);
+  }, true));
+  let hinweisTimer = null;
+  function hinweis() {
+    let el = document.getElementById('selbst-tippen');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'selbst-tippen'; el.setAttribute('role', 'status');
+      el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;max-width:calc(100vw - 32px);'
+        + 'background:#1d2340;color:#fff;padding:10px 16px;border-radius:12px;font:600 .95rem system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);text-align:center';
+      el.textContent = '✍️ Bitte selbst tippen – Vorschläge der Tastatur und Einfügen gehen hier nicht.';
+      document.body.appendChild(el);
+    }
+    el.hidden = false;
+    clearTimeout(hinweisTimer);
+    hinweisTimer = setTimeout(() => { el.hidden = true; }, 2500);
+  }
+  document.addEventListener('beforeinput', e => {
+    if (!feld(e.target)) return;
+    vorher.set(e.target, [e.target.value, e.target.selectionStart, e.target.selectionEnd]);
+    if (fremd(e)) { e.preventDefault(); hinweis(); }
+  }, true);
+  // Falls der Browser das Abbrechen nicht zulässt: alten Text zurück, bevor die Seite ihn speichert
+  document.addEventListener('input', e => {
+    const v = vorher.get(e.target);
+    vorher.delete(e.target);   // nur einmal verwenden – nie einen älteren Stand zurückholen
+    if (!feld(e.target) || !fremd(e) || !v) return;
+    e.target.value = v[0];
+    try { e.target.setSelectionRange(v[1], v[2]); } catch (_) {}
+    e.stopImmediatePropagation();
+    hinweis();
+  }, true);
+})();
+
 document.addEventListener('input', e => {
+  if (e.target.dataset.werk !== undefined) {
+    if (WK.runde && !WK.runde.done) { WK.runde.answers[e.target.dataset.werk] = e.target.value; writeWerk(); }
+    return;
+  }
   const id = e.target.dataset.ans;
   if (!id) return;
   if (id === 'writing') {
@@ -1908,6 +2063,7 @@ document.addEventListener('keydown', e => {
   const inputs = [...document.querySelectorAll('input[type="text"]:not(:disabled)')];
   const i = inputs.indexOf(e.target);
   if (i >= 0 && inputs[i + 1]) { e.preventDefault(); inputs[i + 1].focus(); }
+  else if (e.target.dataset.werk !== undefined) { e.preventDefault(); werkPruefen(); }
 });
 
 document.addEventListener('click', async e => {
@@ -1931,6 +2087,9 @@ document.addEventListener('click', async e => {
   if (b.dataset.open) { openTest(b.dataset.open); return; }
   if (b.hasAttribute('data-gesamt')) { askGesamt(); return; }
   if (b.hasAttribute('data-training')) { startTraining(); return; }
+  if (b.hasAttribute('data-werkstatt')) { openWerkstatt(); return; }
+  if (b.hasAttribute('data-werk-pruefen')) { werkPruefen(); return; }
+  if (b.hasAttribute('data-werk-neu')) { werkNeueRunde(); render(); window.scrollTo({ top: 0 }); return; }
   if (b.dataset.ueben) {
     const kind = b.dataset.ueben;
     const karten = b.closest('.plan');
@@ -2614,6 +2773,194 @@ async function gesamtFrage(text) {
   if (!kiOn()) throw { code: 'weg' };
   const r = await kiFrage('lernplan', { modus: 'gesamt', fehler: text }, 30000);
   return planKarten(r) || String(r && r.plan || '');   // Karten, bei einem älteren Worker Text
+}
+
+// ---------------------------------------------------------------------------
+// Wörter-Werkstatt: die selten vorkommenden Theme-1-Wörter und die Fehlerwörter –
+// aus den Arbeiten und dem Training (Teil Words), dem Vokabeltrainer (oft falsch
+// oder im Heft als schwierig markiert) und der Werkstatt selbst. Zählt nicht für
+// Noten und nicht für den Lernstand. Ein Wort sitzt, wenn es nach dem letzten
+// Fehler einmal als Vokabel und einmal im Satz richtig war.
+// Stand: { runde: { items: [{ w, typ, grund }], answers, done, at }, woerter: { w: { ok: { wort, satz }, err, n, at } } }
+// ---------------------------------------------------------------------------
+const WERK_KEY = STORE + '-werkstatt', WERK_RUNDE = 10;
+const WERK_BY = new Map(WERK.map(x => [x.w, x]));
+function readWerk() {
+  try {
+    const o = JSON.parse(localStorage.getItem(WERK_KEY) || 'null');
+    if (o && typeof o === 'object') {
+      const woerter = o.woerter && typeof o.woerter === 'object' ? o.woerter : {};
+      let runde = o.runde && typeof o.runde === 'object' && Array.isArray(o.runde.items) ? o.runde : null;
+      if (runde) {
+        // Nur Aufgaben, die es mit dieser Wortliste noch gibt; fehlt einer offenen Runde etwas, kommt eine neue
+        const ok = t => t && WERK_BY.has(t.w) && werkTypen(WERK_BY.get(t.w)).includes(t.typ);
+        if (!runde.items.every(ok)) runde = runde.done ? Object.assign({}, runde, { items: runde.items.filter(ok), answers: {} }) : null;
+        if (runde) runde = Object.assign({}, runde, { answers: runde.answers && typeof runde.answers === 'object' ? runde.answers : {},
+          items: runde.items.map(t => Object.assign({}, t, { grund: WERK_GRUND[t.grund] ? t.grund : 'wdh' })) });
+      }
+      return { runde, woerter };
+    }
+  } catch (e) {}
+  return { runde: null, woerter: {} };
+}
+function writeWerk() { try { localStorage.setItem(WERK_KEY, JSON.stringify(WK)); } catch (e) {} }
+const werkTypen = x => x.nurSatz ? ['satz'] : ['wort', 'satz'];
+const WERK_GRUND = { fehler: '🔧 Fehlerwort', selten: '🌱 selten', wdh: '↻ Wiederholung' };
+let WK = readWerk();
+// Vokabel-Aufgabe: wie im Teil Words, wenn es das Wort dort gibt
+let werkPool = null;
+function werkVok(x) { const v = x.vid && (werkPool = werkPool || poolById()).get(x.vid); return v ? { de: v.de, en: v.en } : { de: x.de, en: x.en }; }
+function werkAufgabe(x, typ) {
+  const klein = l => l.map(e => e.toLowerCase());   // die Leak-Prüfung vergleicht klein geschrieben
+  if (typ === 'satz') return { en: klein(x.satz[3]), sicht: plainText(x.satz[0] + ' ' + x.satz[1] + ' ' + x.satz[2]) };
+  const v = werkVok(x);
+  return { en: klein(v.en), sicht: plainText(v.de) };
+}
+function werkRichtig(x, typ, val) {
+  const v = norm(val);
+  if (!v) return false;
+  return typ === 'satz' ? x.satz[3].map(a => a.toLowerCase()).includes(v) : werkVok(x).en.map(a => bare(a.toLowerCase())).includes(bare(v));
+}
+// Sitzt das Wort seit `seit`? Jede Aufgabenart danach richtig, ohne Werkstatt-Fehler dazwischen.
+function werkSitzt(x, seit = 0) {
+  const s = WK.woerter[x.w];
+  if (!s) return false;
+  const ab = Math.max(s.err || 0, seit);
+  return werkTypen(x).every(k => ((s.ok || {})[k] || 0) > ab);
+}
+// Offene Fehlerwörter: w → { ts, wo }
+function werkFehler() {
+  const quelle = {};
+  const merk = (w, ts, wo) => { const q = quelle[w] = quelle[w] || { ts: 0, wo: [] }; q.ts = Math.max(q.ts, ts); if (!q.wo.includes(wo)) q.wo.push(wo); };
+  // Teil Words in Arbeiten und Training: zuletzt falsch (alte Stände ohne Zeitstempel zählen als früh)
+  const byVid = new Map(WERK.filter(x => x.vid).map(x => [x.vid, x])), last = {};
+  lernstandRuns().forEach(r => r.items.forEach(x => {
+    if (x.skill !== 'vocab' || !byVid.has(x.id)) return;
+    const ts = x.t > 1e12 ? x.t : 1;   // ohne Abgabe-Zeit (alte Stände): früh – egal, ob schon archiviert
+    const l = last[x.id] = last[x.id] || { ok: 0, no: 0 };
+    if (x.ok) l.ok = Math.max(l.ok, ts); else l.no = Math.max(l.no, ts);
+  }));
+  Object.entries(last).forEach(([id, l]) => { if (l.no && l.no >= l.ok) merk(byVid.get(id).w, l.no, 'arbeit'); });
+  // Vokabeltrainer (gleicher Browser-Speicher): öfter falsch als richtig, oder im Heft markiert
+  let prog = {}, marks = {};
+  try { prog = JSON.parse(localStorage.getItem('vocabProgress') || '{}') || {}; } catch (e) {}
+  try { marks = JSON.parse(localStorage.getItem('vokabelheftSchwierig') || '{}') || {}; } catch (e) {}
+  WERK.forEach(x => {
+    const tw = (WK.woerter[x.w] || {}).tw;
+    ['de>en', 'en>de'].forEach(dir => {
+      const p = prog['en:' + dir + ':' + x.w.toLowerCase()];
+      // lastSeen ändert sich auch bei richtigen Antworten – deshalb nur, wenn die Fehlerzahl gestiegen ist
+      if (p && p.wrong >= 2 && p.wrong >= (p.correct || 0) && !(tw && tw[dir] >= p.wrong)) merk(x.w, p.lastSeen || 1, 'trainer');
+    });
+  });
+  Object.keys(marks).forEach(k => { const t = k.split('|'); if (t[0] === 'en-theme1' && WERK_BY.has(t.slice(2).join('|'))) merk(t.slice(2).join('|'), 1, 'heft'); });
+  Object.entries(WK.woerter).forEach(([w, s]) => { if (s && s.err && WERK_BY.has(w)) merk(w, s.err, 'werkstatt'); });
+  const out = {};
+  Object.entries(quelle).forEach(([w, q]) => { if (!werkSitzt(WERK_BY.get(w), q.ts)) out[w] = q; });
+  return out;
+}
+function werkStand() {
+  const fehler = werkFehler();
+  return { fehler,
+    selten: WERK_SELTEN.filter(w => !fehler[w] && !werkSitzt(WERK_BY.get(w))),
+    sitzt: WERK.filter(x => !fehler[x.w] && werkSitzt(x)).map(x => x.w) };
+}
+// Aufgabenart: zuerst, was seit dem Fehler noch nicht richtig war – Fehlerwörter als Vokabel, seltene im Satz
+function werkTyp(x, grund, seit) {
+  const s = WK.woerter[x.w] || {}, alle = werkTypen(x);
+  const offen = alle.filter(k => !(((s.ok || {})[k] || 0) > Math.max(s.err || 0, seit || 0)));
+  if (!offen.length) return alle[Math.floor(Math.random() * alle.length)];
+  return grund === 'fehler' || !offen.includes('satz') ? offen[0] : 'satz';
+}
+function werkNeueRunde() {
+  const st = werkStand();
+  const mische = l => { const a = l.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let kand = Object.entries(st.fehler).sort((a, b) => b[1].ts - a[1].ts).map(([w, q]) => [w, 'fehler', q.ts])
+    .concat(mische(st.selten).map(w => [w, 'selten', 0]));
+  if (kand.length < 6) {
+    // Zu wenig offen: angefangene Wörter, dann noch nie geübte, dann die am längsten nicht mehr geübten
+    const drin = new Set(kand.map(k => k[0])), rest = WERK.filter(x => !drin.has(x.w));
+    const zuletzt = x => (WK.woerter[x.w] || {}).at || 0;
+    kand = kand.concat(mische(rest.filter(x => WK.woerter[x.w] && !werkSitzt(x))), mische(rest.filter(x => !WK.woerter[x.w])),
+      rest.filter(x => werkSitzt(x)).sort((a, b) => zuletzt(a) - zuletzt(b))).map(k => Array.isArray(k) ? k : [k.w, 'wdh', 0]);
+  }
+  // Keine Aufgabe darf die Lösung einer anderen verraten
+  const wahl = [];
+  let text = '';
+  for (const [w, grund, seit] of kand) {
+    if (wahl.length >= WERK_RUNDE) break;
+    const x = WERK_BY.get(w), typ = werkTyp(x, grund, seit), a = werkAufgabe(x, typ);
+    if (verraten(a, text) || wahl.some(t => verraten(t, a.sicht))) continue;
+    wahl.push({ w, typ, grund, en: a.en }); text += ' ' + a.sicht;
+  }
+  WK.runde = { items: mische(wahl).map(({ w, typ, grund }) => ({ w, typ, grund })), answers: {}, done: false, at: Date.now() };
+  writeWerk();
+}
+function openWerkstatt() {
+  if (VIEW === 'test') writeState(CUR, S);
+  WK = readWerk();
+  if (!WK.runde || WK.runde.done) werkNeueRunde();
+  VIEW = 'werkstatt'; confirming = null; saveMeta(); render(); window.scrollTo({ top: 0 });
+}
+function werkPruefen() {
+  const r = WK.runde, jetzt = Date.now();
+  if (!r || r.done) return;
+  let prog = {};
+  try { prog = JSON.parse(localStorage.getItem('vocabProgress') || '{}') || {}; } catch (e) {}
+  r.items.forEach((t, i) => {
+    const x = WERK_BY.get(t.w);
+    if (!x || !String(r.answers[i] || '').trim()) return;   // leer gelassen: kein Fehler, nur die Lösung sehen
+    const s = WK.woerter[t.w] = Object.assign({ ok: {}, err: 0, n: 0 }, WK.woerter[t.w]);
+    s.n++; s.at = jetzt;
+    s.tw = Object.fromEntries(['de>en', 'en>de'].map(d => [d, ((prog['en:' + d + ':' + x.w.toLowerCase()] || {}).wrong) || 0]));
+    if (werkRichtig(x, t.typ, r.answers[i])) s.ok = Object.assign({}, s.ok, { [t.typ]: jetzt }); else s.err = jetzt;
+  });
+  r.done = true;
+  writeWerk(); render();
+}
+function werkMenuHtml() {
+  const st = werkStand(), f = Object.keys(st.fehler).length;
+  return `<section class="lernstand" aria-label="Wörter-Werkstatt"><h2>🔧 Wörter-Werkstatt</h2>
+    <p class="task" style="margin:0">Hier übst du die Wörter aus Theme 1, die in den Arbeiten selten vorkommen, und die, die du falsch hattest –
+      in den Arbeiten, im Training oder im Vokabeltrainer.</p>
+    <div class="werk-woerter"><span class="fehler">🔧 ${f} ${f === 1 ? 'Fehlerwort' : 'Fehlerwörter'}</span><span>🌱 ${st.selten.length} selten geübt</span><span class="sitzt">✓ ${st.sitzt.length} ${st.sitzt.length === 1 ? 'sitzt' : 'sitzen'}</span></div>
+    <div><button type="button" class="btn" style="background:var(--line-red)" id="werkstatt-start" data-werkstatt>🔧 In die Werkstatt</button></div></section>`;
+}
+function renderWerkstatt() {
+  const r = WK.runde || { items: [], answers: {} }, done = !!r.done;
+  const items = r.items.map((t, i) => {
+    const x = WERK_BY.get(t.w);
+    if (!x) return '';
+    const val = r.answers[i] || '', ok = werkRichtig(x, t.typ, val);
+    const input = `<input type="text" id="wk-${i}" data-werk="${i}" value="${esc(val)}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false" ${done ? 'disabled' : ''}>`;
+    const grund = `<span class="werk-grund ${t.grund}">${WERK_GRUND[t.grund] || ''}</span>`;
+    const body = t.typ === 'satz'
+      ? `<div class="q">${grund}<small>Setz das Wort ein (${esc(x.satz[2])}):</small></div><div class="inline werk-satz">${x.satz[0] ? `<span>${esc(x.satz[0])}</span>` : ''}${input}<span>${esc(x.satz[1])}</span></div>`
+      : `<div class="q">${grund}${esc(werkVok(x).de)}</div>${input}`;
+    const loesung = t.typ === 'satz' ? capital((x.satz[0] + ' ' + x.satz[3][0] + ' ' + x.satz[1]).trim()).replace(/ ([.,!?:])/g, '$1') : x.w;
+    const fb = !done ? '' : ok ? '<span class="right">✓ richtig</span>'
+      : `<span class="wrong">${val.trim() ? '✗' : '–'}</span> ${val.trim() ? '' : 'nicht bearbeitet · '}Lösung: <span class="sol">${esc(loesung)}</span>`;
+    return `<div class="item ${done ? (ok ? 'ok' : 'no') : ''}"><span class="n">${i + 1}</span><div class="body">${body}${done ? `<div class="fb">${fb}</div>` : ''}</div></div>`;
+  }).join('');
+  const n = r.items.length;
+  const richtig = done ? r.items.filter((t, i) => WERK_BY.has(t.w) && werkRichtig(WERK_BY.get(t.w), t.typ, r.answers[i])).length : 0;
+  // Die Wortlisten erst nach dem Prüfen zeigen – vorher verrieten sie die Lösungen
+  let listen = '';
+  if (done) {
+    const st = werkStand(), chips = (l, cls) => l.map(w => `<span class="${cls}">${esc(w)}</span>`).join('');
+    const fw = Object.keys(st.fehler);
+    listen = `<div class="card"><h3>Deine Werkstatt-Wörter</h3>
+      ${fw.length ? `<p class="task">🔧 Fehlerwörter</p><div class="werk-woerter">${chips(fw, 'fehler')}</div>` : ''}
+      ${st.selten.length ? `<p class="task">🌱 Selten geübt</p><div class="werk-woerter">${chips(st.selten, '')}</div>` : ''}
+      ${st.sitzt.length ? `<p class="task">✓ Sitzen</p><div class="werk-woerter">${chips(st.sitzt, 'sitzt')}</div>` : ''}</div>`;
+  }
+  return `<div class="train-head"><h2>🔧 Wörter-Werkstatt</h2><p class="task" style="margin:4px 0 0">Wörter aus Theme 1, die in den Arbeiten selten vorkommen,
+      und Wörter, die du falsch hattest. Zählt nicht für Noten.</p></div>
+    <div class="card"><h3>Runde <span class="pts">${n} ${n === 1 ? 'Wort' : 'Wörter'}</span></h3><div class="items">${items}</div>
+      <div class="actions">${done ? `<span class="note"><b>${richtig} von ${n}</b> richtig.</span><button type="button" class="btn" data-werk-neu>🔧 Neue Runde</button>`
+        : `<span class="note">Ein Wort sitzt, wenn du es einmal als Vokabel und einmal im Satz richtig hattest (kleine Wörter wie „if“ nur im Satz). Leere Felder zählen nicht.</span><button type="button" class="btn" data-werk-pruefen>✔ Prüfen</button>`}</div></div>
+    ${listen}
+    <div class="actions"><span></span><button type="button" class="btn ghost" data-menu>☰ Zurück zu den Arbeiten</button></div>`;
 }
 
 // ---------------------------------------------------------------------------
