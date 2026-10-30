@@ -343,7 +343,7 @@ const ED_RS = ED_SCHREIBUNG_IST_VERBFEHLER
   ? 'Nur falsch geschriebene -ed-Formen gehören zu falsche_verbformen; andere Tippfehler in richtigen Verbformen (siad, thougt, swiming) sind Rechtschreibung.'
   : 'Auch falsch geschriebene -ed-Formen (stoped, tryed) und andere Tippfehler in richtigen Verbformen (siad, thougt, swiming) sind Rechtschreibung.';
 
-// Die fünf Schreibaufgaben der Arbeiten A–E mit einer Kurzzeile zum Lesetext (gegen
+// Die sechs Schreibaufgaben der Arbeiten A–F mit einer Kurzzeile zum Lesetext (gegen
 // Nacherzählungen) und dem Titel für den Lernplan. Die Seite schickt nur den Buchstaben;
 // Freitext nimmt der Worker nicht an. Unbekannt → A.
 const TEXT_AUFGABEN = {
@@ -362,8 +362,11 @@ const TEXT_AUFGABEN = {
     E: { titel: 'A boat trip I will never forget', task: 'Write a story: "A boat trip I will never forget" (real or invented).',
          lesetext: 'Hannah und ihr Opa geraten bei einem Bootsausflug auf einem See in Schottland in einen Sturm und rudern zurück ans Ufer.',
          thema: 'ein Bootsausflug, den man nicht vergisst (auch Fähre, Kanu oder Tretboot)' },
+    F: { titel: 'When I opened the door …', task: 'Write a story that starts with the sentence "When I opened the door, I couldn\'t believe my eyes." (real or invented).',
+         lesetext: 'Tom spielt beim Weihnachtskonzert seiner Schule Schlagzeug; plötzlich geht das Licht aus, und die Band spielt im Dunkeln weiter.',
+         thema: 'frei – jeder Inhalt ist erlaubt, auch etwas zu Hause. Die Geschichte soll mit dem vorgegebenen Satz „When I opened the door, I couldn\'t believe my eyes.“ beginnen; dieser Satz zählt als interessanter erster Satz (rahmen bewertet dann nur Titel und letzten Satz). Fehlt der Satz, ist das höchstens thema_teilweise, nie thema_verfehlt' },
 };
-const aufgabe = story => TEXT_AUFGABEN[/^[A-E]$/.test(String(story || '')) ? story : 'A'];
+const aufgabe = story => TEXT_AUFGABEN[/^[A-F]$/.test(String(story || '')) ? story : 'A'];
 // Derselbe Regelblock steht wörtlich im Artefakt (askWriting).
 const textAnweisung = ({ task, lesetext, thema }) => `Du bist eine freundliche Englischlehrerin und bewertest einen Text aus einer Übungs-Klassenarbeit, Klasse 6 Gymnasium in Deutschland.
 Aufgabe für das Kind: "${task} Write your own story – don't retell the text. Give it a title. 80–120 words, simple past, use connectives, adjectives and direct speech."

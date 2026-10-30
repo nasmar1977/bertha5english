@@ -18,6 +18,7 @@
   --line-orange: #ee7c0e;  /* Overground     – Schreiben  */
   --line-purple: #6950a1;  /* Elizabeth line – Ergebnis   */
   --line-pink: #d0477f;    /* Hammersmith & City (kräftiger) – Satzbau */
+  --line-f: #00a4a7;       /* DLR – Arbeit F */
   --good: #13a35a;
   --good-bg: #e3f8ec;
   --bad: #d93a3a;
@@ -134,7 +135,7 @@ input:disabled, select:disabled, textarea:disabled { opacity: 1; color: var(--in
 .tile:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .ghost-tile { border-style: dashed; color: transparent; box-shadow: none; cursor: default; user-select: none; }
 
-/* Menü: Arbeiten A–E und Zufall */
+/* Menü: Arbeiten A–F und Zufall */
 .chip-btn { font: inherit; cursor: pointer; color: var(--ink); }
 .chip-btn:hover, .chip-btn:focus-visible { border-color: var(--line-purple); outline: none; }
 .menu-intro { margin: 18px 0 14px; color: var(--muted); }
@@ -864,8 +865,107 @@ const STORIES = {
              en: 'Write a story: <em>A boat trip I will never forget</em> (real or invented).',
              prompt: 'Write a story: "A boat trip I will never forget" (real or invented).', ph: 'Last summer I went on a boat trip …' },
   },
+  F: {
+    title: 'The school concert', theme: '🥁 Konzert im Dunkeln',
+    lesetext: 'Tom spielt beim Weihnachtskonzert seiner Schule Schlagzeug; plötzlich geht das Licht aus, und die Band spielt im Dunkeln weiter.',
+    thema: 'frei – jeder Inhalt ist erlaubt, auch etwas zu Hause. Die Geschichte soll mit dem vorgegebenen Satz „When I opened the door, I couldn\'t believe my eyes.“ beginnen; dieser Satz zählt als interessanter erster Satz (rahmen bewertet dann nur Titel und letzten Satz). Fehlt der Satz, ist das höchstens thema_teilweise, nie thema_verfehlt',
+    paras: [
+      '[[Last December]] Tom\'s school had a big [[Christmas concert]] in the hall. Tom played the drums in the [[school band]]. [[At first]] he was nervous because his whole family was there: his mum, his dad and his [[little sister]] Ruby.',
+      'The band started with a Christmas song, and everybody clapped. Then Tom started his [[drum solo]]. Suddenly all the lights went out, and the other children stopped playing. It was very dark. Some little children screamed.',
+      '"Don\'t stop!" Mr Evans, the music teacher, shouted. "Play in the dark!" So Tom played on. He couldn\'t see his drums, but he knew the song very well. When the other children heard the drums, they started to play too.',
+      '[[Ten minutes later]] the lights came back on. Everybody stood up and cheered. [[After that]] Tom\'s class teacher, Ms Green, gave him a big smile. "That was the best concert ever!" she said. [[In the end]] Tom wasn\'t nervous any more. He was very proud.',
+    ],
+    conn: ['at first', 'because', 'but', 'then', 'suddenly', 'so', 'when', 'after that', 'in the end'],
+    accept: ['and', 'last december', 'ten minutes later'],
+    // Arbeit F: drei Antworten – right, wrong oder not in the text ('ni')
+    tf3: true,
+    tf: [
+      { id: 'tf1', s: 'Tom played the guitar in the school band.',  a: false },
+      { id: 'tf2', s: 'Tom\'s family came to the concert.',          a: true  },
+      { id: 'tf3', s: 'The concert started at seven o\'clock.',      a: 'ni'  },
+      { id: 'tf4', s: 'The lights came back on after ten minutes.', a: true  },
+      { id: 'tf5', s: 'Ruby wanted to play the drums too.',         a: 'ni'  },
+    ],
+    adj: [
+      { id: 'af1', pre: 'At first Tom was', post: 'because his whole family was there.', opts: ['nervous', 'strong', 'high'], a: 'nervous' },
+      { id: 'af2', pre: 'When the lights went out, it was very', post: '.', opts: ['interesting', 'dark', 'friendly'], a: 'dark' },
+      { id: 'af3', pre: 'Some', post: 'children screamed.', opts: ['little', 'serious', 'high'], a: 'little' },
+      { id: 'af4', pre: 'In the end Tom was very', post: '.', opts: ['bored', 'unfriendly', 'proud'], a: 'proud' },
+    ],
+    speech: [
+      { id: 'df1', opts: ['"Don\'t stop"! Mr Evans shouted.', '"Don\'t stop!" Mr Evans shouted.', '"Don\'t stop! Mr Evans shouted."'], a: 1 },
+      { id: 'df2', opts: ['Ms Green said, "That was the best concert ever!"', 'Ms Green said "That was the best concert ever"!', 'Ms Green said, That was the best concert ever!"'], a: 0 },
+      { id: 'df3', opts: ['"Play in the dark" he said.', '"Play in the dark." he said.', '"Play in the dark," he said.'], a: 2 },
+      { id: 'df4', opts: ['"Is everybody OK?" asked Ms Green.', '"Is everybody OK"? asked Ms Green.', '"Is everybody OK?," asked Ms Green.'], a: 0 },
+    ],
+    write: { title: 'When I opened the door …', de: 'Schreib eine eigene Geschichte, die mit diesem Satz beginnt: <em>„When I opened the door, I couldn\'t believe my eyes.“</em> Was hast du gesehen? Was ist danach passiert? Echt oder ausgedacht.',
+             en: 'Start your story with this sentence: <em>"When I opened the door, I couldn\'t believe my eyes."</em> (real or invented).',
+             prompt: 'Write a story that starts with the sentence "When I opened the door, I couldn\'t believe my eyes." (real or invented).', ph: 'When I opened the door, I couldn\'t believe my eyes. …' },
+  },
 };
-let STORY_KEY = 'A', STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
+// Arbeit F: Wörter im Satz – [Satzanfang, Satzende]. Die Lücke nimmt die Grundform
+// (wie in der Vokabelliste), das deutsche Wort steht in Klammern dahinter.
+const SATZ_F = {
+  v1:  ['There was an', 'on the road, so the bus is late today.'],
+  v2:  ['We are playing football in the park.', 'it starts to rain.'],
+  v3:  ['Is extra homework a good', 'for talking in class?'],
+  v4:  ['Cats can', 'trees, but dogs can\'t.'],
+  v5:  ['Mum, can you read this', 'from my teacher?'],
+  v6:  ['Please', 'your phone in the cinema.'],
+  v7:  ['I can\'t', 'his name. Is it Tom or Tim?'],
+  v8:  ['There is nothing to do here. I am so', '!'],
+  v9:  ['Our trip to the jungle was a real', '.'],
+  v10: ['Mrs Wood is our', '.'],
+  v11: ['Excuse me,', 'I go to the toilet, please?'],
+  v12: ['If you are late again, you will be in', '.'],
+  v13: ['The doctor works at the', 'in town.'],
+  v14: ['Can you help me? My friend is', '.'],
+  v15: ['My dad can carry the heavy box because he is very', '.'],
+  v16: ['Turn on the light, please. It is too', 'in here.'],
+  v17: ['Can you help me', 'the boat out of the water?'],
+  v18: ['The car doesn\'t start. Can you help us', 'it?'],
+  v19: ['We are going to Spain by', '.'],
+  v20: ['We are going to London by', '. The station is near our house.'],
+  v21: ['My little brother always sings the same song. It is so', '!'],
+  v22: ['Don\'t laugh! This is', '.'],
+  v23: ['Please take this letter to the school', '.'],
+  v24: ['Can you', 'the song on your phone?'],
+  v25: ['Ben can\'t come to school today because he is', '.'],
+  v26: ['Will the teacher', 'us for being late?'],
+  v27: ['I think the film is great. Do you', '?'],
+  v28: ['We are sitting on a big', 'by the river.'],
+  v29: ['This wall is very', '. I can\'t see over it.'],
+  v30: ['Don\'t worry. Nothing can', '!'],
+  v31: ['I have got', 'in my bag: my clothes, my books and my toothbrush.'],
+  v32: ['I have two sisters.', 'of them like football.'],
+  v33: ['Can you', 'over the wall?'],
+  v34: ['Every team needs a', '.'],
+  v35: ['Can you', 'me your new bike?'],
+  v36: ['You can', 'one book from the box.'],
+  v37: ['Let\'s', 'our trip to the zoo together.'],
+  v38: ['This book is really', '. I can\'t stop reading.'],
+  v39: ['We play football in the playground at', '.'],
+  v40: ['The new neighbour never says hello. He is very', '.'],
+  v41: ['I will', 'you tonight. What is your number?'],
+  v42: ['Sorry, that was a', 'idea.'],
+  v43: ['The bus is going to', 'in five minutes.'],
+  v44: ['We must', 'the food for the party.'],
+  v45: ['Tomorrow I am giving a', 'about London.'],
+  v46: ['You think cats are better than dogs? I', '!'],
+  v47: ['Be careful on the ice! Don\'t', '!'],
+  v48: ['Can you', 'me a photo of the dog?'],
+  v49: ['We work in a', 'of four.'],
+  v50: ['', 'to our school! We are happy you are here.'],
+  v51: ['Please sit', '.'],
+  v52: ['', 'children in my class have a phone.'],
+};
+// Lückensatz einer Vokabel in Arbeit F (sonst null) – ohne Lücke, für Verrats-Prüfungen
+const satzF = v => (TESTS[CUR] || {}).satz && SATZ_F[v.id] || null;
+// Satzende ohne Leerzeichen vor einem Satzzeichen („needs a ___.“)
+const satzRest = x => (/^[.!?,]/.test(x[1]) ? '' : ' ') + x[1];
+const satzText = v => { const x = satzF(v); return x ? plainText(x[0] + ' ' + x[1]) : ''; };
+let STORY_KEY = 'A', STORY_TITLE = '', STORY = [], CONNECTIVES = [], ACCEPT_TOO = [], TF = [], TF3 = false, ADJ = [], SPEECH = [], WRITE_TASK = STORIES.A.write;
+const TF3_LABEL = { true: 'right', false: 'wrong', ni: 'not in the text' };
 const counts = k => CONNECTIVES.includes(k) || ACCEPT_TOO.includes(k);
 
 
@@ -893,17 +993,20 @@ let MAX = {};
 // ---------------------------------------------------------------------------
 // Zustand (nur in diesem Browser, für "später weitermachen")
 // ---------------------------------------------------------------------------
-// Arbeit A behält den alten Schlüssel; B–E und Z hängen -B … an.
+// Arbeit A behält den alten Schlüssel; B–F und Z hängen -B … an.
 const STORE = 'klassenarbeit-camden-v1';
 const fresh = () => ({ answers: {}, done: {}, claudeOk: {}, ai: {}, marks: [], order: {}, writing: '', self: {}, writeAi: null, start: Date.now(), elapsed: 0, revealed: {}, doneAt: {}, round: 1, v: 2, tv: 2, at: 'vocab' });
 // Arbeiten: A = die erste (feste Originalaufgaben), B–E feste eigene Aufgaben und
-// Lesetexte, Z = Zufallsarbeit. Jede Arbeit hat ihren eigenen Speicherstand.
+// Lesetexte, F = feste Arbeit mit anderen Aufgabenformen (Wörter im Satz, „not in the
+// text“, Geschichte mit vorgegebenem Anfang), Z = Zufallsarbeit. Jede Arbeit hat ihren
+// eigenen Speicherstand.
 const TESTS = {
   A: { story: 'A', color: 'var(--line-red)' },
   B: { story: 'B', slot: 0, color: 'var(--line-blue)' },
   C: { story: 'C', slot: 1, color: 'var(--line-green)' },
   D: { story: 'D', slot: 2, color: 'var(--line-pink)' },
   E: { story: 'E', slot: 3, color: 'var(--line-orange)' },
+  F: { story: 'F', satz: true, color: 'var(--line-f)' },   // fest gemischt aus dem ganzen Vorrat
   Z: { random: true, color: 'var(--line-purple)' },
   T: { training: true, color: 'var(--line-purple)' },   // 🎯 Training – kein Menü-Eintrag, keine Note
 };
@@ -1037,7 +1140,7 @@ function applyStory(t, key) {
   STORY_KEY = key || (t.random ? (STORIES[S.story] ? S.story : 'A') : t.story);
   const st = STORIES[STORY_KEY];
   STORY_TITLE = st.title; STORY = st.paras; CONNECTIVES = st.conn; ACCEPT_TOO = st.accept;
-  TF = st.tf; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
+  TF = st.tf; TF3 = !!st.tf3; ADJ = st.adj; SPEECH = st.speech; WRITE_TASK = st.write;
 }
 function applyVariant() {
   const t = TESTS[CUR] || TESTS.A;
@@ -1049,7 +1152,7 @@ function applyVariant() {
     applyStory(t, 'A');
     return finishVariant();
   }
-  if (t.slot !== undefined || t.random) { applyFrozen(t, seed); return finishVariant(); }
+  if (t.slot !== undefined || t.random || t.satz) { applyFrozen(t, seed); return finishVariant(); }
   // Arbeit A: unverändert – Seed 0 = Grundarbeit; eine früher gemischte A nur aus dem
   // alten Vorrat, in derselben Reihenfolge der Aufrufe, damit sie gleich bleibt.
   let pick;
@@ -1072,7 +1175,7 @@ function applyVariant() {
   applyStory(t);
   finishVariant();
 }
-// B–E und Zufall: Die Auswahl wird beim ersten Öffnen im Stand eingefroren (S.pick),
+// B–F und Zufall: Die Auswahl wird beim ersten Öffnen im Stand eingefroren (S.pick),
 // damit spätere Änderungen am Vorrat nichts mehr verschieben.
 const PICK_LISTS = ['VOCAB', 'IRREG', 'GAPS', 'NEG', 'QUEST', 'SHORT', 'TRANS', 'ORDER'];
 function poolById() {
@@ -1163,7 +1266,7 @@ function ausgemustertErsetzen(t, seed, pk, lists) {
         const vorrat = t.slot !== undefined ? split(basis, mehr.flat(), Infinity, t.slot, 'ersatz-' + L)
           : shuffled(basis.concat(...mehr), rng(hash('ersatz-' + alt.id + '-' + (seed || 0))));
         for (const k of vorrat) {
-          if (da.has(k.id) || (L === 'QUEST' && !!k.words !== !!alt.words)) continue;
+          if (da.has(k.id) || (L === 'QUEST' && !!k.words !== !!alt.words) || (L === 'VOCAB' && t.satz && !satzF(k))) continue;
           cur[L][i] = k;
           if ([...pruefe()].every(id => vorher.has(id))) return;
         }
@@ -1193,8 +1296,15 @@ function verrateneLoesungen() {
   const vok = VOCAB; VOCAB = [];
   const ohneVokabeln = renderedText() + ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText() + ' ' + menuText();
   VOCAB = vok;
-  VOCAB.forEach(v => { if (verraten(v, ohneVokabeln)) funde.push(v.id); });
-  return funde;
+  VOCAB.forEach(v => { if (verraten(v, ohneVokabeln + ' ' + VOCAB.filter(x => x !== v).map(satzText).join(' '))) funde.push(v.id); });
+  // Arbeit F: Die Wörter-Sätze dürfen auch keine Verbformen aus Grammatik verraten
+  const saetze = VOCAB.map(satzText).join(' ');
+  if (saetze.trim()) {
+    TRANS.forEach(it => { if (transVerbs(it).some(w => wordIn(w, saetze))) funde.push(it.id); });
+    IRREG.forEach(i => { if (forms(i).some(w => w !== i.inf && wordIn(w, saetze))) funde.push(i.id); });
+    GAPS.forEach(g => { if (forms(g).some(w => w !== g.verb && wordIn(w, saetze))) funde.push(g.id); });
+  }
+  return [...new Set(funde)];
 }
 // Auswahl aus 2.33.4 (pick.v 1) einmal nachprüfen, solange der Vokabelteil offen ist: Nur
 // Vokabeln, die sich jetzt verraten, werden aus dem Vorrat ersetzt – alles andere bleibt.
@@ -1203,10 +1313,10 @@ function recheckVocab(t, seed, pk) {
   const bad = new Set(VOCAB.filter(v => verraten(v, text)).map(v => v.id));
   if (!bad.size) return;
   const have = new Set(VOCAB.map(v => v.id));
-  const pool = t.random
+  const pool = t.random || t.satz
     ? shuffled(BASE.VOCAB.concat(VOCAB_EXTRA, VOCAB_MORE), rng(((seed || 1) ^ hash('ersatz')) >>> 0))
     : split(BASE.VOCAB, VOCAB_EXTRA.concat(VOCAB_MORE), Infinity, t.slot, 'vocab');
-  const ersatz = pool.filter(v => !have.has(v.id) && !verraten(v, text));
+  const ersatz = pool.filter(v => !have.has(v.id) && !verraten(v, text) && (!t.satz || satzF(v)));
   VOCAB = VOCAB.map(v => bad.has(v.id) && ersatz.length ? ersatz.shift() : v);
   pk.VOCAB = VOCAB.map(v => v.id);
 }
@@ -1217,8 +1327,10 @@ function recheckVocab(t, seed, pk) {
 // und die Filter laufen auf den behaltenen Listen.
 function applyFiltered(t, seed, keep = {}) {
   const r = t.random ? rng(seed || 1) : null;
-  const full = (base, extra, more, salt) => t.random
-    ? shuffled(base.concat(extra, more), r) : split(base, extra.concat(more), Infinity, t.slot, salt);
+  // F: der ganze Vorrat, fest gemischt; die Aufgaben von A ganz hinten
+  const full = (base, extra, more, salt) => t.random ? shuffled(base.concat(extra, more), r)
+    : t.satz ? shuffled(extra.concat(more), rng(hash('arbeit-f-' + salt))).concat(base)
+    : split(base, extra.concat(more), Infinity, t.slot, salt);
   applyStory(t, keep.story);
   VOCAB = []; IRREG = []; GAPS = []; TRANS = [];
   NEG   = keep.NEG || full(BASE.NEG, NEG_EXTRA, NEG_MORE, 'neg').slice(0, 5);
@@ -1240,7 +1352,18 @@ function applyFiltered(t, seed, keep = {}) {
     GAPS.push(g); verbs.add(g.verb); forms(g).forEach(w => taken.add(w)); text += ' ' + satz;
   }
   text += ' ' + plainText(IRREG.map(i => i.inf).concat(GAPS.map(g => g.verb)).join(' ')) + ' ' + solutionText() + ' ' + menuText();
-  VOCAB = keep.VOCAB || full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
+  if (keep.VOCAB) VOCAB = keep.VOCAB;
+  else if (t.satz) {
+    // F: nur Wörter mit Lückensatz; kein Satz darf eine andere Lösung zeigen (Verbformen, andere Wörter)
+    VOCAB = [];
+    let saetze = '';
+    for (const v of full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab')) {
+      if (VOCAB.length === 12) break;
+      const satz = satzText(v);
+      if (!satz || verraten(v, text + ' ' + saetze) || [...taken].some(w => wordIn(w, satz)) || VOCAB.some(x => verraten(x, satz))) continue;
+      VOCAB.push(v); saetze += ' ' + satz;
+    }
+  } else VOCAB = full(BASE.VOCAB, VOCAB_EXTRA, VOCAB_MORE, 'vocab').filter(v => !verraten(v, text)).slice(0, 12);
 }
 function finishVariant() {
   ALL_TYPED = { vocab: VOCAB, irreg: IRREG, gap: GAPS, neg: NEG, quest: QUEST, short: SHORT, trans: TRANS, order: ORDER };
@@ -1390,7 +1513,8 @@ function showSol(item, kind) {
     return t + (kind === 'quest' ? '?' : '.');
   }
   if (kind === 'short') return (first === 'i was' ? 'I was' : first) + '.';
-  return (kind === 'vocab' && (['v4', 'v6', 'v7'].includes(item.id) || item.verb)) ? 'to ' + first : first;
+  // Arbeit F: im Lückensatz ohne „to“ (Cats can climb trees)
+  return (kind === 'vocab' && !satzF(item) && (['v4', 'v6', 'v7'].includes(item.id) || item.verb)) ? 'to ' + first : first;
 }
 
 // ---------------------------------------------------------------------------
@@ -1588,6 +1712,12 @@ function next(key) {
 }
 
 function renderVocab(sec) {
+  if (TESTS[CUR].satz) return head(sec, 'Welches englische Wort fehlt im Satz? Das deutsche Wort steht in Klammern.') +
+    `<div class="card"><h3>A · Words in sentences <span class="pts">${MAX.vocab} Punkte</span></h3>
+     <p class="task">Schreib das fehlende englische Wort in die Lücke. Achte auf die <em>Rechtschreibung</em>.</p>
+     <div class="items">${VOCAB.map((v, i) => { const x = satzF(v);
+       return typedItem(v, i + 1, 'vocab', x ? `${esc(x[0])} %INPUT%${esc(satzRest(x))} <small>(${esc(v.de)})</small>` : `${esc(v.de)} → %INPUT%`, { section: 'vocab', inline: true }); }).join('')}</div></div>` +
+    submitBar('vocab', 'Wortschatz');
   return head(sec, 'Was heißt das auf Englisch? Bei Verben darfst du „to“ davor schreiben.') +
     `<div class="card"><h3>A · Vocabulary <span class="pts">${MAX.vocab} Punkte</span></h3>
      <p class="task">Schreib das englische Wort. Achte auf die <em>Rechtschreibung</em>.</p>
@@ -1720,11 +1850,16 @@ function renderReading(sec) {
       <p class="task" style="margin:10px 0 0">${done
         ? (reveal('reading') ? `Richtig markiert: <b>${mr.good}</b> · falsch markiert: <b>${mr.bad}</b> → <b>${mr.pts} Punkte</b>. Grün umrandet: weitere connectives im Text.` : 'Nichts markiert.')
         : `Markiert: <b>${S.marks.length}</b>. Nochmal tippen hebt die Markierung auf.`}</p></div>
-    <div class="card"><h3>C2 · True or false? <span class="pts">${TF.length} Punkte</span></h3>
+    ${TF3 ? `<div class="card"><h3>C2 · Right, wrong or not in the text? <span class="pts">${TF.length} Punkte</span></h3>
+      <p class="task">Stimmt das laut Text (<em>right</em>), stimmt es nicht (<em>wrong</em>) – oder steht dazu gar nichts im Text (<em>not in the text</em>)?</p>
+      <div class="items">${TF.map((t, i) => choiceRow(t.id, i + 1,
+        `<div class="q">${esc(t.s)}</div><div class="tf">${radio(t.id, true, 'right', done, t.a === true)}${radio(t.id, false, 'wrong', done, t.a === false)}${radio(t.id, 'ni', 'not in the text', done, t.a === 'ni')}</div>`,
+        S.answers[t.id] === String(t.a), done, TF3_LABEL[String(t.a)])).join('')}</div></div>`
+    : `<div class="card"><h3>C2 · True or false? <span class="pts">${TF.length} Punkte</span></h3>
       <p class="task">Stimmt das laut Text?</p>
       <div class="items">${TF.map((t, i) => choiceRow(t.id, i + 1,
         `<div class="q">${esc(t.s)}</div><div class="tf">${radio(t.id, true, 'true', done, t.a === true)}${radio(t.id, false, 'false', done, t.a === false)}</div>`,
-        S.answers[t.id] === String(t.a), done, t.a ? 'true' : 'false')).join('')}</div></div>
+        S.answers[t.id] === String(t.a), done, t.a ? 'true' : 'false')).join('')}</div></div>`}
     <div class="card"><h3>C3 · Adjectives <span class="pts">${ADJ.length} Punkte</span></h3>
       <p class="task">Welches <em>adjective</em> passt zur Geschichte?</p>
       <div class="items">${ADJ.map((t, i) => choiceRow(t.id, i + 1,
@@ -2150,7 +2285,7 @@ document.addEventListener('click', async e => {
 // ---------------------------------------------------------------------------
 function taskText(kind, it) {
   return {
-    vocab: `Übersetze ins Englische: "${it.de}"`,
+    vocab: satzF(it) ? `Setze das englische Wort für "${it.de}" in die Lücke: "${satzF(it)[0]} ___${satzRest(satzF(it))}"` : `Übersetze ins Englische: "${it.de}"`,
     irreg: `Simple-past-Form von "to ${it.inf}"`,
     gap: `Setze das Verb "${it.verb}" im simple past ein: "${it.pre} ___ ${it.post}"`,
     neg: `Verneine den Satz im simple past: "${it.s}"`,
@@ -2228,7 +2363,7 @@ async function askPlan(btn) {
   Object.entries(ALL_TYPED).forEach(([kind, list]) => teil(list
     .filter(it => !isRight(S.answers[it.id], it.en, it) && !S.claudeOk[it.id])
     .map(it => `[${kind}] ${taskText(kind, it)} – Kind: "${cut(S.answers[it.id]) || '(leer)'}", richtig: "${showSol(it, kind)}"`)));
-  teil(TF.filter(t => S.answers[t.id] !== String(t.a)).map(t => `[lesen] Lesen true/false: "${t.s}"`));
+  teil(TF.filter(t => S.answers[t.id] !== String(t.a)).map(t => TF3 ? `[lesen] Lesen right/wrong/not in the text: "${t.s}" – richtig: ${TF3_LABEL[String(t.a)]}` : `[lesen] Lesen true/false: "${t.s}"`));
   teil(ADJ.filter(t => S.answers[t.id] !== t.a).map(t => `[lesen] Adjektiv-Lücke: "${t.pre} ___ ${t.post}" – richtig: ${t.a}`));
   teil(SPEECH.filter(t => S.answers[t.id] !== String(t.a)).map(t => `[lesen] Zeichensetzung direkte Rede – richtig: ${t.opts[t.a]}`));
   const mr = markResult();
@@ -2391,14 +2526,14 @@ document.addEventListener('keydown', e => {
 const VERLAUF_KEY = STORE + '-verlauf', GESAMT_KEY = STORE + '-gesamtplan';
 const SKILLS = [
   ['vocab', 'Wörter'], ['irreg', 'Unregelmäßige Verben'], ['gap', 'Sätze im simple past'], ['neg', 'Verneinung'], ['quest', 'Fragen'],
-  ['short', 'Kurzantworten'], ['order', 'Satzbau'], ['trans', 'Übersetzen'], ['tf', 'Lesen: true/false'], ['conn', 'Lesen: connectives'],
+  ['short', 'Kurzantworten'], ['order', 'Satzbau'], ['trans', 'Übersetzen'], ['tf', 'Lesen: Stimmt das laut Text?'], ['conn', 'Lesen: connectives'],
   ['adj', 'Lesen: adjectives'], ['speech', 'Lesen: direkte Rede'], ['w_wwww', 'Geschichte: Who? What? Where? When?'],
   ['w_rahmen', 'Geschichte: Titel, Anfang, Schluss'], ['w_past', 'Geschichte: simple past'], ['w_adjektive', 'Geschichte: Wörter & Adjektive'],
   ['w_connectives', 'Geschichte: connectives'], ['w_speech', 'Geschichte: direkte Rede'], ['spelling', 'Rechtschreibung']];
 const SKILL_LABEL = Object.fromEntries(SKILLS);
 const PART_OF = { vocab: 'vocab', irreg: 'grammar', gap: 'grammar', neg: 'grammar', quest: 'grammar', short: 'grammar', trans: 'grammar', order: 'order' };
 const TRAIN_KINDS = ['vocab', 'irreg', 'gap', 'neg', 'quest', 'short', 'trans'];
-const TEST_ORDER = ['A', 'B', 'C', 'D', 'E', 'Z', 'T'];
+const TEST_ORDER = ['A', 'B', 'C', 'D', 'E', 'Z', 'T', 'F'];   // F hinten: Reihenfolge alter Stände bleibt
 function readVerlauf() { try { const v = JSON.parse(localStorage.getItem(VERLAUF_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
 function writeVerlauf(v) { try { localStorage.setItem(VERLAUF_KEY, JSON.stringify(v.slice(-60))); } catch (e) {} }
 
@@ -2510,7 +2645,7 @@ function archiveRun(k, st) {
 function lernstandRuns() {
   const runs = readVerlauf().filter(r => r && Array.isArray(r.items))
     .map(r => Object.assign({}, r, { items: r.items.filter(x => !(x && x.id && AUSGEMUSTERT.has(x.id))) }));
-  ['A', 'B', 'C', 'D', 'E', 'Z'].forEach(k => {
+  ['A', 'B', 'C', 'D', 'E', 'F', 'Z'].forEach(k => {
     const st = k === CUR && VIEW === 'test' ? S : readState(k);
     if (st && Object.values(st.done).some(Boolean)) runs.push({ test: k, label: runLabel(k, st), items: collectRun(k, st) });
   });
@@ -2695,7 +2830,7 @@ function startTraining(fokus) {
   if (fokus) tp.woerter = fokus.kind === 'woerter' ? fokus.woerter : [];
   const benutzt = new Set(), falsch = new Set();
   runs.forEach(r => r.items.forEach(x => { if (x.id) { benutzt.add(x.id); if (!x.ok) falsch.add(x.id); } }));
-  ['A', 'B', 'C', 'D', 'E', 'Z'].forEach(k => { const st = readState(k); if (st && st.pick) PICK_LISTS.forEach(L => (st.pick[L] || []).forEach(id => benutzt.add(id))); });
+  ['A', 'B', 'C', 'D', 'E', 'F', 'Z'].forEach(k => { const st = readState(k); if (st && st.pick) PICK_LISTS.forEach(L => (st.pick[L] || []).forEach(id => benutzt.add(id))); });
   BASE.VOCAB.concat(BASE.IRREG, BASE.GAPS, BASE.NEG, BASE.QUEST, BASE.SHORT, BASE.TRANS).forEach(it => benutzt.add(it.id));
   const ziel = fokus ? [fokus.kind].filter(k => TRAIN_KINDS.includes(k)) : tp.kinds;
   const proArt = fokus ? 8 : Math.max(2, Math.min(4, Math.ceil(12 / Math.max(1, ziel.length))));
