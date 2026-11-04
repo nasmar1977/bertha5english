@@ -156,8 +156,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.35.0
-**Datum:** 30.10.2026
+**Version:** 2.36.0
+**Datum:** 04.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -205,6 +205,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.36.0 (04.11.2026)
+- Musik: neue Seite `moldau.html` (Probearbeit „Die Moldau, Programmmusik & Holzbläser“, Runde 2), übernommen aus dem
+  eigenen Claude-Artefakt „Moldau Runde 2“. Ohne Speicher, ohne KI, ohne Google-Schriften (Ersatzschriften), mit Link
+  zurück. Im Hauptmenü (`#languageSelection`) neue Karte `.lang-card.musik`.
 
 ### Version 2.35.0 (30.10.2026)
 - Klassenarbeit: Arbeit F (`TESTS.F`, `satz: true`, Speicher `STORE + '-F'`, Farbe `--line-f`). Lesetext „The school

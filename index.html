@@ -842,6 +842,9 @@
         .lang-card.latin {
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
         }
+        .lang-card.musik {
+            background: linear-gradient(135deg, #e0c3fc 0%, #c2e9fb 100%);
+        }
         .lang-icon { font-size: 3em; margin-bottom: 10px; }
         .lang-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; }
         .lang-info { font-size: 1em; color: #666; }
@@ -2841,6 +2844,14 @@
                 <div class="lang-icon">🏛️</div>
                 <div class="lang-title">Latein</div>
                 <div class="lang-info">Vokabeln, Verben &amp; Sätze</div>
+            </div>
+            <!-- Eigene Seite ohne Speicher (moldau.html, aus dem Claude-Artefakt) -->
+            <div class="lang-card musik" role="link" tabindex="0"
+                 onclick="location.href='moldau.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='moldau.html'">
+                <div class="lang-icon">🎻</div>
+                <div class="lang-title">Musik</div>
+                <div class="lang-info">Probearbeit: Die Moldau, Programmmusik &amp; Holzbläser</div>
             </div>
         </div>
         <div class="taler-display">
@@ -7154,9 +7165,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.35.0';
+        const APP_VERSION = '2.36.0';
 
         const changelogEntries = [
+            {
+                version: '2.36.0',
+                date: '04.11.2026',
+                items: [
+                    '<b>Musik</b>: Im Hauptmenü gibt es jetzt neben English und Latein die Karte <b>🎻 Musik</b>. Dahinter steckt die Probearbeit „Die Moldau, Programmmusik &amp; Holzbläser“ mit fünf Teilen und den Notenbeispielen vom Arbeitsblatt.'
+                ]
+            },
             {
                 version: '2.35.0',
                 date: '30.10.2026',
