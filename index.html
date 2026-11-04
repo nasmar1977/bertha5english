@@ -1870,6 +1870,9 @@
         .theme1-card {
             background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
         }
+        .musik-card {
+            background: linear-gradient(135deg, #e0c3fc 0%, #c2e9fb 100%);
+        }
         .klassenarbeit-card {
             background: linear-gradient(135deg, #ffe29f 0%, #ffa99f 100%);
         }
@@ -2845,13 +2848,12 @@
                 <div class="lang-title">Latein</div>
                 <div class="lang-info">Vokabeln, Verben &amp; Sätze</div>
             </div>
-            <!-- Eigene Seite ohne Speicher (moldau.html, aus dem Claude-Artefakt) -->
-            <div class="lang-card musik" role="link" tabindex="0"
-                 onclick="location.href='moldau.html'"
-                 onkeydown="if (event.key === 'Enter') location.href='moldau.html'">
+            <div class="lang-card musik" role="button" tabindex="0"
+                 onclick="selectLanguage('musik')"
+                 onkeydown="if (event.key === 'Enter') selectLanguage('musik')">
                 <div class="lang-icon">🎻</div>
                 <div class="lang-title">Musik</div>
-                <div class="lang-info">Probearbeit: Die Moldau, Programmmusik &amp; Holzbläser</div>
+                <div class="lang-info">Probearbeiten: Die Moldau &amp; Holzbläser</div>
             </div>
         </div>
         <div class="taler-display">
@@ -2859,6 +2861,31 @@
             <div>Deine Taler: <strong><span id="displayTalersMain">0</span>/50</strong></div>
             <button class="btn btn-clear" onclick="resetTalersFromMenu()" style="margin-top: 10px; font-size: 0.9em;">Taler zurücksetzen</button>
             <button class="btn btn-skip" onclick="resetProgress()" style="margin-top: 10px; font-size: 0.9em;">Lernfortschritt zurücksetzen</button>
+        </div>
+    </div>
+
+    <!-- MUSIK: eigene Seiten ohne Speicher (moldau-1.html, moldau.html – aus den Claude-Artefakten) -->
+    <div class="game-container" id="musikSelection" style="display: none;">
+        <button class="back-btn" onclick="backToLanguage()">← Zurück</button>
+        <div class="header">
+            <h1>🎻 Musik</h1>
+            <p style="color: #666; margin-top: 10px;">Wähle deine Probearbeit:</p>
+        </div>
+        <div class="set-selection">
+            <div class="module-card musik-card" role="link" tabindex="0"
+                 onclick="location.href='moldau-1.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='moldau-1.html'">
+                <div class="module-icon">🌊</div>
+                <div class="module-title">Runde 1 · Die Moldau &amp; die Holzblasinstrumente</div>
+                <div class="module-info">Smetana, Verlauf der Moldau, Dynamik, wie ein Ton entsteht, Holzbläser</div>
+            </div>
+            <div class="module-card musik-card" role="link" tabindex="0"
+                 onclick="location.href='moldau.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='moldau.html'">
+                <div class="module-icon">🎼</div>
+                <div class="module-title">Runde 2 · Moldau, Programmmusik &amp; Holzbläser</div>
+                <div class="module-info">Neue Aufgaben, Programmmusik und die Notenbeispiele vom Arbeitsblatt</div>
+            </div>
         </div>
     </div>
 
@@ -7165,9 +7192,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.36.0';
+        const APP_VERSION = '2.37.0';
 
         const changelogEntries = [
+            {
+                version: '2.37.0',
+                date: '04.11.2026',
+                items: [
+                    '<b>Musik</b>: Unter <b>🎻 Musik</b> gibt es jetzt zwei Probearbeiten: <b>Runde 1</b> „Die Moldau &amp; die Holzblasinstrumente“ und <b>Runde 2</b> „Moldau, Programmmusik &amp; Holzbläser“.'
+                ]
+            },
             {
                 version: '2.36.0',
                 date: '04.11.2026',
@@ -9117,7 +9151,7 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen','saetzeScreen'].forEach(id => {
+            ['changelogSplash','languageSelection','musikSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen','saetzeScreen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
             hdStopAll();
@@ -9137,6 +9171,8 @@
                 document.getElementById('setSelection').style.display = 'block';
             } else if (lang === 'latin') {
                 document.getElementById('latinChapterSelection').style.display = 'block';
+            } else if (lang === 'musik') {
+                document.getElementById('musikSelection').style.display = 'block';
             }
             applyAprilDarkBody();
         }

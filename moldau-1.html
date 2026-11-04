@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Musik: Die Moldau, Runde 1</title>
+<!-- Aus dem Claude-Artefakt „Moldau & Holzbläser“ (Version 1793288641-00ec), ohne Google-Schriften -->
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: one reading column like an Arbeitsblatt, a river line runs down the left edge of Teil A; sticky score bar on top */
+:root{
+  --bg:#f3f6f7; --paper:#ffffff; --ink:#15262d; --muted:#5a6d74; --line:#d3dde0;
+  --river:#1f6f8b; --river-soft:#dcecf1; --reed:#a8651e; --reed-soft:#f5e8d8;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1a1e; --paper:#16252b; --ink:#e4eef0; --muted:#97abb1; --line:#2b3f46;
+  --river:#6cc0db; --river-soft:#183842; --reed:#e0a35c; --reed-soft:#3a2a18;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a1e; --paper:#16252b; --ink:#e4eef0; --muted:#97abb1; --line:#2b3f46;
+  --river:#6cc0db; --river-soft:#183842; --reed:#e0a35c; --reed-soft:#3a2a18;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3.1rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.65rem;font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bar .lbl{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.score{font-family:var(--display);font-weight:800;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.meter{flex:1;min-width:120px;height:10px;border-radius:5px;background:var(--river-soft);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--river);transition:width .4s}
+.bar nav{display:flex;gap:6px;flex-wrap:wrap}
+.bar nav a{font-size:.85rem;color:var(--river);text-decoration:none;padding:4px 10px;border:1px solid var(--line);border-radius:999px}
+.bar nav a:hover{background:var(--river-soft)}
+header.top{padding-block:36px 20px;display:grid;gap:10px}
+.eyebrow{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--river);font-weight:700}
+.fields{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.fields label{display:flex;gap:8px;align-items:baseline;color:var(--muted);font-size:.9rem}
+.fields input{border:0;border-bottom:1.5px solid var(--line);background:transparent;color:var(--ink);font:inherit;width:12em;padding:2px 4px}
+.part{margin-top:40px;display:grid;gap:22px}
+.part>*,.task>*{min-width:0}   /* breite Tabelle scrollt in ihrem Kasten, nicht die Seite */
+.parthead{display:flex;gap:14px;align-items:center;padding-bottom:10px;border-bottom:3px solid var(--river)}
+.part.holz .parthead{border-color:var(--reed)}
+.tag{font-family:var(--display);font-weight:800;font-size:1rem;color:var(--paper);background:var(--river);border-radius:8px;padding:4px 10px}
+.part.holz .tag{background:var(--reed)}
+.task{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:14px}
+.task .th{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.pts{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hint{color:var(--muted);font-size:.93rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--river);color:var(--paper);border:0;border-radius:8px;padding:8px 16px;font-weight:700}
+.part.holz .btn{background:var(--reed)}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:400}
+.part.holz .btn.ghost{background:transparent}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--river);outline-offset:2px}
+.result{font-weight:700;font-size:.95rem}
+.result.good{color:var(--ok)} .result.mid{color:var(--reed)} .result.low{color:var(--bad)}
+select,input.gap{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:4px 6px;max-width:100%}
+.ok{border-color:var(--ok)!important;background:var(--ok-soft)!important}
+.no{border-color:var(--bad)!important;background:var(--bad-soft)!important}
+.mc{display:grid;gap:14px}
+.q{display:grid;gap:6px}
+.q .opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:5px 14px;background:var(--bg);color:var(--ink);font-size:.95rem}
+.opt[aria-pressed="true"]{border-color:var(--river);background:var(--river-soft);font-weight:700}
+.part.holz .opt[aria-pressed="true"]{border-color:var(--reed);background:var(--reed-soft)}
+.order{list-style:none;margin:0;padding:0;display:grid;gap:6px;position:relative}
+.order li{display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px 6px 12px}
+.order .n{font-family:var(--display);font-weight:800;color:var(--river);width:1.4em;font-variant-numeric:tabular-nums}
+.order .t{flex:1;min-width:0}
+.order button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;width:34px;height:30px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;background:var(--bg)}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.92rem}
+.card dt{font-weight:700;color:var(--river)}
+.card dd{margin:0}
+.match{display:grid;gap:10px}
+.match .row{display:grid;grid-template-columns:minmax(120px,200px) 1fr;gap:10px;align-items:center}
+@media (max-width:520px){.match .row{grid-template-columns:1fr}}
+.match .row>*{min-width:0} .match select{width:100%}   /* lange Antworten umbrechen nicht in der Auswahl */
+.cloze{line-height:2.3;font-size:1.05rem}
+.cloze input.gap{width:9.5em}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank span{font-size:.9rem;padding:2px 10px;border:1px dashed var(--muted);border-radius:6px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.tf{display:grid;gap:8px}
+.tf .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.tf .row p{flex:1;min-width:220px}
+.diagram{overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:520px;height:auto}
+.labels{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.labels label{display:flex;gap:8px;align-items:center}
+.num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--reed);color:var(--paper);font-weight:700;font-size:.85rem;flex:none}
+details.sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 20px}
+details.sheet summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:1.05rem}
+.tablewrap{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;font-size:.85rem;min-width:760px}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+th{background:var(--river-soft);font-family:var(--display)}
+td:first-child{font-weight:700;color:var(--river);white-space:nowrap}
+.river{display:block;width:100%;height:46px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:.92rem}
+.facts div{border-left:3px solid var(--reed);padding-left:10px}
+.final{margin-top:40px;text-align:center;display:grid;gap:10px;justify-items:center}
+.final .big{font-family:var(--display);font-size:3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.back{justify-self:start;font-size:.95rem;color:var(--ink);text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 14px}
+.back:hover{border-color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+</style>
+
+<div class="bar"><div class="in">
+  <span class="lbl">Punkte</span>
+  <span class="score" id="score">0 / 0</span>
+  <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+  <nav><a href="#teil-a">Moldau</a><a href="#teil-b">Ton</a><a href="#teil-c">Holzbläser</a></nav>
+</div></div>
+
+<div class="wrap">
+<header class="top">
+  <a class="back" href="index.html">← Zurück zum Vokabeltrainer</a>
+  <span class="eyebrow">Musik · Klasse 6 · Übung zur Klassenarbeit</span>
+  <h1>Die Moldau &amp; die Holzblasinstrumente</h1>
+  <p class="hint">Bearbeite jede Aufgabe und drücke auf „Prüfen“. Grün heißt richtig, rot heißt: noch einmal überlegen. Unten bei Teil A findest du die Verlaufstabelle aus dem Heft zum Wiederholen.</p>
+  <div class="fields">
+    <label for="name">Name <input id="name" autocomplete="off"></label>
+    <label for="datum">Datum <input id="datum" autocomplete="off"></label>
+  </div>
+</header>
+
+<!-- ============ TEIL A ============ -->
+<section class="part" id="teil-a">
+  <div class="parthead"><span class="tag">A</span><h2>Die Moldau von Bedřich Smetana</h2></div>
+
+  <svg class="river" viewBox="0 0 800 46" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 30 C60 30 80 12 140 14 S240 30 300 26 S420 20 470 24 S540 10 560 26 S600 6 620 30 S650 4 670 30 S700 8 720 28 L800 22" fill="none" stroke="var(--river)" stroke-width="3"/>
+    <path d="M0 36 C60 36 80 20 140 22 S240 36 300 32 S420 28 470 30 S540 18 560 32 S600 14 620 36 S650 12 670 36 S700 16 720 34 L800 28" fill="none" stroke="var(--river)" stroke-width="1.5" opacity=".5"/>
+  </svg>
+
+  <div class="task" data-task="a1" data-max="10">
+    <div class="th"><h3>A1 · Steckbrief: Was weißt du über das Werk?</h3><span class="pts">10 P.</span></div>
+    <div class="mc" id="a1"></div>
+    <div class="actions"><button class="btn" data-check="a1">Prüfen</button><button class="btn ghost" data-solve="a1">Lösung zeigen</button><button class="btn ghost" data-reset="a1">Zurücksetzen</button><span class="result" id="r-a1"></span></div>
+  </div>
+
+  <div class="task" data-task="a2" data-max="10">
+    <div class="th"><h3>A2 · Der Verlauf der Moldau</h3><span class="pts">10 P.</span></div>
+    <p class="hint">Bringe die Abschnitte in die richtige Reihenfolge, von den Quellen bis zum Schluss. Verschiebe sie mit ▲ und ▼.</p>
+    <ol class="order" id="a2"></ol>
+    <div class="actions"><button class="btn" data-check="a2">Prüfen</button><button class="btn ghost" data-solve="a2">Lösung zeigen</button><button class="btn ghost" data-reset="a2">Neu mischen</button><span class="result" id="r-a2"></span></div>
+  </div>
+
+  <div class="task" data-task="a3" data-max="9">
+    <div class="th"><h3>A3 · Welcher Abschnitt ist das?</h3><span class="pts">9 P.</span></div>
+    <p class="hint">Lies Dynamik (D), Instrumente (I), Gestaltung (G) und Ausdruck (A). Wähle den passenden Abschnitt.</p>
+    <div class="cards" id="a3"></div>
+    <div class="actions"><button class="btn" data-check="a3">Prüfen</button><button class="btn ghost" data-solve="a3">Lösung zeigen</button><button class="btn ghost" data-reset="a3">Zurücksetzen</button><span class="result" id="r-a3"></span></div>
+  </div>
+
+  <div class="task" data-task="a4" data-max="7">
+    <div class="th"><h3>A4 · Dynamik: Wie laut ist das?</h3><span class="pts">7 P.</span></div>
+    <p class="hint">Ordne jedem Zeichen den Namen und die Bedeutung zu.</p>
+    <div class="match" id="a4"></div>
+    <div class="actions"><button class="btn" data-check="a4">Prüfen</button><button class="btn ghost" data-solve="a4">Lösung zeigen</button><button class="btn ghost" data-reset="a4">Zurücksetzen</button><span class="result" id="r-a4"></span></div>
+  </div>
+
+  <div class="task" data-task="a5" data-max="5">
+    <div class="th"><h3>A5 · Musik malt Bilder</h3><span class="pts">5 P.</span></div>
+    <p class="hint">Welches Instrument oder welche Musik passt zum Bild? Wähle aus.</p>
+    <div class="match" id="a5"></div>
+    <div class="actions"><button class="btn" data-check="a5">Prüfen</button><button class="btn ghost" data-solve="a5">Lösung zeigen</button><button class="btn ghost" data-reset="a5">Zurücksetzen</button><span class="result" id="r-a5"></span></div>
+  </div>
+
+  <div class="task" data-task="a6" data-max="10">
+    <div class="th"><h3>A6 · Takt, Tonart, Lautstärke, Tempo</h3><span class="pts">10 P.</span></div>
+    <p class="hint">Vervollständige die Sätze zur musikalischen Gestaltung.</p>
+    <div class="match" id="a6"></div>
+    <div class="actions"><button class="btn" data-check="a6">Prüfen</button><button class="btn ghost" data-solve="a6">Lösung zeigen</button><button class="btn ghost" data-reset="a6">Zurücksetzen</button><span class="result" id="r-a6"></span></div>
+  </div>
+
+  <details class="sheet">
+    <summary>Lernhilfe: Verlaufstabelle aus Heft und Arbeitsblatt (Smetana, 1824–1884)</summary>
+    <div class="tablewrap"><table id="sheet"></table></div>
+  </details>
+</section>
+
+<!-- ============ TEIL B ============ -->
+<section class="part" id="teil-b">
+  <div class="parthead"><span class="tag">B</span><h2>Wie entsteht ein Ton?</h2></div>
+  <div class="task" data-task="b1" data-max="8">
+    <div class="th"><h3>B1 · Lückentext</h3><span class="pts">8 P.</span></div>
+    <p class="hint">Setze die Wörter aus dem Kasten ein.</p>
+    <div class="bank" id="bank"></div>
+    <p class="cloze" id="b1"></p>
+    <div class="actions"><button class="btn" data-check="b1">Prüfen</button><button class="btn ghost" data-solve="b1">Lösung zeigen</button><button class="btn ghost" data-reset="b1">Zurücksetzen</button><span class="result" id="r-b1"></span></div>
+  </div>
+  <div class="task" data-task="b2" data-max="4">
+    <div class="th"><h3>B2 · Der Weg des Schalls</h3><span class="pts">4 P.</span></div>
+    <p class="hint">Bringe die Schritte in die richtige Reihenfolge.</p>
+    <ol class="order" id="b2"></ol>
+    <div class="actions"><button class="btn" data-check="b2">Prüfen</button><button class="btn ghost" data-solve="b2">Lösung zeigen</button><button class="btn ghost" data-reset="b2">Neu mischen</button><span class="result" id="r-b2"></span></div>
+  </div>
+</section>
+
+<!-- ============ TEIL C ============ -->
+<section class="part holz" id="teil-c">
+  <div class="parthead"><span class="tag">C</span><h2>Die Holzblasinstrumente</h2></div>
+
+  <div class="facts">
+    <div><strong>Kante</strong><br>Querflöte, Blockflöte: Der Luftstrom wird an einer scharfen Kante gespalten.</div>
+    <div><strong>Einfaches Rohrblatt</strong><br>Klarinette, Saxophon: Ein Blättchen aus Schilfrohr schwingt.</div>
+    <div><strong>Doppelrohrblatt</strong><br>Oboe, Fagott: Zwei Rohrblätter schwingen gegeneinander.</div>
+  </div>
+
+  <div class="task" data-task="c1" data-max="6">
+    <div class="th"><h3>C1 · Finde alle Holzblasinstrumente</h3><span class="pts">6 P.</span></div>
+    <p class="hint">Tippe alle Holzblasinstrumente an. Vorsicht: Es kommt auf die Tonerzeugung an, nicht auf das Material.</p>
+    <div class="chips" id="c1"></div>
+    <div class="actions"><button class="btn" data-check="c1">Prüfen</button><button class="btn ghost" data-solve="c1">Lösung zeigen</button><button class="btn ghost" data-reset="c1">Zurücksetzen</button><span class="result" id="r-c1"></span></div>
+  </div>
+
+  <div class="task" data-task="c2" data-max="3">
+    <div class="th"><h3>C2 · So entsteht der Ton</h3><span class="pts">3 P.</span></div>
+    <div class="match" id="c2"></div>
+    <div class="actions"><button class="btn" data-check="c2">Prüfen</button><button class="btn ghost" data-solve="c2">Lösung zeigen</button><button class="btn ghost" data-reset="c2">Zurücksetzen</button><span class="result" id="r-c2"></span></div>
+  </div>
+
+  <div class="task" data-task="c3" data-max="6">
+    <div class="th"><h3>C3 · Beschrifte Querflöte und Klarinette</h3><span class="pts">6 P.</span></div>
+    <h3 style="font-size:1rem">Die Querflöte</h3>
+    <div class="diagram">
+      <svg viewBox="0 0 640 130" role="img" aria-label="Querflöte mit drei Markierungen">
+        <rect x="30" y="52" width="580" height="18" rx="4" fill="var(--line)" stroke="var(--muted)"/>
+        <line x1="190" y1="52" x2="190" y2="70" stroke="var(--muted)"/>
+        <line x1="520" y1="52" x2="520" y2="70" stroke="var(--muted)"/>
+        <ellipse cx="90" cy="61" rx="9" ry="5" fill="var(--ink)"/>
+        <g fill="var(--paper)" stroke="var(--muted)" stroke-width="1.5">
+          <circle cx="250" cy="61" r="7"/><circle cx="275" cy="61" r="7"/><circle cx="300" cy="61" r="7"/><circle cx="340" cy="61" r="7"/><circle cx="365" cy="61" r="7"/><circle cx="390" cy="61" r="7"/><circle cx="430" cy="61" r="7"/><circle cx="455" cy="61" r="7"/>
+          <circle cx="545" cy="61" r="6"/><circle cx="568" cy="61" r="6"/>
+        </g>
+        <g stroke="var(--reed)" stroke-width="1.5" fill="none"><path d="M90 70 L90 100"/><path d="M320 52 L320 22"/><path d="M560 70 L560 100"/></g>
+        <g font-family="sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+          <circle cx="90" cy="112" r="12" fill="var(--reed)"/><text x="90" y="117" fill="var(--paper)">1</text>
+          <circle cx="320" cy="14" r="12" fill="var(--reed)"/><text x="320" y="19" fill="var(--paper)">2</text>
+          <circle cx="560" cy="112" r="12" fill="var(--reed)"/><text x="560" y="117" fill="var(--paper)">3</text>
+        </g>
+      </svg>
+    </div>
+    <div class="labels" id="c3a"></div>
+    <h3 style="font-size:1rem;margin-top:6px">Die Klarinette</h3>
+    <div class="diagram">
+      <svg viewBox="0 0 640 130" role="img" aria-label="Klarinette mit drei Markierungen">
+        <path d="M30 56 L80 54 L80 68 L30 66 Z" fill="var(--ink)"/>
+        <path d="M32 67 L78 69" stroke="var(--reed)" stroke-width="3"/>
+        <rect x="80" y="52" width="420" height="18" fill="var(--ink)" opacity=".85"/>
+        <path d="M500 52 L560 52 Q600 46 615 30 L615 92 Q600 76 560 70 L500 70 Z" fill="var(--ink)" opacity=".85"/>
+        <g fill="none" stroke="var(--paper)" stroke-width="1.5">
+          <circle cx="200" cy="61" r="5"/><circle cx="225" cy="61" r="5"/><circle cx="250" cy="61" r="5"/><circle cx="330" cy="61" r="5"/><circle cx="355" cy="61" r="5"/><circle cx="380" cy="61" r="5"/>
+        </g>
+        <g stroke="var(--reed)" stroke-width="1.5" fill="none"><path d="M55 70 L55 100"/><path d="M290 52 L290 22"/><path d="M590 82 L590 100"/></g>
+        <g font-family="sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+          <circle cx="55" cy="112" r="12" fill="var(--reed)"/><text x="55" y="117" fill="var(--paper)">4</text>
+          <circle cx="290" cy="14" r="12" fill="var(--reed)"/><text x="290" y="19" fill="var(--paper)">5</text>
+          <circle cx="590" cy="112" r="12" fill="var(--reed)"/><text x="590" y="117" fill="var(--paper)">6</text>
+        </g>
+      </svg>
+    </div>
+    <div class="labels" id="c3b"></div>
+    <div class="actions"><button class="btn" data-check="c3">Prüfen</button><button class="btn ghost" data-solve="c3">Lösung zeigen</button><button class="btn ghost" data-reset="c3">Zurücksetzen</button><span class="result" id="r-c3"></span></div>
+  </div>
+
+  <div class="task" data-task="c4" data-max="8">
+    <div class="th"><h3>C4 · Richtig oder falsch?</h3><span class="pts">8 P.</span></div>
+    <div class="tf" id="c4"></div>
+    <div class="actions"><button class="btn" data-check="c4">Prüfen</button><button class="btn ghost" data-solve="c4">Lösung zeigen</button><button class="btn ghost" data-reset="c4">Zurücksetzen</button><span class="result" id="r-c4"></span></div>
+  </div>
+</section>
+
+<section class="final">
+  <span class="eyebrow">Gesamtergebnis</span>
+  <div class="big" id="finalScore">0 / 0</div>
+  <p class="hint" id="finalText">Prüfe die Aufgaben, dann siehst du hier dein Ergebnis.</p>
+  <div class="actions"><button class="btn ghost" id="resetAll">Alles zurücksetzen</button></div>
+</section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const scores={}; const maxes={};
+document.querySelectorAll('.task').forEach(t=>maxes[t.dataset.task]=+t.dataset.max);
+const MAX=Object.values(maxes).reduce((a,b)=>a+b,0);
+function updateTotal(){
+  const s=Object.values(scores).reduce((a,b)=>a+b,0);
+  $('#score').textContent=s+' / '+MAX; $('#finalScore').textContent=s+' / '+MAX;
+  $('#meter').style.width=(s/MAX*100)+'%';
+  const done=Object.keys(scores).length, all=Object.keys(maxes).length;
+  const pct=s/MAX;
+  $('#finalText').textContent = done<all ? `Geprüft: ${done} von ${all} Aufgaben.` :
+    pct>=.9?'Ausgezeichnet! Du bist bestens vorbereitet.':pct>=.7?'Gut gemacht! Wiederhole noch die roten Stellen.':pct>=.5?'Schon ordentlich. Schau dir die Lernhilfe und die Fehler noch einmal an.':'Übe noch einmal mit der Lernhilfe und den Heftseiten.';
+}
+function report(id,got){
+  scores[id]=got; const m=maxes[id]; const r=$('#r-'+id);
+  r.textContent=`${got} von ${m} Punkten`; r.className='result '+(got===m?'good':got>=m/2?'mid':'low'); updateTotal();
+}
+function clearRes(id){delete scores[id];$('#r-'+id).textContent='';updateTotal()}
+const mark=(el,ok)=>{el.classList.remove('ok','no');el.classList.add(ok?'ok':'no')};
+const unmark=root=>root.querySelectorAll('.ok,.no').forEach(e=>e.classList.remove('ok','no'));
+function sel(id,options,answer){
+  const s=document.createElement('select'); s.id=id; s.dataset.answer=answer;
+  s.innerHTML='<option value="">– wählen –</option>'+options.map(o=>`<option>${o}</option>`).join('');
+  return s;
+}
+
+/* ---- Daten (aus der Mitschrift) ---- */
+const SECTIONS=[
+ {n:'Die Quellen der Moldau',d:'piano, crescendo',i:'2 Querflöten + Klarinetten, am Schluss Violoncelli',g:'schnelle Melodieschritte, erst einstimmig, dann zweistimmig im Wechsel',a:'spielerisch, geheimnisvoll'},
+ {n:'Das Moldau-Thema',d:'forte',i:'Melodie: Violinen; Flussbewegung: tiefe Streicher',g:'Tonalität: Moll',a:'friedlich, gewaltig'},
+ {n:'Waldjagd',d:'forte, fortissimo',i:'Hörner, dazu Trompeten und Posaunen',g:'Dreiklangsmelodien, 6/8-Takt, Dur',a:'aufgeregt, dramatisch'},
+ {n:'Bauernhochzeit',d:'mf &lt; f &gt; p',i:'Streichinstrumente, am Schluss Bässe',g:'böhmischer Tanz (Polka), 2/4-Takt',a:'fröhlich, tänzerisch'},
+ {n:'Mondschein – Nymphenreigen',d:'piano, pianissimo',i:'Violinen mit Dämpfern, Harfe, Holzbläser',g:'großer Melodiebogen, ruhige Akkorde, Motiv wie die Quellen',a:'magisch, träumerisch'},
+ {n:'St.-Johann-Stromschnellen',d:'fortissimo',i:'ganzes Orchester, Pauken, Becken, Posaunen, Trompeten',g:'Akzente, Tonleitern aufwärts – das Wasser peitscht an die Felsen',a:'hektisch, angsteinflößend'},
+ {n:'Die Moldau strömt breit dahin',d:'fortissimo',i:'Violinen',g:'Moldau-Thema in Dur, schneller',a:'freudig'},
+ {n:'Vyšehrad (alte Prager Königsburg)',d:'forte',i:'Blechblasinstrumente',g:'hymnische Akkorde',a:'festlich, gravitätisch, majestätisch'},
+ {n:'Der Fluss entschwindet den Blicken',d:'ff → pp',i:'Streichinstrumente, zum Schluss ganzes Orchester',g:'Wellenbewegung vom Anfang des Moldau-Themas, langsamer werdend, zwei kräftige Schlussakkorde',a:'abschiednehmend'}
+];
+const ORDER_A2=['Die Quellen der Moldau','Das Moldau-Thema','Waldjagd','Bauernhochzeit','Mondschein – Nymphenreigen','Das Moldau-Thema kehrt zurück','St.-Johann-Stromschnellen','Die Moldau strömt breit dahin','Vyšehrad (alte Prager Königsburg)','Der Fluss entschwindet den Blicken'];
+const SHEET=[
+ ['1. Die Quellen der Moldau','piano, crescendo','schnelle Melodieschritte, einstimmig, dann zweistimmig im Wechsel','2 Querflöten + Klarinetten; Schluss: Violoncelli','spielerisch, geheimnisvoll'],
+ ['2. Moldau-Thema','forte','Tonalität: Moll','Melodie: Violinen; Fluss: tiefe Streicher','friedlich, festlich, gewaltig'],
+ ['3. Waldjagd','forte, fortissimo','Dreiklangsmelodien, 6/8-Takt, Dur','Hörner, dazu Trompeten und Posaunen','pompös, aufgeregt, dramatisch'],
+ ['4. Bauernhochzeit (Polka)','mf &lt; f &gt; p','böhmischer Tanz, 2/4-Takt','Streichinstrumente, Bässe zum Schluss (aus der Ferne), Triangel','fröhlich, tänzerisch, lebhaft'],
+ ['5. Mondschein – Nymphenreigen','piano, pianissimo','großer Melodiebogen, ruhige Akkorde, Reigenmotiv verwandt mit dem Quellen-Thema','Violinen mit Dämpfern, Harfe, Holzbläser','magisch, geheimnisvoll, träumerisch'],
+ ['6. Moldau-Thema','mezzoforte – forte','Tonalität: Moll','ganzes Orchester','festlich, stolz'],
+ ['7. St.-Johann-Stromschnellen','ff (fortissimo)','Akzente, Tonleiterbewegungen aufwärts (das Wasser peitscht an die Felsen)','ganzes Orchester, Pauken und Becken, Posaunen- und Trompetenstöße','hektisch, dramatisch, angsteinflößend'],
+ ['8. Die Moldau strömt breit dahin','ff','Tonalität: Dur (freudig), Tempo: schneller','Violinen','freudig, gewaltig'],
+ ['9. Vyšehrad (alte Prager Königsburg)','forte','hymnische Akkorde','Blechblasinstrumente','festlich, gravitätisch, majestätisch'],
+ ['10. Der Fluss entschwindet den Blicken','ff → pp (pianissimo)','Wellenbewegung des Moldau-Themas, langsamer werdend, zwei kräftige Schlussakkorde (ff)','Streichinstrumente, ganzes Orchester','ruhig, abschiednehmend']
+];
+$('#sheet').innerHTML='<tr><th>Abschnitt</th><th>D · Dynamik</th><th>Gestaltung</th><th>I · Instrumente</th><th>A · Ausdruck</th></tr>'+
+  SHEET.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+
+/* ---- MC builder ---- */
+function buildMC(rootId,qs){
+  const root=$('#'+rootId); root.innerHTML='';
+  qs.forEach((q,qi)=>{
+    const d=document.createElement('div'); d.className='q'; d.dataset.answer=q.a;
+    d.innerHTML=`<p><strong>${qi+1}.</strong> ${q.q}</p><div class="opts">${shuffle(q.o).map(o=>`<button type="button" class="opt" aria-pressed="false">${o}</button>`).join('')}</div>`;
+    d.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{d.querySelectorAll('.opt').forEach(x=>{x.setAttribute('aria-pressed','false');x.classList.remove('ok','no')});b.setAttribute('aria-pressed','true')});
+    root.appendChild(d);
+  });
+}
+const A1=[
+ {q:'Wer hat „Die Moldau“ komponiert?',o:['Bedřich Smetana','Antonín Dvořák','Wolfgang Amadeus Mozart'],a:'Bedřich Smetana'},
+ {q:'Wann lebte Smetana?',o:['1824–1884','1756–1791','1841–1904'],a:'1824–1884'},
+ {q:'Aus welchem Land stammt der Komponist?',o:['Böhmen (heute Tschechien)','Österreich','Polen'],a:'Böhmen (heute Tschechien)'},
+ {q:'Zu welchem Zyklus gehört „Die Moldau“?',o:['„Mein Vaterland“','„Die vier Jahreszeiten“','„Bilder einer Ausstellung“'],a:'„Mein Vaterland“'},
+ {q:'Wie nennt man Musik, die eine Geschichte oder ein Bild beschreibt?',o:['Programmmusik','absolute Musik','Volksmusik'],a:'Programmmusik'},
+ {q:'Welche Gattung ist „Die Moldau“?',o:['Sinfonische Dichtung','Oper','Sonate'],a:'Sinfonische Dichtung'},
+ {q:'Durch welche Stadt fließt die Moldau am Ende des Stücks?',o:['Prag','Wien','Dresden'],a:'Prag'},
+ {q:'In welchen Fluss mündet die Moldau?',o:['Elbe','Donau','Rhein'],a:'Elbe'},
+ {q:'Welcher Tanz erklingt bei der Bauernhochzeit?',o:['Polka','Walzer','Menuett'],a:'Polka'},
+ {q:'Was ist das Besondere an Smetana, als er „Mein Vaterland“ schrieb?',o:['Er war taub geworden','Er war erst 12 Jahre alt','Er konnte keine Noten lesen'],a:'Er war taub geworden'}
+];
+const C4=[
+ ['Die Querflöte ist meist aus Metall und trotzdem ein Holzblasinstrument.',true],
+ ['Das Saxophon gehört zu den Holzblasinstrumenten, weil der Ton mit einem Rohrblatt erzeugt wird.',true],
+ ['Bei der Querflöte schwingt ein Rohrblatt.',false],
+ ['Bei der Klarinette schwingt das Ende eines Rohrblättchens aus Schilfrohr.',true],
+ ['Bei der Blockflöte wird der Luftstrom durch eine Spalte gegen eine scharfe Kante gelenkt.',true],
+ ['Die Trompete ist ein Holzblasinstrument.',false],
+ ['Oboe und Fagott haben ein Doppelrohrblatt.',true],
+ ['Das Fagott ist das höchste Holzblasinstrument.',false]
+];
+function buildTF(){
+  const root=$('#c4'); root.innerHTML='';
+  C4.forEach(([t,a],i)=>{
+    const r=document.createElement('div'); r.className='row q'; r.dataset.answer=a?'richtig':'falsch';
+    r.innerHTML=`<p>${t}</p><div class="opts"><button type="button" class="opt" aria-pressed="false">richtig</button><button type="button" class="opt" aria-pressed="false">falsch</button></div>`;
+    r.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{r.querySelectorAll('.opt').forEach(x=>{x.setAttribute('aria-pressed','false');x.classList.remove('ok','no')});b.setAttribute('aria-pressed','true')});
+    root.appendChild(r);
+  });
+}
+function checkMC(rootId){let g=0;$('#'+rootId).querySelectorAll('.q').forEach(q=>{const p=q.querySelector('[aria-pressed="true"]');q.querySelectorAll('.opt').forEach(o=>o.classList.remove('ok','no'));if(p){const ok=p.textContent===q.dataset.answer;mark(p,ok);if(ok)g++}});return g}
+function solveMC(rootId){$('#'+rootId).querySelectorAll('.q').forEach(q=>q.querySelectorAll('.opt').forEach(o=>{const ok=o.textContent===q.dataset.answer;o.setAttribute('aria-pressed',ok);o.classList.remove('ok','no');if(ok)o.classList.add('ok')}))}
+
+/* ---- Order builder ---- */
+const ORDERS={
+  a2:ORDER_A2,
+  b2:['Ein elastischer Körper (z. B. eine Saite) wird in Schwingung versetzt.','Andere Körper schwingen mit – die Resonanz verstärkt den Schall.','Die Schwingungen breiten sich als Schallwellen in der Luft aus.','Die Schallwellen gelangen ans Ohr – wir hören einen Ton.']
+};
+function buildOrder(id,items){
+  const ol=$('#'+id); ol.innerHTML='';
+  let mix=shuffle(items); while(items.length>1&&mix.every((x,i)=>x===items[i])) mix=shuffle(items);
+  mix.forEach(t=>{const li=document.createElement('li');li.innerHTML=`<span class="n"></span><span class="t">${t}</span><button type="button" aria-label="nach oben">▲</button><button type="button" aria-label="nach unten">▼</button>`;
+    const [up,dn]=li.querySelectorAll('button');
+    up.onclick=()=>{if(li.previousElementSibling){ol.insertBefore(li,li.previousElementSibling);renum(ol);up.focus()}};
+    dn.onclick=()=>{if(li.nextElementSibling){ol.insertBefore(li.nextElementSibling,li);renum(ol);dn.focus()}};
+    ol.appendChild(li)});
+  renum(ol);
+}
+function renum(ol){[...ol.children].forEach((li,i)=>{li.querySelector('.n').textContent=i+1;li.classList.remove('ok','no')})}
+function checkOrder(id){let g=0;[...$('#'+id).children].forEach((li,i)=>{const ok=li.querySelector('.t').textContent===ORDERS[id][i];mark(li,ok);if(ok)g++});return g}
+function solveOrder(id){const ol=$('#'+id);const lis=[...ol.children];ORDERS[id].forEach(t=>ol.appendChild(lis.find(l=>l.querySelector('.t').textContent===t)));renum(ol);[...ol.children].forEach(l=>l.classList.add('ok'))}
+
+/* ---- Select-based ---- */
+function buildA3(){
+  const root=$('#a3'); root.innerHTML=''; const names=SECTIONS.map(s=>s.n);
+  shuffle(SECTIONS).forEach((s,i)=>{const c=document.createElement('div');c.className='card';
+    c.innerHTML=`<dl><dt>D</dt><dd>${s.d}</dd><dt>I</dt><dd>${s.i}</dd><dt>G</dt><dd>${s.g}</dd><dt>A</dt><dd>${s.a}</dd></dl>`;
+    const lab=document.createElement('label');lab.htmlFor='a3-'+i;lab.className='hint';lab.textContent='Abschnitt:';
+    c.append(lab,sel('a3-'+i,names,s.n));root.appendChild(c)});
+}
+function buildMatch6(){const root=$('#a6');root.innerHTML='';A6.forEach(([k,ans,o],i)=>{const r=document.createElement('div');r.className='row';const l=document.createElement('label');l.htmlFor='a6-'+i;l.textContent=k;r.append(l,sel('a6-'+i,o,ans));root.appendChild(r)})}
+function buildMatch(rootId,pairs,options){
+  const root=$('#'+rootId); root.innerHTML='';
+  pairs.forEach(([k,ans],i)=>{const r=document.createElement('div');r.className='row';
+    const l=document.createElement('label');l.htmlFor=rootId+'-'+i;l.innerHTML=k;
+    r.append(l,sel(rootId+'-'+i,shuffle(options||pairs.map(p=>p[1])),ans));root.appendChild(r)});
+}
+const A4=[['<strong>pp</strong>','pianissimo – sehr leise'],['<strong>p</strong>','piano – leise'],['<strong>mp</strong>','mezzopiano – halbleise'],['<strong>mf</strong>','mezzoforte – halblaut'],['<strong>f</strong>','forte – laut'],['<strong>ff</strong>','fortissimo – sehr laut'],['<strong>cresc.</strong> &lt;','crescendo – lauter werdend']];
+const A5=[['Zwei kleine Quellen plätschern','2 Querflöten und Klarinetten'],['Jagdsignale im Wald','Hörner, Trompeten und Posaunen'],['Tanzende Paare auf der Hochzeit','Polka der Streicher im 2/4-Takt'],['Nymphen tanzen im Mondlicht','Violinen mit Dämpfern und Harfe'],['Das Wasser peitscht an die Felsen','ganzes Orchester mit Pauken und Becken']];
+const A6=[
+ ['Die Waldjagd steht im …','6/8-Takt',['6/8-Takt','2/4-Takt','3/4-Takt']],
+ ['Die Polka der Bauernhochzeit steht im …','2/4-Takt',['2/4-Takt','6/8-Takt','4/4-Takt']],
+ ['Das Moldau-Thema klingt am Anfang in …','Moll',['Moll','Dur']],
+ ['Wenn die Moldau breit dahinströmt, klingt das Thema in …','Dur',['Dur','Moll']],
+ ['Die Waldjagd klingt in …','Dur',['Dur','Moll']],
+ ['Lautstärke bei den Stromschnellen:','ff – fortissimo',['ff – fortissimo','pp – pianissimo','mf – mezzoforte']],
+ ['Wenn die Moldau breit dahinströmt, wird das Tempo …','schneller',['schneller','langsamer','gleich']],
+ ['Wenn der Fluss den Blicken entschwindet, wird das Tempo …','langsamer',['langsamer','schneller']],
+ ['Lautstärke, wenn der Fluss entschwindet:','von ff zu pp',['von ff zu pp','von pp zu ff','immer mf']],
+ ['Wie viele kräftige Schlussakkorde hat das Stück?','zwei',['einen','zwei','drei']]
+];
+const C2=[['Querflöte','Der Luftstrom trifft auf eine scharfe Kante am Anblasloch und wird gespalten.'],['Blockflöte','Im schnabelförmigen Mundstück wird die Luft durch eine Spalte gegen eine Kante gelenkt.'],['Klarinette','Ein Rohrblättchen aus Schilfrohr schwingt und versetzt die Luftsäule in Vibration.']];
+const PARTS=['Mundstück mit Anblasloch','Klappen','Fußstück','Mundstück mit Rohrblatt','Schallbecher','Grifflöcher mit Ringklappen'];
+const C3A=[['1','Mundstück mit Anblasloch'],['2','Klappen'],['3','Fußstück']];
+const C3B=[['4','Mundstück mit Rohrblatt'],['5','Grifflöcher mit Ringklappen'],['6','Schallbecher']];
+function buildLabels(rootId,pairs){const root=$('#'+rootId);root.innerHTML='';pairs.forEach(([n,a])=>{const l=document.createElement('label');l.htmlFor='lbl'+n;l.innerHTML=`<span class="num">${n}</span>`;l.append(sel('lbl'+n,PARTS,a));root.appendChild(l)})}
+function checkSel(scope){let g=0;scope.querySelectorAll('select[data-answer]').forEach(s=>{const ok=s.value===s.dataset.answer;mark(s,ok);if(ok)g++});return g}
+function solveSel(scope){scope.querySelectorAll('select[data-answer]').forEach(s=>{s.value=s.dataset.answer;mark(s,true)})}
+
+/* ---- Cloze ---- */
+const CLOZE='Schall wird durch {Schwingungen} erzeugt. Jeder {elastische} Körper kann in Schwingungen versetzt werden. Wenn diese Schwingungen andere Körper zum {Mitschwingen} bringen, nennt man das {Resonanz}. Die Resonanz {verstärkt} den Schall. Die Schwingungen gelangen über die {Luft} ans {Ohr}. Das sind die {Schallwellen}.';
+function buildCloze(){let i=0;$('#b1').innerHTML=CLOZE.replace(/\{(.+?)\}/g,(m,w)=>`<input class="gap" id="gap${i++}" data-answer="${w}" aria-label="Lücke ${i}" autocomplete="off" spellcheck="false">`);
+  $('#bank').innerHTML=shuffle(CLOZE.match(/\{(.+?)\}/g).map(x=>x.slice(1,-1))).map(w=>`<span>${w}</span>`).join('')}
+const norm=s=>s.trim().toLowerCase().replace(/ae/g,'ä').replace(/oe/g,'ö').replace(/ue/g,'ü');
+function checkCloze(){let g=0;document.querySelectorAll('#b1 input').forEach(inp=>{const ok=norm(inp.value)===norm(inp.dataset.answer);mark(inp,ok);if(ok)g++});return g}
+
+/* ---- Chips ---- */
+const CHIPS=[['Oboe',1],['Trompete',0],['Klarinette',1],['Geige',0],['Fagott',1],['Posaune',0],['Blockflöte',1],['Harfe',0],['Saxophon',1],['Pauke',0],['Querflöte',1],['Horn',0]];
+function buildChips(){$('#c1').innerHTML=shuffle(CHIPS).map(([n,c])=>`<button type="button" class="opt" aria-pressed="false" data-c="${c}">${n}</button>`).join('');
+  $('#c1').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');b.classList.remove('ok','no')})}
+function checkChips(){let g=0;$('#c1').querySelectorAll('.opt').forEach(b=>{const on=b.getAttribute('aria-pressed')==='true',c=b.dataset.c==='1';b.classList.remove('ok','no');if(on){mark(b,c);g+=c?1:-1}else if(c){b.classList.add('no')}});return Math.max(0,g)}
+
+/* ---- Wiring ---- */
+const T={
+ a1:{build:()=>buildMC('a1',A1),check:()=>checkMC('a1'),solve:()=>solveMC('a1')},
+ a2:{build:()=>buildOrder('a2',ORDERS.a2),check:()=>checkOrder('a2'),solve:()=>solveOrder('a2')},
+ a3:{build:buildA3,check:()=>checkSel($('#a3')),solve:()=>solveSel($('#a3'))},
+ a4:{build:()=>buildMatch('a4',A4),check:()=>checkSel($('#a4')),solve:()=>solveSel($('#a4'))},
+ a5:{build:()=>buildMatch('a5',A5),check:()=>checkSel($('#a5')),solve:()=>solveSel($('#a5'))},
+ a6:{build:buildMatch6,check:()=>checkSel($('#a6')),solve:()=>solveSel($('#a6'))},
+ b1:{build:buildCloze,check:checkCloze,solve:()=>document.querySelectorAll('#b1 input').forEach(i=>{i.value=i.dataset.answer;mark(i,true)})},
+ b2:{build:()=>buildOrder('b2',ORDERS.b2),check:()=>checkOrder('b2'),solve:()=>solveOrder('b2')},
+ c1:{build:buildChips,check:checkChips,solve:()=>$('#c1').querySelectorAll('.opt').forEach(b=>{const c=b.dataset.c==='1';b.setAttribute('aria-pressed',c);b.classList.remove('ok','no');if(c)b.classList.add('ok')})},
+ c2:{build:()=>buildMatch('c2',C2),check:()=>checkSel($('#c2')),solve:()=>solveSel($('#c2'))},
+ c3:{build:()=>{buildLabels('c3a',C3A);buildLabels('c3b',C3B)},check:()=>checkSel(document.querySelector('[data-task="c3"]')),solve:()=>solveSel(document.querySelector('[data-task="c3"]'))},
+ c4:{build:buildTF,check:()=>checkMC('c4'),solve:()=>solveMC('c4')}
+};
+Object.entries(T).forEach(([id,t])=>t.build());
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.check){report(b.dataset.check,T[b.dataset.check].check())}
+  else if(b.dataset.solve){T[b.dataset.solve].solve();clearRes(b.dataset.solve);$('#r-'+b.dataset.solve).textContent='Lösung angezeigt (keine Punkte)';$('#r-'+b.dataset.solve).className='result'}
+  else if(b.dataset.reset){T[b.dataset.reset].build();clearRes(b.dataset.reset)}
+});
+$('#resetAll').onclick=()=>{Object.entries(T).forEach(([id,t])=>{t.build();clearRes(id)});scrollTo({top:0})};
+updateTotal();
+</script>
+
+</body></html>
