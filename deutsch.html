@@ -251,19 +251,24 @@ const TIPP = {
   'Erklärung': 'Was zeigt die Textstelle? Was kann man daraus schließen?',
   'Kein Beleg': 'Keine Textstelle aus dem Roman – nur eine Meinung oder ein allgemeiner Satz.'
 };
-const tippAttr = o => TIPP[o] ? ` title="${esc(TIPP[o])}" data-h="${esc(o)}"` : '';
+// Groß/klein: Tipp hängt an der Schreibweise, nicht am Wort
+const TIPP_GROSS = 'Großgeschrieben, wenn ein Signalwort davorsteht: das, beim, zum, etwas, nichts, alles – „Das Tanzen macht Spaß.“';
+const TIPP_KLEIN = 'Kleingeschrieben als Verb oder als Adjektiv vor einem Nomen – „Ich will tanzen.“, „das bunte Bild“';
+const tippText = (o, it) => TIPP[o] || (it && it.st === 'E' ? (o[0] === o[0].toUpperCase() ? TIPP_GROSS : TIPP_KLEIN) : '');
+const tippAttr = (o, it) => { const t = tippText(o, it); return t ? ` title="${esc(t)}" data-h="${esc(o)}" data-tt="${esc(t)}"` : ''; };
 // unter jede Antwortgruppe mit Tipps: Zeile für Hover/Fokus und ein Knopf, der alle Tipps aufklappt (für iPad ohne Hover)
 function tippsAn(host) {
   host.querySelectorAll('.opts').forEach(g => {
     const hs = [...g.querySelectorAll('.opt[data-h]')].map(b => b.dataset.h);
     if (!hs.length || (g.nextElementSibling && g.nextElementSibling.classList.contains('tippbox'))) return;
     const box = document.createElement('div'); box.className = 'tippbox';
+    const tts = [...g.querySelectorAll('.opt[data-h]')].map(b => b.dataset.tt);
     box.innerHTML = `<div class="row"><button type="button" class="linkbtn tippbtn">💡 Tipps</button><span class="tipp" aria-live="polite"></span></div>
-      <ul class="tipps" hidden>${hs.map(h => `<li><b>${esc(h)}:</b> ${esc(TIPP[h])}</li>`).join('')}</ul>`;
+      <ul class="tipps" hidden>${hs.map((h, i) => `<li><b>${esc(h)}:</b> ${esc(tts[i])}</li>`).join('')}</ul>`;
     g.after(box);
     const zeile = box.querySelector('.tipp'), liste = box.querySelector('.tipps');
     box.querySelector('.tippbtn').onclick = () => { liste.hidden = !liste.hidden; };
-    const zeig = e => { const b = e.target.closest('.opt[data-h]'); if (b) zeile.innerHTML = `<b>${esc(b.dataset.h)}:</b> ${esc(TIPP[b.dataset.h])}`; };
+    const zeig = e => { const b = e.target.closest('.opt[data-h]'); if (b) zeile.innerHTML = `<b>${esc(b.dataset.h)}:</b> ${esc(b.dataset.tt)}`; };
     g.addEventListener('mouseover', zeig); g.addEventListener('focusin', zeig);
     g.addEventListener('mouseleave', () => { zeile.textContent = ''; });
   });
@@ -335,10 +340,10 @@ const ST = {
       { s: 'Wir besuchen [[diejenige]] Tante, die in Köln wohnt.', a: 'Demonstrativpronomen', e: '„derjenige, diejenige, dasjenige“ weist auf eine bestimmte Person hin – Demonstrativpronomen, kein Possessivpronomen.' },
       { s: 'Der Mann, [[der]] dort steht, ist mein Onkel.', a: 'Relativpronomen', e: 'Komma davor, Verb „steht“ am Ende – Relativpronomen, bezogen auf „Mann“.' },
       { s: 'Sie malt mit ihren [[eigenen]] Farben.', o: PR.concat(['kein Pronomen (Adjektiv)']), a: 'kein Pronomen (Adjektiv)', e: '„eigenen“ ist ein Adjektiv (die eigene Farbe). Das Possessivpronomen ist „ihren“.' },
-      { s: 'Das Fahrrad meines Bruders, das im Keller steht, ist rot.', q: 'Auf welches Nomen bezieht sich das Relativpronomen „das“?', o: ['Fahrrad', 'Bruders', 'Keller'], a: 'Fahrrad', e: '„das“ passt nur zu einem sächlichen Nomen: das Fahrrad. (der Bruder, der Keller)' },
-      { s: 'Ich suche die Mütze, die ich gestern im Bus vergessen habe.', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Mütze', 'Bus'], a: 'Mütze', e: 'die Mütze → die. (der Bus würde „den“ verlangen.)' },
-      { s: 'Der Trainer lobt die Spieler, die heute gut gespielt haben.', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Trainer', 'Spieler'], a: 'Spieler', e: '„die … haben“ ist Mehrzahl – es geht um die Spieler.' },
-      { s: 'Wir gehen in den Park, in dem ein großer Teich liegt.', q: 'Auf welches Nomen bezieht sich „dem“?', o: ['Park', 'Teich'], a: 'Park', e: 'Der Teich liegt im Park: „in dem“ = in dem Park.' }
+      { s: 'Das Fahrrad meines Bruders, das im Keller steht, ist rot.', h: 'Das Relativpronomen passt in Geschlecht und Zahl zu seinem Nomen – „der Baum, der …“, „die Blume, die …“, „die Kinder, die …“', q: 'Auf welches Nomen bezieht sich das Relativpronomen „das“?', o: ['Fahrrad', 'Bruders', 'Keller'], a: 'Fahrrad', e: '„das“ passt nur zu einem sächlichen Nomen: das Fahrrad. (der Bruder, der Keller)' },
+      { s: 'Ich suche die Mütze, die ich gestern im Bus vergessen habe.', h: 'Das Relativpronomen passt in Geschlecht und Zahl zu seinem Nomen – „der Baum, der …“, „die Blume, die …“, „die Kinder, die …“', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Mütze', 'Bus'], a: 'Mütze', e: 'die Mütze → die. (der Bus würde „den“ verlangen.)' },
+      { s: 'Der Trainer lobt die Spieler, die heute gut gespielt haben.', h: 'Das Relativpronomen passt in Geschlecht und Zahl zu seinem Nomen – „der Baum, der …“, „die Blume, die …“, „die Kinder, die …“', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Trainer', 'Spieler'], a: 'Spieler', e: '„die … haben“ ist Mehrzahl – es geht um die Spieler.' },
+      { s: 'Wir gehen in den Park, in dem ein großer Teich liegt.', h: 'Das Relativpronomen passt in Geschlecht und Zahl zu seinem Nomen – „der Baum, der …“, „die Blume, die …“, „die Kinder, die …“', q: 'Auf welches Nomen bezieht sich „dem“?', o: ['Park', 'Teich'], a: 'Park', e: 'Der Teich liegt im Park: „in dem“ = in dem Park.' }
     ]
   },
   C: {
@@ -406,16 +411,16 @@ const ST = {
       { t: 'komma', s: 'Die Jacke, die im Flur hängt, gehört meiner Schwester.', g: REL, e: 'Eingeschobener Relativsatz – Komma davor und danach.' },
       { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz vorn)', lst: true,
         o: ['Mama sagte: „Räum bitte dein Zimmer auf!“', 'Mama sagte „Räum bitte dein Zimmer auf!“', 'Mama sagte: „Räum bitte dein Zimmer auf“!', 'Mama sagte, „räum bitte dein Zimmer auf!“'],
-        a: 'Mama sagte: „Räum bitte dein Zimmer auf!“', e: 'Doppelpunkt nach dem Begleitsatz, das Ausrufezeichen steht innerhalb der Anführungszeichen, groß weiter.' },
+        a: 'Mama sagte: „Räum bitte dein Zimmer auf!“', h: 'Beispiel mit anderem Satz: Papa rief: „Das Essen ist fertig!“', e: 'Doppelpunkt nach dem Begleitsatz, das Ausrufezeichen steht innerhalb der Anführungszeichen, groß weiter.' },
       { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz hinten)', lst: true,
         o: ['„Ich habe Hunger“, rief Tim.', '„Ich habe Hunger.“, rief Tim.', '„Ich habe Hunger“ rief Tim.', '„Ich habe Hunger,“ rief Tim.'],
-        a: '„Ich habe Hunger“, rief Tim.', e: 'Der Punkt der Rede fällt weg, das Komma steht nach dem schließenden Anführungszeichen.' },
+        a: '„Ich habe Hunger“, rief Tim.', h: 'Beispiel mit anderem Satz: „Das Essen ist fertig“, rief Papa.', e: 'Der Punkt der Rede fällt weg, das Komma steht nach dem schließenden Anführungszeichen.' },
       { s: '', q: 'Welcher Satz ist richtig geschrieben? (Frage, Begleitsatz hinten)', lst: true,
         o: ['„Kommst du mit?“, fragte Lea.', '„Kommst du mit“?, fragte Lea.', '„Kommst du mit?“ fragte Lea.', '„Kommst du mit“, fragte Lea?'],
-        a: '„Kommst du mit?“, fragte Lea.', e: 'Das Fragezeichen bleibt in den Anführungszeichen, danach trotzdem ein Komma vor dem Begleitsatz.' },
+        a: '„Kommst du mit?“, fragte Lea.', h: 'Beispiel mit anderem Satz: „Hast du Hunger?“, fragte Papa.', e: 'Das Fragezeichen bleibt in den Anführungszeichen, danach trotzdem ein Komma vor dem Begleitsatz.' },
       { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz in der Mitte)', lst: true,
         o: ['„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', '„Wenn du willst, sagte Oma, backen wir einen Kuchen.“', '„Wenn du willst“ sagte Oma „backen wir einen Kuchen.“', '„Wenn du willst“, sagte Oma. „Backen wir einen Kuchen.“'],
-        a: '„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', e: 'Der Begleitsatz in der Mitte steht zwischen zwei Kommas, jeder Redeteil hat eigene Anführungszeichen.' }
+        a: '„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', h: 'Beispiel mit anderem Satz: „Komm schnell“, rief Papa, „das Essen ist fertig.“', e: 'Der Begleitsatz in der Mitte steht zwischen zwei Kommas, jeder Redeteil hat eigene Anführungszeichen.' }
     ]
   },
   E: {
@@ -645,8 +650,6 @@ function renderRunEnd() {
 // KARTEN
 // ===================================================================
 function feedback(host, ok, it, done, extra) {
-  host.querySelectorAll('.tippbox').forEach(b => b.remove());
-  host.querySelectorAll('.opt[title]').forEach(b => b.removeAttribute('title'));
   const fb = host.querySelector('.fb');
   fb.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Leider nicht.'}</b> ${extra || ''}${esc(it.e || '')}</div>
     <div class="row"><button class="btn" id="weiterK">Weiter</button></div>`;
@@ -658,7 +661,9 @@ function renderCard(it, host, done) {
   const opts = it.o || (it.st === 'A' ? SG : it.st === 'B' ? PR : WA);
   const q = it.q || (ST[it.st] && ST[it.st].q) || '';
   host.innerHTML = `${it.s ? `<p class="satz">${fmt(it.s)}</p>` : ''}<p class="frage">${esc(q)}</p>
-    <div class="opts ${it.lst ? 'liste' : ''}">${shuffleIf(opts, it).map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div><div class="fb"></div>`;
+    <div class="opts ${it.lst ? 'liste' : ''}">${shuffleIf(opts, it).map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o, it)}>${esc(o)}</button>`).join('')}</div>
+    ${it.h ? `<div class="tippbox"><div class="row"><button type="button" class="linkbtn tippbtn">💡 Tipp</button></div><ul class="tipps" hidden><li>${esc(it.h)}</li></ul></div>` : ''}<div class="fb"></div>`;
+  const tb = host.querySelector('.tippbox .tippbtn'); if (tb) tb.onclick = () => { const l = host.querySelector('.tippbox .tipps'); l.hidden = !l.hidden; };
   host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
     if (host.dataset.locked) return; host.dataset.locked = '1';
     const ok = b.dataset.v === it.a;
