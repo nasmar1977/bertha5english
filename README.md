@@ -156,8 +156,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ### 📕 Deutsch
 - **Letzter Tag vor der Arbeit** (`deutsch.html`, Karte im Hauptmenü): Klasse 6, Satzglieder/Wortarten und der Roman
-  „Wolf“ (Saša Stanišić). Plan in acht Schritten (etwa 75 min): Aufwärmen „Wortart und Satzglied“, Check mit zwei
-  Aufgaben je Station, die zwei schwächsten Stationen (fertig nach drei Richtigen in Folge), Pause, „Wolf“, Generalprobe,
+  „Wolf“ (Saša Stanišić). Plan in acht Schritten (etwa 90 min): Aufwärmen „Wortart und Satzglied“, Check mit zwei
+  Aufgaben je Station, die zwei schwächsten Stationen aus A–C (fertig nach mindestens sechs Karten mit drei Richtigen in Folge), Pause, „Wolf“, Generalprobe,
   Spickzettel. Stationen: A Satzglieder (Frageproben, Dativ- und Präpositionalobjekt), B Der-die-das-Detektiv
   (Pronomenarten, Bezugswort), C Kleine Wörter (Präposition/Konjunktion/Adjektiv/Adverb, Adverbarten, neben-/unterordnend),
   D Zeichen (Kommas antippen und begründen, wörtliche Rede), E Groß/klein. Gewichtet nach den Fehlern der korrigierten
@@ -165,12 +165,12 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - „Wolf“: nur die Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“ (S. 34, S. 49, Kletterwald). „Welcher Beleg ist besser?“ (konkrete Szene, Seite, passt zur Behauptung),
   Musterabsatz zerlegen (Behauptung – Beleg – Erklärung), Formulierungshilfen (M 2), eigener Belege-Sammler, Stellungnahme
   mit Aufbau-Checkliste und Musterlösung. Ohne KI.
-- Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 76 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
+- Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 81 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
   Lösungen erst nach dem Abgeben. Speicher: `deutsch-6b-wolf-v1`.
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.38.3
+**Version:** 2.39.0
 **Datum:** 08.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -221,6 +221,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.39.0 (08.11.2026)
+- Deutsch, nach zweitem Review (Didaktik + Code):
+  - Merkregeln ohne Aufgabensätze (vorher erkannte das Kind Sätze wieder, statt die Regel anzuwenden); Tipps zu
+    Groß/klein („… und kein Nomen folgt“) und Artikel (auch gebeugt) genauer.
+  - Aufwärmen mit „kein eigenes Satzglied“ (Nachdem, und); Darum und Nachdem immer dabei.
+  - Plan-Stationen nur aus A–C; Station erst nach mindestens 6 Karten mit 3 richtigen in Folge geschafft, sonst
+    „Noch nicht ganz“ und der Schritt bleibt offen. Plan etwa 90 min („Wolf“ 25 min).
+  - „Wolf“: Musterabsatz auf ein Argument gekürzt, dazu eine Erklärung selbst schreiben; FORM 4 gestrichen; zweite
+    Deutung im Muster; „Nochmal“ je Teil; Checkliste genauer (Einleitung, Urteil im letzten Drittel, Hilfen einmal
+    gezählt, Eigenschaften auch gebeugt/mit Umlaut) plus zwei Punkte zum Selbstabhaken.
+  - Generalprobe: Nr. 2 mit Dativverb (helfen) und neuem Präpositionalobjekt (81 Punkte); Lösung in Nr. 9 nicht
+    mehr im aria-label; Warnung zählt alle leeren Felder; Uhr-Leck behoben; nach über 3 h „weitermachen oder neu“;
+    danach „Kurz nachüben“ für die schwächste Station.
+  - Robust: `load()` prüft jedes Feld, `render()` fängt Fehler ab („Speicher zurücksetzen“). Beleg löschen mit
+    Rückfrage, Spickzettel auch über Cmd+P, Tap-Ziele ≥ 40 px, Selects 16 px (kein iOS-Zoom).
 
 ### Version 2.38.3 (08.11.2026)
 - Deutsch, „Wolf“: Teil 1 „Was ist ein Beleg?“ (Pro/Contra/kein Beleg sortieren – die Sätze kannte das Kind schon vom
