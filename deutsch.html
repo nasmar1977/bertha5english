@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deutsch: Letzter Tag vor der Arbeit</title>
+<!-- Deutsch Kl. 6: Satzglieder, Wortarten, Zeichen, Groß/klein und „Wolf“ (Saša Stanišić).
+     Eigene Sätze nach Aufbau der Übungsarbeit der Lehrerin. Speicher: localStorage „deutsch-6b-wolf-v1“. -->
+<style>
+:root{
+  --bg:#f4f3f0; --paper:#ffffff; --ink:#1d2226; --muted:#5f676d; --line:#d9d6cf;
+  --acc:#2f5d7c; --acc-soft:#dfeaf2; --wolf:#8a5a2b; --wolf-soft:#f3e7d9;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13181b; --paper:#1c2327; --ink:#e7ecee; --muted:#9aa6ac; --line:#33403f;
+  --acc:#7fb4d6; --acc-soft:#1f3442; --wolf:#e0a86a; --wolf-soft:#3a2b1c;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13181b; --paper:#1c2327; --ink:#e7ecee; --muted:#9aa6ac; --line:#33403f;
+  --acc:#7fb4d6; --acc-soft:#1f3442; --wolf:#e0a86a; --wolf-soft:#3a2b1c;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.7rem,5.5vw,2.5rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:820px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px}
+:root[data-theme="dark"] .btn{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.wolf{background:var(--wolf)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* Plan */
+.plan{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.plan li{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.plan li.next{border:2px solid var(--acc)}
+.plan li .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.9rem}
+.plan li.done .n{background:var(--ok-soft);color:var(--ok)}
+.plan li .t{font-weight:700}
+.plan li .d{font-size:.85rem;color:var(--muted)}
+.plan li .m{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.tile .meter{margin-top:4px}
+.meter{height:8px;border-radius:4px;background:var(--acc-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc)}
+
+/* Karten-Übung */
+.satz{font-size:1.15rem;line-height:1.7}
+mark{background:var(--mark);color:inherit;padding:1px 3px;border-radius:3px;font-weight:700}
+.luecke{display:inline-block;min-width:4em;border-bottom:2px solid var(--ink);text-align:center}
+.frage{font-weight:700}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:40px;text-align:left}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default;opacity:1}
+.fb{display:grid;gap:10px}
+.fb .msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.fb .msg.ok{background:var(--ok-soft);color:var(--ink);border-left:4px solid var(--ok)}
+.fb .msg.no{background:var(--bad-soft);color:var(--ink);border-left:4px solid var(--bad)}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted)}
+.dots{display:flex;gap:4px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.merk ul{margin:6px 0 0;padding-left:20px}
+.merk li{margin:3px 0}
+
+/* Komma-Lücken */
+.ksatz{display:flex;flex-wrap:wrap;align-items:baseline;row-gap:6px;font-size:1.15rem}
+.gap{width:26px;height:34px;margin:0 1px;border:1px dashed var(--line);border-radius:6px;background:transparent;color:var(--ink);font-weight:700;font-size:1.2rem;line-height:1;padding:0;vertical-align:baseline}
+.gap.on{border-style:solid;border-color:var(--acc);background:var(--acc-soft)}
+.gap.miss{border-color:var(--bad);border-style:solid;background:var(--bad-soft)}
+.gap.extra{border-color:var(--bad);border-style:solid;background:var(--bad-soft);text-decoration:line-through}
+.gap.good{border-color:var(--ok);border-style:solid;background:var(--ok-soft)}
+.gap:disabled{cursor:default}
+
+/* Generalprobe */
+.timer{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums}
+.segs{display:flex;flex-wrap:wrap;gap:10px 6px;align-items:flex-start;line-height:1.4}
+.seg{display:inline-grid;gap:4px;justify-items:start}
+.seg .w{font-size:1.05rem;padding:0 2px}
+.seg .w.b{font-weight:700}
+.seg select{font:inherit;font-size:.82rem;max-width:11.5em;padding:4px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.seg select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.seg select.no{border-color:var(--bad);background:var(--bad-soft)}
+.seg .sol{font-size:.78rem;color:var(--bad)}
+.txt{font-size:1.05rem}
+.tok{border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.05rem;padding:2px 3px;border-radius:4px;border-bottom:2px solid transparent}
+.tok.on{border-bottom-color:var(--acc);background:var(--acc-soft)}
+.tok.hit{border-bottom-color:var(--ok);background:var(--ok-soft)}
+.tok.extra{border-bottom-color:var(--bad);background:var(--bad-soft);text-decoration:line-through}
+.tok.miss{border-bottom:2px dashed var(--bad)}
+.tok:disabled{cursor:default}
+.radio{display:grid;gap:6px}
+.radio label{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+.radio label.ok{border-color:var(--ok);background:var(--ok-soft)}
+.radio label.no{border-color:var(--bad);background:var(--bad-soft)}
+.pts{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.th{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:1.6rem;font-weight:800}
+
+/* Wolf */
+.wolfhead{border-left:5px solid var(--wolf);padding-left:12px}
+textarea,input.txtin{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:90px;resize:vertical}
+.beleg{display:grid;grid-template-columns:1fr 5.5em auto;gap:6px;align-items:start}
+.beleg .del{min-height:40px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:0 10px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.cols{grid-template-columns:1fr}}
+.beispiel{font-size:.9rem;color:var(--muted);font-style:italic}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.check li{display:flex;gap:8px;align-items:flex-start;font-size:.95rem}
+.check li b{min-width:1.2em}
+.check li.ok b{color:var(--ok)}
+.check li.no b{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:.82rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--bg)}
+.muster{background:var(--wolf-soft);border-radius:10px;padding:14px;display:grid;gap:8px}
+
+/* Spickzettel */
+.spick label{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)}
+#spickDruck{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  .bar,#app{display:none!important}
+  #spickDruck{display:block;font-size:13pt;padding:10mm}
+  #spickDruck h2{margin-bottom:8pt}
+  #spickDruck li{margin:6pt 0}
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <button class="linkbtn" id="homeBtn" type="button">📋 Plan</button>
+  <span class="crumb" id="crumb"></span>
+</div></div>
+<main class="wrap" id="app"></main>
+<div id="spickDruck"></div>
+<script>
+'use strict';
+// ===================================================================
+// SPEICHER
+// ===================================================================
+const KEY = 'deutsch-6b-wolf-v1';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const blankWolf = () => ({ sort: {}, zer: {}, form: {}, pro: [], contra: [], text: '', lang: false, muster: false });
+const blank = () => ({ plan: {}, stat: {}, check: null, wolf: blankWolf(), probe: null, spick: null });
+function load() {
+  try {
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (o && typeof o === 'object') { const s = Object.assign(blank(), o); s.wolf = Object.assign(blankWolf(), o.wolf || {}); return s; }
+  } catch (e) {}
+  return blank();
+}
+let S = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = s => esc(s).replace(/\[\[_\]\]/g, '<span class="luecke">&nbsp;?&nbsp;</span>').replace(/\[\[(.+?)\]\]/g, '<mark>$1</mark>');
+
+// ===================================================================
+// ANTWORTLISTEN
+// ===================================================================
+const SG = ['Subjekt', 'Prädikat', 'Akkusativobjekt', 'Dativobjekt', 'Präpositionalobjekt',
+  'adv. Best. der Zeit (Abz)', 'adv. Best. des Ortes (Abo)', 'adv. Best. des Grundes (Abg)', 'adv. Best. der Art und Weise (Abaw)'];
+const [SUBJ, PRAED, AKK, DAT, PRAEP, ZEIT, ORT, GRUND, ART] = SG;
+const WA = ['Nomen', 'Verb', 'Adjektiv', 'Adverb', 'Pronomen', 'Artikel', 'Präposition', 'Konjunktion'];
+const PR = ['Artikel', 'Personalpronomen', 'Possessivpronomen', 'Demonstrativpronomen', 'Relativpronomen',
+  'Reflexivpronomen', 'Fragepronomen', 'Indefinitpronomen', 'Konjunktion'];
+const KW = ['Präposition', 'Konjunktion', 'Adjektiv', 'Adverb'];
+const AA = ['Ort', 'Zeit', 'Grund', 'Art und Weise'];
+const NU = ['nebenordnend', 'unterordnend'];
+const KG = ['Aufzählung (Wörter oder Hauptsätze)', 'Nebensatz mit Konjunktion (weil, als, obwohl …)', 'Relativsatz (der, die, das …)'];
+const [AUFZ, NS, REL] = KG;
+
+// ===================================================================
+// STATIONEN – eigene Sätze, nach den Fehlern in der Übungsarbeit gewichtet
+// ===================================================================
+const ST = {
+  A: {
+    name: 'Satzglieder', icon: '🧩', sub: 'Frageproben: wem, wen, auf wen, wo, wann …',
+    q: 'Welches Satzglied ist markiert?',
+    merk: [
+      'Zuerst das Prädikat (Verb) suchen, dann mit der Frageprobe weiter.',
+      'Wer oder was? → Subjekt. Wen oder was? → Akkusativobjekt. Wem? → Dativobjekt.',
+      'Gehört die Präposition fest zum Verb (warten auf, sich freuen über, denken an)? → Präpositionalobjekt. Frage: Auf wen? Worüber? Woran?',
+      'Kann man die Präposition austauschen (auf / unter / neben dem Tisch, vor / nach dem Essen)? → adverbiale Bestimmung, kein Objekt. Die Art bestimmst du mit wo? wohin? wann? warum?',
+      'Wann? → Zeit (Abz). Wo? → Ort (Abo). Warum? → Grund (Abg). Wie? → Art und Weise (Abaw).',
+      'Verben mit Dativ: begegnen, helfen, danken, gehorchen, gefallen – „seiner Freundin begegnen“ ist ein Dativobjekt.'
+    ],
+    items: [
+      { s: 'Lena begegnet [[ihrem Lehrer]] im Supermarkt.', a: DAT, e: 'Wem begegnet Lena? – Ihrem Lehrer. „Begegnen“ verlangt immer den Dativ.' },
+      { s: 'Wir warten schon lange [[auf den Bus]].', a: PRAEP, e: 'Auf wen oder was warten wir? – Auf den Bus. „Warten auf“ gehört fest zusammen, die Präposition kann man nicht austauschen.' },
+      { s: 'Die Katze sitzt [[auf dem Dach]].', a: ORT, e: 'Wo sitzt die Katze? – Auf dem Dach. Man könnte auch „unter dem Dach“ oder „neben dem Dach“ sagen – die Präposition ist austauschbar, also adverbiale Bestimmung des Ortes.' },
+      { s: 'Der Opa schenkt [[seinem Enkel]] ein Fahrrad.', a: DAT, e: 'Wem schenkt der Opa ein Fahrrad? – Seinem Enkel.' },
+      { s: 'Der Opa schenkt seinem Enkel [[ein Fahrrad]].', a: AKK, e: 'Wen oder was schenkt der Opa? – Ein Fahrrad.' },
+      { s: '[[Am Nachmittag]] spielen die Kinder Fußball.', a: ZEIT, e: 'Wann spielen die Kinder Fußball? – Am Nachmittag.' },
+      { s: 'Max freut sich [[über das Geschenk]].', a: PRAEP, e: 'Worüber freut sich Max? – Über das Geschenk. „Sich freuen über“ gehört fest zusammen.' },
+      { s: '[[Wegen des Regens]] fällt das Training aus.', a: GRUND, e: 'Warum fällt das Training aus? – Wegen des Regens.' },
+      { s: 'Die Schülerin liest [[den Text]] laut vor.', a: AKK, e: 'Wen oder was liest die Schülerin vor? – Den Text.' },
+      { s: 'Das Mädchen rennt [[schnell]] nach Hause.', a: ART, e: 'Wie rennt das Mädchen? – Schnell.' },
+      { s: 'Ich denke oft [[an meine Oma]].', a: PRAEP, e: 'An wen denke ich? – An meine Oma. „Denken an“ gehört fest zusammen.' },
+      { s: 'Die Lehrerin hilft [[dem neuen Schüler]].', a: DAT, e: 'Wem hilft die Lehrerin? – Dem neuen Schüler. „Helfen“ verlangt den Dativ.' },
+      { s: '[[Mein kleiner Bruder]] baut eine Sandburg.', a: SUBJ, e: 'Wer baut eine Sandburg? – Mein kleiner Bruder.' },
+      { s: 'Der Zug [[ist]] pünktlich [[angekommen]].', a: PRAED, e: 'Das Prädikat kann aus zwei Teilen bestehen: „ist … angekommen“. Beide Teile zusammen sind das Prädikat.' },
+      { s: 'Er stellt die Vase [[auf den Tisch]].', a: ORT, e: 'Wohin stellt er die Vase? – Auf den Tisch. Austauschbar: neben den Tisch, unter den Tisch → adverbiale Bestimmung des Ortes, kein Präpositionalobjekt.' },
+      { s: 'Paul dankt [[seiner Freundin]] für die Hilfe.', a: DAT, e: 'Wem dankt Paul? – Seiner Freundin.' },
+      { s: 'Sie interessiert sich [[für Pferde]].', a: PRAEP, e: 'Wofür interessiert sie sich? – Für Pferde. „Sich interessieren für“ gehört fest zusammen.' },
+      { s: '[[Aus Angst]] versteckt sich der Hund unter dem Bett.', a: GRUND, e: 'Warum versteckt sich der Hund? – Aus Angst.' }
+    ]
+  },
+  B: {
+    name: 'Der-die-das-Detektiv', icon: '🔎', sub: 'Artikel, Relativ- oder Demonstrativpronomen? Und alle anderen Pronomen',
+    q: 'Was ist das markierte Wort?',
+    merk: [
+      'der/die/das direkt vor einem Nomen → Artikel (der Ball).',
+      'der/die/das nach einem Komma, das Verb steht am Ende des Nebensatzes → Relativpronomen (der Ball, den ich gefunden habe).',
+      'der/die/das steht allein und zeigt betont auf etwas → Demonstrativpronomen („Den habe ich verloren.“). dieser, jener, derjenige sind immer Demonstrativpronomen, auch vor einem Nomen – Artikel sind nur der, die, das und ein, eine.',
+      '„dass“ mit ss ist eine Konjunktion, kein Pronomen.',
+      '„ihr“ vor einem Nomen (ihr Fahrrad) → Possessivpronomen. „ihr“ allein (ich gebe ihr das Heft) → Personalpronomen.',
+      'sich, mich, dich, uns, euch – zurück auf das Subjekt → Reflexivpronomen (Tim wäscht sich).',
+      'Ein Relativpronomen richtet sich nach seinem Nomen: das Fahrrad, das …; die Mütze, die …; der Ball, den …'
+    ],
+    items: [
+      { s: '[[Der]] Ball liegt im Garten.', a: 'Artikel', e: '„Der“ steht direkt vor dem Nomen „Ball“ – Artikel.' },
+      { s: 'Der Ball, [[den]] ich gefunden habe, ist kaputt.', a: 'Relativpronomen', e: 'Nach dem Komma beginnt ein Nebensatz, das Verb „habe“ steht am Ende. „den“ bezieht sich auf „Ball“ – Relativpronomen.' },
+      { s: '„Wo ist dein Ball?“ – „[[Den]] habe ich verloren.“', a: 'Demonstrativpronomen', e: '„Den“ steht allein, ohne Nomen dahinter, und zeigt auf den Ball – Demonstrativpronomen.' },
+      { s: 'Ich weiß, [[dass]] du recht hast.', a: 'Konjunktion', e: '„dass“ mit ss ist eine (unterordnende) Konjunktion. Probe: Man kann es nicht durch „welches“ ersetzen.' },
+      { s: 'Das Buch, [[das]] auf dem Tisch liegt, gehört mir.', a: 'Relativpronomen', e: 'Probe: „Das Buch, welches auf dem Tisch liegt …“ – passt, also Relativpronomen.' },
+      { s: '[[Das]] Buch auf dem Tisch gehört mir.', a: 'Artikel', e: '„Das“ steht direkt vor dem Nomen „Buch“ – Artikel.' },
+      { s: 'Tim wäscht [[sich]] die Hände.', a: 'Reflexivpronomen', e: '„sich“ zeigt zurück auf Tim, das Subjekt – Reflexivpronomen.' },
+      { s: 'Lisa leiht [[ihm]] ihr Fahrrad.', a: 'Personalpronomen', e: '„ihm“ steht für eine Person (er → ihm) – Personalpronomen im Dativ. Es zeigt keinen Besitz an.' },
+      { s: 'Lisa leiht ihm [[ihr]] Fahrrad.', a: 'Possessivpronomen', e: '„ihr“ steht vor dem Nomen „Fahrrad“ und zeigt, wem es gehört – Possessivpronomen.' },
+      { s: 'Ich gebe [[ihr]] das Heft zurück.', a: 'Personalpronomen', e: 'Hier steht „ihr“ allein und ersetzt eine Person (sie → ihr): Wem gebe ich das Heft? – Ihr. Personalpronomen.' },
+      { s: '[[Dieser]] Pullover ist mir zu klein.', a: 'Demonstrativpronomen', e: '„dieser“ zeigt auf einen bestimmten Pullover – Demonstrativpronomen.' },
+      { s: 'Er bleibt zu Hause, [[denn]] er ist krank.', a: 'Konjunktion', e: '„denn“ verbindet zwei Hauptsätze – Konjunktion, kein Pronomen.' },
+      { s: '[[Wer]] hat mein Lineal?', a: 'Fragepronomen', e: 'Mit „wer“ fragt man nach einer Person – Fragepronomen (Interrogativpronomen).' },
+      { s: '[[Manche]] Kinder mögen keinen Spinat.', a: 'Indefinitpronomen', e: '„manche“ nennt keine genaue Anzahl – unbestimmtes Pronomen (Indefinitpronomen).' },
+      { s: 'Wir besuchen [[diejenige]] Tante, die in Köln wohnt.', a: 'Demonstrativpronomen', e: '„derjenige, diejenige, dasjenige“ weist auf eine bestimmte Person hin – Demonstrativpronomen, kein Possessivpronomen.' },
+      { s: 'Der Mann, [[der]] dort steht, ist mein Onkel.', a: 'Relativpronomen', e: 'Komma davor, Verb „steht“ am Ende – Relativpronomen, bezogen auf „Mann“.' },
+      { s: 'Sie malt mit ihren [[eigenen]] Farben.', o: PR.concat(['kein Pronomen (Adjektiv)']), a: 'kein Pronomen (Adjektiv)', e: '„eigenen“ ist ein Adjektiv (die eigene Farbe). Das Possessivpronomen ist „ihren“.' },
+      { s: 'Das Fahrrad meines Bruders, das im Keller steht, ist rot.', q: 'Auf welches Nomen bezieht sich das Relativpronomen „das“?', o: ['Fahrrad', 'Bruders', 'Keller'], a: 'Fahrrad', e: '„das“ passt nur zu einem sächlichen Nomen: das Fahrrad. (der Bruder, der Keller)' },
+      { s: 'Ich suche die Mütze, die ich gestern im Bus vergessen habe.', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Mütze', 'Bus'], a: 'Mütze', e: 'die Mütze → die. (der Bus würde „den“ verlangen.)' },
+      { s: 'Der Trainer lobt die Spieler, die heute gut gespielt haben.', q: 'Auf welches Nomen bezieht sich „die“?', o: ['Trainer', 'Spieler'], a: 'Spieler', e: '„die … haben“ ist Mehrzahl – es geht um die Spieler.' },
+      { s: 'Wir gehen in den Park, in dem ein großer Teich liegt.', q: 'Auf welches Nomen bezieht sich „dem“?', o: ['Park', 'Teich'], a: 'Park', e: 'Der Teich liegt im Park: „in dem“ = in dem Park.' }
+    ]
+  },
+  C: {
+    name: 'Kleine Wörter', icon: '🔤', sub: 'Präposition, Konjunktion, Adjektiv, Adverb – und welche Adverbart',
+    q: 'Welche Wortart ist das markierte Wort?',
+    merk: [
+      'Wortart ist nicht Satzglied! Die Wortart sagt, was für ein Wort es ist (Adverb, Konjunktion …), das Satzglied sagt, welche Aufgabe es im Satz hat (Abz, Abg …).',
+      'Adjektiv-Probe: Passt das Wort gebeugt vor ein Nomen (der laute Mann)? → Adjektiv. Geht nicht (der sehre Mann) → Adverb.',
+      'Präposition steht vor einem Nomen oder Pronomen: mit, unter, ins (= in das), zu, aus.',
+      'Konjunktion verbindet Wörter oder Sätze: und, aber, denn, weil, nachdem, als, obwohl.',
+      'Unterordnend: das Verb rutscht ans Ende (…, weil es regnet). Nebenordnend: der Satz bleibt normal (…, denn es regnet).',
+      'Adverbarten: Ort (dort, oben, draußen), Zeit (heute, bald, sofort, oft), Grund (deshalb, darum), Art und Weise (gern, glücklicherweise).'
+    ],
+    items: [
+      { s: 'Wir fahren [[mit]] dem Rad zur Schule.', o: KW, a: 'Präposition', e: '„mit“ steht vor „dem Rad“ – Präposition.' },
+      { s: '[[Nachdem]] wir gegessen hatten, spielten wir draußen.', o: KW, a: 'Konjunktion', e: '„Nachdem“ leitet einen Nebensatz ein (Verb „hatten“ am Ende) – unterordnende Konjunktion. Nicht Abz: Das wäre ein Satzglied, keine Wortart.' },
+      { s: 'Die Suppe ist [[sehr]] heiß.', o: KW, a: 'Adverb', e: 'Probe: „die sehre Suppe“ geht nicht – also kein Adjektiv, sondern ein Adverb.' },
+      { s: 'Sie lief [[schnell]] zur Tür.', o: KW, a: 'Adjektiv', e: 'Probe: „die schnelle Läuferin“ geht – „schnell“ ist ein Adjektiv, auch wenn es hier beim Verb steht.' },
+      { s: 'Ich komme [[morgen]] wieder.', o: KW, a: 'Adverb', e: '„morgen“ sagt, wann – unveränderliches Adverb (Zeit).' },
+      { s: 'Er ging [[ins]] Haus.', o: KW, a: 'Präposition', e: '„ins“ = „in das“ – Präposition mit Artikel verschmolzen. Keine Konjunktion: Es verbindet keine Sätze.' },
+      { s: 'Ich mag Äpfel [[und]] Birnen.', o: KW, a: 'Konjunktion', e: '„und“ verbindet zwei Wörter – Konjunktion.' },
+      { s: '[[Darum]] bleibe ich heute zu Hause.', o: KW, a: 'Adverb', e: '„Darum“ ist ein Adverb (des Grundes). Als Satzglied wäre es Abg – gefragt ist aber die Wortart.' },
+      { s: 'Wir spielen drinnen, [[weil]] es regnet.', o: KW, a: 'Konjunktion', e: '„weil“ leitet einen Nebensatz ein – Konjunktion.' },
+      { s: 'Der Hund schläft [[unter]] dem Tisch.', o: KW, a: 'Präposition', e: '„unter“ steht vor „dem Tisch“ – Präposition.' },
+      { s: 'Das Kino ist [[dort]].', o: KW, a: 'Adverb', e: '„dort“ sagt, wo – Adverb des Ortes.' },
+      { s: 'Er lächelte [[freundlich]].', o: KW, a: 'Adjektiv', e: 'Probe: „der freundliche Mann“ – Adjektiv.' },
+      { s: 'Es regnete. [[Trotzdem]] gingen wir hinaus.', o: KW, a: 'Adverb', e: '„Trotzdem“ besetzt allein den Platz vor dem Verb – das kann eine Konjunktion nicht (vergleiche: „…, aber wir gingen hinaus“). Also Adverb.' },
+      { s: 'Sie wartet, [[bis]] der Regen aufhört.', o: KW, a: 'Konjunktion', e: 'Hier leitet „bis“ einen Nebensatz ein (Verb „aufhört“ am Ende) – Konjunktion.' },
+      { s: 'Ich bleibe [[bis]] Montag bei Oma.', o: KW, a: 'Präposition', e: 'Hier steht „bis“ vor dem Nomen „Montag“ – Präposition. Dasselbe Wort kann verschiedene Wortarten haben!' },
+      { s: 'Ich habe [[kaum]] geschlafen.', o: KW, a: 'Adverb', e: 'Probe: „der kaume Schlaf“ geht nicht – „kaum“ lässt sich nicht beugen, also Adverb.' },
+      { s: '[[Glücklicherweise]] hat niemand etwas bemerkt.', q: 'Welche Adverbart?', o: AA, a: 'Art und Weise', e: 'Wörter auf -weise (glücklicherweise, seltsamerweise) zählen in der Schule zu den Adverbien der Art und Weise. (Manche Bücher nennen sie Kommentaradverbien.)' },
+      { s: 'Wir treffen uns [[heute]] im Park.', q: 'Welche Adverbart?', o: AA, a: 'Zeit', e: 'Wann? – Heute.' },
+      { s: 'Die Katze schläft [[draußen]].', q: 'Welche Adverbart?', o: AA, a: 'Ort', e: 'Wo? – Draußen.' },
+      { s: 'Es regnet, [[deshalb]] nehme ich den Schirm.', q: 'Welche Adverbart?', o: AA, a: 'Grund', e: 'Warum nehme ich den Schirm? – Deshalb (wegen des Regens).' },
+      { s: 'Sie kommt [[oft]] zu spät.', q: 'Welche Adverbart?', o: AA, a: 'Zeit', e: 'Wie oft, wann? – Oft. Häufigkeit gehört zur Zeit.' },
+      { s: 'Er fängt [[sofort]] an.', q: 'Welche Adverbart?', o: AA, a: 'Zeit', e: 'Wann fängt er an? – Sofort.' },
+      { s: 'Ich lese [[gern]] Comics.', q: 'Welche Adverbart?', o: AA, a: 'Art und Weise', e: 'Wie lese ich Comics? – Gern.' },
+      { s: 'Ich bleibe drinnen, [[denn]] es ist kalt.', q: 'Neben- oder unterordnend?', o: NU, a: 'nebenordnend', e: 'Nach „denn“ bleibt der Satz normal: „es ist kalt“ – nebenordnend.' },
+      { s: 'Ich bleibe drinnen, [[weil]] es kalt ist.', q: 'Neben- oder unterordnend?', o: NU, a: 'unterordnend', e: 'Nach „weil“ steht das Verb am Ende: „weil es kalt ist“ – unterordnend.' },
+      { s: '[[Als]] es dunkel wurde, gingen wir nach Hause.', q: 'Neben- oder unterordnend?', o: NU, a: 'unterordnend', e: '„als es dunkel wurde“ – Verb am Ende, unterordnend.' },
+      { s: 'Ich wollte kommen, [[aber]] ich war krank.', q: 'Neben- oder unterordnend?', o: NU, a: 'nebenordnend', e: 'Nach „aber“ folgt ein normaler Hauptsatz – nebenordnend.' }
+    ]
+  },
+  D: {
+    name: 'Zeichen', icon: '✒️', sub: 'Kommas setzen und begründen, wörtliche Rede',
+    q: 'Tippe zwischen die Wörter, wo ein Komma hingehört, und wähle die Begründung.',
+    merk: [
+      'Komma bei Aufzählungen – aber nicht vor „und“ / „oder“. Verbindet „und“ zwei ganze Sätze, darf ein Komma stehen.',
+      'Komma zwischen Haupt- und Nebensatz: vor oder nach weil, als, obwohl, nachdem, dass.',
+      'Ein eingeschobener Relativsatz steht zwischen zwei Kommas: Der Hund, der laut bellt, gehört …',
+      'Begleitsatz vorn: Mama sagte: „Räum auf!“',
+      'Begleitsatz hinten: „Ich habe Hunger“, rief Tim. – Frage- und Ausrufezeichen bleiben stehen: „Kommst du?“, fragte Lea.',
+      'Begleitsatz in der Mitte: „Wenn du willst“, sagte Oma, „backen wir.“'
+    ],
+    items: [
+      { t: 'komma', s: 'Peter isst gern Nudeln, Pizza und Pommes.', g: AUFZ, e: 'Aufzählung: Komma zwischen den Gliedern, aber nicht vor „und“.' },
+      { t: 'komma', s: 'Ich bleibe zu Hause, weil ich krank bin.', g: NS, e: '„weil ich krank bin“ ist ein Nebensatz – Komma davor.' },
+      { t: 'komma', s: 'Der Hund, der laut bellt, gehört dem Nachbarn.', g: REL, e: 'Der Relativsatz „der laut bellt“ ist eingeschoben – Komma davor und danach.' },
+      { t: 'komma', s: 'Als es dunkel wurde, gingen wir nach Hause.', g: NS, e: 'Der Nebensatz steht vorn – Komma nach dem Nebensatz.' },
+      { t: 'komma', s: 'Lena liest, ihr Bruder spielt am Computer(,) und ihre Mutter kocht.', g: AUFZ, e: 'Drei Hauptsätze werden aufgezählt. Vor „und“ darf hier ein Komma stehen, muss aber nicht.' },
+      { t: 'komma', s: 'Das Fahrrad, das ich zum Geburtstag bekommen habe, ist blau.', g: REL, e: 'Eingeschobener Relativsatz „das ich … bekommen habe“ – zwei Kommas.' },
+      { t: 'komma', s: 'Obwohl die Sonne scheint, ist es kalt.', g: NS, e: '„Obwohl die Sonne scheint“ ist ein Nebensatz – Komma danach.' },
+      { t: 'komma', s: 'Wir kaufen Brot, Käse, Milch und Eier.', g: AUFZ, e: 'Aufzählung – Kommas zwischen den Wörtern, keins vor „und“.' },
+      { t: 'komma', s: 'Ich glaube, dass morgen die Sonne scheint.', g: NS, e: '„dass morgen die Sonne scheint“ ist ein Nebensatz – Komma vor „dass“.' },
+      { t: 'komma', s: 'Die Jacke, die im Flur hängt, gehört meiner Schwester.', g: REL, e: 'Eingeschobener Relativsatz – Komma davor und danach.' },
+      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz vorn)', lst: true,
+        o: ['Mama sagte: „Räum bitte dein Zimmer auf!“', 'Mama sagte „Räum bitte dein Zimmer auf!“', 'Mama sagte: „Räum bitte dein Zimmer auf“!', 'Mama sagte, „räum bitte dein Zimmer auf!“'],
+        a: 'Mama sagte: „Räum bitte dein Zimmer auf!“', e: 'Doppelpunkt nach dem Begleitsatz, das Ausrufezeichen steht innerhalb der Anführungszeichen, groß weiter.' },
+      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz hinten)', lst: true,
+        o: ['„Ich habe Hunger“, rief Tim.', '„Ich habe Hunger.“, rief Tim.', '„Ich habe Hunger“ rief Tim.', '„Ich habe Hunger,“ rief Tim.'],
+        a: '„Ich habe Hunger“, rief Tim.', e: 'Der Punkt der Rede fällt weg, das Komma steht nach dem schließenden Anführungszeichen.' },
+      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Frage, Begleitsatz hinten)', lst: true,
+        o: ['„Kommst du mit?“, fragte Lea.', '„Kommst du mit“?, fragte Lea.', '„Kommst du mit?“ fragte Lea.', '„Kommst du mit“, fragte Lea?'],
+        a: '„Kommst du mit?“, fragte Lea.', e: 'Das Fragezeichen bleibt in den Anführungszeichen, danach trotzdem ein Komma vor dem Begleitsatz.' },
+      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz in der Mitte)', lst: true,
+        o: ['„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', '„Wenn du willst, sagte Oma, backen wir einen Kuchen.“', '„Wenn du willst“ sagte Oma „backen wir einen Kuchen.“', '„Wenn du willst“, sagte Oma. „Backen wir einen Kuchen.“'],
+        a: '„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', e: 'Der Begleitsatz in der Mitte steht zwischen zwei Kommas, jeder Redeteil hat eigene Anführungszeichen.' }
+    ]
+  },
+  E: {
+    name: 'Groß oder klein', icon: '🔠', sub: 'Nominalisierung: das, beim, zum, etwas, nichts, alles',
+    q: 'Welche Schreibung passt in die Lücke?',
+    merk: [
+      'Verben und Adjektive werden großgeschrieben, wenn sie zum Nomen werden.',
+      'Signalwörter: das, beim, zum, im (das Rennen, beim Lesen, zum Malen).',
+      'Signalwörter: etwas, nichts, viel, alles (etwas Schönes, nichts Neues, alles Gute).',
+      'Steht das Adjektiv vor einem Nomen, bleibt es klein: das schöne Wetter.'
+    ],
+    items: [
+      { s: 'Das [[_]] macht mir Spaß.', o: ['Schwimmen', 'schwimmen'], a: 'Schwimmen', e: 'Signalwort „das“ – das Verb wird zum Nomen.' },
+      { s: 'Wir wollen heute [[_]].', o: ['Schwimmen', 'schwimmen'], a: 'schwimmen', e: 'Hier ist „schwimmen“ ein Verb (wir wollen schwimmen) – klein.' },
+      { s: 'Beim [[_]] vergesse ich die Zeit.', o: ['Lesen', 'lesen'], a: 'Lesen', e: 'Signalwort „beim“ (= bei dem) – groß.' },
+      { s: 'Ich wünsche dir alles [[_]].', o: ['Gute', 'gute'], a: 'Gute', e: 'Signalwort „alles“ – groß.' },
+      { s: 'Er hat nichts [[_]] erzählt.', o: ['Neues', 'neues'], a: 'Neues', e: 'Signalwort „nichts“ – groß.' },
+      { s: 'Das ist ein [[_]] Fahrrad.', o: ['Neues', 'neues'], a: 'neues', e: 'Das Adjektiv steht vor dem Nomen „Fahrrad“ – klein.' },
+      { s: 'Etwas [[_]] ist passiert.', o: ['Schönes', 'schönes'], a: 'Schönes', e: 'Signalwort „etwas“ – groß.' },
+      { s: 'Zum [[_]] brauche ich Farben.', o: ['Malen', 'malen'], a: 'Malen', e: 'Signalwort „zum“ (= zu dem) – groß.' },
+      { s: 'Ich kann gut [[_]].', o: ['Malen', 'malen'], a: 'malen', e: 'Verb – klein.' },
+      { s: 'Sie hat viel [[_]] erlebt.', o: ['Lustiges', 'lustiges'], a: 'Lustiges', e: 'Signalwort „viel“ – groß.' },
+      { s: 'Das [[_]] Wetter gefällt mir.', o: ['Schöne', 'schöne'], a: 'schöne', e: '„Das“ gehört zu „Wetter“. „schöne“ ist ein Adjektiv vor dem Nomen – klein.' },
+      { s: 'Das [[_]] auf dem Schulhof ist verboten.', o: ['Rennen', 'rennen'], a: 'Rennen', e: 'Signalwort „das“ – groß.' }
+    ]
+  }
+};
+const ST_KEYS = ['A', 'B', 'C', 'D', 'E'];
+ST_KEYS.forEach(k => ST[k].items.forEach((it, i) => { it.id = k + i; it.st = k; }));
+
+// Aufwärmen: ein Wort, zwei Fragen (Wortart UND Satzglied)
+const WARM = [
+  { s: '[[Darum]] blieb er zu Hause.', a1: 'Adverb', a2: GRUND, e: 'Wortart: Adverb (unveränderlich). Satzglied: Warum blieb er zu Hause? → adverbiale Bestimmung des Grundes.' },
+  { s: '[[Sie]] liest ein Buch.', a1: 'Pronomen', a2: SUBJ, e: 'Wortart: Personalpronomen. Satzglied: Wer liest? → Subjekt.' },
+  { s: 'Ich helfe [[ihm]].', a1: 'Pronomen', a2: DAT, e: 'Wortart: Personalpronomen. Satzglied: Wem helfe ich? → Dativobjekt.' },
+  { s: 'Tom ruft [[laut]].', a1: 'Adjektiv', a2: ART, e: 'Wortart: Adjektiv (der laute Ruf). Satzglied: Wie ruft Tom? → Art und Weise.' },
+  { s: 'Der Hund [[bellt]].', a1: 'Verb', a2: PRAED, e: 'Wortart: Verb. Satzglied: Prädikat.' },
+  { s: '[[Mia]] lacht.', a1: 'Nomen', a2: SUBJ, e: 'Wortart: Nomen (Name). Satzglied: Wer lacht? → Subjekt.' },
+  { s: 'Ich sehe [[dich]].', a1: 'Pronomen', a2: AKK, e: 'Wortart: Personalpronomen. Satzglied: Wen sehe ich? → Akkusativobjekt.' },
+  { s: 'Wir spielen [[draußen]].', a1: 'Adverb', a2: ORT, e: 'Wortart: Adverb. Satzglied: Wo spielen wir? → adverbiale Bestimmung des Ortes.' },
+  { s: 'Mama kauft [[Brot]].', a1: 'Nomen', a2: AKK, e: 'Wortart: Nomen. Satzglied: Wen oder was kauft Mama? → Akkusativobjekt.' },
+  { s: 'Er kommt [[bald]].', a1: 'Adverb', a2: ZEIT, e: 'Wortart: Adverb. Satzglied: Wann kommt er? → adverbiale Bestimmung der Zeit.' }
+].map((it, i) => Object.assign(it, { t: 'doppel', id: 'W' + i, st: 'W' }));
+
+// ===================================================================
+// ANSICHTEN
+// ===================================================================
+const app = document.getElementById('app');
+let VIEW = 'home', RUN = null, timerId = null;
+document.getElementById('homeBtn').onclick = () => go('home');
+function go(v) { VIEW = v; if (timerId) { clearInterval(timerId); timerId = null; } render(); window.scrollTo(0, 0); }
+function crumb(t) { document.getElementById('crumb').textContent = t || ''; }
+
+const PLAN = [
+  { k: 'warm', t: 'Aufwärmen: Was ist es, was macht es?', d: 'Zu jedem Wort zwei Fragen: Wortart und Satzglied', min: 5 },
+  { k: 'check', t: 'Kurzer Check', d: 'Zwei Aufgaben aus jeder Station – zeigt, wo es noch hakt', min: 10 },
+  { k: 'st1', t: 'Station 1', d: '', min: 10 },
+  { k: 'st2', t: 'Station 2', d: '', min: 10 },
+  { k: 'pause', t: 'Pause', d: 'Aufstehen, trinken, Fenster auf', min: 5 },
+  { k: 'wolf', t: '„Wolf“: Kemi und Jörg – Freunde?', d: 'Belege sortieren, Absatz zerlegen, selbst schreiben', min: 15 },
+  { k: 'probe', t: 'Generalprobe', d: 'Mini-Arbeit wie die Übungsarbeit, mit Uhr und Note', min: 20 },
+  { k: 'spick', t: 'Spickzettel', d: 'Deine 5 wichtigsten Merksätze – dann ist Schluss', min: 5 }
+];
+function weakest() {
+  const def = ['A', 'B', 'C', 'D', 'E'];
+  if (!S.check) return def.slice(0, 2);
+  const rate = k => { const r = S.check[k] || [0, 0]; return r[1] ? r[0] / r[1] : 1; };
+  return def.slice().sort((a, b) => rate(a) - rate(b) || def.indexOf(a) - def.indexOf(b)).slice(0, 2);
+}
+function planStep(k) {
+  const w = weakest();
+  if (k === 'warm') startRun('warm');
+  else if (k === 'check') startRun('check');
+  else if (k === 'st1') startRun(w[0], 'st1');
+  else if (k === 'st2') startRun(w[1], 'st2');
+  else go(k);
+}
+
+function render() {
+  if (VIEW === 'home') return renderHome();
+  if (VIEW === 'run') return renderRun();
+  if (VIEW === 'pause') return renderPause();
+  if (VIEW === 'wolf') return renderWolf();
+  if (VIEW === 'probe') return renderProbe();
+  if (VIEW === 'spick') return renderSpick();
+}
+
+function renderHome() {
+  crumb('');
+  const w = weakest();
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  const stat = k => { const r = S.stat[k] || { r: 0, n: 0 }; return r.n ? Math.round(100 * r.r / r.n) : null; };
+  app.innerHTML = `
+  <header class="top">
+    <div class="eyebrow">Deutsch · Klasse 6 · Klassenarbeit</div>
+    <h1>Der letzte Tag vor der Arbeit</h1>
+    <p class="muted">Satzglieder, Wortarten, Zeichen, Groß/klein und „Wolf“. Nichts Neues mehr – nur die Lücken schließen und einmal alles durchspielen. Etwa 75 Minuten.</p>
+  </header>
+  <section>
+    <h2>📋 Dein Plan für heute</h2>
+    <ol class="plan">${PLAN.map((p, i) => {
+      let t = p.t, d = p.d;
+      if (p.k === 'st1' || p.k === 'st2') { const st = ST[w[p.k === 'st1' ? 0 : 1]]; t = p.t + ': ' + st.name; d = S.check ? 'Aus deinem Check: hier hakt es am meisten' : 'Nach dem Check kommt hier deine schwächste Station'; }
+      return `<li class="${S.plan[p.k] ? 'done' : ''} ${i === nextIdx ? 'next' : ''}" data-k="${p.k}" tabindex="0" role="button">
+        <span class="n">${S.plan[p.k] ? '✓' : i + 1}</span>
+        <span><span class="t">${esc(t)}</span><br><span class="d">${esc(d)}</span></span>
+        <span class="m">${p.min} min</span></li>`;
+    }).join('')}</ol>
+    <div class="row">
+      ${nextIdx >= 0 ? `<button class="btn" id="weiter">${nextIdx === 0 ? 'Los geht’s' : 'Weiter mit Schritt ' + (nextIdx + 1)}</button>` : '<p><b>🎉 Alles geschafft. Jetzt ist Schluss – gut schlafen ist die beste Vorbereitung!</b></p>'}
+      ${Object.keys(S.plan).length ? '<button class="btn ghost" id="planReset">Plan neu starten</button>' : ''}
+    </div>
+  </section>
+  <section>
+    <h2>🎯 Frei üben</h2>
+    <div class="grid">
+      ${ST_KEYS.map(k => { const p = stat(k); return `<button class="tile" data-st="${k}"><b>${ST[k].icon} ${esc(ST[k].name)}</b><span>${esc(ST[k].sub)}</span>
+        ${p === null ? '<span>noch nicht geübt</span>' : `<span>${p} % richtig</span><div class="meter"><i style="width:${p}%"></i></div>`}</button>`; }).join('')}
+      <button class="tile" data-go="wolf"><b>🐺 „Wolf“</b><span>Kemi und Jörg – Freunde? Belege sammeln und Stellung nehmen</span></button>
+      <button class="tile" data-go="probe"><b>📝 Generalprobe</b><span>${S.probe && S.probe.done ? 'Ergebnis: ' + S.probe.punkte + ' / ' + PROBE_MAX + ' Punkte' : 'Mini-Arbeit mit Uhr und Note'}</span></button>
+      <button class="tile" data-go="spick"><b>🗒️ Spickzettel</b><span>Merksätze auswählen und ausdrucken</span></button>
+    </div>
+  </section>`;
+  app.querySelectorAll('.plan li').forEach(li => { li.onclick = () => planStep(li.dataset.k); li.onkeydown = e => { if (e.key === 'Enter') planStep(li.dataset.k); }; });
+  const wb = document.getElementById('weiter'); if (wb) wb.onclick = () => planStep(PLAN[nextIdx].k);
+  const pr = document.getElementById('planReset'); if (pr) pr.onclick = () => { if (confirm('Plan von vorn beginnen? Deine Texte zu „Wolf“ bleiben erhalten.')) { S.plan = {}; S.check = null; S.probe = null; save(); render(); } };
+  app.querySelectorAll('[data-st]').forEach(b => b.onclick = () => startRun(b.dataset.st));
+  app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+function renderPause() {
+  crumb('Pause');
+  let rest = 300;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Schritt 5</div><h1>☕ Pause</h1></header>
+    <div class="card"><p>Fünf Minuten weg vom Bildschirm: aufstehen, etwas trinken, Fenster auf. Danach kommt „Wolf“.</p>
+    <p class="score timer" id="pt">5:00</p>
+    <div class="row"><button class="btn" id="pw">Pause vorbei – weiter</button></div></div>`;
+  timerId = setInterval(() => { rest = Math.max(0, rest - 1); const el = document.getElementById('pt'); if (el) el.textContent = Math.floor(rest / 60) + ':' + String(rest % 60).padStart(2, '0'); if (!rest) { clearInterval(timerId); timerId = null; } }, 1000);
+  document.getElementById('pw').onclick = () => { S.plan.pause = true; save(); go('wolf'); };
+}
+
+// ===================================================================
+// ÜBUNGSLAUF (Aufwärmen, Check, Stationen)
+// ===================================================================
+function startRun(kind, planKey) {
+  let queue;
+  if (kind === 'warm') queue = shuffle(WARM).slice(0, 6);
+  else if (kind === 'check') queue = shuffle(ST_KEYS.flatMap(k => shuffle(ST[k].items).slice(0, 2)));
+  else queue = shuffle(ST[kind].items);
+  RUN = { kind, planKey: planKey || (kind === 'warm' || kind === 'check' ? kind : null), queue, idx: 0, streak: 0, count: 0, right: 0, res: {}, finished: false, showMerk: kind in ST };
+  go('run');
+}
+function runTitle() {
+  if (RUN.kind === 'warm') return 'Aufwärmen: Was ist es, was macht es?';
+  if (RUN.kind === 'check') return 'Kurzer Check';
+  return ST[RUN.kind].icon + ' Station: ' + ST[RUN.kind].name;
+}
+function merkBox(k) { return `<div class="merk"><b>Merkregeln</b><ul>${ST[k].merk.map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`; }
+
+function renderRun() {
+  crumb(runTitle());
+  if (RUN.finished) return renderRunEnd();
+  if (RUN.showMerk) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">Station</div><h1>${esc(runTitle())}</h1></header>
+      ${merkBox(RUN.kind)}
+      <p class="muted small">Die Station ist geschafft, wenn du drei Aufgaben hintereinander richtig hast.</p>
+      <div class="row"><button class="btn" id="los">Los</button></div>`;
+    document.getElementById('los').onclick = () => { RUN.showMerk = false; render(); };
+    return;
+  }
+  const it = RUN.queue[RUN.idx];
+  const isSt = RUN.kind in ST;
+  const prog = isSt ? `<span>Richtig in Folge:</span><span class="dots">${[0, 1, 2].map(i => `<i class="${i < RUN.streak ? 'on' : ''}"></i>`).join('')}</span>`
+    : `<span>Aufgabe ${RUN.idx + 1} von ${RUN.queue.length}</span>`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div></header>
+    <div class="progress">${prog}${isSt ? '<button class="linkbtn" id="merkAuf" style="margin-left:auto">Merkregeln</button>' : ''}</div>
+    <div class="card" id="karte"></div><div id="merkHier"></div>`;
+  if (isSt) document.getElementById('merkAuf').onclick = () => { const m = document.getElementById('merkHier'); m.innerHTML = m.innerHTML ? '' : merkBox(RUN.kind); };
+  renderCard(it, document.getElementById('karte'), ok => answered(it, ok));
+}
+
+function answered(it, ok) {
+  RUN.count++;
+  if (ok) { RUN.right++; RUN.streak++; } else RUN.streak = 0;
+  if (it.st && it.st !== 'W') {
+    const s = S.stat[it.st] || (S.stat[it.st] = { r: 0, n: 0 });
+    s.n++; if (ok) s.r++;
+  }
+  if (RUN.kind === 'check') { const r = RUN.res[it.st] || (RUN.res[it.st] = [0, 0]); r[1]++; if (ok) r[0]++; }
+  // falsch beantwortete Aufgabe kommt zwei Karten später noch einmal
+  if (!ok && RUN.kind in ST) RUN.queue.splice(Math.min(RUN.idx + 3, RUN.queue.length), 0, it);
+  RUN.idx++;
+  const isSt = RUN.kind in ST;
+  if ((isSt && (RUN.streak >= 3 || RUN.count >= 12)) || RUN.idx >= RUN.queue.length) {
+    RUN.finished = true;
+    if (RUN.kind === 'check') S.check = RUN.res;
+    if (RUN.planKey) S.plan[RUN.planKey] = true;
+  }
+  save();
+  render();
+  window.scrollTo(0, 0);
+}
+
+function renderRunEnd() {
+  let body = '';
+  if (RUN.kind === 'check') {
+    const w = weakest();
+    body = `<div class="card"><h3>So lief dein Check</h3>
+      ${ST_KEYS.map(k => { const r = S.check[k] || [0, 0]; const p = r[1] ? Math.round(100 * r[0] / r[1]) : 0; return `<div><div class="th"><span>${ST[k].icon} ${esc(ST[k].name)}</span><span class="pts">${r[0]} / ${r[1]}</span></div><div class="meter"><i style="width:${p}%"></i></div></div>`; }).join('')}
+      <p>Deine zwei Stationen: <b>${esc(ST[w[0]].name)}</b> und <b>${esc(ST[w[1]].name)}</b>.</p></div>`;
+  } else {
+    body = `<div class="card"><p><b>${RUN.right} von ${RUN.count}</b> richtig.${RUN.kind in ST && RUN.streak >= 3 ? ' Drei in Folge – Station geschafft! 🎉' : ''}</p>
+      ${RUN.kind in ST && RUN.streak < 3 ? '<p class="muted">Das Thema braucht noch etwas Übung. Lies die Merkregeln noch einmal – sie kommen auch auf deinen Spickzettel.</p>' : ''}</div>`;
+  }
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div><h1>Geschafft</h1></header>${body}
+    <div class="row">${RUN.planKey && nextIdx >= 0 ? `<button class="btn" id="nx">Weiter: ${esc(PLAN[nextIdx].k === 'st1' || PLAN[nextIdx].k === 'st2' ? 'Station ' + ST[weakest()[PLAN[nextIdx].k === 'st1' ? 0 : 1]].name : PLAN[nextIdx].t)}</button>` : ''}
+    ${RUN.kind in ST ? '<button class="btn ghost" id="nochmal">Noch eine Runde</button>' : ''}
+    <button class="btn ghost" id="hm">Zum Plan</button></div>`;
+  const nx = document.getElementById('nx'); if (nx) nx.onclick = () => planStep(PLAN[nextIdx].k);
+  const nm = document.getElementById('nochmal'); if (nm) nm.onclick = () => startRun(RUN.kind);
+  document.getElementById('hm').onclick = () => go('home');
+}
+
+// ===================================================================
+// KARTEN
+// ===================================================================
+function feedback(host, ok, it, done, extra) {
+  const fb = host.querySelector('.fb');
+  fb.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Leider nicht.'}</b> ${extra || ''}${esc(it.e || '')}</div>
+    <div class="row"><button class="btn" id="weiterK">Weiter</button></div>`;
+  const b = document.getElementById('weiterK'); b.focus({ preventScroll: true }); b.onclick = () => done(ok);
+}
+function renderCard(it, host, done) {
+  if (it.t === 'doppel') return cardDoppel(it, host, done);
+  if (it.t === 'komma') return cardKomma(it, host, done);
+  const opts = it.o || (it.st === 'A' ? SG : it.st === 'B' ? PR : WA);
+  const q = it.q || (ST[it.st] && ST[it.st].q) || '';
+  host.innerHTML = `${it.s ? `<p class="satz">${fmt(it.s)}</p>` : ''}<p class="frage">${esc(q)}</p>
+    <div class="opts ${it.lst ? 'liste' : ''}">${shuffleIf(opts, it).map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="fb"></div>`;
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (host.dataset.locked) return; host.dataset.locked = '1';
+    const ok = b.dataset.v === it.a;
+    host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (x.dataset.v === it.a) x.classList.add('ok'); });
+    if (!ok) b.classList.add('no');
+    feedback(host, ok, it, done, ok ? '' : 'Richtig ist: <b>' + esc(it.a) + '</b>. ');
+  });
+}
+// feste Antwortlisten (Satzglieder, Pronomen …) bleiben in ihrer Reihenfolge, Satz-Varianten werden gemischt
+function shuffleIf(opts, it) { return it.lst ? shuffle(opts) : opts; }
+
+function cardDoppel(it, host, done) {
+  const sel = { a1: null, a2: null };
+  host.innerHTML = `<p class="satz">${fmt(it.s)}</p>
+    <p class="frage">1. Welche Wortart?</p><div class="opts" data-r="a1">${WA.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <p class="frage">2. Welches Satzglied ist es hier?</p><div class="opts" data-r="a2">${SG.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
+  const pb = host.querySelector('#pruef');
+  host.querySelectorAll('.opts').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (host.dataset.locked) return;
+    g.querySelectorAll('.opt').forEach(x => x.classList.remove('sel')); b.classList.add('sel');
+    sel[g.dataset.r] = b.dataset.v; pb.disabled = !(sel.a1 && sel.a2);
+  }));
+  pb.onclick = () => {
+    host.dataset.locked = '1'; pb.disabled = true;
+    let ok = true;
+    host.querySelectorAll('.opts').forEach(g => {
+      const r = g.dataset.r;
+      g.querySelectorAll('.opt').forEach(x => { x.disabled = true; x.classList.remove('sel'); if (x.dataset.v === it[r]) x.classList.add('ok'); else if (x.dataset.v === sel[r]) x.classList.add('no'); });
+      if (sel[r] !== it[r]) ok = false;
+    });
+    feedback(host, ok, it, done);
+  };
+}
+
+function parseKomma(s) {
+  return s.split(' ').map(t => {
+    if (t.endsWith('(,)')) return { w: t.slice(0, -3), opt: true };
+    if (t.endsWith(',')) return { w: t.slice(0, -1), req: true };
+    return { w: t };
+  });
+}
+function kommaRichtig(toks, on) {
+  // on[i] = Komma nach Wort i gesetzt; Pflicht muss gesetzt sein, sonst darf nur ein freigestelltes stehen
+  let gut = 0, fehler = 0;
+  toks.forEach((t, i) => {
+    if (t.req) { if (on[i]) gut++; else fehler++; }
+    else if (on[i] && !t.opt) fehler++;
+  });
+  return { gut, fehler, pflicht: toks.filter(t => t.req).length };
+}
+function kommaHtml(toks, prefix) {
+  return toks.map((t, i) => `<span>${esc(t.w)}</span>${i < toks.length - 1 ? `<button type="button" class="gap" data-i="${i}" ${prefix ? `data-k="${prefix}-${i}"` : ''} aria-label="Komma nach ${esc(t.w)}"></button>` : ''}`).join('');
+}
+function kommaZeigen(host, toks, on) {
+  host.querySelectorAll('.gap').forEach(g => {
+    const i = +g.dataset.i, t = toks[i]; g.disabled = true;
+    if (t.req) { g.textContent = ','; g.classList.add(on[i] ? 'good' : 'miss'); }
+    else if (on[i]) { if (t.opt) g.classList.add('good'); else g.classList.add('extra'); }
+  });
+}
+function cardKomma(it, host, done) {
+  const toks = parseKomma(it.s), on = {};
+  let grund = null;
+  host.innerHTML = `<p class="frage">${esc(ST.D.q)}</p><div class="ksatz">${kommaHtml(toks)}</div>
+    <p class="frage">Begründung:</p><div class="opts liste">${KG.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
+  const pb = host.querySelector('#pruef');
+  host.querySelectorAll('.gap').forEach(g => g.onclick = () => { if (host.dataset.locked) return; const i = +g.dataset.i; on[i] = !on[i]; g.classList.toggle('on', on[i]); g.textContent = on[i] ? ',' : ''; });
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => { if (host.dataset.locked) return; host.querySelectorAll('.opt').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); grund = b.dataset.v; pb.disabled = false; });
+  pb.onclick = () => {
+    host.dataset.locked = '1'; pb.disabled = true;
+    const r = kommaRichtig(toks, on);
+    kommaZeigen(host, toks, on);
+    host.querySelectorAll('.opt').forEach(x => { x.disabled = true; x.classList.remove('sel'); if (x.dataset.v === it.g) x.classList.add('ok'); else if (x.dataset.v === grund) x.classList.add('no'); });
+    const ok = !r.fehler && grund === it.g;
+    feedback(host, ok, it, done, ok ? '' : 'Richtig: <i>' + esc(it.s) + '</i>' + (it.s.includes('(,)') ? ' (das Komma in Klammern darf stehen, muss aber nicht)' : '') + '. ');
+  };
+}
+
+// ===================================================================
+// „WOLF“ – nur Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“
+// ===================================================================
+const SORT = [
+  { s: 'Kemi mag Jörg und schätzt seine Schrullen (S. 34).', a: 'Pro', e: 'Ein Beleg mit Seitenzahl, der für eine Freundschaft spricht.' },
+  { s: 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).', a: 'Contra', e: 'Ein Freund würde helfen – das spricht gegen eine Freundschaft.' },
+  { s: 'Kemi folgt Marko und Jörg in den Kletterwald, weil Kemi sich Sorgen macht, dass Marko Jörg verletzen will.', a: 'Pro', e: 'Kemi passt auf Jörg auf – das spricht für eine Freundschaft. Schreib die Seitenzahl aus deinem Lesetagebuch dazu!' },
+  { s: 'Ich finde Jörg sympathisch.', a: 'Kein Beleg', e: 'Das ist deine eigene Meinung über Jörg – keine Textstelle, die etwas über Kemi und Jörg zeigt.' },
+  { s: 'Freunde sollten immer zusammenhalten.', a: 'Kein Beleg', e: 'Ein allgemeiner Satz ohne Textstelle. Als Erklärung kann er aber helfen.' }
+];
+const SORT_O = { 'Pro': 'Pro (Freunde)', 'Contra': 'Contra (keine Freunde)', 'Kein Beleg': 'Kein Beleg' };
+const ZER = [
+  { s: 'Für eine Freundschaft spricht, dass Kemi sich um Jörg sorgt.', a: 'Behauptung' },
+  { s: 'Er folgt Marko und Jörg in den Kletterwald, weil er sich Sorgen macht, dass Marko Jörg verletzen will (S. ?).', a: 'Beleg' },
+  { s: 'Daraus kann man schließen, dass Jörg ihm wichtig ist und er ihn beschützen möchte.', a: 'Erklärung' },
+  { s: 'Allerdings verhält sich Kemi nicht immer wie ein Freund.', a: 'Behauptung' },
+  { s: 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).', a: 'Beleg' },
+  { s: 'Daran wird deutlich, dass er unsicher ist und sich nicht traut, sich gegen Marko zu stellen.', a: 'Erklärung' }
+];
+const ZER_O = ['Behauptung', 'Beleg', 'Erklärung'];
+const FORM = [
+  { s: 'Kemi hilft Jörg bei der Wanderung nicht (S. 49). [[_]], dass er sich nicht traut, sich gegen Marko zu stellen.', o: ['Daraus kann man schließen', 'Zum Beispiel', 'Insgesamt'], a: 'Daraus kann man schließen', e: 'Nach dem Beleg kommt die Erklärung: „Daraus kann man schließen, dass …“' },
+  { s: 'Kemi sorgt sich um Jörg. [[_]] folgt er Marko und Jörg in den Kletterwald.', o: ['Insgesamt', 'Zum Beispiel', 'Daran wird deutlich'], a: 'Zum Beispiel', e: 'Nach der Behauptung kommt der Beleg: „Zum Beispiel …“' },
+  { s: '[[_]] sind Kemi und Jörg für mich noch keine richtigen Freunde, aber Kemi sorgt sich um Jörg.', o: ['Zum Beispiel', 'Insgesamt', 'Daran wird deutlich'], a: 'Insgesamt', e: 'Das Fazit am Ende beginnt mit „Insgesamt …“ oder „Zusammenfassend …“.' },
+  { s: 'Weil Kemi Jörg auf der Wanderung nicht hilft, wirkt Kemi in dieser Szene [[_]].', o: ['furchtlos', 'unsicher', 'selbstsicher'], a: 'unsicher', e: 'Wer sich nicht traut zu helfen, wirkt unsicher oder ängstlich – nicht furchtlos.' }
+];
+const HILFEN = ['Man erkennt an seinem Verhalten, dass …', 'Daran wird deutlich, dass …', 'Hinweise für … sind …', 'Daraus kann man schließen, dass …', 'Daraus, dass er …, lässt sich … ableiten.'];
+const VERHALTEN = ['wirkt', 'auffällig ist', 'besitzt', 'tritt … auf', 'fühlt sich', 'macht sich Gedanken über', 'beschäftigt sich mit', 'beweist', 'beschützt', 'sorgt sich um', 'interessiert sich für'];
+const EIGEN = ['neugierig', 'furchtlos', 'ängstlich', 'mutig', 'nachdenklich', 'unsicher', 'unglücklich', 'schutzlos', 'unterlegen', 'selbstsicher', 'schüchtern', 'ernst', 'lustig', 'offen', 'verschlossen', 'einsam', 'allein', 'klug'];
+const MUSTER = [
+  'Ob Kemi und Jörg Freunde sind, lässt sich nicht einfach mit Ja oder Nein beantworten.',
+  'Für eine Freundschaft spricht, dass Kemi Jörg mag und seine Schrullen schätzt (S. 34). Daran wird deutlich, dass Kemi Jörg mit seinen Eigenheiten so annimmt, wie er ist.',
+  'Außerdem folgt Kemi Marko und Jörg in den Kletterwald, weil Kemi sich Sorgen macht, dass Marko Jörg verletzen will (S. ?). Daraus kann man schließen, dass Jörg ihm wichtig ist und er auf ihn aufpassen möchte.',
+  'Allerdings hilft Kemi Jörg nicht, als Marko sich bei der ersten Wanderung zwischen die beiden drängt (S. 49). Man erkennt an seinem Verhalten, dass er unsicher ist und sich nicht traut, sich gegen Marko zu stellen. Ein echter Freund würde Jörg beistehen.',
+  '[Hier gehört ein zweites Contra-Argument aus deinem Lesetagebuch hin: Behauptung – Beleg mit Seite – Erklärung.]',
+  'Insgesamt sind Kemi und Jörg für mich noch keine richtigen Freunde, weil Kemi sich nicht immer für Jörg einsetzt. Weil Kemi sich aber um Jörg sorgt, glaube ich, dass zwischen den beiden eine Freundschaft entstehen kann.'
+];
+
+function wolfPick(list, store, optsOf, key) {
+  return list.map((it, i) => {
+    const v = store[i];
+    const opts = optsOf(it);
+    return `<div class="card" data-wk="${key}" data-i="${i}"><p class="satz">${fmt(it.s)}</p>
+      <div class="opts">${opts.map(o => { const lab = key === 'sort' ? SORT_O[o] : o; const cls = v === undefined ? '' : (o === it.a ? 'ok' : (o === v ? 'no' : '')); return `<button class="opt ${cls}" data-v="${esc(o)}" ${v !== undefined ? 'disabled' : ''}>${esc(lab)}</button>`; }).join('')}</div>
+      ${v !== undefined && it.e ? `<p class="small ${v === it.a ? '' : ''}">${v === it.a ? '✓ ' : '✗ '}${esc(it.e)}</p>` : (v !== undefined ? `<p class="small">${v === it.a ? '✓ Richtig.' : '✗ Richtig ist: ' + esc(it.a) + '.'}</p>` : '')}</div>`;
+  }).join('');
+}
+function wolfAuswertung(text, lang) {
+  const t = text.toLowerCase();
+  const woerter = (text.match(/\S+/g) || []).length;
+  const seiten = (text.match(/S\.\s*\d+/g) || []).length;
+  const hilfen = ['man erkennt', 'daran wird deutlich', 'daran sieht man', 'was man daran sieht', 'hinweise für', 'daraus kann man schließen', 'daraus, dass', 'lässt sich', 'ableiten', 'zum beispiel', 'z. b.', 'z.b.'].filter(h => t.includes(h)).length;
+  const gegen = ['allerdings', 'dagegen spricht', 'gegen eine freundschaft', 'andererseits', 'jedoch', 'auf der anderen seite'].some(h => t.includes(h));
+  const fazit = ['insgesamt', 'zusammenfassend', 'abschließend', 'meiner meinung nach', 'ich finde', 'ich denke', 'ich glaube'].some(h => t.includes(h));
+  const eigen = EIGEN.filter(e => new RegExp('\\b' + e + '\\b', 'i').test(text)).length;
+  const zielW = lang ? 150 : 80, zielS = lang ? 3 : 2, zielH = lang ? 3 : 2;
+  return [
+    [woerter >= zielW, `Länge: ${woerter} Wörter (Ziel: mindestens ${zielW})`],
+    [seiten >= zielS, `Seitenangaben „(S. …)“: ${seiten} (Ziel: ${zielS}) – Belege brauchen eine Textstelle`],
+    [hilfen >= zielH, `Formulierungshilfen benutzt: ${hilfen} (Ziel: ${zielH}) – z. B. „Daran wird deutlich, dass …“`],
+    [gegen, 'Gegenseite eingeleitet („Allerdings …“, „Dagegen spricht …“)'],
+    [fazit, 'Eigenes Urteil am Ende („Insgesamt …“, „Ich finde …“)'],
+    [eigen >= 1, `Eigenschaften genannt: ${eigen} (z. B. unsicher, mutig, einsam)`]
+  ];
+}
+function renderWolf() {
+  crumb('„Wolf“');
+  const W = S.wolf;
+  const zeile = (seite, r, i) => `<div class="beleg"><textarea data-b="${seite}" data-i="${i}" data-f="t" placeholder="Was passiert? Wer tut was?" rows="2">${esc(r.t || '')}</textarea>
+    <input class="txtin" data-b="${seite}" data-i="${i}" data-f="s" placeholder="S." value="${esc(r.s || '')}" inputmode="numeric" aria-label="Seite">
+    <button class="del" data-del="${seite}" data-i="${i}" aria-label="Zeile löschen">✕</button></div>`;
+  const check = wolfAuswertung(W.text, W.lang);
+  app.innerHTML = `
+  <header class="top wolfhead"><div class="eyebrow">„Wolf“ von Saša Stanišić</div><h1>Kemi und Jörg – Freunde?</h1>
+    <p class="muted">So kann die Aufgabe in der Arbeit aussehen: Nimm Stellung mit Argumenten und Belegen aus dem Roman. Die Textstellen hier stammen vom Arbeitsblatt – deine eigenen holst du aus dem Lesetagebuch.</p></header>
+
+  <section><h2>1 · Was ist ein Beleg?</h2><p class="muted small">Spricht der Satz für eine Freundschaft, dagegen – oder ist er gar kein Beleg?</p>
+    ${wolfPick(SORT, W.sort, () => ['Pro', 'Contra', 'Kein Beleg'], 'sort')}</section>
+
+  <section><h2>2 · Ein Musterabsatz, zerlegt</h2><p class="muted small">Ein gutes Argument hat drei Teile: <b>Behauptung</b> → <b>Beleg</b> (Textstelle mit Seite) → <b>Erklärung</b> (was zeigt das?). Ordne jeden Satz zu.</p>
+    ${wolfPick(ZER, W.zer, () => ZER_O, 'zer')}</section>
+
+  <section><h2>3 · Die richtige Formulierung</h2>
+    ${wolfPick(FORM, W.form, it => it.o, 'form')}</section>
+
+  <section><h2>4 · Deine Belege sammeln</h2>
+    <p class="muted small">Schau in dein Lesetagebuch und den Roman. Trag Szenen ein, die zeigen, dass Kemi und Jörg (keine) Freunde sind – immer mit Seite.</p>
+    <div class="cols">
+      <div class="card"><h3>Pro – Freunde</h3><p class="beispiel">z. B. Kemi mag Jörg und schätzt seine Schrullen (S. 34)</p>
+        ${W.pro.map((r, i) => zeile('pro', r, i)).join('')}<button class="btn ghost" data-add="pro">+ Beleg</button></div>
+      <div class="card"><h3>Contra – keine Freunde</h3><p class="beispiel">z. B. Kemi hilft Jörg nicht, als Marko sich bei der ersten Wanderung zwischen sie drängt (S. 49)</p>
+        ${W.contra.map((r, i) => zeile('contra', r, i)).join('')}<button class="btn ghost" data-add="contra">+ Beleg</button></div>
+    </div></section>
+
+  <section><h2>5 · Selbst schreiben</h2>
+    <div class="card">
+      <div class="row"><button class="opt ${W.lang ? '' : 'sel'}" data-lang="0">Kurz für heute: 1 Pro + 1 Contra + Urteil</button><button class="opt ${W.lang ? 'sel' : ''}" data-lang="1">Ganze Stellungnahme: je 2 Argumente</button></div>
+      <p><b>Leitfrage:</b> Sind Kemi und Jörg Freunde? Nimm Stellung. Nenne ${W.lang ? 'mindestens zwei Pro- und zwei Contra-Argumente' : 'ein Pro- und ein Contra-Argument'} mit Belegen und schreib am Ende dein eigenes Urteil.</p>
+      <details><summary>Formulierungshilfen (M 2)</summary>
+        <p class="small"><b>Belege:</b> ${HILFEN.map(esc).join(' · ')}</p>
+        <p class="small"><b>Verhalten:</b></p><div class="chips">${VERHALTEN.map(v => `<span>${esc(v)}</span>`).join('')}</div>
+        <p class="small"><b>Eigenschaften:</b></p><div class="chips">${EIGEN.map(v => `<span>${esc(v)}</span>`).join('')}</div>
+      </details>
+      <textarea id="wtext" rows="12" placeholder="Für eine Freundschaft spricht, dass …">${esc(W.text)}</textarea>
+      <ul class="check" id="wcheck">${checkHtml(check)}</ul>
+      <p class="muted small">Die Liste prüft nur den Aufbau, nicht ob deine Textstellen stimmen – das weißt du aus dem Buch.</p>
+      <div class="row"><button class="btn ghost" id="musterBtn">${W.muster ? 'Musterlösung ausblenden' : 'Musterlösung zeigen'}</button></div>
+      ${W.muster ? `<div class="muster">${MUSTER.map(p => `<p>${esc(p)}</p>`).join('')}<p class="small muted">Die Musterlösung benutzt nur die Textstellen vom Arbeitsblatt. „S. ?“: Die Seite steht in deinem Lesetagebuch.</p></div>` : ''}
+    </div></section>
+
+  <div class="row" style="margin-top:24px"><button class="btn wolf" id="wfertig">${S.plan.wolf ? 'Zurück zum Plan' : 'Fertig – weiter zur Generalprobe'}</button></div>`;
+
+  app.querySelectorAll('[data-wk]').forEach(card => card.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const store = W[card.dataset.wk], i = +card.dataset.i;
+    if (store[i] !== undefined) return;
+    store[i] = b.dataset.v; save(); const y = window.scrollY; renderWolf(); window.scrollTo(0, y);
+  }));
+  app.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { W[b.dataset.add].push({ t: '', s: '' }); save(); const y = window.scrollY; renderWolf(); window.scrollTo(0, y); });
+  app.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { W[b.dataset.del].splice(+b.dataset.i, 1); save(); const y = window.scrollY; renderWolf(); window.scrollTo(0, y); });
+  app.querySelectorAll('[data-b]').forEach(el => el.oninput = () => { W[el.dataset.b][+el.dataset.i][el.dataset.f] = el.value; save(); });
+  app.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { W.lang = b.dataset.lang === '1'; save(); const y = window.scrollY; renderWolf(); window.scrollTo(0, y); });
+  const ta = document.getElementById('wtext');
+  ta.oninput = () => { W.text = ta.value; save(); document.getElementById('wcheck').innerHTML = checkHtml(wolfAuswertung(W.text, W.lang)); };
+  document.getElementById('musterBtn').onclick = () => { W.muster = !W.muster; save(); const y = window.scrollY; renderWolf(); window.scrollTo(0, y); };
+  document.getElementById('wfertig').onclick = () => { const war = S.plan.wolf; S.plan.wolf = true; save(); go(war ? 'home' : 'probe'); };
+}
+function checkHtml(c) { return c.map(([ok, t]) => `<li class="${ok ? 'ok' : 'no'}"><b>${ok ? '✓' : '○'}</b><span>${esc(t)}</span></li>`).join(''); }
+
+// ===================================================================
+// GENERALPROBE – Aufbau wie die Übungsarbeit, eigene Sätze
+// ===================================================================
+const WA2 = ['Artikel', 'Nomen', 'Verb', 'Adjektiv', 'Adverb', 'Präposition', 'Konjunktion', 'Personalpronomen', 'Possessivpronomen', 'Relativpronomen', 'Demonstrativpronomen'];
+const PROBE = [
+  { id: 'g1', h: '1. Bestimme die Wortarten.', type: 'segs', o: WA2, segs: [
+    ['Die', 'Artikel'], ['müde', 'Adjektiv'], ['Katze', 'Nomen'], ['schlief', 'Verb'], ['gestern', 'Adverb'], ['im', 'Präposition'], ['Garten', 'Nomen'],
+    ['ihrer', 'Possessivpronomen'], ['Nachbarin,', 'Nomen'], ['die', 'Relativpronomen'], ['dort', 'Adverb'], ['Blumen', 'Nomen'], ['pflanzte.', 'Verb']] },
+  { id: 'g2', h: '2. Bestimme die Satzglieder.', hint: 'Die Grenzen sind hier schon gezogen. In der Arbeit musst du sie selbst finden – mit der Umstellprobe: Was zusammen umgestellt werden kann, ist ein Satzglied.', type: 'segs', o: SG, segs: [
+    ['Der alte Mann', SUBJ], ['schenkte', PRAED], ['gestern', ZEIT], ['im Park', ORT], ['seinem Enkel', DAT], ['einen Drachen.', AKK], '|',
+    ['Die Kinder', SUBJ], ['warten', PRAED], ['vor der Schule', ORT], ['auf den Bus.', PRAEP]] },
+  { id: 'g3', h: '3. Präposition, Konjunktion, Adjektiv oder Adverb? Bestimme die fett gedruckten Wörter.', type: 'segs', o: KW, segs: [
+    ['Als', 'Konjunktion', 1], 'Tim', ['aus', 'Präposition', 1], 'der Schule kam, rief er', ['fröhlich', 'Adjektiv', 1], ['nach', 'Präposition', 1], 'seiner Mutter.',
+    ['Deshalb', 'Adverb', 1], 'kam sie', ['sehr', 'Adverb', 1], ['schnell', 'Adjektiv', 1], ['in', 'Präposition', 1], 'den Flur', ['und', 'Konjunktion', 1], 'umarmte ihn.'] },
+  { id: 'g4', h: '4. Wörtliche Rede: Welcher Satz ist jeweils richtig?', type: 'picks', picks: [
+    { o: ['Die Mutter fragte: „Wie war die Schule?“', 'Die Mutter fragte „Wie war die Schule?“', 'Die Mutter fragte: „Wie war die Schule“?', 'Die Mutter fragte, „wie war die Schule?“'], a: 0 },
+    { o: ['„Heute, sagte Tim, habe ich eine Eins geschrieben.“', '„Heute“, sagte Tim, „habe ich eine Eins geschrieben.“', '„Heute“ sagte Tim „habe ich eine Eins geschrieben.“', '„Heute“, sagte Tim. „Habe ich eine Eins geschrieben.“'], a: 1 },
+    { o: ['„Das ist toll“!, rief die Mutter.', '„Das ist toll!“ rief die Mutter.', '„Das ist toll.“, rief die Mutter.', '„Das ist toll!“, rief die Mutter.'], a: 3 }] },
+  { id: 'g5', h: '5. Ist die Konjunktion nebenordnend oder unterordnend?', type: 'picks', picks: [
+    { q: '„Obwohl es kalt war, gingen wir baden.“ – obwohl', o: NU, a: 1 },
+    { q: '„Ich habe gelernt, aber die Aufgabe war schwer.“ – aber', o: NU, a: 0 }] },
+  { id: 'g6', h: '6. Tippe alle Adverbien an und bestimme ihre Art.', type: 'finden', o: AA,
+    text: '{Heute|Zeit} treffen wir uns {oben|Ort} auf dem Dachboden. {Dort|Ort} ist es {immer|Zeit} dunkel, {deshalb|Grund} nehme ich eine Taschenlampe. {Seltsamerweise|Art und Weise} hat niemand Angst.' },
+  { id: 'g7', h: '7. Tippe alle Pronomen an und bestimme ihre Art.', type: 'finden', o: PR.filter(p => p !== 'Artikel' && p !== 'Konjunktion'),
+    text: 'Lea geht mit {ihrem|Possessivpronomen} Hund in den Park. {Er|Personalpronomen} rennt sofort zu einem Jungen, {der|Relativpronomen} dort Ball spielt. {Das|Demonstrativpronomen} findet der Junge lustig, denn {er|Personalpronomen} mag Hunde. Lea entschuldigt {sich|Reflexivpronomen} trotzdem bei {ihm|Personalpronomen}.' },
+  { id: 'g8', h: '8. Setze die fehlenden Kommas und begründe.', type: 'kommas', saetze: [
+    { s: 'Wir packen Zelt, Schlafsack und Taschenlampe ein.', g: AUFZ },
+    { s: 'Der Rucksack, den ich mir geliehen habe, ist sehr schwer.', g: REL },
+    { s: 'Weil es regnet, bleiben wir im Zelt.', g: NS }] },
+  { id: 'g9', h: '9. Groß oder klein?', type: 'segs', segs: [
+    'Das', ['Lachen', 'Lachen', 0, ['Lachen', 'lachen']], 'der Kinder war laut. Beim', ['Spielen', 'Spielen', 0, ['Spielen', 'spielen']], 'vergessen sie alles. Ich wünsche euch nichts',
+    ['Böses.', 'Böses.', 0, ['Böses.', 'böses.']], 'Morgen wollen wir', ['wandern.', 'wandern.', 0, ['Wandern.', 'wandern.']], ['Etwas', 'Etwas', 0], ['Spannendes', 'Spannendes', 0, ['Spannendes', 'spannendes']],
+    'ist passiert. Der', ['spannende', 'spannende', 0, ['Spannende', 'spannende']], 'Film ist leider vorbei.'] }
+];
+// Lückenwörter in Nr. 9 werden ohne Auswahl angezeigt – nur der Satzanfang „Etwas“ steht schon fest
+PROBE[8].segs = PROBE[8].segs.map(x => Array.isArray(x) && !x[3] ? x[0] : x);
+
+function findenTokens(text) {
+  const out = []; const re = /\{([^|}]+)\|([^}]+)\}|([^\s{]+)/g; let m;
+  while ((m = re.exec(text))) out.push(m[1] ? { w: m[1], a: m[2] } : { w: m[3], p: /^[.,!?;:]+$/.test(m[3]) });
+  return out;
+}
+function taskMax(t) {
+  if (t.type === 'segs') return t.segs.filter(Array.isArray).length;
+  if (t.type === 'picks') return t.picks.length;
+  if (t.type === 'finden') return 2 * findenTokens(t.text).filter(x => x.a).length;
+  if (t.type === 'kommas') return t.saetze.reduce((n, x) => n + parseKomma(x.s).filter(k => k.req).length + 1, 0);
+  return 0;
+}
+const PROBE_MAX = PROBE.reduce((n, t) => n + taskMax(t), 0);
+function taskPunkte(t, A) {
+  if (t.type === 'segs') return t.segs.filter(Array.isArray).reduce((n, s, i) => n + (A[t.id + '-' + i] === s[1] ? 1 : 0), 0);
+  if (t.type === 'picks') return t.picks.reduce((n, p, i) => n + (A[t.id + '-' + i] === p.a ? 1 : 0), 0);
+  if (t.type === 'finden') {
+    let hit = 0, falsch = 0, typ = 0;
+    findenTokens(t.text).forEach((x, i) => { const v = A[t.id + '-' + i]; if (!v || !v.on) return; if (x.a) { hit++; if (v.typ === x.a) typ++; } else falsch++; });
+    // Art-Punkte höchstens so viele wie echte Treffer – blindes Antippen bringt nichts
+    const treffer = Math.max(0, hit - falsch);
+    return treffer + Math.min(typ, treffer);
+  }
+  if (t.type === 'kommas') return t.saetze.reduce((n, x, si) => {
+    const toks = parseKomma(x.s), on = {}; toks.forEach((_, i) => on[i] = !!A[t.id + '-' + si + '-' + i]);
+    const r = kommaRichtig(toks, on);
+    return n + Math.max(0, r.gut - (r.fehler - (r.pflicht - r.gut))) + (A[t.id + '-' + si + '-g'] === x.g ? 1 : 0);
+  }, 0);
+  return 0;
+}
+function grade(pct) { return pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 25 ? '5' : '6'; }
+
+function renderProbe() {
+  crumb('Generalprobe');
+  if (!S.probe) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">Generalprobe</div><h1>📝 Mini-Arbeit</h1>
+      <p class="muted">Aufgebaut wie die Übungsarbeit „Satzglieder/Wortarten“: Wortarten, Satzglieder, kleine Wörter, wörtliche Rede, Konjunktionen, Adverbien, Pronomen, Kommas, Groß/klein. ${PROBE_MAX} Punkte, etwa 20 Minuten. Erst am Ende siehst du, was richtig war.</p></header>
+      <div class="row"><button class="btn" id="start">Uhr starten</button></div>`;
+    document.getElementById('start').onclick = () => { S.probe = { ans: {}, start: Date.now(), done: false }; save(); render(); };
+    return;
+  }
+  const P = S.probe, A = P.ans, fertig = P.done;
+  let html = `<header class="top"><div class="eyebrow">Generalprobe</div>
+    <div class="th"><h1>📝 Mini-Arbeit</h1><span class="timer" id="uhr"></span></div></header>`;
+  if (fertig) {
+    const pct = Math.round(100 * P.punkte / PROBE_MAX);
+    html += `<div class="card"><div class="th"><span class="score">${P.punkte} / ${PROBE_MAX} Punkte</span><span class="score">Note ${grade(pct)}</span></div>
+      <p class="small muted">${pct} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrerin kann anders bewerten.</p>
+      <div class="row"><button class="btn" id="zumSpick">${S.plan.spick ? 'Zum Plan' : 'Weiter zum Spickzettel'}</button><button class="btn ghost" id="neu">Noch einmal von vorn</button></div></div>`;
+  }
+  PROBE.forEach(t => {
+    const pkt = fertig ? `${taskPunkte(t, A)} / ${taskMax(t)} P.` : `${taskMax(t)} P.`;
+    html += `<div class="card" data-t="${t.id}"><div class="th"><h3>${esc(t.h)}</h3><span class="pts">${pkt}</span></div>${t.hint ? `<p class="small muted">${esc(t.hint)}</p>` : ''}${probeTask(t, A, fertig)}</div>`;
+  });
+  if (!fertig) html += `<div class="row"><button class="btn" id="abgeben">Abgeben</button></div>`;
+  app.innerHTML = html;
+
+  const uhr = document.getElementById('uhr');
+  const tick = () => { const s = Math.floor(((P.end || Date.now()) - P.start) / 1000); const m = Math.floor(s / 60); uhr.textContent = '⏱ ' + m + ':' + String(s % 60).padStart(2, '0') + (fertig ? '' : m >= 20 ? ' – Zeit um, mach in Ruhe fertig' : ' / 20:00'); };
+  tick(); if (!fertig) timerId = setInterval(tick, 1000);
+
+  if (fertig) {
+    document.getElementById('neu').onclick = () => { if (confirm('Generalprobe neu beginnen?')) { S.probe = null; save(); render(); } };
+    document.getElementById('zumSpick').onclick = () => go(S.plan.spick ? 'home' : 'spick');
+    return;
+  }
+  app.querySelectorAll('select[data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = el.value; save(); });
+  app.querySelectorAll('input[type=radio][data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = +el.value; save(); });
+  app.querySelectorAll('.tok[data-k]').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, v = A[k] || { on: false, typ: '' }; v.on = !v.on; A[k] = v; save();
+    const y = window.scrollY; renderProbe(); window.scrollTo(0, y);
+  });
+  app.querySelectorAll('select[data-typ]').forEach(el => el.onchange = () => { A[el.dataset.typ].typ = el.value; save(); });
+  app.querySelectorAll('.gap[data-k]').forEach(g => g.onclick = () => { const k = g.dataset.k; A[k] = !A[k]; save(); g.classList.toggle('on', A[k]); g.textContent = A[k] ? ',' : ''; });
+  document.getElementById('abgeben').onclick = () => {
+    const leer = PROBE.reduce((n, t) => n + (t.type === 'segs' ? t.segs.filter(Array.isArray).filter((s, i) => !A[t.id + '-' + i]).length : t.type === 'picks' ? t.picks.filter((p, i) => A[t.id + '-' + i] === undefined).length : 0), 0);
+    if (!confirm(leer ? `Noch ${leer} Felder sind leer. Trotzdem abgeben?` : 'Arbeit abgeben?')) return;
+    P.done = true; P.end = Date.now(); P.punkte = PROBE.reduce((n, t) => n + taskPunkte(t, A), 0);
+    S.plan.probe = true; save(); go('probe');
+  };
+}
+function optHtml(opts, v) { return `<option value="">–</option>` + opts.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join(''); }
+function probeTask(t, A, fertig) {
+  if (t.type === 'segs') {
+    let n = -1;
+    return `<div class="segs">${t.segs.map(s => {
+      if (s === '|') return '<span style="flex-basis:100%;height:0"></span>';
+      if (!Array.isArray(s)) return `<span class="seg"><span class="w">${esc(s)}</span></span>`;
+      n++; const k = t.id + '-' + n, v = A[k] || '', opts = s[3] || t.o;
+      const cls = fertig ? (v === s[1] ? 'ok' : 'no') : '';
+      const wort = s[3] ? '' : `<span class="w ${s[2] ? 'b' : ''}">${esc(s[0])}</span>`;
+      return `<span class="seg">${wort}<select data-k="${k}" class="${cls}" ${fertig ? 'disabled' : ''} aria-label="${esc(s[0])}">${optHtml(opts, v)}</select>${fertig && v !== s[1] ? `<span class="sol">${esc(s[1])}</span>` : ''}</span>`;
+    }).join('')}</div>`;
+  }
+  if (t.type === 'picks') {
+    return t.picks.map((p, i) => { const k = t.id + '-' + i, v = A[k]; return `${p.q ? `<p class="frage">${esc(p.q)}</p>` : ''}<div class="radio">${p.o.map((o, j) => {
+      const cls = fertig ? (j === p.a ? 'ok' : (j === v ? 'no' : '')) : '';
+      return `<label class="${cls}"><input type="radio" name="${k}" data-k="${k}" value="${j}" ${v === j ? 'checked' : ''} ${fertig ? 'disabled' : ''}><span>${esc(o)}</span></label>`; }).join('')}</div>`; }).join('');
+  }
+  if (t.type === 'finden') {
+    return `<p class="txt">${findenTokens(t.text).map((x, i) => {
+      if (x.p) return '\u0000' + esc(x.w);
+      const k = t.id + '-' + i, v = A[k] || {};
+      let cls = v.on ? 'on' : '';
+      if (fertig) cls = x.a ? (v.on ? 'hit' : 'miss') : (v.on ? 'extra' : '');
+      const sel = v.on && (x.a || !fertig) ? `<select data-typ="${k}" ${fertig ? 'disabled' : ''} class="${fertig ? (v.typ === x.a ? 'ok' : 'no') : ''}">${optHtml(t.o, v.typ)}</select>${fertig && v.typ !== x.a ? `<span class="sol">${esc(x.a)}</span>` : ''}` : '';
+      const sol = fertig && x.a && !v.on ? `<span class="sol">${esc(x.a)}</span>` : '';
+      return (sel || sol) ? `<span class="seg" style="vertical-align:top"><button class="tok ${cls}" data-k="${k}" ${fertig ? 'disabled' : ''}>${esc(x.w)}</button>${sel}${sol}</span>` : `<button class="tok ${cls}" data-k="${k}" ${fertig ? 'disabled' : ''}>${esc(x.w)}</button>`;
+    }).join(' ').replace(/ \u0000/g, '')}</p><p class="small muted">Antippen markiert ein Wort, nochmal antippen hebt die Markierung auf. Falsch markierte Wörter kosten einen Punkt.</p>`;
+  }
+  if (t.type === 'kommas') {
+    return t.saetze.map((x, si) => {
+      const toks = parseKomma(x.s), pre = t.id + '-' + si;
+      let html = `<div class="ksatz">${toks.map((tk, i) => {
+        const k = pre + '-' + i, on = !!A[k];
+        let cls = on ? 'on' : '', txt = on ? ',' : '';
+        if (fertig) { cls = tk.req ? (on ? 'good' : 'miss') : (on ? (tk.opt ? 'good' : 'extra') : ''); if (tk.req) txt = ','; }
+        return `<span>${esc(tk.w)}</span>${i < toks.length - 1 ? `<button type="button" class="gap ${cls}" data-k="${k}" ${fertig ? 'disabled' : ''} aria-label="Komma nach ${esc(tk.w)}">${txt}</button>` : ''}`;
+      }).join('')}</div>`;
+      const gk = pre + '-g', gv = A[gk] || '';
+      html += `<div class="seg"><select data-k="${gk}" ${fertig ? 'disabled' : ''} class="${fertig ? (gv === x.g ? 'ok' : 'no') : ''}" aria-label="Begründung">${optHtml(KG, gv)}</select>${fertig && gv !== x.g ? `<span class="sol">${esc(x.g)}</span>` : ''}</div>`;
+      return html;
+    }).join('<hr style="border:0;border-top:1px solid var(--line);width:100%">');
+  }
+  return '';
+}
+
+// ===================================================================
+// SPICKZETTEL
+// ===================================================================
+const ALLE_MERK = ST_KEYS.flatMap(k => ST[k].merk.map((m, i) => ({ id: k + i, st: k, m })));
+function spickVorschlag() {
+  const w = weakest();
+  const rate = k => { const r = S.stat[k]; return r && r.n ? r.r / r.n : 1; };
+  const order = ST_KEYS.slice().sort((a, b) => (w.includes(b) - w.includes(a)) || rate(a) - rate(b));
+  const sel = [];
+  order.forEach(k => ST[k].merk.slice(0, 3).forEach((_, i) => { if (sel.length < 5 && sel.filter(x => x[0] === k).length < 2) sel.push(k + i); }));
+  // Wortart ≠ Satzglied gehört immer drauf – das war der Hauptfehler in der Übungsarbeit
+  if (!sel.includes('C0')) sel[4] = 'C0';
+  return sel;
+}
+function renderSpick() {
+  crumb('Spickzettel');
+  if (!S.spick) { S.spick = { sel: spickVorschlag(), own: '' }; save(); }
+  const SP = S.spick;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Zum Schluss</div><h1>🗒️ Dein Spickzettel</h1>
+    <p class="muted">Fünf Merksätze, die du dir heute Abend noch einmal durchliest. Vorgeschlagen sind die aus deinen schwächsten Stationen – du kannst sie ändern. (Natürlich nicht mit in die Arbeit nehmen 😉)</p></header>
+    <div class="card spick">${ST_KEYS.map(k => `<h3>${ST[k].icon} ${esc(ST[k].name)}</h3>${ST[k].merk.map((m, i) => `<label><input type="checkbox" data-id="${k + i}" ${SP.sel.includes(k + i) ? 'checked' : ''}><span>${esc(m)}</span></label>`).join('')}`).join('')}
+      <h3>✍️ Eigener Merksatz</h3><textarea id="own" rows="3" placeholder="z. B. Bei „begegnen“ immer: wem?">${esc(SP.own)}</textarea>
+      <p class="small muted" id="anz"></p></div>
+    <div class="row"><button class="btn" id="druck">Drucken</button><button class="btn ghost" id="fertig">${S.plan.spick ? 'Zum Plan' : 'Fertig für heute'}</button></div>`;
+  const anz = () => { document.getElementById('anz').textContent = SP.sel.length + ' ausgewählt' + (SP.sel.length > 5 ? ' – weniger ist mehr, fünf reichen.' : ''); };
+  anz();
+  app.querySelectorAll('[data-id]').forEach(c => c.onchange = () => { SP.sel = SP.sel.filter(x => x !== c.dataset.id); if (c.checked) SP.sel.push(c.dataset.id); save(); anz(); });
+  document.getElementById('own').oninput = e => { SP.own = e.target.value; save(); };
+  document.getElementById('druck').onclick = () => {
+    const items = ALLE_MERK.filter(x => SP.sel.includes(x.id)).map(x => `<li>${esc(x.m)}</li>`).join('') + (SP.own.trim() ? `<li>${esc(SP.own.trim())}</li>` : '');
+    document.getElementById('spickDruck').innerHTML = `<h2>Mein Spickzettel – Deutscharbeit</h2><ol>${items}</ol>`;
+    window.print();
+  };
+  document.getElementById('fertig').onclick = () => { S.plan.spick = true; save(); go('home'); };
+}
+
+render();
+</script>
+</body>
+</html>

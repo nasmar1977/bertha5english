@@ -154,10 +154,24 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **Alles gemischt**: Kombination aller Module (ohne Tabellentraining)
 - Makron-Unterstützung: Tiles zeigen ā/ē/ī/ō/ū, Tastatur-Eingabe 'a' passt zu 'ā'
 
+### 📕 Deutsch
+- **Letzter Tag vor der Arbeit** (`deutsch.html`, Karte im Hauptmenü): Klasse 6, Satzglieder/Wortarten und der Roman
+  „Wolf“ (Saša Stanišić). Plan in acht Schritten (etwa 75 min): Aufwärmen „Wortart und Satzglied“, Check mit zwei
+  Aufgaben je Station, die zwei schwächsten Stationen (fertig nach drei Richtigen in Folge), Pause, „Wolf“, Generalprobe,
+  Spickzettel. Stationen: A Satzglieder (Frageproben, Dativ- und Präpositionalobjekt), B Der-die-das-Detektiv
+  (Pronomenarten, Bezugswort), C Kleine Wörter (Präposition/Konjunktion/Adjektiv/Adverb, Adverbarten, neben-/unterordnend),
+  D Zeichen (Kommas antippen und begründen, wörtliche Rede), E Groß/klein. Gewichtet nach den Fehlern der korrigierten
+  Übungsarbeit; eigene Sätze, nichts aus dem Arbeitsblatt der Lehrerin übernommen.
+- „Wolf“: nur die Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“ (S. 34, S. 49, Kletterwald). Belege sortieren,
+  Musterabsatz zerlegen (Behauptung – Beleg – Erklärung), Formulierungshilfen (M 2), eigener Belege-Sammler, Stellungnahme
+  mit Aufbau-Checkliste und Musterlösung. Ohne KI.
+- Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 76 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
+  Lösungen erst nach dem Abgeben. Speicher: `deutsch-6b-wolf-v1`.
+
 ## 🎯 Aktueller Stand
 
-**Version:** 2.37.0
-**Datum:** 04.11.2026
+**Version:** 2.38.0
+**Datum:** 08.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -183,6 +197,8 @@ Vokabeln April: 24) + 27 Redewendungen
 |---|---|
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
+| `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
+| `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
 
@@ -205,6 +221,10 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.38.0 (08.11.2026)
+- Deutsch: neue Seite `deutsch.html` (letzter Tag vor der Deutscharbeit Kl. 6: Satzglieder/Wortarten und „Wolf“),
+  Karte `.lang-card.deutsch` im Hauptmenü, verlinkt wie `klassenarbeit.html`. Eigener Speicher `deutsch-6b-wolf-v1`.
 
 ### Version 2.37.0 (04.11.2026)
 - Musik: Runde 1 als `moldau-1.html` (aus dem Claude-Artefakt „Moldau & Holzbläser“, gleich umgewandelt wie

@@ -845,6 +845,9 @@
         .lang-card.musik {
             background: linear-gradient(135deg, #e0c3fc 0%, #c2e9fb 100%);
         }
+        .lang-card.deutsch {
+            background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+        }
         .lang-icon { font-size: 3em; margin-bottom: 10px; }
         .lang-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; }
         .lang-info { font-size: 1em; color: #666; }
@@ -2854,6 +2857,14 @@
                 <div class="lang-icon">🎻</div>
                 <div class="lang-title">Musik</div>
                 <div class="lang-info">Probearbeiten: Die Moldau &amp; Holzbläser</div>
+            </div>
+            <!-- Gabel: eigene Seite, eigener Speicher (deutsch.html) -->
+            <div class="lang-card deutsch" role="link" tabindex="0"
+                 onclick="location.href='deutsch.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='deutsch.html'">
+                <div class="lang-icon">📕</div>
+                <div class="lang-title">Deutsch</div>
+                <div class="lang-info">Satzglieder, Wortarten &amp; „Wolf“</div>
             </div>
         </div>
         <div class="taler-display">
@@ -7192,9 +7203,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.37.0';
+        const APP_VERSION = '2.38.0';
 
         const changelogEntries = [
+            {
+                version: '2.38.0',
+                date: '08.11.2026',
+                items: [
+                    '<b>Deutsch</b>: Neue Karte <b>📕 Deutsch</b> im Hauptmenü – der letzte Tag vor der Deutscharbeit: ein Plan in acht Schritten mit Stationen zu Satzgliedern, Pronomen, kleinen Wörtern, Kommas und Groß/klein, „Wolf“ (Kemi und Jörg – Freunde?), einer Generalprobe mit Note und einem Spickzettel.'
+                ]
+            },
             {
                 version: '2.37.0',
                 date: '04.11.2026',
