@@ -92,6 +92,12 @@ mark{background:var(--mark);color:inherit;padding:1px 3px;border-radius:3px;font
 .dots{display:flex;gap:4px}
 .dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
 .dots i.on{background:var(--ok)}
+.tippbox{display:grid;gap:6px}
+.tippbox .row{flex-wrap:nowrap;align-items:flex-start}
+.tippbtn{flex:none}
+.tipp{font-size:.88rem;color:var(--muted);min-height:1.3em}
+.tipps{margin:0;padding:10px 12px 10px 28px;background:var(--acc-soft);border-radius:8px;font-size:.88rem;display:grid;gap:4px}
+.tipps[hidden]{display:none}
 .merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
 .merk ul{margin:6px 0 0;padding-left:20px}
 .merk li{margin:3px 0}
@@ -203,6 +209,65 @@ const AA = ['Ort', 'Zeit', 'Grund', 'Art und Weise'];
 const NU = ['nebenordnend', 'unterordnend'];
 const KG = ['Aufzählung (Wörter oder Hauptsätze)', 'Nebensatz mit Konjunktion (weil, als, obwohl …)', 'Relativsatz (der, die, das …)'];
 const [AUFZ, NS, REL] = KG;
+
+// Tipps zu den Antworten: Frageprobe + Beispiel. Die Beispiele kommen in keiner Aufgabe vor – sie verraten nichts.
+const TIPP = {
+  [SUBJ]: 'Wer oder was? – „Der Vogel singt.“',
+  [PRAED]: 'Das gebeugte Verb, oft zweiteilig – „Wir haben gesungen.“',
+  [AKK]: 'Wen oder was? – „Ich rufe meinen Freund an.“',
+  [DAT]: 'Wem? – „Ich gebe dem Hund Futter.“',
+  [PRAEP]: 'Die Präposition gehört fest zum Verb: Auf wen? Worauf? Woran? – „Ich hoffe auf gutes Wetter.“',
+  [ZEIT]: 'Wann? Wie lange? Wie oft? – „Nach dem Essen gehen wir raus.“',
+  [ORT]: 'Wo? Wohin? Woher? – „Der Ball liegt hinter dem Sofa.“',
+  [GRUND]: 'Warum? Weshalb? – „Vor Freude sprang er hoch.“',
+  [ART]: 'Wie? Auf welche Weise? – „Sie spricht leise.“',
+  'Nomen': 'Lebewesen, Dinge, Gefühle – großgeschrieben, mit Artikel: der Baum, die Freude',
+  'Verb': 'Tätigkeit oder Zustand, wird gebeugt: laufen – ich laufe – er lief',
+  'Adjektiv': 'Eigenschaft, steigerbar und beugbar: groß – größer – der große Hund',
+  'Adverb': 'Umstand (wo, wann, warum, wie), unveränderlich: hier, damals, daher',
+  'Pronomen': 'Steht für ein Nomen oder begleitet es: er, sein, jemand',
+  'Artikel': 'Begleiter direkt vor dem Nomen – nur der, die, das, ein, eine: das Auto',
+  'Präposition': 'Verhältniswort vor Nomen oder Pronomen: auf, wegen, neben',
+  'Konjunktion': 'Bindewort zwischen Wörtern oder Sätzen: oder, sondern, obwohl',
+  'Personalpronomen': 'Steht für eine Person oder Sache: ich, du, er, wir, euch',
+  'Possessivpronomen': 'Zeigt, wem etwas gehört: mein, dein, unser – „unser Garten“',
+  'Demonstrativpronomen': 'Zeigt betont auf etwas: jener, solcher – „Jenes Haus ist alt.“',
+  'Relativpronomen': 'Leitet nach einem Komma einen Nebensatz ein, Verb am Ende – „die Blume, die blüht“',
+  'Reflexivpronomen': 'Zeigt zurück auf das Subjekt – „Ich freue mich.“',
+  'Fragepronomen': 'Fragt nach etwas – „Was machst du?“, „Welcher Bus fährt?“',
+  'Indefinitpronomen': 'Unbestimmte Person oder Menge: jemand, niemand, alle, einige',
+  'kein Pronomen (Adjektiv)': 'Eigenschaftswort, das man beugen kann: der alte, die alte, das alte …',
+  'Ort': 'Wo? Wohin? – hier, überall, hinten',
+  'Zeit': 'Wann? Wie lange? – jetzt, gestern, nie',
+  'Grund': 'Warum? – deswegen, daher',
+  'Art und Weise': 'Wie? – anders, so, vergebens',
+  'nebenordnend': 'Der Satz danach bleibt normal – „…, sondern ich bleibe hier.“',
+  'unterordnend': 'Das Verb rutscht ans Ende – „…, obwohl ich müde war.“',
+  [AUFZ]: '„Ich mag Hunde, Katzen und Pferde.“',
+  [NS]: '„Wir spielten weiter, obwohl es spät war.“',
+  [REL]: '„Das Lied, das wir singen, ist neu.“',
+  'Behauptung': 'Was willst du zeigen? Der erste Satz eines Arguments.',
+  'Beleg': 'Was passiert im Buch? Die Textstelle, am besten mit Seite.',
+  'Erklärung': 'Was zeigt die Textstelle? Was kann man daraus schließen?',
+  'Kein Beleg': 'Keine Textstelle aus dem Roman – nur eine Meinung oder ein allgemeiner Satz.'
+};
+const tippAttr = o => TIPP[o] ? ` title="${esc(TIPP[o])}" data-h="${esc(o)}"` : '';
+// unter jede Antwortgruppe mit Tipps: Zeile für Hover/Fokus und ein Knopf, der alle Tipps aufklappt (für iPad ohne Hover)
+function tippsAn(host) {
+  host.querySelectorAll('.opts').forEach(g => {
+    const hs = [...g.querySelectorAll('.opt[data-h]')].map(b => b.dataset.h);
+    if (!hs.length || (g.nextElementSibling && g.nextElementSibling.classList.contains('tippbox'))) return;
+    const box = document.createElement('div'); box.className = 'tippbox';
+    box.innerHTML = `<div class="row"><button type="button" class="linkbtn tippbtn">💡 Tipps</button><span class="tipp" aria-live="polite"></span></div>
+      <ul class="tipps" hidden>${hs.map(h => `<li><b>${esc(h)}:</b> ${esc(TIPP[h])}</li>`).join('')}</ul>`;
+    g.after(box);
+    const zeile = box.querySelector('.tipp'), liste = box.querySelector('.tipps');
+    box.querySelector('.tippbtn').onclick = () => { liste.hidden = !liste.hidden; };
+    const zeig = e => { const b = e.target.closest('.opt[data-h]'); if (b) zeile.innerHTML = `<b>${esc(b.dataset.h)}:</b> ${esc(TIPP[b.dataset.h])}`; };
+    g.addEventListener('mouseover', zeig); g.addEventListener('focusin', zeig);
+    g.addEventListener('mouseleave', () => { zeile.textContent = ''; });
+  });
+}
 
 // ===================================================================
 // STATIONEN – eigene Sätze, nach den Fehlern in der Übungsarbeit gewichtet
@@ -530,6 +595,7 @@ function renderRun() {
     <div class="card" id="karte"></div><div id="merkHier"></div>`;
   if (isSt) document.getElementById('merkAuf').onclick = () => { const m = document.getElementById('merkHier'); m.innerHTML = m.innerHTML ? '' : merkBox(RUN.kind); };
   renderCard(it, document.getElementById('karte'), ok => answered(it, ok));
+  tippsAn(document.getElementById('karte'));
 }
 
 function answered(it, ok) {
@@ -579,6 +645,8 @@ function renderRunEnd() {
 // KARTEN
 // ===================================================================
 function feedback(host, ok, it, done, extra) {
+  host.querySelectorAll('.tippbox').forEach(b => b.remove());
+  host.querySelectorAll('.opt[title]').forEach(b => b.removeAttribute('title'));
   const fb = host.querySelector('.fb');
   fb.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Leider nicht.'}</b> ${extra || ''}${esc(it.e || '')}</div>
     <div class="row"><button class="btn" id="weiterK">Weiter</button></div>`;
@@ -590,7 +658,7 @@ function renderCard(it, host, done) {
   const opts = it.o || (it.st === 'A' ? SG : it.st === 'B' ? PR : WA);
   const q = it.q || (ST[it.st] && ST[it.st].q) || '';
   host.innerHTML = `${it.s ? `<p class="satz">${fmt(it.s)}</p>` : ''}<p class="frage">${esc(q)}</p>
-    <div class="opts ${it.lst ? 'liste' : ''}">${shuffleIf(opts, it).map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="fb"></div>`;
+    <div class="opts ${it.lst ? 'liste' : ''}">${shuffleIf(opts, it).map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div><div class="fb"></div>`;
   host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
     if (host.dataset.locked) return; host.dataset.locked = '1';
     const ok = b.dataset.v === it.a;
@@ -605,8 +673,8 @@ function shuffleIf(opts, it) { return it.lst ? shuffle(opts) : opts; }
 function cardDoppel(it, host, done) {
   const sel = { a1: null, a2: null };
   host.innerHTML = `<p class="satz">${fmt(it.s)}</p>
-    <p class="frage">1. Welche Wortart?</p><div class="opts" data-r="a1">${WA.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
-    <p class="frage">2. Welches Satzglied ist es hier?</p><div class="opts" data-r="a2">${SG.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <p class="frage">1. Welche Wortart?</p><div class="opts" data-r="a1">${WA.map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div>
+    <p class="frage">2. Welches Satzglied ist es hier?</p><div class="opts" data-r="a2">${SG.map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div>
     <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
   const pb = host.querySelector('#pruef');
   host.querySelectorAll('.opts').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
@@ -656,7 +724,7 @@ function cardKomma(it, host, done) {
   const toks = parseKomma(it.s), on = {};
   let grund = null;
   host.innerHTML = `<p class="frage">${esc(ST.D.q)}</p><div class="ksatz">${kommaHtml(toks)}</div>
-    <p class="frage">Begründung:</p><div class="opts liste">${KG.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+    <p class="frage">Begründung:</p><div class="opts liste">${KG.map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div>
     <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
   const pb = host.querySelector('#pruef');
   host.querySelectorAll('.gap').forEach(g => g.onclick = () => { if (host.dataset.locked) return; const i = +g.dataset.i; on[i] = !on[i]; g.classList.toggle('on', on[i]); g.textContent = on[i] ? ',' : ''; });
@@ -714,7 +782,7 @@ function wolfPick(list, store, optsOf, key) {
     const v = store[i];
     const opts = optsOf(it);
     return `<div class="card" data-wk="${key}" data-i="${i}"><p class="satz">${fmt(it.s)}</p>
-      <div class="opts">${opts.map(o => { const lab = key === 'sort' ? SORT_O[o] : o; const cls = v === undefined ? '' : (o === it.a ? 'ok' : (o === v ? 'no' : '')); return `<button class="opt ${cls}" data-v="${esc(o)}" ${v !== undefined ? 'disabled' : ''}>${esc(lab)}</button>`; }).join('')}</div>
+      <div class="opts">${opts.map(o => { const lab = key === 'sort' ? SORT_O[o] : o; const cls = v === undefined ? '' : (o === it.a ? 'ok' : (o === v ? 'no' : '')); return `<button class="opt ${cls}" data-v="${esc(o)}"${v === undefined ? tippAttr(o) : ''} ${v !== undefined ? 'disabled' : ''}>${esc(lab)}</button>`; }).join('')}</div>
       ${v !== undefined && it.e ? `<p class="small ${v === it.a ? '' : ''}">${v === it.a ? '✓ ' : '✗ '}${esc(it.e)}</p>` : (v !== undefined ? `<p class="small">${v === it.a ? '✓ Richtig.' : '✗ Richtig ist: ' + esc(it.a) + '.'}</p>` : '')}</div>`;
   }).join('');
 }
@@ -783,6 +851,7 @@ function renderWolf() {
 
   <div class="row" style="margin-top:24px"><button class="btn wolf" id="wfertig">${S.plan.wolf ? 'Zurück zum Plan' : 'Fertig – weiter zur Generalprobe'}</button></div>`;
 
+  app.querySelectorAll('[data-wk]').forEach(card => { if (card.querySelector('.opt:not(:disabled)')) tippsAn(card); });
   app.querySelectorAll('[data-wk]').forEach(card => card.querySelectorAll('.opt').forEach(b => b.onclick = () => {
     const store = W[card.dataset.wk], i = +card.dataset.i;
     if (store[i] !== undefined) return;
