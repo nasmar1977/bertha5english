@@ -107,8 +107,16 @@ mark{background:var(--mark);color:inherit;padding:1px 3px;border-radius:3px;font
 .ksatz{display:flex;flex-wrap:wrap;align-items:baseline;row-gap:6px;font-size:1.15rem}
 .gap{width:30px;height:40px;margin:0 1px;border:1px dashed var(--line);border-radius:6px;background:transparent;color:var(--ink);font-weight:700;font-size:1.2rem;line-height:1;padding:0;vertical-align:baseline}
 .gap.on{border-style:solid;border-color:var(--acc);background:var(--acc-soft)}
-.gap.miss{border-color:var(--bad);border-style:solid;background:var(--bad-soft)}
-.gap.extra{border-color:var(--bad);border-style:solid;background:var(--bad-soft);text-decoration:line-through}
+.rgap{width:auto;min-width:30px;padding:0 5px;white-space:nowrap}
+.rgap.sel{outline:3px solid var(--acc);outline-offset:1px}
+.rpal{margin-top:6px}
+.rpal .opt{min-width:48px;justify-content:center;text-align:center;font-size:1.15rem;font-weight:700}
+.gap.miss{border:2px dashed var(--ok);color:var(--ok);background:transparent}
+.gap.extra{border:2px solid var(--bad);background:var(--bad-soft);color:var(--bad)}
+.gap s{color:var(--bad);margin-right:3px}
+.rbox:not(.aktiv) .rpal{display:none}
+.rbox:not(.aktiv) .rgap.sel{outline:none}
+.rpal .opt:focus{background:var(--bg)}
 .gap.good{border-color:var(--ok);border-style:solid;background:var(--ok-soft)}
 .gap:disabled{cursor:default}
 
@@ -313,6 +321,7 @@ const ST = {
       'Gehört die Präposition fest zum Verb (sich erinnern an, sprechen über, achten auf)? → Präpositionalobjekt. Frage: Woran? Worüber? Auf wen?',
       'Kann man die Präposition austauschen (auf / unter / neben dem Schrank, vor / nach dem Essen)? → adverbiale Bestimmung, kein Objekt.',
       'Die Art der adverbialen Bestimmung findest du mit wo? wohin? wann? warum? wie?',
+      'Satzglieder abgrenzen mit der Umstellprobe: Was du zusammen an den Satzanfang stellen kannst, ist ein Satzglied. Das Prädikat bleibt an 2. Stelle und ist selbst ein Satzglied – sein zweiter Teil (aus, geholfen) steht am Satzende.',
       'Wann? → Zeit (Abz). Wo? → Ort (Abo). Warum? → Grund (Abg). Wie? → Art und Weise (Abaw).',
       'Verben mit Dativ: begegnen, helfen, danken, gehorchen, gefallen – „seiner Freundin begegnen“ ist ein Dativobjekt.'
     ],
@@ -334,7 +343,12 @@ const ST = {
       { s: 'Er stellt die Vase [[auf den Tisch]].', a: ORT, e: 'Wohin stellt er die Vase? – Auf den Tisch. Austauschbar: neben den Tisch, unter den Tisch → adverbiale Bestimmung des Ortes, kein Präpositionalobjekt.' },
       { s: 'Paul dankt [[seiner Freundin]] für die Hilfe.', a: DAT, e: 'Wem dankt Paul? – Seiner Freundin.' },
       { s: 'Sie interessiert sich [[für Pferde]].', a: PRAEP, e: 'Wofür interessiert sie sich? – Für Pferde. „Sich interessieren für“ gehört fest zusammen.' },
-      { s: '[[Aus Angst]] versteckt sich der Hund unter dem Bett.', a: GRUND, e: 'Warum versteckt sich der Hund? – Aus Angst.' }
+      { s: '[[Aus Angst]] versteckt sich der Hund unter dem Bett.', a: GRUND, e: 'Warum versteckt sich der Hund? – Aus Angst.' },
+      { t: 'grenzen', s: 'Der kleine Hund | bellt | jeden Morgen | im Garten.', e: 'Umstellprobe: „Jeden Morgen bellt der kleine Hund im Garten.“ – „jeden Morgen“ wandert zusammen, also ein Satzglied. 4 Satzglieder.' },
+      { t: 'grenzen', s: 'Meine Schwester | schenkt | ihrer besten Freundin | ein Buch.', e: 'Umstellprobe: „Ihrer besten Freundin schenkt meine Schwester ein Buch.“ – „ihrer besten Freundin“ bleibt zusammen. 4 Satzglieder.' },
+      { t: 'grenzen', s: 'Nach der Schule | warten | die Kinder | auf ihre Eltern.', e: 'Umstellprobe: „Die Kinder warten nach der Schule auf ihre Eltern.“ 4 Satzglieder.' },
+      { t: 'grenzen', s: 'Wegen des Gewitters | fiel | das Konzert | gestern | aus.', e: 'Umstellprobe: „Gestern fiel das Konzert wegen des Gewitters aus.“ – „fiel … aus“ ist ein Prädikat in zwei Teilen: „aus“ steht am Ende, gehört aber zu „fiel“. 4 Satzglieder, 5 Teile.' },
+      { t: 'grenzen', s: 'Der neue Schüler | hat | uns | sofort | geholfen.', e: 'Umstellprobe: „Sofort hat uns der neue Schüler geholfen.“ – „hat … geholfen“ ist das Prädikat in zwei Teilen. 4 Satzglieder, 5 Teile.' }
     ]
   },
   B: {
@@ -423,7 +437,7 @@ const ST = {
       'Komma zwischen Haupt- und Nebensatz: vor oder nach weil, als, obwohl, nachdem, dass.',
       'Ein eingeschobener Relativsatz steht zwischen zwei Kommas: Die Katze, die im Garten schläft, heißt Mia.',
       'Begleitsatz vorn: Opa fragte: „Wo ist meine Brille?“',
-      'Begleitsatz hinten: „Ich bin müde“, sagte Ben. – Frage- und Ausrufezeichen bleiben stehen: „Wo ist Ben?“, fragte Opa.',
+      'Begleitsatz hinten: „Ich bin müde“, sagte Ben. – Frage- und Ausrufezeichen bleiben stehen, und trotzdem folgt nach “ ein Komma: „Wo ist Ben?“, fragte Opa.',
       'Begleitsatz in der Mitte: „Morgen“, sagte Ben, „gehen wir schwimmen.“'
     ],
     items: [
@@ -437,18 +451,12 @@ const ST = {
       { t: 'komma', s: 'Wir kaufen Brot, Käse, Milch und Eier.', g: AUFZ, e: 'Aufzählung – Kommas zwischen den Wörtern, keins vor „und“.' },
       { t: 'komma', s: 'Ich glaube, dass morgen die Sonne scheint.', g: NS, e: '„dass morgen die Sonne scheint“ ist ein Nebensatz – Komma vor „dass“.' },
       { t: 'komma', s: 'Die Jacke, die im Flur hängt, gehört meiner Schwester.', g: REL, e: 'Eingeschobener Relativsatz – Komma davor und danach.' },
-      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz vorn)', lst: true,
-        o: ['Mama sagte: „Räum bitte dein Zimmer auf!“', 'Mama sagte „Räum bitte dein Zimmer auf!“', 'Mama sagte: „Räum bitte dein Zimmer auf“!', 'Mama sagte, „räum bitte dein Zimmer auf!“'],
-        a: 'Mama sagte: „Räum bitte dein Zimmer auf!“', h: 'Beispiel mit anderem Satz: Papa rief: „Das Essen ist fertig!“', e: 'Doppelpunkt nach dem Begleitsatz, das Ausrufezeichen steht innerhalb der Anführungszeichen, groß weiter.' },
-      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz hinten)', lst: true,
-        o: ['„Ich habe Hunger“, rief Tim.', '„Ich habe Hunger.“, rief Tim.', '„Ich habe Hunger“ rief Tim.', '„Ich habe Hunger,“ rief Tim.'],
-        a: '„Ich habe Hunger“, rief Tim.', h: 'Beispiel mit anderem Satz: „Das Essen ist fertig“, rief Papa.', e: 'Der Punkt der Rede fällt weg, das Komma steht nach dem schließenden Anführungszeichen.' },
-      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Frage, Begleitsatz hinten)', lst: true,
-        o: ['„Kommst du mit?“, fragte Lea.', '„Kommst du mit“?, fragte Lea.', '„Kommst du mit?“ fragte Lea.', '„Kommst du mit“, fragte Lea?'],
-        a: '„Kommst du mit?“, fragte Lea.', h: 'Beispiel mit anderem Satz: „Hast du Hunger?“, fragte Papa.', e: 'Das Fragezeichen bleibt in den Anführungszeichen, danach trotzdem ein Komma vor dem Begleitsatz.' },
-      { s: '', q: 'Welcher Satz ist richtig geschrieben? (Begleitsatz in der Mitte)', lst: true,
-        o: ['„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', '„Wenn du willst, sagte Oma, backen wir einen Kuchen.“', '„Wenn du willst“ sagte Oma „backen wir einen Kuchen.“', '„Wenn du willst“, sagte Oma. „Backen wir einen Kuchen.“'],
-        a: '„Wenn du willst“, sagte Oma, „backen wir einen Kuchen.“', h: 'Beispiel mit anderem Satz: „Komm schnell“, rief Papa, „das Essen ist fertig.“', e: 'Der Begleitsatz in der Mitte steht zwischen zwei Kommas, jeder Redeteil hat eigene Anführungszeichen.' }
+      { t: 'rede', s: 'Der Trainer rief: „Lauft schneller!“', h: 'Begleitsatz vorn – Beispiel mit anderem Satz: Papa rief: „Das Essen ist fertig!“', e: 'Begleitsatz vorn: Doppelpunkt, dann „ … “. Das Ausrufezeichen gehört zur Rede und steht vor dem schließenden Zeichen.' },
+      { t: 'rede', s: 'Mia fragte: „Hast du meinen Schlüssel gesehen?“', h: 'Begleitsatz vorn – Beispiel mit anderem Satz: Papa fragte: „Hast du Hunger?“', e: 'Doppelpunkt nach dem Begleitsatz, das Fragezeichen bleibt in der Rede.' },
+      { t: 'rede', s: '„Ich komme gleich“, sagte Paul.', h: 'Begleitsatz hinten – Beispiel mit anderem Satz: „Das Essen ist fertig“, rief Papa.', e: 'Begleitsatz hinten: Der Punkt der Rede fällt weg, nach dem schließenden “ kommt ein Komma.' },
+      { t: 'rede', s: '„Wo bist du?“, rief die Mutter.', h: 'Begleitsatz hinten – Beispiel mit anderem Satz: „Hast du Hunger?“, fragte Papa.', e: 'Das Fragezeichen bleibt in der Rede – trotzdem kommt nach “ ein Komma vor dem Begleitsatz.' },
+      { t: 'rede', s: '„Das ist ungerecht!“, schimpfte Lukas.', h: 'Begleitsatz hinten – Beispiel mit anderem Satz: „Komm sofort her!“, rief Papa.', e: 'Das Ausrufezeichen bleibt in der Rede, nach “ kommt ein Komma.' },
+      { t: 'rede', s: '„Wenn es regnet“, meinte Opa, „bleiben wir zu Hause.“', h: 'Begleitsatz in der Mitte – Beispiel mit anderem Satz: „Morgen“, sagte Papa, „fahren wir ans Meer.“', e: 'Begleitsatz in der Mitte: Er steht zwischen zwei Kommas, jeder Redeteil hat eigene Anführungszeichen. Der zweite Teil geht klein weiter, weil der Satz der Rede weitergeht.' }
     ]
   },
   E: {
@@ -702,6 +710,8 @@ function feedback(host, ok, it, done, extra) {
 function renderCard(it, host, done) {
   if (it.t === 'doppel') return cardDoppel(it, host, done);
   if (it.t === 'komma') return cardKomma(it, host, done);
+  if (it.t === 'rede') return cardRede(it, host, done);
+  if (it.t === 'grenzen') return cardGrenzen(it, host, done);
   const opts = it.o || (it.st === 'A' ? SG : it.st === 'B' ? PR : WA);
   const q = it.q || (ST[it.st] && ST[it.st].q) || '';
   host.innerHTML = `${it.s ? `<p class="satz">${fmt(it.s)}</p>` : ''}<p class="frage">${esc(q)}</p>
@@ -743,6 +753,92 @@ function cardDoppel(it, host, done) {
   };
 }
 
+// Karten-Tipp als Knopf zum Aufklappen
+function tippBox(h) { return h ? `<div class="tippbox"><div class="row"><button type="button" class="linkbtn tippbtn">💡 Tipp</button></div><ul class="tipps" hidden><li>${esc(h)}</li></ul></div>` : ''; }
+function tippBinden(host) { const tb = host.querySelector('.tippbox .tippbtn'); if (tb) tb.onclick = () => { const l = tb.closest('.tippbox').querySelector('.tipps'); l.hidden = !l.hidden; }; }
+
+// ---- Wörtliche Rede: Lücken vor, zwischen und nach den Wörtern; Zeichen aus einer Leiste ----
+const REDE_O = ['', ',', ':', '„', '“', '“,', ': „', ', „'];
+function parseRede(sol) {
+  const words = [], lead = [], trail = [];
+  sol.split(' ').forEach(t => {
+    let l = ''; while (t[0] === '„') { l += '„'; t = t.slice(1); }
+    let tr = ''; while (/[“,:]$/.test(t)) { tr = t.slice(-1) + tr; t = t.slice(0, -1); }
+    words.push(t); lead.push(l); trail.push(tr);
+  });
+  const gaps = [lead[0]];
+  for (let i = 1; i < words.length; i++) gaps.push(trail[i - 1] + (trail[i - 1] && lead[i] ? ' ' : '') + lead[i]);
+  gaps.push(trail[words.length - 1]);
+  return { words, gaps };
+}
+function redeHtml(r, vals, fertig) {
+  const gap = i => {
+    const v = vals[i] || '', soll = r.gaps[i];
+    let cls = v ? 'on' : '', html = esc(v);
+    if (fertig) {
+      // fehlend: Lösung grün gestrichelt (eigene falsche Eingabe durchgestrichen davor); zu viel: rot mit ✗
+      if (soll) { cls = v === soll ? 'good' : 'miss'; if (v !== soll) html = (v ? `<s>${esc(v)}</s>` : '') + esc(soll); }
+      else if (v) { cls = 'extra'; html = '✗ ' + esc(v); }
+    }
+    return `<button type="button" class="gap rgap ${cls}" data-g="${i}" ${fertig ? 'disabled' : ''} aria-label="Lücke ${i + 1}: ${v ? esc(v) : 'leer'}">${html}</button>`;
+  };
+  return `<div class="ksatz">${r.words.map((w, i) => gap(i) + `<span>${esc(w)}</span>`).join('')}${gap(r.words.length)}</div>
+    ${fertig ? '' : `<div class="opts rpal">${REDE_O.map(o => `<button type="button" class="opt" data-m="${esc(o)}">${o ? esc(o) : 'nichts'}</button>`).join('')}</div>`}`;
+}
+// nur ein Satz ist aktiv: dort Auswahlring und Zeichenleiste (wichtig in der Generalprobe mit mehreren Sätzen)
+function redeBinden(box, vals, onChange) {
+  let sel = 0;
+  const zeig = () => box.querySelectorAll('.rgap').forEach(g => g.classList.toggle('sel', +g.dataset.g === sel));
+  const aktiv = () => { document.querySelectorAll('.rbox.aktiv').forEach(b => { if (b !== box) b.classList.remove('aktiv'); }); box.classList.add('aktiv'); };
+  box.querySelectorAll('.rgap').forEach(g => g.onclick = () => { sel = +g.dataset.g; aktiv(); zeig(); });
+  box.querySelectorAll('.rpal .opt').forEach(b => b.onclick = () => {
+    const m = b.dataset.m, g = box.querySelector(`.rgap[data-g="${sel}"]`);
+    vals[sel] = m; g.textContent = m; g.classList.toggle('on', !!m); g.setAttribute('aria-label', `Lücke ${sel + 1}: ${m || 'leer'}`);
+    onChange(sel, m); b.blur(); g.focus({ preventScroll: true });
+  });
+  zeig();
+}
+function cardRede(it, host, done) {
+  const r = parseRede(it.s), vals = [];
+  host.innerHTML = `<p class="frage">Setze die Zeichen der wörtlichen Rede. Tippe eine Lücke an und wähle unten das Zeichen.</p>
+    <div class="rbox aktiv">${redeHtml(r, vals, false)}</div>
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div>${tippBox(it.h)}<div class="fb"></div>`;
+  tippBinden(host);
+  redeBinden(host.querySelector('.rbox'), vals, () => { host.querySelector('#pruef').disabled = !vals.some(Boolean); });
+  host.querySelector('#pruef').onclick = () => {
+    if (host.dataset.locked) return; host.dataset.locked = '1'; host.querySelector('#pruef').disabled = true;
+    const ok = r.gaps.every((g, i) => (vals[i] || '') === g);
+    host.querySelector('.rbox').innerHTML = redeHtml(r, vals, true);
+    feedback(host, ok, it, done, ok ? '' : 'Richtig: <i>' + esc(it.s) + '</i> ');
+  };
+}
+
+// ---- Satzgliedgrenzen: Lösung als „Teil | Teil | Teil“ ----
+const GRENZ_TIPP = 'Umstellprobe: Was du zusammen an den Satzanfang stellen kannst, ist ein Satzglied – „Im Sommer | fahren | wir | ans Meer.“ → „Wir fahren im Sommer ans Meer.“';
+function parseGrenzen(sol) {
+  const words = [], cut = new Set();
+  sol.split(' | ').forEach((sg, si, all) => { sg.split(' ').forEach(w => words.push(w)); if (si < all.length - 1) cut.add(words.length - 1); });
+  return { words, cut };
+}
+function cardGrenzen(it, host, done) {
+  const r = parseGrenzen(it.s), on = {};
+  host.innerHTML = `<p class="frage">Wo endet ein Satzglied? Tippe zwischen die Wörter, um eine Grenze zu setzen.</p>
+    <div class="ksatz">${r.words.map((w, i) => `<span>${esc(w)}</span>${i < r.words.length - 1 ? `<button type="button" class="gap" data-i="${i}" aria-label="Grenze nach ${esc(w)}"></button>` : ''}`).join('')}</div>
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div>${tippBox(it.h || GRENZ_TIPP)}<div class="fb"></div>`;
+  tippBinden(host);
+  host.querySelectorAll('.gap').forEach(g => g.onclick = () => { if (host.dataset.locked) return; const i = +g.dataset.i; on[i] = !on[i]; g.classList.toggle('on', on[i]); g.textContent = on[i] ? '|' : ''; host.querySelector('#pruef').disabled = !Object.values(on).some(Boolean); });
+  host.querySelector('#pruef').onclick = () => {
+    if (host.dataset.locked) return; host.dataset.locked = '1'; host.querySelector('#pruef').disabled = true;
+    let ok = true;
+    host.querySelectorAll('.gap').forEach(g => {
+      const i = +g.dataset.i, soll = r.cut.has(i); g.disabled = true;
+      if (soll) { g.textContent = '|'; g.classList.add(on[i] ? 'good' : 'miss'); if (!on[i]) ok = false; }
+      else if (on[i]) { g.classList.add('extra'); g.textContent = '✗'; ok = false; }
+    });
+    feedback(host, ok, it, done, ok ? '' : 'Richtig: <i>' + esc(it.s) + '</i> ');
+  };
+}
+
 function parseKomma(s) {
   return s.split(' ').map(t => {
     if (t.endsWith('(,)')) return { w: t.slice(0, -3), opt: true };
@@ -766,7 +862,7 @@ function kommaZeigen(host, toks, on) {
   host.querySelectorAll('.gap').forEach(g => {
     const i = +g.dataset.i, t = toks[i]; g.disabled = true;
     if (t.req) { g.textContent = ','; g.classList.add(on[i] ? 'good' : 'miss'); }
-    else if (on[i]) { if (t.opt) g.classList.add('good'); else g.classList.add('extra'); }
+    else if (on[i]) { if (t.opt) g.classList.add('good'); else { g.classList.add('extra'); g.textContent = '✗'; } }
   });
 }
 function cardKomma(it, host, done) {
@@ -965,10 +1061,10 @@ const PROBE = [
   { id: 'g3', h: '3. Präposition, Konjunktion, Adjektiv oder Adverb? Bestimme die fett gedruckten Wörter.', type: 'segs', o: KW, segs: [
     ['Als', 'Konjunktion', 1], 'Tim', ['aus', 'Präposition', 1], 'der Schule kam, rief er', ['fröhlich', 'Adjektiv', 1], ['nach', 'Präposition', 1], 'seiner Mutter.',
     ['Deshalb', 'Adverb', 1], 'kam sie', ['sehr', 'Adverb', 1], ['schnell', 'Adjektiv', 1], ['in', 'Präposition', 1], 'den Flur', ['und', 'Konjunktion', 1], 'umarmte ihn.'] },
-  { id: 'g4', h: '4. Wörtliche Rede: Welcher Satz ist jeweils richtig?', type: 'picks', picks: [
-    { o: ['Die Mutter fragte: „Wie war die Schule?“', 'Die Mutter fragte „Wie war die Schule?“', 'Die Mutter fragte: „Wie war die Schule“?', 'Die Mutter fragte, „wie war die Schule?“'], a: 0 },
-    { o: ['„Heute, sagte Tim, habe ich eine Eins geschrieben.“', '„Heute“, sagte Tim, „habe ich eine Eins geschrieben.“', '„Heute“ sagte Tim „habe ich eine Eins geschrieben.“', '„Heute“, sagte Tim. „Habe ich eine Eins geschrieben.“'], a: 1 },
-    { o: ['„Das ist toll“!, rief die Mutter.', '„Das ist toll!“ rief die Mutter.', '„Das ist toll.“, rief die Mutter.', '„Das ist toll!“, rief die Mutter.'], a: 3 }] },
+  { id: 'g4', h: '4. Setze die fehlenden Zeichen der wörtlichen Rede.', hint: 'Tippe eine Lücke an und wähle unten das Zeichen. Ein Punkt pro richtigem Zeichen; falsch oder zu viel gesetzte Zeichen kosten einen Punkt.', type: 'rede', saetze: [
+    'Die Mutter fragte: „Wie war es in der Schule?“',
+    '„Heute“, sagte Tim, „habe ich eine Eins geschrieben.“',
+    '„Das ist toll!“, rief die Mutter.'] },
   { id: 'g5', h: '5. Ist die Konjunktion nebenordnend oder unterordnend?', type: 'picks', picks: [
     { q: '„Obwohl es kalt war, gingen wir baden.“ – obwohl', o: NU, a: 1 },
     { q: '„Ich habe gelernt, aber die Aufgabe war schwer.“ – aber', o: NU, a: 0 }] },
@@ -997,6 +1093,7 @@ function taskMax(t) {
   if (t.type === 'segs') return t.segs.filter(Array.isArray).length;
   if (t.type === 'picks') return t.picks.length;
   if (t.type === 'finden') return 2 * findenTokens(t.text).filter(x => x.a).length;
+  if (t.type === 'rede') return t.saetze.reduce((n, x) => n + parseRede(x).gaps.join('').replace(/ /g, '').length, 0);
   if (t.type === 'kommas') return t.saetze.reduce((n, x) => n + parseKomma(x.s).filter(k => k.req).length + 1, 0);
   return 0;
 }
@@ -1011,6 +1108,15 @@ function taskPunkte(t, A) {
     const treffer = Math.max(0, hit - falsch);
     return treffer + Math.min(typ, treffer);
   }
+  if (t.type === 'rede') return t.saetze.reduce((n, x, si) => {
+    // ein Punkt pro richtigem Zeichen („: „“ sind zwei); jedes überzählige oder falsche Zeichen kostet einen
+    const r = parseRede(x); let gut = 0, falsch = 0;
+    r.gaps.forEach((g, gi) => {
+      const soll = g.replace(/ /g, '').split(''), ist = (A[t.id + '-' + si + '-' + gi] || '').replace(/ /g, '').split('');
+      ist.forEach(c => { const k = soll.indexOf(c); if (k >= 0) { gut++; soll.splice(k, 1); } else falsch++; });
+    });
+    return n + Math.max(0, gut - falsch);
+  }, 0);
   if (t.type === 'kommas') return t.saetze.reduce((n, x, si) => {
     const toks = parseKomma(x.s), on = {}; toks.forEach((_, i) => on[i] = !!A[t.id + '-' + si + '-' + i]);
     const r = kommaRichtig(toks, on);
@@ -1032,7 +1138,7 @@ function renderProbe() {
   crumb('Generalprobe');
   if (!S.probe) {
     app.innerHTML = `<header class="top"><div class="eyebrow">Generalprobe</div><h1>📝 Mini-Arbeit</h1>
-      <p class="muted">Aufgebaut wie die Übungsarbeit „Satzglieder/Wortarten“: Wortarten, Satzglieder, kleine Wörter, wörtliche Rede, Konjunktionen, Adverbien, Pronomen, Kommas, Groß/klein. ${PROBE_MAX} Punkte, etwa 20 Minuten. Erst am Ende siehst du, was richtig war.</p></header>
+      <p class="muted">Aufgebaut wie die Übungsarbeit „Satzglieder/Wortarten“: Wortarten, Satzglieder, kleine Wörter, Zeichen der wörtlichen Rede, Konjunktionen, Adverbien, Pronomen, Kommas, Groß/klein. ${PROBE_MAX} Punkte, etwa 20 Minuten. Erst am Ende siehst du, was richtig war.</p></header>
       <div class="row"><button class="btn" id="start">Uhr starten</button></div>`;
     document.getElementById('start').onclick = () => { S.probe = { ans: {}, start: Date.now(), done: false }; save(); render(); };
     return;
@@ -1072,6 +1178,10 @@ function renderProbe() {
     const nu = document.getElementById('nachueben'); if (nu) nu.onclick = () => startRun(nu.dataset.st);
     return;
   }
+  app.querySelectorAll('.rbox[data-rs]').forEach(box => {
+    const t = PROBE.find(x => x.id === box.closest('[data-t]').dataset.t), si = +box.dataset.rs, r = parseRede(t.saetze[si]);
+    redeBinden(box, r.gaps.map((_, gi) => A[t.id + '-' + si + '-' + gi] || ''), (gi, v) => { A[t.id + '-' + si + '-' + gi] = v; save(); });
+  });
   app.querySelectorAll('select[data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = el.value; save(); });
   app.querySelectorAll('input[type=radio][data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = +el.value; save(); });
   app.querySelectorAll('.tok[data-k]').forEach(b => b.onclick = () => {
@@ -1084,8 +1194,9 @@ function renderProbe() {
     const leer = PROBE.reduce((n, t) => n + (t.type === 'segs' ? t.segs.filter(Array.isArray).filter((s, i) => !A[t.id + '-' + i]).length
       : t.type === 'picks' ? t.picks.filter((p, i) => A[t.id + '-' + i] === undefined).length
       : t.type === 'finden' ? findenTokens(t.text).filter((x, i) => { const v = A[t.id + '-' + i]; return v && v.on && !v.typ; }).length
-      : t.type === 'kommas' ? t.saetze.filter((x, si) => !A[t.id + '-' + si + '-g']).length : 0), 0);
-    if (!confirm(leer ? `Noch ${leer} Felder sind leer. Trotzdem abgeben?` : 'Arbeit abgeben?')) return;
+      : t.type === 'kommas' ? t.saetze.filter((x, si) => !A[t.id + '-' + si + '-g']).length
+      : t.type === 'rede' ? t.saetze.filter((x, si) => !parseRede(x).gaps.some((_, gi) => A[t.id + '-' + si + '-' + gi])).length : 0), 0);
+    if (!confirm(leer ? `Es fehlen noch ${leer} Antworten. Trotzdem abgeben?` : 'Arbeit abgeben?')) return;
     P.done = true; P.end = Date.now(); P.punkte = PROBE.reduce((n, t) => n + taskPunkte(t, A), 0);
     S.plan.probe = true; save(); go('probe');
   };
@@ -1119,13 +1230,17 @@ function probeTask(t, A, fertig) {
       return `<button class="tok ${cls}" data-k="${k}" ${fertig ? 'disabled' : ''}>${esc(x.w)}</button>${sel || sol ? `<span class="fsel">${sel}${sol}</span>` : ''}`;
     }).join(' ').replace(/ \u0000/g, '')}</p><p class="small muted">Antippen markiert ein Wort, nochmal antippen hebt die Markierung auf. Falsch markierte Wörter kosten einen Punkt.</p>`;
   }
+  if (t.type === 'rede') {
+    return t.saetze.map((x, si) => { const r = parseRede(x); const vals = r.gaps.map((_, gi) => A[t.id + '-' + si + '-' + gi] || ''); return `<div class="rbox" data-rs="${si}">${redeHtml(r, vals, fertig)}</div>`; })
+      .join('<hr style="border:0;border-top:1px solid var(--line);width:100%">');
+  }
   if (t.type === 'kommas') {
     return t.saetze.map((x, si) => {
       const toks = parseKomma(x.s), pre = t.id + '-' + si;
       let html = `<div class="ksatz">${toks.map((tk, i) => {
         const k = pre + '-' + i, on = !!A[k];
         let cls = on ? 'on' : '', txt = on ? ',' : '';
-        if (fertig) { cls = tk.req ? (on ? 'good' : 'miss') : (on ? (tk.opt ? 'good' : 'extra') : ''); if (tk.req) txt = ','; }
+        if (fertig) { cls = tk.req ? (on ? 'good' : 'miss') : (on ? (tk.opt ? 'good' : 'extra') : ''); if (tk.req) txt = ','; if (cls === 'extra') txt = '✗'; }
         return `<span>${esc(tk.w)}</span>${i < toks.length - 1 ? `<button type="button" class="gap ${cls}" data-k="${k}" ${fertig ? 'disabled' : ''} aria-label="Komma nach ${esc(tk.w)}">${txt}</button>` : ''}`;
       }).join('')}</div>`;
       const gk = pre + '-g', gv = A[gk] || '';

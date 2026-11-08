@@ -158,19 +158,19 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - **Letzter Tag vor der Arbeit** (`deutsch.html`, Karte im Hauptmenü): Klasse 6, Satzglieder/Wortarten und der Roman
   „Wolf“ (Saša Stanišić). Plan in acht Schritten (etwa 90 min): Aufwärmen „Wortart und Satzglied“, Check mit zwei
   Aufgaben je Station, die zwei schwächsten Stationen aus A–C (fertig nach mindestens sechs Karten mit drei Richtigen in Folge), Pause, „Wolf“, Generalprobe,
-  Spickzettel. Stationen: A Satzglieder (Frageproben, Dativ- und Präpositionalobjekt), B Der-die-das-Detektiv
+  Spickzettel. Stationen: A Satzglieder (Frageproben, Dativ- und Präpositionalobjekt, Grenzen mit der Umstellprobe), B Der-die-das-Detektiv
   (Pronomenarten, Bezugswort), C Kleine Wörter (Präposition/Konjunktion/Adjektiv/Adverb, Adverbarten, neben-/unterordnend),
-  D Zeichen (Kommas antippen und begründen, wörtliche Rede), E Groß/klein. Gewichtet nach den Fehlern der korrigierten
+  D Zeichen (Kommas antippen und begründen, Zeichen der wörtlichen Rede selbst setzen), E Groß/klein. Gewichtet nach den Fehlern der korrigierten
   Übungsarbeit; eigene Sätze, nichts aus dem Arbeitsblatt der Lehrerin übernommen.
 - „Wolf“: nur die Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“ (S. 34, S. 49, Kletterwald). „Welcher Beleg ist besser?“ (konkrete Szene, Seite, passt zur Behauptung),
   Musterabsatz zerlegen (Behauptung – Beleg – Erklärung), Formulierungshilfen (M 2), eigener Belege-Sammler, Stellungnahme
   mit Aufbau-Checkliste und Musterlösung. Ohne KI.
-- Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 81 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
+- Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 90 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
   Lösungen erst nach dem Abgeben. Speicher: `deutsch-6b-wolf-v1`.
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.39.0
+**Version:** 2.40.0
 **Datum:** 08.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -221,6 +221,15 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.40.0 (08.11.2026)
+- Deutsch: zwei neue Kartentypen. Wörtliche Rede selbst setzen (`cardRede`, `parseRede`: Lücke antippen, Zeichen aus
+  der Leiste `REDE_O`), ersetzt die Auswahlaufgaben in Station D; Satzgliedgrenzen antippen (`cardGrenzen`,
+  `parseGrenzen`, Lösung als „Teil | Teil“) in Station A, mit Merkregel zur Umstellprobe.
+- Generalprobe Nr. 4 jetzt „Zeichen der wörtlichen Rede einsetzen“ (Typ `rede`), ein Punkt pro Zeichen, falsche oder
+  überzählige Zeichen kosten einen (90 Punkte). Nur der zuletzt angetippte Satz zeigt Auswahl und Zeichenleiste.
+- Auswertung überall klarer: fehlendes Zeichen grün gestrichelt mit Lösung (eigene falsche Eingabe durchgestrichen),
+  überzähliges rot mit ✗; „Prüfen“ erst nach der ersten Eingabe.
 
 ### Version 2.39.0 (08.11.2026)
 - Deutsch, nach zweitem Review (Didaktik + Code):
