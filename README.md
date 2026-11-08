@@ -162,7 +162,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   (Pronomenarten, Bezugswort), C Kleine Wörter (Präposition/Konjunktion/Adjektiv/Adverb, Adverbarten, neben-/unterordnend),
   D Zeichen (Kommas antippen und begründen, wörtliche Rede), E Groß/klein. Gewichtet nach den Fehlern der korrigierten
   Übungsarbeit; eigene Sätze, nichts aus dem Arbeitsblatt der Lehrerin übernommen.
-- „Wolf“: nur die Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“ (S. 34, S. 49, Kletterwald). Belege sortieren,
+- „Wolf“: nur die Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“ (S. 34, S. 49, Kletterwald). „Welcher Beleg ist besser?“ (konkrete Szene, Seite, passt zur Behauptung),
   Musterabsatz zerlegen (Behauptung – Beleg – Erklärung), Formulierungshilfen (M 2), eigener Belege-Sammler, Stellungnahme
   mit Aufbau-Checkliste und Musterlösung. Ohne KI.
 - Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 76 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
@@ -170,7 +170,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.38.2
+**Version:** 2.38.3
 **Datum:** 08.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -221,6 +221,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.38.3 (08.11.2026)
+- Deutsch, „Wolf“: Teil 1 „Was ist ein Beleg?“ (Pro/Contra/kein Beleg sortieren – die Sätze kannte das Kind schon vom
+  Arbeitsblatt) ersetzt durch „Welcher Beleg ist besser?“ (`BESSER`, gespeichert in `wolf.besser`): starke gegen
+  schwache Fassung – vage, Deutung statt Textstelle, passt nicht zur Behauptung.
 
 ### Version 2.38.2 (08.11.2026)
 - Deutsch: Tipps auf allen Übungskarten. Groß/klein über die Schreibweise (`tippText`), wörtliche Rede und Bezugswort

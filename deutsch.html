@@ -181,7 +181,7 @@ textarea{min-height:90px;resize:vertical}
 // ===================================================================
 const KEY = 'deutsch-6b-wolf-v1';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const blankWolf = () => ({ sort: {}, zer: {}, form: {}, pro: [], contra: [], text: '', lang: false, muster: false });
+const blankWolf = () => ({ besser: {}, sort: {}, zer: {}, form: {}, pro: [], contra: [], text: '', lang: false, muster: false });
 const blank = () => ({ plan: {}, stat: {}, check: null, wolf: blankWolf(), probe: null, spick: null });
 function load() {
   try {
@@ -248,8 +248,7 @@ const TIPP = {
   [REL]: '„Das Lied, das wir singen, ist neu.“',
   'Behauptung': 'Was willst du zeigen? Der erste Satz eines Arguments.',
   'Beleg': 'Was passiert im Buch? Die Textstelle, am besten mit Seite.',
-  'Erklärung': 'Was zeigt die Textstelle? Was kann man daraus schließen?',
-  'Kein Beleg': 'Keine Textstelle aus dem Roman – nur eine Meinung oder ein allgemeiner Satz.'
+  'Erklärung': 'Was zeigt die Textstelle? Was kann man daraus schließen?'
 };
 // Groß/klein: Tipp hängt an der Schreibweise, nicht am Wort
 const TIPP_GROSS = 'Großgeschrieben, wenn ein Signalwort davorsteht: das, beim, zum, etwas, nichts, alles – „Das Tanzen macht Spaß.“';
@@ -747,14 +746,26 @@ function cardKomma(it, host, done) {
 // ===================================================================
 // „WOLF“ – nur Textstellen vom Arbeitsblatt „Kemi und Jörg – Freunde?“
 // ===================================================================
-const SORT = [
-  { s: 'Kemi mag Jörg und schätzt seine Schrullen (S. 34).', a: 'Pro', e: 'Ein Beleg mit Seitenzahl, der für eine Freundschaft spricht.' },
-  { s: 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).', a: 'Contra', e: 'Ein Freund würde helfen – das spricht gegen eine Freundschaft.' },
-  { s: 'Kemi folgt Marko und Jörg in den Kletterwald, weil Kemi sich Sorgen macht, dass Marko Jörg verletzen will.', a: 'Pro', e: 'Kemi passt auf Jörg auf – das spricht für eine Freundschaft. Schreib die Seitenzahl aus deinem Lesetagebuch dazu!' },
-  { s: 'Ich finde Jörg sympathisch.', a: 'Kein Beleg', e: 'Das ist deine eigene Meinung über Jörg – keine Textstelle, die etwas über Kemi und Jörg zeigt.' },
-  { s: 'Freunde sollten immer zusammenhalten.', a: 'Kein Beleg', e: 'Ein allgemeiner Satz ohne Textstelle. Als Erklärung kann er aber helfen.' }
+// Teil 1: Welcher Beleg ist besser? Starke und schwache Fassung derselben Aussage – geübt wird, woran die Lehrerin
+// Belege misst: konkrete Szene, Seitenangabe, passt zur Behauptung. Reihenfolge der Fassungen fest, aber gemischt.
+const BESSER = [
+  { s: 'Behauptung: Kemi mag Jörg.',
+    o: ['Kemi ist nett zu Jörg.', 'Kemi mag Jörg und schätzt seine Schrullen (S. 34).'],
+    a: 'Kemi mag Jörg und schätzt seine Schrullen (S. 34).',
+    e: '„Kemi ist nett zu Jörg“ ist zu allgemein: Welche Szene? Welche Seite? Der zweite Satz nennt eine konkrete Stelle mit Seitenzahl – das kann jeder im Buch nachprüfen.' },
+  { s: 'Behauptung: Kemi steht Jörg nicht immer bei.',
+    o: ['Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).', 'Kemi ist manchmal feige.'],
+    a: 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).',
+    e: '„Kemi ist manchmal feige“ ist schon deine Deutung, keine Textstelle. Ein Beleg sagt, was im Buch passiert – deuten kommt danach in der Erklärung.' },
+  { s: 'Behauptung: Kemi macht sich Sorgen um Jörg.',
+    o: ['Im Buch gibt es viele Stellen, an denen Kemi an Jörg denkt.', 'Kemi folgt Marko und Jörg in den Kletterwald, weil Kemi sich Sorgen macht, dass Marko Jörg verletzen will (S. ?).'],
+    a: 'Kemi folgt Marko und Jörg in den Kletterwald, weil Kemi sich Sorgen macht, dass Marko Jörg verletzen will (S. ?).',
+    e: '„Viele Stellen“ – aber welche? Ein Beleg nennt eine bestimmte Szene. Die Seite zur Kletterwald-Szene schreibst du aus deinem Lesetagebuch dazu.' },
+  { s: 'Behauptung: Kemi und Jörg sind keine richtigen Freunde.',
+    o: ['Kemi mag Jörg und schätzt seine Schrullen (S. 34).', 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).'],
+    a: 'Als Marko sich bei der ersten Wanderung zwischen die beiden drängt, hilft Kemi Jörg nicht (S. 49).',
+    e: 'Beide sind gute Textstellen – aber nur die zweite passt zu dieser Behauptung. Die erste spricht für eine Freundschaft, sie gehört zur Gegenseite.' }
 ];
-const SORT_O = { 'Pro': 'Pro (Freunde)', 'Contra': 'Contra (keine Freunde)', 'Kein Beleg': 'Kein Beleg' };
 const ZER = [
   { s: 'Für eine Freundschaft spricht, dass Kemi sich um Jörg sorgt.', a: 'Behauptung' },
   { s: 'Er folgt Marko und Jörg in den Kletterwald, weil er sich Sorgen macht, dass Marko Jörg verletzen will (S. ?).', a: 'Beleg' },
@@ -782,12 +793,12 @@ const MUSTER = [
   'Insgesamt sind Kemi und Jörg für mich noch keine richtigen Freunde, weil Kemi sich nicht immer für Jörg einsetzt. Weil Kemi sich aber um Jörg sorgt, glaube ich, dass zwischen den beiden eine Freundschaft entstehen kann.'
 ];
 
-function wolfPick(list, store, optsOf, key) {
+function wolfPick(list, store, optsOf, key, liste) {
   return list.map((it, i) => {
     const v = store[i];
     const opts = optsOf(it);
     return `<div class="card" data-wk="${key}" data-i="${i}"><p class="satz">${fmt(it.s)}</p>
-      <div class="opts">${opts.map(o => { const lab = key === 'sort' ? SORT_O[o] : o; const cls = v === undefined ? '' : (o === it.a ? 'ok' : (o === v ? 'no' : '')); return `<button class="opt ${cls}" data-v="${esc(o)}"${v === undefined ? tippAttr(o) : ''} ${v !== undefined ? 'disabled' : ''}>${esc(lab)}</button>`; }).join('')}</div>
+      <div class="opts${liste ? ' liste' : ''}">${opts.map(o => { const lab = o; const cls = v === undefined ? '' : (o === it.a ? 'ok' : (o === v ? 'no' : '')); return `<button class="opt ${cls}" data-v="${esc(o)}"${v === undefined ? tippAttr(o) : ''} ${v !== undefined ? 'disabled' : ''}>${esc(lab)}</button>`; }).join('')}</div>
       ${v !== undefined && it.e ? `<p class="small ${v === it.a ? '' : ''}">${v === it.a ? '✓ ' : '✗ '}${esc(it.e)}</p>` : (v !== undefined ? `<p class="small">${v === it.a ? '✓ Richtig.' : '✗ Richtig ist: ' + esc(it.a) + '.'}</p>` : '')}</div>`;
   }).join('');
 }
@@ -820,8 +831,8 @@ function renderWolf() {
   <header class="top wolfhead"><div class="eyebrow">„Wolf“ von Saša Stanišić</div><h1>Kemi und Jörg – Freunde?</h1>
     <p class="muted">So kann die Aufgabe in der Arbeit aussehen: Nimm Stellung mit Argumenten und Belegen aus dem Roman. Die Textstellen hier stammen vom Arbeitsblatt – deine eigenen holst du aus dem Lesetagebuch.</p></header>
 
-  <section><h2>1 · Was ist ein Beleg?</h2><p class="muted small">Spricht der Satz für eine Freundschaft, dagegen – oder ist er gar kein Beleg?</p>
-    ${wolfPick(SORT, W.sort, () => ['Pro', 'Contra', 'Kein Beleg'], 'sort')}</section>
+  <section><h2>1 · Welcher Beleg ist besser?</h2><p class="muted small">Ein guter Beleg nennt eine <b>bestimmte Szene</b> aus dem Buch, hat eine <b>Seitenangabe</b> und <b>passt zur Behauptung</b>. Wähle jeweils den besseren.</p>
+    ${wolfPick(BESSER, W.besser, it => it.o, 'besser', true)}</section>
 
   <section><h2>2 · Ein Musterabsatz, zerlegt</h2><p class="muted small">Ein gutes Argument hat drei Teile: <b>Behauptung</b> → <b>Beleg</b> (Textstelle mit Seite) → <b>Erklärung</b> (was zeigt das?). Ordne jeden Satz zu.</p>
     ${wolfPick(ZER, W.zer, () => ZER_O, 'zer')}</section>
