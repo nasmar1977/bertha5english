@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GEWI: Demokratie wiederholen</title>
+<!-- GEWI Kl. 6: Antike, Polis, Anfänge der Demokratie in Athen, Demokratie heute, Gewaltenteilung, Definitionen.
+     Nach Buch S. 196–199 und Heft, eigene Formulierungen. Speicher: localStorage „gewi-6-athen-v1“. -->
+<style>
+:root{
+  --bg:#f4f3f0; --paper:#ffffff; --ink:#1d2226; --muted:#5f676d; --line:#d9d6cf;
+  --acc:#2f5d7c; --acc-soft:#dfeaf2; --ton:#a4502a; --ton-soft:#f6e4d8;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13181b; --paper:#1c2327; --ink:#e7ecee; --muted:#9aa6ac; --line:#33403f;
+  --acc:#7fb4d6; --acc-soft:#1f3442; --ton:#e8936a; --ton-soft:#3d241a;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13181b; --paper:#1c2327; --ink:#e7ecee; --muted:#9aa6ac; --line:#33403f;
+  --acc:#7fb4d6; --acc-soft:#1f3442; --ton:#e8936a; --ton-soft:#3d241a;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.7rem,5.5vw,2.5rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:820px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;min-height:40px;display:inline-flex;align-items:center}
+@media (max-width:560px){.bar .crumb{display:none}}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px}
+:root[data-theme="dark"] .btn{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.ton{background:var(--ton)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* Plan */
+.plan{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.plan li{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.plan li.next{border:2px solid var(--acc)}
+.plan li .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.9rem}
+.plan li.done .n{background:var(--ok-soft);color:var(--ok)}
+.plan li .t{font-weight:700}
+.plan li .d{font-size:.85rem;color:var(--muted)}
+.plan li .m{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.tile .meter{margin-top:4px}
+.meter{height:8px;border-radius:4px;background:var(--acc-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc)}
+
+/* Karten-Übung */
+.satz{font-size:1.15rem;line-height:1.7}
+mark{background:var(--mark);color:inherit;padding:1px 3px;border-radius:3px;font-weight:700}
+.luecke{display:inline-block;min-width:4em;border-bottom:2px solid var(--ink);text-align:center}
+.frage{font-weight:700}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:40px;text-align:left}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default;opacity:1}
+.fb{display:grid;gap:10px}
+.fb .msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.fb .msg.ok{background:var(--ok-soft);color:var(--ink);border-left:4px solid var(--ok)}
+.fb .msg.no{background:var(--bad-soft);color:var(--ink);border-left:4px solid var(--bad)}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted)}
+.dots{display:flex;gap:4px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.tippbox{display:grid;gap:6px}
+.tippbox .row{flex-wrap:nowrap;align-items:flex-start}
+.tippbtn{flex:none}
+.tipp{font-size:.88rem;color:var(--muted);min-height:1.3em}
+.tipps{margin:0;padding:10px 12px 10px 28px;background:var(--acc-soft);border-radius:8px;font-size:.88rem;display:grid;gap:4px}
+.tipps[hidden]{display:none}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.merk ul{margin:6px 0 0;padding-left:20px}
+.merk li{margin:3px 0}
+
+/* Komma-Lücken */
+.ksatz{display:flex;flex-wrap:wrap;align-items:baseline;row-gap:6px;font-size:1.15rem}
+.gap{width:30px;height:40px;margin:0 1px;border:1px dashed var(--line);border-radius:6px;background:transparent;color:var(--ink);font-weight:700;font-size:1.2rem;line-height:1;padding:0;vertical-align:baseline}
+.gap.on{border-style:solid;border-color:var(--acc);background:var(--acc-soft)}
+.rgap{width:auto;min-width:30px;padding:0 5px;white-space:nowrap}
+.rgap.sel{outline:3px solid var(--acc);outline-offset:1px}
+.rpal{margin-top:6px}
+.rpal .opt{min-width:48px;justify-content:center;text-align:center;font-size:1.15rem;font-weight:700}
+.gap.miss{border:2px dashed var(--ok);color:var(--ok);background:transparent}
+.gap.extra{border:2px solid var(--bad);background:var(--bad-soft);color:var(--bad)}
+.gap s{color:var(--bad);margin-right:3px}
+.rbox:not(.aktiv) .rpal{display:none}
+.rbox:not(.aktiv) .rgap.sel{outline:none}
+.rpal .opt:focus{background:var(--bg)}
+.gap.good{border-color:var(--ok);border-style:solid;background:var(--ok-soft)}
+.gap:disabled{cursor:default}
+
+/* Generalprobe */
+.timer{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums}
+.segs{display:flex;flex-wrap:wrap;gap:10px 6px;align-items:flex-start;line-height:1.4}
+.seg{display:inline-grid;gap:4px;justify-items:start;max-width:100%;min-width:0}
+.seg .w{font-size:1.05rem;padding:0 2px}
+.seg .w.b{font-weight:700}
+.seg select,.fsel select{font:inherit;font-size:16px;max-width:100%;min-height:40px;padding:4px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.seg select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.seg select.no{border-color:var(--bad);background:var(--bad-soft)}
+.seg .sol{font-size:.78rem;color:var(--bad)}
+.txt{font-size:1.05rem}
+.fsel{display:inline-flex;gap:4px;align-items:center;margin:0 4px}
+.fsel .sol{font-size:.78rem;color:var(--bad)}
+.fsel select{max-width:9.5em}
+.fsel select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fsel select.no{border-color:var(--bad);background:var(--bad-soft)}
+.txt{line-height:2.4}
+.tok{border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.05rem;padding:2px 3px;min-height:40px;border-radius:4px;border-bottom:2px solid transparent}
+.tok.on{border-bottom-color:var(--acc);background:var(--acc-soft)}
+.tok.hit{border-bottom-color:var(--ok);background:var(--ok-soft)}
+.tok.extra{border-bottom-color:var(--bad);background:var(--bad-soft);text-decoration:line-through}
+.tok.miss{border-bottom:2px dashed var(--bad)}
+.tok:disabled{cursor:default}
+.radio{display:grid;gap:6px}
+.radio label{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+.radio label.ok{border-color:var(--ok);background:var(--ok-soft)}
+.radio label.no{border-color:var(--bad);background:var(--bad-soft)}
+.pts{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.th{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:1.6rem;font-weight:800}
+
+
+/* Definitions-Baukasten */
+.bsatz{font-size:1.08rem;line-height:1.9;background:var(--bg);border-radius:8px;padding:10px 12px}
+.bgap{border-bottom:2px solid var(--acc);padding:0 3px;font-weight:700;color:var(--acc)}
+.bgap.leer{color:var(--muted);font-weight:400;border-bottom-style:dashed}
+.bgap.ok{color:var(--ok);border-color:var(--ok)}
+.bgap.no{color:var(--bad);border-color:var(--bad)}
+.bteil{display:grid;gap:6px}
+.bteil .nr{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.modell{background:var(--ok-soft);border-radius:8px;padding:10px 12px}
+
+/* Zuordnen */
+.mrow{display:grid;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}
+.mrow .mt{font-weight:700}
+
+/* Schaubild Athen */
+.sb{display:grid;gap:8px;font-size:.92rem}
+.sb .lvl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sb .box{background:var(--acc-soft);border:1.5px solid var(--acc);border-radius:10px;padding:8px;display:grid;gap:4px;justify-items:center;text-align:center;min-width:0}
+.sb .box.top{justify-self:center;width:min(100%,320px);border-radius:60px 60px 10px 10px;padding-top:14px}
+.sb .box.nicht{background:var(--bg);border-style:dashed}
+.sb .pf{display:grid;justify-items:center;gap:2px;color:var(--acc);font-size:1.1rem;min-width:0}
+.sb .amt{display:grid;gap:8px;min-width:0;align-content:start}
+@media (max-width:560px){.sb .lvl{grid-template-columns:1fr}.sb .amt{grid-template-columns:1fr 6.5em;align-items:center}}
+.sb .hint{font-size:.78rem;color:var(--muted);line-height:1.3}
+.sb select{font:inherit;font-size:16px;width:100%;max-width:100%;min-height:40px;padding:4px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.sb select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.sb select.no{border-color:var(--bad);background:var(--bad-soft)}
+.sb .sol{font-size:.78rem;color:var(--bad);font-weight:700}
+
+/* Karteikarten */
+.kk{min-height:220px;align-content:center}
+.kk .begriff{font-family:var(--display);font-size:clamp(1.5rem,6vw,2rem);font-weight:800;text-align:center}
+.kk .def{font-size:1.02rem}
+.kk .def b{color:var(--acc)}
+.wissen{border-left:5px solid var(--ton);background:var(--ton-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.wissen ul{margin:6px 0 0;padding-left:20px}
+.wissen li{margin:3px 0}
+.hl{color:var(--ton);font-weight:700}
+
+#druck{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  .bar,#app{display:none!important}
+  #druck{display:block;font-size:11.5pt;padding:8mm}
+  #druck h2{margin-bottom:6pt}
+  #druck dt{font-weight:700;margin-top:7pt}
+  #druck dd{margin:1pt 0 0 0}
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <button class="linkbtn" id="homeBtn" type="button">📋 Plan</button>
+  <span class="crumb" id="crumb"></span>
+</div></div>
+<main class="wrap" id="app"></main>
+<div id="druck"></div>
+<script>
+'use strict';
+// ===================================================================
+// SPEICHER
+// ===================================================================
+const KEY = 'gewi-6-athen-v1';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const blank = () => ({ plan: {}, stat: {}, check: null, probe: null, kkErst: [] });
+// jedes Feld auf seinen Typ prüfen – ein kaputter Eintrag darf die Seite nicht lahmlegen
+const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+function load() {
+  try {
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!isObj(o)) return blank();
+    const s = blank();
+    if (isObj(o.plan)) s.plan = o.plan;
+    if (isObj(o.stat)) Object.keys(o.stat).forEach(k => { const r = o.stat[k]; if (isObj(r) && +r.n >= 0) s.stat[k] = { r: +r.r || 0, n: +r.n || 0 }; });
+    if (isObj(o.check)) s.check = o.check;
+    if (Array.isArray(o.kkErst)) s.kkErst = o.kkErst.filter(x => typeof x === 'string');
+    if (isObj(o.probe) && isObj(o.probe.ans) && +o.probe.start > 0 && +o.probe.start <= Date.now()) {
+      s.probe = { ans: o.probe.ans, start: +o.probe.start, done: !!o.probe.done };
+      if (s.probe.done) { s.probe.end = +o.probe.end || s.probe.start; s.probe.punkte = +o.probe.punkte || 0; }
+    }
+    return s;
+  } catch (e) {}
+  return blank();
+}
+let S = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = s => esc(s).replace(/\[\[_\]\]/g, '<span class="luecke">&nbsp;?&nbsp;</span>').replace(/\[\[(.+?)\]\]/g, '<mark>$1</mark>');
+const abc = a => a.slice().sort((x, y) => x.localeCompare(y, 'de'));
+
+// ===================================================================
+// FESTE ANTWORTGRUPPEN UND IHRE TIPPS (erklären die Begriffe, nicht die Aufgabe)
+// ===================================================================
+const GEW = ['Legislative', 'Exekutive', 'Judikative'];
+const [LEG, EXE, JUD] = GEW;
+const WL = ['Wahl', 'Los'];
+const DR = ['direkte Demokratie', 'repräsentative Demokratie'];
+const MIT = ['darf mitbestimmen', 'darf nicht mitbestimmen'];
+const PC = ['spricht dafür', 'spricht dagegen'];
+const SPR = ['Lateinisch', 'Griechisch'];
+const TIPP = {
+  'Lateinisch': 'die Sprache der alten Römer – viele Fachwörter stammen daher, z. B. „Text“ (textus = Gewebe)',
+  'Griechisch': 'die Sprache der alten Griechen, auch der Menschen in Athen – z. B. „Theater“ (theatron = Schauplatz)',
+  [LEG]: 'die gesetzgebende Gewalt (lateinisch lex = Gesetz): Sie macht die Regeln.',
+  [EXE]: 'die ausführende Gewalt: Sie sorgt dafür, dass die Regeln im Alltag umgesetzt werden.',
+  [JUD]: 'die rechtsprechende Gewalt (lateinisch iudex = Richter): Sie entscheidet im Streitfall, was nach dem Gesetz gilt.',
+  'Wahl': 'Die Bürger stimmen ab, wer das Amt bekommt – gewinnen kann, wen viele kennen und für fähig halten.',
+  'Los': 'Der Zufall entscheidet, wie beim Ziehen aus einem Topf – jeder hat dieselbe Chance.',
+  [DR[0]]: 'Die Bürger stimmen selbst über eine Sache ab – ohne Vertreter dazwischen.',
+  [DR[1]]: 'Die Bürger wählen Vertreter, die dann für sie entscheiden.',
+  'direkten': 'Die Bürger stimmen selbst über eine Sache ab – ohne Vertreter dazwischen.',
+  'repräsentativen': 'Die Bürger wählen Vertreter, die dann für sie entscheiden.',
+  [MIT[0]]: 'durfte in die Volksversammlung, dort reden und abstimmen',
+  [MIT[1]]: 'lebte in Athen, hatte dort aber keine Stimme',
+  [PC[0]]: 'Das Argument zeigt: Hier bestimmt wirklich das Volk.',
+  [PC[1]]: 'Das Argument zeigt eine Grenze dieser Volksherrschaft.'
+};
+const tippText = o => TIPP[o] || '';
+const tippAttr = o => { const t = tippText(o); return t ? ` title="${esc(t)}" data-h="${esc(o)}" data-tt="${esc(t)}"` : ''; };
+// unter jede Antwortgruppe mit Tipps: Zeile für Hover/Fokus und ein Knopf, der alle Tipps aufklappt (für iPad ohne Hover)
+function tippsAn(host) {
+  host.querySelectorAll('.opts').forEach(g => {
+    if (g.closest('.mrow')) return;
+    const bs = [...g.querySelectorAll('.opt[data-h]')];
+    if (!bs.length || (g.nextElementSibling && g.nextElementSibling.classList.contains('tippbox'))) return;
+    const box = document.createElement('div'); box.className = 'tippbox';
+    box.innerHTML = `<div class="row"><button type="button" class="linkbtn tippbtn">💡 Tipps</button><span class="tipp" aria-live="polite"></span></div>
+      <ul class="tipps" hidden>${bs.map(b => `<li><b>${esc(b.dataset.h)}:</b> ${esc(b.dataset.tt)}</li>`).join('')}</ul>`;
+    g.after(box);
+    const zeile = box.querySelector('.tipp'), liste = box.querySelector('.tipps');
+    box.querySelector('.tippbtn').onclick = () => { liste.hidden = !liste.hidden; };
+    const zeig = e => { if (e.type === 'focusin' && !e.target.matches(':focus-visible')) return; const b = e.target.closest('.opt[data-h]'); if (b) zeile.innerHTML = `<b>${esc(b.dataset.h)}:</b> ${esc(b.dataset.tt)}`; };
+    g.addEventListener('mouseover', zeig); g.addEventListener('focusin', zeig);
+    g.addEventListener('mouseleave', () => { zeile.textContent = ''; });
+  });
+}
+// Karten-Tipp als Knopf zum Aufklappen
+function tippBox(h, label) { return h ? `<div class="tippbox"><div class="row"><button type="button" class="linkbtn tippbtn">💡 ${label || 'Tipp'}</button></div><ul class="tipps" hidden>${[].concat(h).map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''; }
+function tippBinden(host) { host.querySelectorAll('.tippbox .tippbtn').forEach(tb => { if (!tb.onclick) tb.onclick = () => { const l = tb.closest('.tippbox').querySelector('.tipps'); l.hidden = !l.hidden; }; }); }
+// Tipps einer ganzen Antwortgruppe auf einmal (für Zuordnungs-Karten mit vielen Zeilen)
+function gruppenTipps(o) { const t = o.filter(x => TIPP[x]); return t.length ? tippBox(t.map(x => `<b>${esc(x)}:</b> ${esc(TIPP[x])}`), 'Tipps') : ''; }
+
+// ===================================================================
+// STATIONEN
+// ===================================================================
+const ST = {
+  A: {
+    name: 'Antike und Polis', icon: '🏺', sub: 'Zeitstrahl, Stadtstaaten, Athen',
+    merk: [
+      'Antike (lateinisch „alt, altertümlich“): die Zeit von etwa 800 v. Chr. bis etwa 500 n. Chr. – die Zeit der Griechen und Römer.',
+      'Zeitstrahl: Steinzeit → Ägypten (ab 3000 v. Chr.) → Antike → Mittelalter (500–1500) → Neuzeit (ab 1500). Vor Christus zählt man rückwärts.',
+      'Polis (Mehrzahl: Poleis) = Stadtstaat: eine Stadt mit dem Land drumherum. Es gab mehrere hundert Poleis, die meisten mit nur einigen hundert Einwohnern. Die größte war Athen.',
+      'Jede Polis war selbstständig. Gemeinsam hatten die Griechen Sprache, Schrift, Sagen, Götter (Zeus, Athene) und Feste – aber keinen gemeinsamen Staat.',
+      'In der Mitte jeder Polis lag ein großer Platz für Märkte und Versammlungen, die Agora. Dazu kamen Tempel, Theater und Bäder.',
+      'Athen war mächtig durch seine vielen Kriegsschiffe (Hafen: Piräus) und ein Zentrum von Kunst und Kultur. Auf der Akropolis steht der Parthenon, der Tempel der Göttin Athene.',
+      'In Athen gab es Getreide, Wein, Oliven, Fisch, Keramik, Marmor, Silber und Waffen.',
+      'Politik (griechisch) kommt von Polis: Es geht um die Angelegenheiten der Polis – „die Kunst der Staatsführung“.'
+    ],
+    items: [
+      { q: 'Aus welcher Sprache kommt das Wort „Antike“?', o: SPR, a: 'Lateinisch', fix: 1, e: '„Antike“ kommt aus dem Lateinischen und bedeutet „alt“ oder „altertümlich“.' },
+      { q: 'Welche Zeit meinen Historiker mit „Antike“?', o: ['etwa 800 v. Chr. bis 500 n. Chr.', 'etwa 3000 v. Chr. bis zum Jahr 0', 'etwa 500 bis 1500 n. Chr.', 'ab 1500 n. Chr.'], a: 0, h: 'Nach der Antike kommt das Mittelalter, davor die Frühgeschichte mit den Ägyptern.', e: 'Die Antike reicht von etwa 800 v. Chr. bis etwa 500 n. Chr. Danach beginnt das Mittelalter.' },
+      { q: 'Welche Epoche folgt direkt auf die Antike?', o: ['Mittelalter', 'Neuzeit', 'Steinzeit', 'Frühgeschichte'], a: 'Mittelalter', h: 'Die Neuzeit beginnt erst um 1500 n. Chr.', e: 'Steinzeit → Ägypten → Antike → Mittelalter → Neuzeit.' },
+      { q: 'Was war früher?', o: ['800 v. Chr.', '500 v. Chr.'], a: '800 v. Chr.', fix: 1, h: 'Vor Christus zählt man rückwärts – wie ein Countdown bis zum Jahr 0.', e: 'Vor Christus zählt man rückwärts: 800 v. Chr. liegt 300 Jahre vor 500 v. Chr.' },
+      { q: 'Die Demokratie in Athen begann 507 v. Chr. Wie lange ist das ungefähr her?', o: ['etwa 500 Jahre', 'etwa 2500 Jahre', 'etwa 5000 Jahre'], a: 1, fix: 1, h: 'Rechne: 507 Jahre bis Christi Geburt, dann noch einmal 2026 Jahre bis heute.', e: '507 + 2026 = 2533 – also etwa 2500 Jahre.' },
+      { q: 'Was ist eine Polis?', o: ['ein Stadtstaat: eine Stadt mit dem Land drumherum', 'ein großer Tempel für die griechischen Götter', 'ein Königreich mit vielen Städten und einem König', 'der große Marktplatz in der Mitte von Athen'], a: 0, h: 'Auf Karte M1 findest du Neapolis (heute Neapel) – das heißt „neue Stadt“.', e: 'Eine Polis ist ein Stadtstaat: ein städtisches Zentrum und das umliegende Land.' },
+      { q: 'Wie heißt die Mehrzahl von „Polis“?', o: ['die Poleis', 'die Polisse', 'die Polise', 'die Polizeien'], a: 'die Poleis', h: 'Die Mehrzahl ist nicht deutsch, sondern griechisch gebildet. Sie steht bei den Fachbegriffen im Buch.', e: 'Eine Polis, zwei Poleis.' },
+      { q: 'Wie viele Menschen lebten in den meisten Poleis?', o: ['nur einige hundert', 'mehrere hunderttausend', 'etwa eine Million'], a: 0, fix: 1, h: 'Es gab mehrere hundert Poleis – aber nur wenige waren so groß wie Athen.', e: 'In den meisten Poleis lebten nur einige hundert Menschen. Athen war die große Ausnahme.' },
+      { q: 'Was hatten die Griechen der verschiedenen Poleis NICHT gemeinsam?', o: ['einen gemeinsamen König und Staat', 'die Sprache und die Schrift', 'die Götter, z. B. Zeus und Athene', 'die Sagen und Feste'], a: 0, h: 'Lies den Merke-Kasten auf S. 197.', e: 'Jede Polis war selbstständig. Gemeinsam waren Sprache, Schrift, Sagen, Götter und Feste.' },
+      { q: 'Was lag in der Mitte jeder Polis?', o: ['ein großer Platz mit Märkten und Versammlungen', 'eine hohe Burg, in der der König wohnte', 'ein großer Hafen mit vielen Kriegsschiffen'], a: 0, h: 'Nicht jede Polis lag am Meer – und nicht jede hatte einen König.', e: 'Der große Platz hieß Agora: Hier kaufte man ein, traf sich und hielt Versammlungen ab.' },
+      { q: 'Warum war Athen so mächtig?', o: ['vor allem wegen seiner vielen Kriegsschiffe', 'weil es die meisten Tempel hatte', 'weil ein starker König es regierte'], a: 0, h: 'Lies Info 1 auf S. 197.', e: 'Athen war die größte Polis und hatte seit 500 v. Chr. die Vorherrschaft über Griechenland – vor allem durch seine Flotte.' },
+      { q: 'Was wurde in der Polis Athen NICHT angebaut oder hergestellt?', o: ['Kartoffeln und Mais', 'Wein und Oliven', 'Keramik', 'Silber aus dem Bergwerk'], a: 0, h: 'Schau in die Legende der Karte M3 auf S. 197.', e: 'Kartoffeln und Mais kamen erst nach der Entdeckung Amerikas nach Europa. In Athen gab es Getreide, Wein, Oliven, Fisch, Keramik, Marmor, Silber und Waffen.' },
+      { q: 'Wem war der Parthenon-Tempel auf der Akropolis geweiht?', o: ['der Göttin Athene', 'dem Gott Zeus', 'dem Gott Poseidon'], a: 0, h: 'Sie war die Schutzgöttin der Stadt.', e: 'Der Parthenon wurde ab 447 v. Chr. für Athene gebaut, die Schutzgöttin der Stadt. „Akropolis“ heißt „Oberstadt“ – ein Burgberg mitten in Athen.' },
+      { q: 'Wie heißt der Hafen von Athen?', o: ['Piräus', 'Sparta', 'Marathon'], a: 'Piräus', h: 'Auf der Karte M3 ist er durch die „Langen Mauern“ mit Athen verbunden.', e: 'Piräus – die Langen Mauern schützten den Weg zwischen Stadt und Hafen.' },
+      { q: 'Woher kommt das Wort „Politik“?', o: ['von „Polis“ – die Angelegenheiten der Polis', 'vom griechischen „polemos“ – Krieg', 'vom lateinischen „populus“ – Volk'], a: 0, h: 'Lies Aufgabe 4 auf S. 196: Woher kommt das Wort „Politik“?', e: 'Politik kommt von Polis und meint die Angelegenheiten der Polis: das Regieren und die Ausübung der Macht.' }
+    ]
+  },
+  B: {
+    name: 'Demokratie in Athen', icon: '🏛️', sub: 'Volksversammlung, Los und Wahl, Scherbengericht',
+    merk: [
+      '507 v. Chr.: Kleisthenes beendet die Machtkämpfe in Athen und legt die Grundlage für die Demokratie (griechisch demos = Volk, kratos = Herrschaft).',
+      'Volksversammlung: alle freien männlichen Bürger über 20 Jahre. Sie entscheidet über Krieg und Frieden, Gesetze und Staatsausgaben.',
+      'Keine Mitbestimmung: Frauen, Sklaven, Zuwanderer. Grob geschätzt durfte nur etwa jeder zehnte Einwohner mitbestimmen.',
+      'Strategen (gewählt): führen Flotte und Heer. Rat der 500 (gelost): bereitet die Gesetze vor. Richter (gelost): bilden das Volksgericht. Regierung: ein Vorsitzender, der täglich wechselt.',
+      'Perikles: der wichtigste Politiker Athens, ab 443 v. Chr. 15-mal hintereinander gewählt – im Buch heißt es „zum Regierungschef“, genau genommen war er Stratege. Ein großer Redner.',
+      'Scherbengericht: Die Bürger ritzen den Namen eines Politikers in eine Tonscherbe. Ab 6000 Scherben muss der, dessen Name am häufigsten draufsteht, für zehn Jahre die Stadt verlassen – sein Vermögen behält er. So wird die Macht Einzelner beschränkt.',
+      'Zusatzwissen: Die Volksversammlung traf sich unter freiem Himmel auf dem Hügel Pnyx. Abgestimmt wurde meist per Handzeichen, und jeder Bürger durfte reden.',
+      'Zusatzwissen: Das Los galt als besonders gerecht – jeder Bürger hatte dieselbe Chance, nicht nur Reiche oder gute Redner. Perikles ließ die Richter bezahlen, damit auch Arme mitmachen konnten.'
+    ],
+    items: [
+      { q: 'Wer legte 507 v. Chr. die Grundlage für die Demokratie in Athen?', o: ['Kleisthenes', 'Perikles', 'Themistokles', 'Alexander der Große'], a: 'Kleisthenes', h: 'Perikles kam später – er wurde erst um 500 v. Chr. geboren.', e: 'Kleisthenes beendete 507 v. Chr. die Machtkämpfe in der Polis und legte die Grundlage für die neue Ordnung.' },
+      { q: 'Was beendete Kleisthenes 507 v. Chr.?', o: ['die Machtkämpfe innerhalb der Polis', 'den langen Krieg zwischen Athen und Rom', 'die Verehrung der griechischen Götter'], a: 0, h: 'Denk an die Lage in Athen vor 507 v. Chr.: Wer stritt dort mit wem um die Macht?', e: 'Er beendete die Machtkämpfe in Athen. Von nun an hatten die Bürger selbst die Macht.' },
+      { q: 'Wer durfte in der Volksversammlung mitbestimmen?', o: ['alle freien männlichen Bürger über 20 Jahre', 'alle Einwohner Athens, auch die Zuwanderer', 'nur die Männer aus reichen Familien', 'alle Männer und Frauen über 18 Jahre'], a: 0, h: 'Im Schaubild M3 steht es in der Stufe über „Keine Mitbestimmung“.', e: 'Nur freie Männer über 20 mit Athener Bürgerrecht – egal ob arm oder reich.' },
+      { t: 'multi', q: 'Durfte diese Person in der Volksversammlung mitstimmen?', o: MIT, rows: [
+        ['ein Töpfer, 40 Jahre, Bürger von Athen', MIT[0]],
+        ['eine Bürgerin, die Frau eines Ratsmitglieds', MIT[1]],
+        ['ein Sklave, der im Silberbergwerk arbeitet', MIT[1]],
+        ['ein Händler aus Milet, der seit Jahren in Athen lebt', MIT[1]],
+        ['der Sohn eines Bürgers, 17 Jahre', MIT[1]],
+        ['ein armer Bauer, 55 Jahre, Bürger von Athen', MIT[0]]],
+        h: 'Prüfe drei Dinge: Ist es ein Mann? Ist er Bürger von Athen? Ist er älter als 20?', e: 'Mitbestimmen durften nur freie Männer über 20 mit Athener Bürgerrecht – auch die armen. Frauen, Sklaven und Zuwanderer hatten keine Stimme.' },
+      { q: 'Worüber entschied die Volksversammlung?', o: ['über Krieg und Frieden, Gesetze und Staatsausgaben', 'über Feste, Spiele und die Reihenfolge der Wettkämpfe', 'über den Bau von Tempeln und die Opfer für die Götter'], a: 0, h: 'Es ging um die wichtigsten Fragen der Polis.', e: 'Über die großen Fragen: Krieg und Frieden, Gesetze und das Geld des Staates.' },
+      { q: 'Wie kamen die Strategen in ihr Amt?', o: WL, a: 'Wahl', fix: 1, e: 'Die zehn Strategen wurden gewählt. Für die Führung von Heer und Flotte wollte man erfahrene Leute – keinen Zufall.' },
+      { q: 'Wie kamen die Mitglieder des Rats der 500 in ihr Amt?', o: WL, a: 'Los', fix: 1, e: 'Sie wurden ausgelost: aus jeder der zehn Phylen (Bürgergruppen) 50 Bürger, mindestens 30 Jahre alt, für ein Jahr.' },
+      { q: 'Wie wurden die Richter bestimmt?', o: WL, a: 'Los', fix: 1, e: 'Die Richter wurden ausgelost und bildeten das Volksgericht. Achtung: Im Schaubild M3 im Buch steht beim Pfeil zu den Richtern „Wahl“. In deinem Heft steht „Los“ – und so war es auch. In der LEK: „Los“ schreiben, wer ganz sicher gehen will: „Los (im Buch steht Wahl)“.' },
+      { q: 'Was machten die Strategen?', o: ['Sie führten die Flotte und das Heer an.', 'Sie bereiteten die Gesetze vor.', 'Sie bildeten das Volksgericht.'], a: 0, h: 'Das Wort steckt in „Strategie“ – einem Plan, wie man gewinnt.', e: 'Die Strategen waren die Anführer von Flotte (See) und Heer (Land).' },
+      { q: 'Was machte der Rat der 500?', o: ['Er bereitete die Gesetze vor.', 'Er führte das Heer an.', 'Er sprach die Urteile.'], a: 0, h: 'Er arbeitete der Volksversammlung zu – bevor dort abgestimmt wurde.', e: 'Der Rat der 500 bereitete die Gesetze vor, über die dann die Volksversammlung abstimmte.' },
+      { q: 'Wer stand an der Spitze der Regierung?', o: ['ein Vorsitzender, der jeden Tag wechselte', 'ein König, der bis zu seinem Tod regierte', 'immer der älteste der zehn Strategen'], a: 0, h: 'Niemand sollte zu lange zu viel Macht haben.', e: 'Der Vorsitzende wechselte täglich – so konnte keiner die Macht an sich reißen. Perikles war zwar der einflussreichste Politiker, den Vorsitz hatte aber jeden Tag ein anderer.' },
+      { t: 'schaubild', h: 'Fang unten an: Wer durfte mitbestimmen, wer nicht? Dann: Welches Amt kam durch Wahl, welches durch Los? Die grauen Hinweise sagen dir, was das Amt tut.', e: 'Strategen: gewählt. Rat der 500 und Richter: gelost. Ganz oben die Regierung mit täglich wechselndem Vorsitzendem. (Im Buch steht bei den Richtern „Wahl“ – im Heft und historisch: Los.)' },
+      { q: 'Wer war Perikles?', o: ['der wichtigste Politiker Athens – 15-mal hintereinander gewählt', 'der Erfinder des Scherbengerichts, der Athen dann selbst verlassen musste', 'ein König von Sparta, der viele Jahre gegen Athen kämpfte'], a: 0, h: 'Bild M1 auf S. 198 zeigt ihn als Redner vor den Bürgern.', e: 'Perikles lebte von etwa 500 bis 429 v. Chr. Die Bürger wählten ihn ab 443 v. Chr. 15-mal hintereinander – das Buch sagt „zum Regierungschef“, genau genommen war er Stratege. Er war ein hervorragender Redner.' },
+      { q: 'Perikles sorgte dafür, dass Richter für ihre Arbeit Geld bekamen. Warum?', o: ['Damit auch arme Bürger mitmachen konnten, ohne ihren Tageslohn zu verlieren.', 'Damit die Richter reich wurden und nicht mehr arbeiten mussten.', 'Damit nur Reiche, die das Geld nicht brauchten, Richter wurden.'], a: 0, h: 'Denk an einen Bauern, der einen ganzen Tag im Gericht sitzt.', e: 'Zusatzwissen: Perikles führte den Richtersold ein. So konnten auch arme Bürger ein Amt übernehmen.' },
+      { q: 'Wo traf sich die Volksversammlung?', o: ['unter freiem Himmel auf dem Hügel Pnyx', 'im Parthenon-Tempel auf der Akropolis', 'in einer großen Halle im Hafen Piräus'], a: 0, h: 'Bild M2 auf S. 199 zeigt viele Männer an einem Hang mit einer Rednertribüne.', e: 'Zusatzwissen: Die Pnyx ist ein Hügel in Athen. Dort stimmten die Bürger meist per Handzeichen ab – und jeder Bürger durfte reden.' },
+      { q: 'Warum losten die Athener viele Ämter aus, statt zu wählen?', o: ['Jeder Bürger hatte dieselbe Chance – nicht nur Reiche oder gute Redner.', 'Weil Wählen in Athen durch ein Gesetz verboten war.', 'Weil Losen schneller ging als das Zählen der Stimmen.'], a: 0, h: 'Überlege, wer bei einer Wahl meistens gewinnt.', e: 'Das Los galt als besonders gerecht. Zusatzwissen: Später gab es dafür sogar eine steinerne Losmaschine, das Kleroterion.' },
+      { q: 'Was ritzten die Bürger beim Scherbengericht in eine Tonscherbe?', o: ['den Namen eines Politikers, den sie für gefährlich hielten', 'ihren eigenen Namen, damit ihre Stimme gezählt wurde', 'ein neues Gesetz, über das die Versammlung abstimmen sollte'], a: 0, h: 'Schau dir die Scherbe auf Bild M2 genau an.', e: 'Auf der Scherbe in M2 steht THEMISTOKLES – der Name des Politikers, der Athen verlassen sollte.' },
+      { q: 'Wie viele Tonscherben mussten mindestens abgegeben werden?', o: ['20', '500', '6000', '100 000'], a: '6000', fix: 1, h: 'Es mussten so viele mitmachen, dass nicht eine kleine Gruppe allein jemanden verbannen konnte – aber Athen hatte auch nicht unendlich viele Bürger.', e: 'Mindestens 6000 Scherben.' },
+      { q: 'Was passierte mit dem Politiker, dessen Name am häufigsten auf den Scherben stand?', o: ['Er musste die Stadt für zehn Jahre verlassen.', 'Er kam für den Rest seines Lebens ins Gefängnis.', 'Er wurde für ein Jahr zum Strategen gewählt.', 'Er musste sein ganzes Vermögen abgeben.'], a: 0, h: 'Es war keine Strafe für ein Verbrechen – man wollte ihn nur eine Zeit lang loswerden.', e: 'Er wurde für zehn Jahre verbannt. Sein Ansehen und sein Vermögen behielt er – es war keine Strafe für ein Verbrechen.' },
+      { q: 'Wozu diente das Scherbengericht?', o: ['Es beschränkte die Macht einzelner Politiker – damit keiner Alleinherrscher wird.', 'Es bestrafte Diebe und andere Verbrecher, die in Athen erwischt wurden.', 'Es wählte jedes Jahr die neuen Strategen für Heer und Flotte aus.'], a: 0, h: 'Lies den Merke-Kasten auf S. 199.', e: 'Es schützte die Demokratie vor ehrgeizigen Politikern, die die Alleinherrschaft anstrebten.' },
+      { q: 'Wie heißt die Tonscherbe auf Griechisch?', o: ['Ostrakon', 'Polis', 'Agora', 'Kratos'], a: 'Ostrakon', h: 'Von diesem Wort kommt der Fachausdruck „Ostrakismos“ für das Scherbengericht.', e: 'Ostrakon (Mehrzahl: Ostraka). Polis = Stadtstaat, Agora = Marktplatz, Kratos = Herrschaft.' },
+      { q: '„Demokratie“ ist aus zwei griechischen Wörtern zusammengesetzt. Was bedeuten sie?', o: ['demos = Volk, kratos = Herrschaft', 'demos = Stadt, kratos = Herrschaft', 'demos = Volk, kratos = Wahl'], a: 0, h: 'Denk an die deutsche Übersetzung von „Demokratie“ aus dem Buch.', e: 'demos = Volk, kratos = Herrschaft → „Herrschaft des Volkes“.' },
+      { q: 'Forscher schätzen: Wie viele Einwohner Athens durften ungefähr mitbestimmen?', o: ['etwa jeder Zehnte', 'etwa die Hälfte', 'fast alle'], a: 0, fix: 1, h: 'Zähl, wer alles fehlte: alle Frauen, alle Sklaven, alle Zuwanderer und alle unter 20.', e: 'Nur eine kleine Minderheit – grob geschätzt jeder zehnte Einwohner. Das ist der wichtigste Einwand gegen „Herrschaft des Volkes“.' },
+      { t: 'multi', q: 'Beurteile: War Athen eine „Herrschaft des Volkes“? Spricht das Argument dafür oder dagegen?', o: PC, rows: [
+        ['Die Volksversammlung entschied selbst über Krieg, Gesetze und Geld.', PC[0]],
+        ['Frauen, Sklaven und Zuwanderer hatten keine Stimme.', PC[1]],
+        ['Viele Ämter wurden ausgelost – jeder Bürger konnte drankommen.', PC[0]],
+        ['Nur etwa jeder zehnte Einwohner durfte mitbestimmen.', PC[1]],
+        ['Mit dem Scherbengericht konnten die Bürger zu mächtige Politiker verbannen.', PC[0]],
+        ['Wer weit draußen auf dem Land wohnte, kam seltener zur Versammlung in die Stadt.', PC[1]]],
+        e: 'Ein gutes Urteil nennt beide Seiten: Für die Bürger war es echte Volksherrschaft – aber das „Volk“ war nur ein kleiner Teil der Einwohner.' },
+      { q: 'Welches Fazit passt am besten zur Aufgabe „Beurteile, ob es sich um eine Herrschaft des Volkes handelte“?', o: ['Teils, teils: Die Bürger bestimmten wirklich selbst – aber viele Einwohner durften nicht mitmachen.', 'Ja, denn in Athen durften alle Einwohner in der Volksversammlung abstimmen.', 'Nein, denn in Athen bestimmte ein König allein über Krieg und Frieden.'], a: 0, h: '„Beurteilen“ heißt: Gründe für beide Seiten abwägen und dann ein eigenes Urteil fällen.', e: 'Gute Urteile wägen ab: dafür (Volksversammlung, Los, Scherbengericht) und dagegen (Frauen, Sklaven, Zuwanderer ausgeschlossen).' },
+      { q: 'Was ist heute in Deutschland anders als im alten Athen?', o: ['Frauen dürfen wählen – seit 1918.', 'Nur Männer über 20 dürfen wählen gehen.', 'Alle Ämter werden unter den Bürgern ausgelost.'], a: 0, h: 'Denk daran, wer in Athen keine Stimme hatte.', e: 'In Deutschland dürfen Frauen seit 1918 wählen. Bei der Bundestagswahl wählt man ab 18 – Frauen und Männer.' }
+    ]
+  },
+  C: {
+    name: 'Demokratie heute', icon: '🗳️', sub: 'Wahlen, Parteien, Parlament, Koalition',
+    merk: [
+      'Direkte Demokratie: Die Bürger stimmen selbst über eine Sache ab. Repräsentative (indirekte) Demokratie: Die Bürger wählen Abgeordnete, die sie im Parlament vertreten. Es entscheidet die Mehrheit.',
+      'Wahlen in Deutschland sind frei, gleich und geheim – dazu allgemein und unmittelbar.',
+      'Partei: Menschen mit ähnlichen politischen Zielen schließen sich zusammen. Die Ziele stehen im Partei- und Wahlprogramm. Vor der Wahl ist Wahlkampf.',
+      'Parlament = Vertretung des Volkes. Die Mitglieder heißen Abgeordnete und werden vom Volk gewählt. Aufgaben: Gesetze beschließen, den Haushalt festlegen, Regierung und Verwaltung kontrollieren.',
+      'Abgeordnetenhaus = Parlament von Berlin, die Sitzungen sind öffentlich. Bundestag (im Reichstagsgebäude) = Parlament für ganz Deutschland.',
+      'Koalition (lateinisch „zusammenwachsen“): Hat keine Partei allein mehr als 50 %, schließen sich Parteien zu einem Bündnis zusammen, um zu regieren. Opposition: die Parteien im Parlament, die nicht mitregieren – sie kontrollieren die Regierung.',
+      'Kompromiss: Die Streitenden einigen sich auf eine Lösung, mit der beide gut leben können. Beide geben freiwillig etwas nach. Wichtig: Geduld, offene Kommunikation, Respekt, Lösungsorientierung.',
+      'Die wichtigsten Gesetze stehen in der Verfassung – in Deutschland heißt sie Grundgesetz. Im Rechtsstaat überwachen unabhängige Gerichte, dass die Gesetze eingehalten werden.'
+    ],
+    items: [
+      { q: 'Welches Wort gehört NICHT zu den Wahlgrundsätzen in Deutschland?', o: ['offen', 'frei', 'gleich', 'geheim'], a: 'offen', h: 'Denk an die Wahlkabine: Wozu hat sie einen Vorhang?', e: 'Wahlen sind allgemein, unmittelbar, frei, gleich und geheim. „Offen“ wäre das Gegenteil von geheim. Achtung: Falls in deinem Heft „offen“ oder „freiwillig“ steht – die fünf richtigen sind allgemein, unmittelbar, frei, gleich, geheim.' },
+      { q: '„Geheim“ wählen heißt …', o: ['Niemand erfährt, wen du gewählt hast.', 'Niemand darf wissen, dass gewählt wird.', 'Nur wenige dürfen wählen.'], a: 0, h: 'Es geht um dein Kreuz auf dem Stimmzettel.', e: 'Du wählst allein in der Kabine, niemand sieht dein Kreuz.' },
+      { q: '„Gleich“ wählen heißt …', o: ['Jede Stimme zählt gleich viel.', 'Alle müssen dasselbe wählen.', 'Alle wählen am selben Ort.'], a: 0, h: 'Es ist egal, ob jemand reich oder arm, berühmt oder unbekannt ist.', e: 'Jede Stimme zählt gleich viel – die Stimme einer Ministerin genauso wie deine später.' },
+      { s: 'In einer [[_]] Demokratie wählen die Bürger Abgeordnete, die ihre Interessen im Parlament vertreten.', q: 'Welches Wort fehlt?', o: ['repräsentativen', 'direkten'], a: 'repräsentativen', fix: 1, e: 'Repräsentativ = vertretend: Die Abgeordneten vertreten die Bürger.' },
+      { s: 'In einer [[_]] Demokratie stimmt jeder Bürger selbst für oder gegen einen politischen Vorschlag.', q: 'Welches Wort fehlt?', o: ['repräsentativen', 'direkten'], a: 'direkten', fix: 1, e: 'Direkt: ohne Vertreter dazwischen – wie in der Volksversammlung in Athen.' },
+      { t: 'multi', q: 'Direkte oder repräsentative Demokratie?', o: DR, rows: [
+        ['Die Volksversammlung in Athen stimmt über einen Krieg ab.', DR[0]],
+        ['Die Berlinerinnen und Berliner wählen Abgeordnete ins Abgeordnetenhaus.', DR[1]],
+        ['Bei einem Volksentscheid stimmen die Berliner selbst über einen Vorschlag ab.', DR[0]],
+        ['Der Bundestag beschließt ein Gesetz für ganz Deutschland.', DR[1]],
+        ['Die Klasse stimmt selbst ab, wohin der Ausflug geht.', DR[0]],
+        ['Die Klasse wählt eine Klassensprecherin, die sie in der Schülervertretung vertritt.', DR[1]]],
+        e: 'Selbst abstimmen = direkt. Vertreter wählen, die dann entscheiden = repräsentativ. In Athen stimmte man öffentlich per Handzeichen ab, beim Berliner Volksentscheid geheim – beides ist direkte Demokratie. Eine Klassensprecherwahl ist gelebte Demokratie im Kleinen.' },
+      { q: 'Wer entscheidet in einer Demokratie am Ende?', o: ['die Mehrheit', 'der Älteste', 'der Lauteste'], a: 0, h: 'Bei der Klassensprecherwahl gewinnt, wer …', e: 'Es entscheidet die Mehrheit.' },
+      { q: 'Was ist eine Partei?', o: ['Menschen mit ähnlichen politischen Zielen, die sich zusammenschließen', 'eine Gruppe von Richtern, die gemeinsam Urteile sprechen', 'das Gebäude, in dem das Parlament seine Sitzungen hat'], a: 0, h: 'In eine Partei kann man eintreten – wie in einen Fußballverein. Dann ist man Mitglied.', e: 'Gemeinsam können sie mehr erreichen, als wenn jeder für sich allein arbeitet.' },
+      { q: 'Wo veröffentlicht eine Partei ihre Ziele?', o: ['im Partei- und Wahlprogramm', 'im Grundgesetz', 'in einem Gerichtsurteil'], a: 0, h: 'Vor der Wahl kann man nachlesen, was eine Partei vorhat.', e: 'Im Partei- und Wahlprogramm.' },
+      { q: 'Wie heißt die Zeit vor einer Wahl, in der die Parteien das Volk von ihren Zielen überzeugen wollen?', o: ['Wahlkampf', 'Koalition', 'Opposition'], a: 'Wahlkampf', h: 'Plakate an jeder Laterne, Reden auf Marktplätzen, Stände in der Fußgängerzone …', e: 'Wahlkampf.' },
+      { q: 'Was ist das Abgeordnetenhaus?', o: ['das Parlament von Berlin', 'das Parlament für ganz Deutschland', 'das Rathaus von Athen', 'das oberste Gericht'], a: 0, h: 'Jedes Bundesland hat sein eigenes Parlament. Das für ganz Deutschland heißt Bundestag.', e: 'Das Abgeordnetenhaus ist das Parlament von Berlin. Seine Sitzungen sind öffentlich: Jeder darf zuschauen.' },
+      { q: 'Im Reichstagsgebäude in Berlin tagt …', o: ['der Bundestag', 'das Abgeordnetenhaus', 'die Volksversammlung'], a: 'der Bundestag', h: 'Auf dem Gebäude ist eine große Glaskuppel – und das Parlament darin macht Gesetze nicht nur für eine Stadt.', e: 'Nicht verwechseln: Reichstagsgebäude = Bundestag (ganz Deutschland). Abgeordnetenhaus = Berlin.' },
+      { q: 'Wer entscheidet im Abgeordnetenhaus über die Gesetze für Berlin?', o: ['die Abgeordneten, die das Volk gewählt hat', 'die Richterinnen und Richter der Berliner Gerichte', 'der Regierende Bürgermeister ganz allein'], a: 0, h: 'Denk daran, wen das Volk bei der Wahl ins Parlament schickt.', e: 'Gewählte Abgeordnete aus verschiedenen Parteien.' },
+      { q: 'Was ist KEINE Aufgabe des Parlaments?', o: ['Urteile vor Gericht sprechen', 'Gesetze beschließen', 'den Haushalt (die Staatsausgaben) festlegen', 'die Regierung kontrollieren'], a: 0, h: 'Denk an die Gewaltenteilung: Das Parlament ist die gesetzgebende Gewalt.', e: 'Urteile sprechen die Gerichte (Judikative). Das Parlament macht Gesetze, legt den Haushalt fest und kontrolliert die Regierung.' },
+      { s: 'Wahlergebnis: Partei A 40 %, Partei B 30 %, Partei C 20 %, Partei D 10 %.', q: 'Partei A will regieren. Was braucht sie?', o: ['eine Koalition, zum Beispiel mit Partei B oder C', 'nichts – sie hat ja die meisten Stimmen', 'eine Koalition mit Partei D – das reicht'], a: 0, h: 'Zum Regieren braucht man die Mehrheit: mehr als die Hälfte, also über 50 %.', e: '40 % sind keine Mehrheit. Mit B (70 %) oder C (60 %) wären es über 50 %. Mit D wären es genau 50 % – das ist noch nicht „mehr als die Hälfte“.' },
+      { q: '„Koalition“ kommt aus dem Lateinischen. Was bedeutet es?', o: ['zusammenwachsen', 'Herrschaft des Volkes', 'Kunst der Staatsführung'], a: 0, h: 'Denk an ein Bündnis.', e: 'Koalition = „zusammenwachsen“: Parteien tun sich zu einem Bündnis zusammen.' },
+      { q: 'Die Abgeordneten der Parteien, die NICHT mitregieren, nennt man …', o: ['Opposition', 'Koalition', 'Regierung'], a: 'Opposition', h: 'Sie sitzen im Parlament, gehören aber nicht zum Regierungsbündnis.', e: 'Die Opposition darf der Regierung Fragen stellen und kontrolliert ihre Arbeit.' },
+      { q: 'Was ist eine wichtige Aufgabe der Opposition?', o: ['Sie kontrolliert die Regierung und stellt ihr Fragen.', 'Sie spricht die Urteile in Streitfällen.', 'Sie führt die Polizei und die Verwaltung.'], a: 0, h: 'Sie regiert nicht mit – aber sie schaut genau hin.', e: 'Die Opposition kontrolliert die Arbeit der Regierung.' },
+      { s: 'Mia will ins Kino, Ben ins Schwimmbad. Sie einigen sich: heute Kino, am Samstag Schwimmbad.', q: 'Was ist das?', o: ['ein Kompromiss', 'eine Koalition', 'eine Opposition'], a: 0, h: 'Hier geht es nicht um Parteien im Parlament.', e: 'Ein Kompromiss: Beide geben freiwillig ein Stück nach und können mit der Lösung gut leben.' },
+      { q: 'Was ist für einen Kompromiss besonders wichtig?', o: ['Geduld, offene Kommunikation, Respekt und Lösungsorientierung', 'möglichst laut sein und dem anderen nicht zuhören', 'niemals nachgeben und auf dem eigenen Plan bestehen'], a: 0, h: 'Was hilft, wenn zwei sich wirklich einigen wollen?', e: 'Geduld und Ausdauer, offene Kommunikation, Respekt und Wertschätzung, Lösungsorientierung.' },
+      { q: 'Die wichtigsten Gesetze eines Staates stehen in seiner Verfassung. Wie heißt sie in Deutschland?', o: ['Grundgesetz', 'Abgeordnetenhaus', 'Wahlprogramm', 'Rechtsstaat'], a: 'Grundgesetz', h: 'Es gilt seit 1949. Artikel 1 lautet: „Die Würde des Menschen ist unantastbar.“', e: 'Verfassung ist der allgemeine Begriff – in Deutschland heißt die Verfassung Grundgesetz. (Nicht umgekehrt!)' },
+      { q: 'Was ist ein Merkmal eines Rechtsstaats?', o: ['Unabhängige Gerichte überwachen, dass die Gesetze eingehalten werden – auch vom Staat.', 'Die Regierung darf alles tun, was sie für richtig hält – auch ohne Gesetz.', 'Die Polizei entscheidet ganz allein, wer wie lange bestraft wird.'], a: 0, h: 'Im Rechtsstaat steht niemand über dem Gesetz – auch nicht die Regierung.', e: 'Unabhängige Gerichte sind ein wesentliches Merkmal eines Rechtsstaats.' }
+    ]
+  },
+  D: {
+    name: 'Gewaltenteilung', icon: '⚖️', sub: 'Legislative, Exekutive, Judikative',
+    merk: [
+      'Gewaltenteilung: Damit in einem demokratischen Staat niemand zu viel Macht hat, wird die Staatsgewalt auf drei Gewalten verteilt.',
+      'Legislative = gesetzgebende Gewalt: Das Parlament (Bundestag, Abgeordnetenhaus) beschließt neue Gesetze.',
+      'Exekutive = ausführende Gewalt: Regierung, Verwaltung und Polizei sorgen dafür, dass die Gesetze eingehalten und umgesetzt werden.',
+      'Judikative = rechtsprechende Gewalt: Gerichte und Richter entscheiden, was nach dem Gesetz richtig oder falsch ist.'
+    ],
+    items: [
+      { q: 'Warum gibt es die Gewaltenteilung?', o: ['Damit niemand im Staat zu viel Macht hat.', 'Damit der Staat schneller entscheiden kann.', 'Damit es mehr Politiker gibt.'], a: 0, h: 'Wer alles allein bestimmt, kann seine Macht missbrauchen – das kennst du schon vom Scherbengericht.', e: 'Die Macht wird aufgeteilt, damit sich die Gewalten gegenseitig kontrollieren.' },
+      { q: 'In welche drei Gewalten wird die Staatsgewalt geteilt?', o: ['Legislative, Exekutive, Judikative', 'Volksversammlung, Rat, Strategen', 'Bund, Länder und Gemeinden'], a: 0, h: 'Denk an: Gesetze machen – Gesetze ausführen – Recht sprechen.', e: 'Legislative (Gesetze machen), Exekutive (Gesetze ausführen), Judikative (Recht sprechen).' },
+      { s: 'Das Abgeordnetenhaus beschließt ein neues Schulgesetz.', q: 'Welche Gewalt ist das?', o: GEW, a: LEG, fix: 1, e: 'Gesetze beschließen = Legislative.' },
+      { s: 'Ein Gericht entscheidet, ob ein Dieb bestraft wird.', q: 'Welche Gewalt ist das?', o: GEW, a: JUD, fix: 1, e: 'Urteile sprechen = Judikative.' },
+      { s: 'Die Polizei kontrolliert, ob Autofahrer vor der Schule langsam fahren.', q: 'Welche Gewalt ist das?', o: GEW, a: EXE, fix: 1, e: 'Die Polizei sorgt dafür, dass Gesetze eingehalten werden = Exekutive.' },
+      { s: 'Die Regierung sorgt dafür, dass das neue Schulgesetz an allen Schulen umgesetzt wird.', q: 'Welche Gewalt ist das?', o: GEW, a: EXE, fix: 1, e: 'Gesetze umsetzen = Exekutive.' },
+      { s: 'Eine Richterin entscheidet einen Streit zwischen zwei Nachbarn.', q: 'Welche Gewalt ist das?', o: GEW, a: JUD, fix: 1, e: 'Recht sprechen = Judikative.' },
+      { s: 'Die Abgeordneten im Bundestag stimmen über den Haushalt ab.', q: 'Welche Gewalt ist das?', o: GEW, a: LEG, fix: 1, e: 'Das Parlament legt den Haushalt fest = Legislative.' },
+      { s: 'Das Bürgeramt stellt einen Personalausweis aus.', q: 'Welche Gewalt ist das?', o: GEW, a: EXE, fix: 1, e: 'Die Verwaltung führt die Gesetze aus = Exekutive.' },
+      { t: 'multi', q: 'Ordne zu: Wer gehört zu welcher Gewalt?', o: GEW, rows: [
+        ['Parlament', LEG], ['Regierung', EXE], ['Polizei', EXE], ['Gericht', JUD], ['Bundestag', LEG], ['Richterin', JUD]],
+        e: 'Legislative: Parlament, Bundestag, Abgeordnetenhaus. Exekutive: Regierung, Verwaltung, Polizei. Judikative: Gerichte, Richter.' },
+      { q: 'Was heißt „Legislative“ auf Deutsch?', o: ['gesetzgebende Gewalt', 'ausführende Gewalt', 'rechtsprechende Gewalt'], a: 0, h: 'Gesetze machen, Gesetze ausführen, im Streit nach dem Gesetz entscheiden – jede Gewalt hat eine dieser Aufgaben.', e: 'Legislative = gesetzgebende Gewalt (lateinisch lex = Gesetz).' },
+      { q: 'Was heißt „Exekutive“ auf Deutsch?', o: ['gesetzgebende Gewalt', 'ausführende Gewalt', 'rechtsprechende Gewalt'], a: 1, h: 'Gesetze machen, Gesetze ausführen, im Streit nach dem Gesetz entscheiden – jede Gewalt hat eine dieser Aufgaben.', e: 'Exekutive = ausführende Gewalt.' },
+      { q: 'Was heißt „Judikative“ auf Deutsch?', o: ['gesetzgebende Gewalt', 'ausführende Gewalt', 'rechtsprechende Gewalt'], a: 2, h: 'Gesetze machen, Gesetze ausführen, im Streit nach dem Gesetz entscheiden – jede Gewalt hat eine dieser Aufgaben.', e: 'Judikative = rechtsprechende Gewalt (lateinisch iudex = Richter).' }
+    ]
+  },
+  // Definitionen: jede Lücke [richtig, falsch, falsch] – die Lösung ergibt den Mustersatz für die Arbeit
+  E: {
+    name: 'Definitionen-Baukasten', icon: '📖', sub: 'Jede Definition einmal richtig bauen', alle: true,
+    merk: [
+      'So baust du eine Definition: 1. Woher kommt das Wort, was bedeutet es? 2. Was ist es genau? 3. Ein Beispiel oder eine wichtige Einzelheit.',
+      'Zwei bis drei Sätze reichen – aber in jeden Satz gehört ein Fachwort.',
+      'Hier musst du jeden Begriff einmal fehlerfrei zusammenbauen. Was nicht klappt, kommt drei Karten später noch einmal.'
+    ],
+    items: [
+      { t: 'bau', b: 'Antike', parts: ['Das Wort „Antike“ kommt aus dem ', ['Lateinischen', 'Griechischen', 'Englischen'], ' und bedeutet ', ['„alt“ oder „altertümlich“', '„Stadt“ oder „Stadtstaat“', '„neu“ oder „modern“'], '. Historiker meinen damit die Zeit zwischen ', ['etwa 800 v. Chr. und 500 n. Chr.', 'etwa 3000 v. Chr. und dem Jahr 0', 'etwa 500 und 1500 n. Chr.'], ''], h: 'Antike = die Zeit der Griechen und Römer. Danach kommt das Mittelalter.' },
+      { t: 'bau', b: 'Polis', parts: ['Eine Polis ist ein ', ['Stadtstaat', 'Tempel', 'Königreich'], ' in der griechischen Antike. Sie bestand aus ', ['einem städtischen Zentrum und dem umliegenden Gebiet', 'nur einer Burg auf einem Berg ohne Umland', 'mehreren großen Ländern mit einem König'], '. Die größte Polis war ', ['Athen', 'Sparta', 'Rom'], '.'], h: 'Die Mehrzahl heißt Poleis. Die meisten waren klein – eine war besonders groß und mächtig.' },
+      { t: 'bau', b: 'Politik', parts: ['Das Wort „Politik“ kommt aus dem ', ['Griechischen', 'Lateinischen', 'Englischen'], ' (von „Polis“) und bedeutet ', ['„Kunst der Staatsführung“', '„Herrschaft des Volkes“', '„zusammenwachsen“'], '. Es geht um ', ['das Bewältigen von Aufgaben und das Lösen von Problemen im Zusammenleben der Menschen', 'den Bau von Tempeln, Theatern, Bädern und Märkten in jeder Polis', 'das Führen von Kriegen gegen andere Poleis, Länder und Völker'], '.'], h: 'Polis + Kunst des Regierens: Es geht darum, wie Menschen gut zusammenleben. In der Übungs-LEK gab es hier 0 Punkte – diese Definition muss sitzen!' },
+      { t: 'bau', b: 'Demokratie', parts: ['Das Wort „Demokratie“ kommt aus dem ', ['Griechischen', 'Lateinischen', 'Englischen'], ' und bedeutet ', ['„Herrschaft des Volkes“', '„Kunst der Staatsführung“', '„Herrschaft eines Einzelnen“'], '. Die Bürgerinnen und Bürger ', ['dürfen an wichtigen politischen Entscheidungen mitwirken', 'müssen allen Gesetzen der Regierung ohne Abstimmung folgen', 'dürfen bei Entscheidungen nur zuschauen'], ' – ', ['direkt in einer Versammlung aller oder indirekt über gewählte Vertreter im Parlament', 'entweder durch das Los oder durch einen König, den der Adel bestimmt', 'entweder über Richter oder über die Polizei, die das Volk auslost'], '. Es entscheidet immer ', ['die Mehrheit', 'der Älteste', 'das Gericht'], '.'], h: 'In der Übungs-LEK gab es hier 0 Punkte – diese Definition muss sitzen! Beispiel aus dem Heft: Eine Klassensprecherwahl ist gelebte Demokratie im Kleinen.' },
+      { t: 'bau', b: 'direkte Demokratie', parts: ['In einer direkten Demokratie ', ['stimmt jede Bürgerin und jeder Bürger selbst für oder gegen einen politischen Vorschlag', 'wählt das Volk Abgeordnete, die dann für es über Vorschläge', 'stimmt nur der Rat der Ältesten über einen politischen Vorschlag'], ' ab. Ein Beispiel ist ', ['die Volksversammlung in Athen', 'der Bundestag in Berlin', 'das Gericht in Athen'], '.'], h: 'Direkt heißt: ohne Vertreter dazwischen.' },
+      { t: 'bau', b: 'repräsentative (indirekte) Demokratie', parts: ['In einer repräsentativen Demokratie ', ['wählen die Bürgerinnen und Bürger Abgeordnete', 'stimmen die Bürger über jedes Gesetz selbst ab', 'werden alle Ämter ausgelost'], ', die ', ['ihre Interessen im Parlament vertreten', 'die Tempel der Stadt bewachen', 'die Gerichte des Landes leiten'], '. Die Abgeordneten können ', ['unterschiedlichen Parteien angehören', 'keiner Partei angehören', 'nur alle derselben Partei angehören'], '.'], h: 'Repräsentieren heißt vertreten – wie eine Klassensprecherin ihre Klasse vertritt.' },
+      { t: 'bau', b: 'Partei', parts: ['Menschen mit ', ['gleichen oder ähnlichen politischen Zielen', 'demselben Wohnort in der Stadt', 'demselben Beruf und Arbeitgeber'], ' schließen sich zu einer Partei zusammen, um ', ['gemeinsam mehr zu erreichen', 'gemeinsam Gerichte zu bilden', 'gemeinsam Steuern zu sparen'], '. Ihre Ziele veröffentlichen sie im ', ['Partei- und Wahlprogramm', 'Grundgesetz für Deutschland', 'Urteil des höchsten Gerichts'], '.'], h: 'Man kann Mitglied einer Partei werden – wie in einem Verein.' },
+      { t: 'bau', b: 'Parlament', parts: ['Das Parlament ist ', ['die Vertretung des Volkes', 'die Regierung', 'das oberste Gericht'], ' in einer Demokratie. Seine Mitglieder heißen ', ['Abgeordnete', 'Strategen', 'Richter'], ' und werden ', ['vom Volk gewählt', 'ausgelost', 'vom König ernannt'], '. Zentrale Aufgaben sind ', ['die Gesetzgebung, die Festlegung des Haushalts und die Kontrolle der Regierung', 'das Sprechen von Urteilen und die Leitung der Polizei im ganzen Land', 'die Ausführung der Gesetze durch Ämter, Polizei und Verwaltung'], '.'], h: 'Das Parlament gehört zur gesetzgebenden Gewalt.' },
+      { t: 'bau', b: 'Abgeordnetenhaus', parts: ['Das Abgeordnetenhaus ist ', ['das Parlament von Berlin', 'das Parlament für ganz Deutschland', 'das Gericht von Berlin'], '. Dort entscheiden ', ['gewählte Abgeordnete aus verschiedenen Parteien', 'ausgeloste Richterinnen und Richter', 'die zehn gewählten Strategen'], ' über ', ['die Gesetze für Berlin', 'die Urteile in Berlin', 'die Gesetze für ganz Europa'], '. Die Sitzungen sind ', ['öffentlich – jeder darf zuschauen', 'streng geheim', 'nur für Parteimitglieder'], '.'], h: 'Nicht verwechseln: Im Reichstagsgebäude sitzt der Bundestag. In der Übungs-LEK kostete genau diese Verwechslung Punkte.' },
+      { t: 'bau', b: 'Koalition', parts: ['Das Wort „Koalition“ kommt aus dem ', ['Lateinischen', 'Griechischen', 'Englischen'], ' und bedeutet ', ['„zusammenwachsen“', '„Herrschaft des Volkes“', '„alt“'], '. Hat ', ['keine Partei allein mehr als 50 % der Stimmen', 'eine Partei mehr als 50 % der Stimmen', 'jede Partei genau 50 %'], ', schließen sich ', ['zwei oder mehr Parteien zu einem Bündnis zusammen, um gemeinsam zu regieren', 'die Parteien ohne Stimmen zur Opposition zusammen, um zu kontrollieren', 'alle Richter zu einem Gericht zusammen, um den Streit zu entscheiden'], '.'], h: 'In der Übungs-LEK gab es hier 0 Punkte. Denk an das Rechenbeispiel: 40 % + 20 % = 60 %.' },
+      { t: 'bau', b: 'Opposition', parts: ['Zur Opposition gehören ', ['die Parteien im Parlament, die nicht mitregieren', 'die Parteien im Parlament, die gemeinsam regieren', 'die Richterinnen und Richter am Gericht'], '. Sie ', ['kontrolliert die Arbeit der Regierung und darf ihr Fragen stellen', 'beschließt ganz allein alle Gesetze für das Land', 'spricht die Urteile, wenn Bürger sich streiten'], '.'], h: 'Ohne sie würde niemand genau hinschauen, was die Regierung macht.' },
+      { t: 'bau', b: 'Kompromiss', parts: ['Bei einem Kompromiss einigen sich ', ['die am Streit Beteiligten auf eine Lösung, mit der beide gut leben können', 'die Streitenden darauf, dass einer am Ende ganz nachgeben muss', 'die Streitenden darauf, dass ein Gericht für sie entscheidet'], '. Dabei ', ['geben beide Seiten freiwillig etwas nach', 'bekommt jede Seite alles, was sie wollte', 'entscheidet am Ende das Los'], '. Wichtig sind ', ['Geduld, offene Kommunikation, Respekt und Lösungsorientierung', 'Lautstärke, Drohungen und niemals einen Schritt nachgeben', 'Glück, Zufall und ein schneller Sieg über die andere Seite'], '.'], h: 'In der Übungs-LEK gab es hier 0 Punkte. Denk an Mia und Ben: heute Kino, am Samstag Schwimmbad.' },
+      { t: 'bau', b: 'Gewaltenteilung', parts: [['Damit in einem demokratischen Staat niemand zu viel Macht hat', 'Damit der Staat schneller und ohne Streit entscheiden kann', 'Damit am Ende nur einer im Staat bestimmt'], ', gibt es die Gewaltenteilung. Sie besteht aus der ', ['Legislative, der Exekutive und der Judikative', 'Volksversammlung, dem Rat der 500 und den Strategen', 'Partei, der Koalition und der Opposition'], '.'], h: 'In der Übungs-LEK gab es hier nur 1 von 4 Punkten: Die Gewalten waren nur genannt, nicht erklärt – und die Judikative fehlte.' },
+      { t: 'bau', b: 'Legislative, Exekutive, Judikative', parts: ['Die Legislative (', ['das Parlament', 'die Polizei', 'das Gericht'], ') beschließt neue Gesetze. Die Exekutive (', ['Regierung und Polizei', 'die Abgeordneten', 'die Richter'], ') sorgt dafür, dass Gesetze eingehalten und umgesetzt werden. Die Judikative (', ['Gerichte und Richter', 'Regierung und Ämter', 'Parteien und Wähler'], ') entscheidet, was nach dem Gesetz richtig oder falsch ist.'], h: 'Gesetze machen → Gesetze ausführen → im Streit nach dem Gesetz entscheiden.' },
+      { t: 'bau', b: 'Volksversammlung', parts: ['In Athen konnten an der Volksversammlung ', ['alle freien männlichen Bürger über 20 Jahre', 'alle Einwohner Athens, auch Frauen und Zuwanderer', 'nur die 500 Mitglieder des Rates'], ' teilnehmen. Dort wurde über ', ['Krieg und Frieden, Gesetze und die Staatsausgaben', 'Feste, Spiele und die Reihenfolge der Wettkämpfe', 'die Preise auf dem Markt und die Löhne der Sklaven'], ' entschieden. Keine Mitbestimmung hatten ', ['Frauen, Sklaven und Zuwanderer', 'Bauern, Fischer und Handwerker', 'arme Bürger ohne eigenes Land'], '.'], h: 'Es zählte nicht, ob jemand arm oder reich war – aber ob er Bürger war.' },
+      { t: 'bau', b: 'Scherbengericht', parts: ['Beim Scherbengericht ritzten die Bürger ', ['den Namen eines Politikers, den sie für gefährlich hielten,', 'den Namen eines Politikers, den sie zum Strategen wählen wollten,', 'ein neues Gesetz, über das sie abstimmen wollten,'], ' in eine Tonscherbe. Wurden mindestens ', ['6000', '600', '60 000'], ' Scherben abgegeben, musste der Politiker mit den meisten Stimmen ', ['für zehn Jahre die Stadt verlassen', 'für den Rest seines Lebens ins Gefängnis', 'sein ganzes Vermögen an die Stadt abgeben'], '. ', ['Ansehen und Vermögen behielt er', 'Ansehen und Vermögen verlor er', 'Er wurde zum Strategen gewählt'], '. So wurde ', ['die Macht einzelner Politiker beschränkt', 'die Zahl der Bürger Athens verkleinert', 'ein neuer König für Athen bestimmt'], '.'], h: 'Bild M2 zeigt eine echte Scherbe mit dem Namen Themistokles. Wichtig ist auch der Zweck: Wovor sollte die Demokratie geschützt werden?' },
+      { t: 'bau', b: 'Verfassung und Grundgesetz', parts: ['Die wichtigsten Gesetze eines demokratischen Staates stehen in der ', ['Verfassung', 'Zeitung', 'Wahlkabine'], '. In Deutschland heißt sie ', ['Grundgesetz', 'Abgeordnetenhaus', 'Rechtsstaat'], '.'], h: 'Auf dem Blatt „Demokratie verstehen“ waren die beiden Wörter vertauscht – erst der allgemeine Begriff, dann der deutsche Name.' },
+      { t: 'bau', b: 'Rechtsstaat', parts: ['In einem Rechtsstaat ', ['überwachen unabhängige Gerichte die Einhaltung der Gesetze', 'darf die Regierung alles tun, was sie für richtig hält', 'entscheidet die Polizei ganz allein über alle Strafen'], '. Auch ', ['der Staat selbst muss sich an die Gesetze halten', 'die Gerichte müssen tun, was die Regierung sagt', 'die Gesetze gelten nicht für Politiker'], '.'], h: 'Rechtsstaat = Niemand steht über dem Gesetz.' }
+    ]
+  }
+};
+const ST_KEYS = ['A', 'B', 'C', 'D', 'E'];
+const UEB_KEYS = ['A', 'B', 'C', 'D'];
+ST_KEYS.forEach(k => ST[k].items.forEach((it, i) => {
+  it.id = k + i; it.st = k;
+  if (typeof it.a === 'number') it.a = it.o[it.a];
+}));
+
+// Mustersätze aus dem Baukasten (Karteikarten, Druck)
+const modell = (it, html) => it.parts.map(p => Array.isArray(p) ? (html ? '<b>' + esc(p[0]) + '</b>' : p[0]) : (html ? esc(p) : p)).join('');
+
+// Aufwärmen: Begriff → Kurzbedeutung
+const BLITZ = [
+  ['Antike', 'die Zeit der Griechen und Römer', 'lateinisch: „alt, altertümlich“'],
+  ['Polis', 'ein griechischer Stadtstaat', 'Athen war die größte davon.'],
+  ['Politik', 'die Kunst der Staatsführung', 'Das Wort kommt von „Polis“.'],
+  ['Demokratie', 'die Herrschaft des Volkes', 'griechisch: demos + kratos'],
+  ['Partei', 'Menschen mit ähnlichen politischen Zielen', 'Man kann dort Mitglied werden – wie in einem Verein.'],
+  ['Parlament', 'die gewählte Vertretung des Volkes', 'Dort sitzen die Abgeordneten.'],
+  ['Koalition', 'ein Bündnis von Parteien, um zu regieren', 'lateinisch: „zusammenwachsen“'],
+  ['Kompromiss', 'eine Einigung, bei der beide etwas nachgeben', 'Heute Kino, am Samstag Schwimmbad.'],
+  ['Opposition', 'die Parteien im Parlament, die nicht mitregieren', 'Sie stellt der Regierung unbequeme Fragen.'],
+  ['Gewaltenteilung', 'die Aufteilung der Staatsmacht auf drei Gewalten', 'Legislative, Exekutive, …'],
+  ['Scherbengericht', 'die Verbannung eines zu mächtigen Politikers', 'Namen auf Tonscherben'],
+  ['Volksversammlung', 'das Treffen der Bürger Athens, die mitbestimmen durften', 'auf dem Hügel Pnyx'],
+  ['Rechtsstaat', 'Gerichte wachen darüber, dass alle sich an Gesetze halten', 'Niemand steht über dem Gesetz.']
+];
+const WARM = BLITZ.map(([b, d, h], i) => ({ q: 'Was bedeutet „' + b + '“?', o: [d].concat(shuffle(BLITZ.filter(x => x[0] !== b)).slice(0, 3).map(x => x[1])), a: d, h, e: b + ': ' + d + '.', id: 'W' + i, st: 'W' }));
+
+// ===================================================================
+// ANSICHTEN
+// ===================================================================
+const app = document.getElementById('app');
+let VIEW = 'home', RUN = null, timerId = null, KK = null;
+document.getElementById('homeBtn').onclick = () => go('home');
+function go(v) { if (v !== 'kartei') KK = null; VIEW = v; if (timerId) { clearInterval(timerId); timerId = null; } render(); window.scrollTo(0, 0); }
+function crumb(t) { document.getElementById('crumb').textContent = t || ''; }
+
+const PLAN = [
+  { k: 'warm', t: 'Aufwärmen: Begriffe-Blitz', d: 'Acht Fachbegriffe – was bedeuten sie?', min: 4 },
+  { k: 'check', t: 'Kurzer Check', d: 'Zwei Aufgaben aus jedem Thema – zeigt, wo es noch hakt', min: 6 },
+  { k: 'st1', t: 'Station: Demokratie in Athen', d: 'Das Hauptthema – mit Zusatzwissen über das Buch hinaus', min: 12 },
+  { k: 'st2', t: 'Station 2', d: '', min: 8 },
+  { k: 'def', t: 'Definitionen-Baukasten', d: 'Alle Begriffe einmal richtig zusammenbauen', min: 12 },
+  { k: 'probe', t: 'Generalprobe', d: 'Mini-LEK wie die Übungs-LEK, mit Uhr und Note', min: 15 },
+  { k: 'kartei', t: 'Karteikarten', d: 'Jeden Begriff einmal laut erklären – dann ist Schluss', min: 5 }
+];
+// Station 1 ist immer Athen; Station 2 ist das schwächste der übrigen Themen aus dem Check
+function zweite() {
+  const def = ['C', 'D', 'A'];
+  if (!S.check) return def[0];
+  const rate = k => { const r = S.check[k] || [0, 0]; return r[1] ? r[0] / r[1] : 1; };
+  return def.slice().sort((a, b) => rate(a) - rate(b) || def.indexOf(a) - def.indexOf(b))[0];
+}
+function planStep(k) {
+  if (k === 'warm') startRun('warm');
+  else if (k === 'check') startRun('check');
+  else if (k === 'st1') startRun('B', 'st1');
+  else if (k === 'st2') startRun(zweite(), 'st2');
+  else if (k === 'def') startRun('E', 'def');
+  else go(k);
+}
+function planTitel(p) {
+  if (p.k === 'st2') return S.check ? 'Station 2: ' + ST[zweite()].name : 'Station 2';
+  return p.t;
+}
+
+function render() {
+  try {
+    if (VIEW === 'home') return renderHome();
+    if (VIEW === 'run') return renderRun();
+    if (VIEW === 'probe') return renderProbe();
+    if (VIEW === 'kartei') return renderKartei();
+  } catch (e) {
+    app.innerHTML = `<header class="top"><h1>Hoppla</h1><p class="muted">Hier ist etwas schiefgegangen. Meist hilft es, den gespeicherten Stand zurückzusetzen.</p></header>
+      <div class="row"><button class="btn" id="resetAll">Speicher zurücksetzen</button></div>`;
+    document.getElementById('resetAll').onclick = () => { if (confirm('Alles zurücksetzen?')) { S = blank(); save(); go('home'); } };
+  }
+}
+
+function renderHome() {
+  crumb('');
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  const stat = k => { const r = S.stat[k] || { r: 0, n: 0 }; return r.n ? Math.round(100 * r.r / r.n) : null; };
+  const gesamt = PLAN.reduce((n, p) => n + p.min, 0);
+  app.innerHTML = `
+  <header class="top">
+    <div class="eyebrow">GEWI · Klasse 6 · LEK</div>
+    <h1>Demokratie – einmal alles durch</h1>
+    <p class="muted">Antike und Polis, die Anfänge der Demokratie in Athen, Demokratie heute und die Gewaltenteilung. Nur Antippen und Auswählen, keine langen Texte. Am Ende sitzen alle Definitionen. Etwa ${gesamt} Minuten.</p>
+  </header>
+  <section>
+    <h2>📋 Dein Plan für heute</h2>
+    <ol class="plan">${PLAN.map((p, i) => {
+      let d = p.d;
+      if (p.k === 'st2') d = S.check ? 'Aus deinem Check: hier hakt es am meisten' : 'Nach dem Check steht hier dein schwächstes Thema';
+      return `<li class="${S.plan[p.k] ? 'done' : ''} ${i === nextIdx ? 'next' : ''}" data-k="${p.k}" tabindex="0" role="button">
+        <span class="n">${S.plan[p.k] ? '✓' : i + 1}</span>
+        <span><span class="t">${esc(planTitel(p))}</span><br><span class="d">${esc(d)}</span></span>
+        <span class="m">${p.min} min</span></li>`;
+    }).join('')}</ol>
+    <div class="row">
+      ${nextIdx >= 0 ? `<button class="btn" id="weiter">${nextIdx === 0 ? 'Los geht’s' : 'Weiter mit Schritt ' + (nextIdx + 1)}</button>` : '<p><b>🎉 Alles geschafft. Jetzt ist Schluss – gut schlafen ist die beste Vorbereitung!</b></p>'}
+      ${Object.keys(S.plan).length ? '<button class="btn ghost" id="planReset">Plan neu starten</button>' : ''}
+    </div>
+  </section>
+  <section>
+    <h2>🎯 Frei üben</h2>
+    <div class="grid">
+      ${ST_KEYS.map(k => { const p = stat(k); return `<button class="tile" data-st="${k}"><b>${ST[k].icon} ${esc(ST[k].name)}</b><span>${esc(ST[k].sub)}</span>
+        ${p === null ? '<span>noch nicht geübt</span>' : `<span>${p} % richtig</span><div class="meter"><i style="width:${p}%"></i></div>`}</button>`; }).join('')}
+      <button class="tile" data-go="probe"><b>📝 Generalprobe</b><span>${S.probe && S.probe.done ? 'Ergebnis: ' + S.probe.punkte + ' / ' + PROBE_MAX + ' Punkte' : 'Mini-LEK mit Uhr und Note'}</span></button>
+      <button class="tile" data-go="kartei"><b>🗂️ Karteikarten</b><span>Begriffe laut erklären, alle Definitionen ausdrucken</span></button>
+    </div>
+  </section>`;
+  app.querySelectorAll('.plan li').forEach(li => { li.onclick = () => planStep(li.dataset.k); li.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); planStep(li.dataset.k); } }; });
+  const wb = document.getElementById('weiter'); if (wb) wb.onclick = () => planStep(PLAN[nextIdx].k);
+  const pr = document.getElementById('planReset'); if (pr) pr.onclick = () => { if (confirm('Plan von vorn beginnen? Check und Generalprobe starten neu.')) { S.plan = {}; S.check = null; S.probe = null; save(); render(); } };
+  app.querySelectorAll('[data-st]').forEach(b => b.onclick = () => startRun(b.dataset.st));
+  app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+// ===================================================================
+// ÜBUNGSLAUF (Aufwärmen, Check, Stationen)
+// ===================================================================
+function startRun(kind, planKey) {
+  let queue;
+  if (kind === 'warm') queue = shuffle(WARM).slice(0, 8).map(w => Object.assign({}, w, { o: shuffle(w.o) }));
+  else if (kind === 'check') queue = shuffle(UEB_KEYS.flatMap(k => shuffle(ST[k].items.filter(it => it.t !== 'schaubild')).slice(0, 2)));
+  else queue = shuffle(ST[kind].items);
+  RUN = { kind, planKey: planKey || (kind === 'warm' || kind === 'check' ? kind : null), queue, idx: 0, streak: 0, count: 0, right: 0, res: {}, finished: false, showMerk: kind in ST };
+  go('run');
+}
+function runTitle() {
+  if (RUN.kind === 'warm') return 'Aufwärmen: Begriffe-Blitz';
+  if (RUN.kind === 'check') return 'Kurzer Check';
+  return ST[RUN.kind].icon + ' ' + (RUN.kind === 'E' ? '' : 'Station: ') + ST[RUN.kind].name;
+}
+function merkBox(k) { return `<div class="merk"><b>${k === 'B' ? 'Das musst du wissen – und ein bisschen mehr' : 'Das musst du wissen'}</b><ul>${ST[k].merk.map(m => `<li>${m.startsWith('Zusatzwissen') ? '<span class="hl">Zusatzwissen:</span>' + esc(m.slice(13)) : esc(m)}</li>`).join('')}</ul></div>`; }
+
+function renderRun() {
+  crumb(runTitle());
+  if (RUN.finished) return renderRunEnd();
+  const alle = RUN.kind in ST && ST[RUN.kind].alle;
+  if (RUN.showMerk) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">${RUN.kind === 'E' ? 'Definitionen' : 'Station'}</div><h1>${esc(runTitle())}</h1></header>
+      ${merkBox(RUN.kind)}
+      <p class="muted small">${alle ? `Geschafft, wenn alle ${RUN.queue.length} Begriffe einmal richtig gebaut sind.` : 'Die Station ist geschafft, wenn du mindestens sechs Aufgaben gemacht hast und die letzten drei hintereinander richtig sind.'}</p>
+      <div class="row"><button class="btn" id="los">Los</button></div>`;
+    document.getElementById('los').onclick = () => { RUN.showMerk = false; render(); };
+    return;
+  }
+  const it = RUN.queue[RUN.idx];
+  const isSt = RUN.kind in ST;
+  const prog = alle ? `<span>Geschafft: ${RUN.right} von ${ST.E.items.length}</span>`
+    : isSt ? `<span>Richtig in Folge:</span><span class="dots">${[0, 1, 2].map(i => `<i class="${i < RUN.streak ? 'on' : ''}"></i>`).join('')}</span>`
+    : `<span>Aufgabe ${RUN.idx + 1} von ${RUN.queue.length}</span>`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div></header>
+    <div class="progress">${prog}${isSt ? '<button class="linkbtn" id="merkAuf" style="margin-left:auto">Merkwissen</button>' : ''}</div>
+    <div class="card" id="karte"></div><div id="merkHier"></div>`;
+  if (isSt) document.getElementById('merkAuf').onclick = () => { const m = document.getElementById('merkHier'); m.innerHTML = m.innerHTML ? '' : merkBox(RUN.kind); };
+  const karte = document.getElementById('karte');
+  renderCard(it, karte, ok => answered(it, ok));
+  tippsAn(karte); tippBinden(karte);
+  const erste = karte.querySelector('.opt, select'); if (erste) erste.focus({ preventScroll: true });
+}
+
+function answered(it, ok) {
+  RUN.count++;
+  if (ok) { RUN.right++; RUN.streak++; } else RUN.streak = 0;
+  if (it.st && it.st !== 'W') {
+    const s = S.stat[it.st] || (S.stat[it.st] = { r: 0, n: 0 });
+    s.n++; if (ok) s.r++;
+  }
+  // im Baukasten nicht Geschafftes kommt bei den Karteikarten zuerst dran
+  if (RUN.kind === 'E' && !ok && !S.kkErst.includes(it.id)) S.kkErst.push(it.id);
+  if (RUN.kind === 'check') { const r = RUN.res[it.st] || (RUN.res[it.st] = [0, 0]); r[1]++; if (ok) r[0]++; }
+  // falsch beantwortete Aufgabe kommt drei Karten später noch einmal
+  if (!ok && RUN.kind in ST) RUN.queue.splice(Math.min(RUN.idx + 3, RUN.queue.length), 0, it);
+  RUN.idx++;
+  const isSt = RUN.kind in ST, alle = isSt && ST[RUN.kind].alle;
+  // Station: mindestens 6 Karten und 3 richtige in Folge; nach 14 Karten Schluss (dann noch nicht geschafft).
+  // Baukasten: geschafft, wenn alles einmal richtig war
+  RUN.geschafft = alle ? RUN.idx >= RUN.queue.length : isSt && RUN.streak >= 3 && RUN.count >= 6;
+  if ((isSt && !alle && (RUN.geschafft || RUN.count >= 14)) || RUN.idx >= RUN.queue.length) {
+    RUN.finished = true;
+    if (RUN.kind === 'check') S.check = RUN.res;
+    if (RUN.planKey && (!isSt || RUN.geschafft)) S.plan[RUN.planKey] = true;
+  }
+  save();
+  render();
+  window.scrollTo(0, 0);
+}
+
+function renderRunEnd() {
+  let body = '';
+  const isSt = RUN.kind in ST, alle = isSt && ST[RUN.kind].alle;
+  if (RUN.kind === 'check') {
+    body = `<div class="card"><h3>So lief dein Check</h3>
+      ${UEB_KEYS.map(k => { const r = S.check[k] || [0, 0]; const p = r[1] ? Math.round(100 * r[0] / r[1]) : 0; return `<div><div class="th"><span>${ST[k].icon} ${esc(ST[k].name)}</span><span class="pts">${r[0]} / ${r[1]}</span></div><div class="meter"><i style="width:${p}%"></i></div></div>`; }).join('')}
+      <p>Als Nächstes: <b>Demokratie in Athen</b> (das Hauptthema), danach <b>${esc(ST[zweite()].name)}</b>.</p></div>`;
+  } else if (alle) {
+    const falsch = new Set(RUN.queue.slice(0, RUN.idx).filter((x, i, q) => q.indexOf(x) !== i).map(x => x.id)).size;
+    body = `<div class="card"><p><b>Alle ${ST.E.items.length} Definitionen gebaut.</b> ${falsch ? (falsch === 1 ? 'Ein Begriff hat' : falsch + ' Begriffe haben') + ' erst im zweiten Anlauf geklappt – die kommen bei den Karteikarten zuerst dran.' : 'Alles im ersten Anlauf – stark! 🎉'}</p></div>`;
+  } else {
+    body = `<div class="card"><p><b>${RUN.right} von ${RUN.count}</b> richtig.${RUN.geschafft ? ' Drei in Folge – Station geschafft! 🎉' : ''}</p>
+      ${isSt && !RUN.geschafft ? '<p class="muted">Das Thema braucht noch etwas Übung. Lies das Merkwissen noch einmal und mach noch eine Runde – erst dann ist der Schritt im Plan abgehakt.</p>' : ''}</div>`;
+  }
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  const nichtGeschafft = isSt && !RUN.geschafft;
+  const titel = RUN.kind === 'check' ? 'Check fertig' : nichtGeschafft ? 'Noch nicht ganz' : 'Geschafft';
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div><h1>${titel}</h1></header>${body}
+    <div class="row">${nichtGeschafft ? '<button class="btn" id="nochmal">Noch eine Runde</button>' : ''}${RUN.planKey && nextIdx >= 0 && !nichtGeschafft ? `<button class="btn" id="nx">Weiter: ${esc(planTitel(PLAN[nextIdx]))}</button>` : ''}
+    ${isSt && !nichtGeschafft && !alle ? '<button class="btn ghost" id="nochmal">Noch eine Runde</button>' : ''}
+    <button class="btn ghost" id="hm">Zum Plan</button></div>`;
+  const nx = document.getElementById('nx'); if (nx) nx.onclick = () => planStep(PLAN[nextIdx].k);
+  const nm = document.getElementById('nochmal'); if (nm) nm.onclick = () => startRun(RUN.kind, RUN.planKey);
+  document.getElementById('hm').onclick = () => go('home');
+}
+
+// ===================================================================
+// KARTEN
+// ===================================================================
+function feedback(host, ok, it, done, extra) {
+  const fb = host.querySelector('.fb');
+  fb.setAttribute('role', 'status');
+  fb.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Leider nicht.'}</b> ${extra || ''}${esc(it.e || '')}</div>
+    <div class="row"><button class="btn" id="weiterK">Weiter</button></div>`;
+  const b = document.getElementById('weiterK'); b.focus({ preventScroll: true }); b.onclick = () => done(ok);
+}
+function renderCard(it, host, done) {
+  if (it.t === 'multi') return cardMulti(it, host, done);
+  if (it.t === 'bau') return cardBau(it, host, done);
+  if (it.t === 'schaubild') return cardSchaubild(it, host, done);
+  const opts = it.fix ? it.o : shuffle(it.o);
+  const lang = it.o.some(o => o.length > 26);
+  host.innerHTML = `${it.s ? `<p class="satz">${fmt(it.s)}</p>` : ''}<p class="frage">${esc(it.q)}</p>
+    <div class="opts ${lang ? 'liste' : ''}">${opts.map(o => `<button class="opt" data-v="${esc(o)}"${tippAttr(o)}>${esc(o)}</button>`).join('')}</div>
+    ${tippBox(it.h ? esc(it.h) : '')}<div class="fb"></div>`;
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (host.dataset.locked) return; host.dataset.locked = '1';
+    const ok = b.dataset.v === it.a;
+    host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (x.dataset.v === it.a) x.classList.add('ok'); });
+    if (!ok) b.classList.add('no');
+    feedback(host, ok, it, done, ok ? '' : 'Richtig ist: <b>' + esc(it.a) + '</b>. ');
+  });
+}
+
+// ---- Zuordnen: mehrere Zeilen, eine gemeinsame Antwortgruppe ----
+function cardMulti(it, host, done) {
+  const order = shuffle(it.rows.map((_, i) => i)), sel = {};
+  host.innerHTML = `<p class="frage">${esc(it.q)}</p>
+    ${order.map(i => `<div class="mrow"><span class="mt">${esc(it.rows[i][0])}</span><div class="opts" data-r="${i}">${it.o.map(o => `<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`).join('')}
+    ${gruppenTipps(it.o)}${tippBox(it.h ? esc(it.h) : '')}
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
+  const pb = host.querySelector('#pruef');
+  host.querySelectorAll('.mrow .opts').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (host.dataset.locked) return;
+    g.querySelectorAll('.opt').forEach(x => x.classList.remove('sel')); b.classList.add('sel');
+    sel[g.dataset.r] = b.dataset.v; pb.disabled = Object.keys(sel).length < it.rows.length;
+  }));
+  pb.onclick = () => {
+    host.dataset.locked = '1'; pb.disabled = true;
+    let n = 0;
+    host.querySelectorAll('.mrow .opts').forEach(g => {
+      const soll = it.rows[g.dataset.r][1];
+      g.querySelectorAll('.opt').forEach(x => { x.disabled = true; x.classList.remove('sel'); if (x.dataset.v === soll) x.classList.add('ok'); else if (x.dataset.v === sel[g.dataset.r]) x.classList.add('no'); });
+      if (sel[g.dataset.r] === soll) n++;
+      g.closest('.mrow').querySelector('.mt').insertAdjacentHTML('afterbegin', sel[g.dataset.r] === soll ? '<span style="color:var(--ok)">✓ </span>' : '<span style="color:var(--bad)">✗ </span>');
+    });
+    const ok = n === it.rows.length;
+    feedback(host, ok, it, done, ok ? '' : `${n} von ${it.rows.length} richtig. `);
+  };
+}
+
+// ---- Definitions-Baukasten: Lücken im Mustersatz, je drei Bausteine ----
+function cardBau(it, host, done) {
+  const gaps = it.parts.filter(Array.isArray), opts = gaps.map(g => shuffle(g)), sel = gaps.map(() => null);
+  let fertig = false;
+  const satz = () => { let n = -1; return it.parts.map(p => {
+    if (!Array.isArray(p)) return esc(p);
+    n++; const v = sel[n];
+    const cls = v === null ? 'leer' : fertig ? (v === p[0] ? 'ok' : 'no') : '';
+    return `<span class="bgap ${cls}">${v === null ? '(' + (n + 1) + ') …' : esc(v)}</span>`;
+  }).join(''); };
+  host.innerHTML = `<div class="eyebrow">Definiere</div><h2>${esc(it.b)}</h2><p class="bsatz" id="bs">${satz()}</p>
+    ${opts.map((o, n) => `<div class="bteil"><span class="nr">Lücke ${n + 1}</span><div class="opts ${o.some(x => x.length > 22) ? 'liste' : ''}" data-g="${n}">${o.map(x => `<button class="opt" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>`).join('')}
+    ${tippBox(esc(it.h))}<div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
+  const pb = host.querySelector('#pruef'), bs = host.querySelector('#bs');
+  host.querySelectorAll('.opts[data-g]').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (fertig) return;
+    g.querySelectorAll('.opt').forEach(x => x.classList.remove('sel')); b.classList.add('sel');
+    sel[+g.dataset.g] = b.dataset.v; bs.innerHTML = satz(); pb.disabled = sel.some(x => x === null);
+  }));
+  pb.onclick = () => {
+    fertig = true; pb.disabled = true; bs.innerHTML = satz();
+    host.querySelectorAll('.opts[data-g]').forEach(g => { const soll = gaps[+g.dataset.g][0]; g.querySelectorAll('.opt').forEach(x => { x.disabled = true; x.classList.remove('sel'); if (x.dataset.v === soll) x.classList.add('ok'); else if (x.dataset.v === sel[+g.dataset.g]) x.classList.add('no'); }); });
+    const n = gaps.filter((g, i) => sel[i] === g[0]).length, ok = n === gaps.length;
+    feedback(host, ok, it, done, (ok ? '' : `${n} von ${gaps.length} Lücken richtig. `) + `<div class="modell" style="margin-top:8px"><b>So schreibst du es in der Arbeit:</b><br>${modell(it, true)}</div>`);
+  };
+}
+
+// ---- Schaubild M3: Mitbestimmung in Athen ----
+const SB_BOX = ['Regierung', 'Strategen', 'Rat der 500', 'Richter', 'Volksversammlung'];
+const SB_WER = ['alle männlichen Bürger über 20 Jahre', 'alle Einwohner Athens', 'nur die reichen Bürger', 'alle Männer und Frauen über 18'];
+const SB_NICHT = ['Frauen, Sklaven, Zuwanderer', 'Bauern und Handwerker', 'arme Bürger', 'Soldaten und Seeleute'];
+const SB = [
+  { o: SB_BOX, a: 'Regierung', hint: 'täglich wechselnder Vorsitzender', lab: 'oberstes Feld' },
+  { o: SB_BOX, a: 'Strategen', hint: 'Anführer von Flotte und Heer', lab: 'Amt links' },
+  { o: SB_BOX, a: 'Rat der 500', hint: 'bereitet die Gesetze vor', lab: 'Amt Mitte' },
+  { o: SB_BOX, a: 'Richter', hint: 'bilden das Volksgericht', lab: 'Amt rechts' },
+  { o: WL, a: 'Wahl', lab: 'Pfeil links' }, { o: WL, a: 'Los', lab: 'Pfeil Mitte' }, { o: WL, a: 'Los', lab: 'Pfeil rechts' },
+  { o: SB_WER, a: SB_WER[0], lab: 'Wer gehört zur Volksversammlung?' },
+  { o: SB_NICHT, a: SB_NICHT[0], lab: 'Wer hat keine Mitbestimmung?' }
+];
+function optHtml(opts, v) { return `<option value="">–</option>` + opts.map(o => `<option value="${esc(o)}" ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join(''); }
+function sbHtml(vals, fertig, ohneHinweis) {
+  const sel = i => { const s = SB[i], v = vals[i] || '', cls = fertig ? (v === s.a ? 'ok' : 'no') : '';
+    return `<select data-sb="${i}" class="${cls}" ${fertig ? 'disabled' : ''} aria-label="${esc(s.lab)}">${optHtml(i < 4 || i > 6 ? abc(s.o) : s.o, v)}</select>${fertig && v !== s.a ? `<span class="sol">${esc(s.a)}</span>` : ''}`; };
+  return `<div class="sb">
+    <div class="box top">${sel(0)}${ohneHinweis ? '' : `<span class="hint">${esc(SB[0].hint)}</span>`}</div>
+    <div class="pf">▲</div>
+    <div class="lvl">${[1, 2, 3].map(i => `<div class="amt"><div class="box">${sel(i)}${ohneHinweis ? '' : `<span class="hint">${esc(SB[i].hint)}</span>`}</div><div class="pf"><span aria-hidden="true">▲</span>${sel(i + 3)}</div></div>`).join('')}</div>
+    <div class="box"><b>Volksversammlung</b>${sel(7)}</div>
+    <div class="box nicht"><b>Keine Mitbestimmung:</b>${sel(8)}</div>
+  </div>`;
+}
+function cardSchaubild(it, host, done) {
+  const vals = SB.map(() => '');
+  host.innerHTML = `<p class="frage">Fülle das Schaubild aus: Mitbestimmung der Bürger in Athen im 5. Jahrhundert v. Chr.</p>
+    <div id="sbh">${sbHtml(vals, false)}</div>${tippBox(esc(it.h))}
+    <div class="row"><button class="btn" id="pruef" disabled>Prüfen</button></div><div class="fb"></div>`;
+  const pb = host.querySelector('#pruef');
+  host.querySelectorAll('select[data-sb]').forEach(el => el.onchange = () => { vals[+el.dataset.sb] = el.value; pb.disabled = vals.some(v => !v); });
+  pb.onclick = () => {
+    pb.disabled = true;
+    host.querySelector('#sbh').innerHTML = sbHtml(vals, true);
+    const n = SB.filter((s, i) => vals[i] === s.a).length, ok = n === SB.length;
+    feedback(host, ok, it, done, `${n} von ${SB.length} Feldern richtig. `);
+  };
+}
+
+// ===================================================================
+// GENERALPROBE – Aufbau wie die Übungs-LEK, eigene Formulierungen
+// ===================================================================
+// Lückentext: [angezeigt, Lösung, fett, Auswahl] – die Auswahl wird alphabetisch gezeigt
+const L = (a, ...falsch) => [a, a, 0, [a].concat(falsch)];
+const PROBE = [
+  { id: 'p1', h: '1. Das Abgeordnetenhaus', type: 'picks', picks: [
+    { q: 'a) Wo steht das Abgeordnetenhaus?', o: ['in Bonn', 'in Berlin', 'in Athen'], a: 1 },
+    { q: 'b) Welche Beschreibung passt?', o: ['Das Parlament für ganz Deutschland; es tagt im Reichstagsgebäude.', 'Das Gericht von Berlin; dort sprechen Richter die Urteile.', 'Das Parlament von Berlin; gewählte Abgeordnete beschließen dort die Gesetze.'], a: 2 },
+    { q: 'c) Wer wählt die Abgeordneten?', o: ['das Volk', 'die Regierung', 'die Richter'], a: 0 }] },
+  { id: 'p2', h: '2. Füll das Schaubild aus: Mitbestimmung in Athen.', type: 'schaubild' },
+  { id: 'p3', h: '3. Definiere „Demokratie“.', type: 'segs', segs: [
+    'Das Wort kommt aus dem', L('Griechischen', 'Lateinischen'), 'und bedeutet', L('„Herrschaft des Volkes“.', '„Kunst der Staatsführung“.', '„zusammenwachsen“.'),
+    'Die Bürger dürfen an wichtigen politischen Entscheidungen', L('mitwirken', 'zuschauen'), '– entweder direkt in einer', L('Versammlung', 'Partei'),
+    'oder indirekt über gewählte', L('Vertreter', 'Richter'), 'im Parlament. Es entscheidet immer die', L('Mehrheit.', 'Regierung.')] },
+  { id: 'p4', h: '4. Definiere „Politik“.', type: 'segs', segs: [
+    'Das Wort kommt aus dem', L('Griechischen', 'Lateinischen'), 'und bedeutet', L('„Kunst der Staatsführung“.', '„Herrschaft des Volkes“.', '„alt“.'),
+    'Es geht um das Bewältigen von', L('Aufgaben', 'Kriegen'), 'und das Lösen von Problemen im', L('Zusammenleben', 'Tempel'), 'der Menschen.'] },
+  { id: 'p5', h: '5. Definiere „Koalition“ und „Kompromiss“.', type: 'segs', segs: [
+    'Koalition: Das Wort kommt aus dem', L('Lateinischen', 'Griechischen'), 'und bedeutet „zusammenwachsen“. Hat keine Partei mehr als', L('50 %', '20 %', '90 %'),
+    'der Stimmen, schließen sich', L('zwei oder mehr Parteien', 'alle Richter'), 'zu einem Bündnis zusammen, um zu', L('regieren.', 'klagen.'), '|',
+    'Kompromiss: Die Streitenden einigen sich auf eine Lösung, die', L('für beide gut ist.', 'nur für den Stärkeren gut ist.'), 'Dabei geben beide Seiten', L('freiwillig etwas nach.', 'alles auf.')] },
+  { id: 'p6', h: '6. Gewaltenteilung – was ist das?', type: 'segs', o: GEW, segs: [
+    'Damit niemand zu viel', L('Macht', 'Geld'), 'hat, wird die Staatsgewalt geteilt:', '|', ['Parlament', LEG], ['Regierung und Polizei', EXE], ['Gerichte und Richter', JUD]] },
+  { id: 'p7', h: '7. Unterscheide: direkte oder repräsentative Demokratie?', type: 'segs', o: DR, segs: [
+    ['Das Volk stimmt selbst über einen Vorschlag ab.', DR[0]], '|', ['Das Volk wählt Abgeordnete, die es im Parlament vertreten.', DR[1]], '|',
+    ['Beispiel: die Volksversammlung in Athen', DR[0]], '|', ['Beispiel: das Abgeordnetenhaus in Berlin', DR[1]]] },
+  { id: 'p8', h: '8. Das Scherbengericht', type: 'segs', segs: [
+    'Die Bürger ritzten den', L('Namen', 'Geburtstag'), 'eines Politikers in eine', L('Tonscherbe.', 'Steintafel.'), 'Wurden mindestens', L('6000', '600', '60 000'),
+    'Scherben abgegeben, musste der Politiker mit den meisten Stimmen für', L('zehn', 'zwei', 'zwanzig'), 'Jahre die Stadt verlassen. Sein Vermögen', L('behielt er.', 'verlor er.')] },
+  { id: 'p9', h: '9. Antike und Polis', type: 'segs', segs: [
+    'Die Antike ist die Zeit zwischen', L('800 v. Chr.', '3000 v. Chr.'), 'und etwa', L('500 n. Chr.', '1500 n. Chr.'), 'Eine Polis ist ein', L('Stadtstaat', 'Tempel'),
+    'aus einem städtischen Zentrum und dem', L('umliegenden Gebiet.', 'Meer.'), 'Die größte Polis war', L('Athen.', 'Sparta.')] },
+  { id: 'p10', h: '10. Beurteile: War Athen eine „Herrschaft des Volkes“? Spricht das dafür oder dagegen?', type: 'segs', o: PC, segs: [
+    ['Ämter wurden ausgelost – jeder Bürger konnte drankommen.', PC[0]], '|', ['Frauen und Sklaven durften nicht mitbestimmen.', PC[1]], '|',
+    ['Die Volksversammlung entschied selbst über Krieg und Frieden.', PC[0]], '|', ['Nur etwa jeder zehnte Einwohner durfte abstimmen.', PC[1]]] },
+  { id: 'p11', h: '11. Dein Urteil', type: 'picks', picks: [
+    { q: 'Welches Fazit ist am besten begründet?', o: ['Ja, denn in Athen durften alle Einwohner in der Volksversammlung abstimmen.', 'Teils, teils: Die Bürger bestimmten selbst – aber viele Einwohner waren ausgeschlossen.', 'Nein, denn in Athen bestimmte ein König allein über Krieg und Frieden.'], a: 1 }] }
+];
+
+function taskMax(t) {
+  if (t.type === 'segs') return t.segs.filter(Array.isArray).length;
+  if (t.type === 'picks') return t.picks.length;
+  if (t.type === 'schaubild') return SB.length;
+  return 0;
+}
+const PROBE_MAX = PROBE.reduce((n, t) => n + taskMax(t), 0);
+function taskPunkte(t, A) {
+  if (t.type === 'segs') return t.segs.filter(Array.isArray).reduce((n, s, i) => n + (A[t.id + '-' + i] === s[1] ? 1 : 0), 0);
+  if (t.type === 'picks') return t.picks.reduce((n, p, i) => n + (A[t.id + '-' + i] === p.a ? 1 : 0), 0);
+  if (t.type === 'schaubild') return SB.reduce((n, s, i) => n + (A[t.id + '-' + i] === s.a ? 1 : 0), 0);
+  return 0;
+}
+function taskLeer(t, A) {
+  if (t.type === 'segs') return t.segs.filter(Array.isArray).filter((s, i) => !A[t.id + '-' + i]).length;
+  if (t.type === 'picks') return t.picks.filter((p, i) => A[t.id + '-' + i] === undefined).length;
+  if (t.type === 'schaubild') return SB.filter((s, i) => !A[t.id + '-' + i]).length;
+  return 0;
+}
+// welches Thema passt zu welcher Aufgabe der Generalprobe
+const PROBE_ST = { p1: 'C', p2: 'B', p3: 'E', p4: 'E', p5: 'E', p6: 'D', p7: 'C', p8: 'B', p9: 'A', p10: 'B', p11: 'B' };
+function probeSchwach(A) {
+  const verl = {};
+  PROBE.forEach(t => { const k = PROBE_ST[t.id]; verl[k] = (verl[k] || 0) + taskMax(t) - taskPunkte(t, A); });
+  const k = Object.keys(verl).sort((a, b) => verl[b] - verl[a])[0];
+  return k && verl[k] > 0 ? k : null;
+}
+function grade(pct) { return pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 25 ? '5' : '6'; }
+
+function renderProbe() {
+  crumb('Generalprobe');
+  if (!S.probe) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">Generalprobe</div><h1>📝 Mini-LEK</h1>
+      <p class="muted">Aufgebaut wie die Übungs-LEK: Abgeordnetenhaus, Schaubild Athen, Definitionen, Gewaltenteilung, direkte und repräsentative Demokratie, Scherbengericht, Antike – und zum Schluss ein Urteil. ${PROBE_MAX} Punkte, etwa 15 Minuten. Erst am Ende siehst du, was richtig war.</p></header>
+      <div class="row"><button class="btn" id="start">Uhr starten</button></div>`;
+    document.getElementById('start').onclick = () => { S.probe = { ans: {}, start: Date.now(), done: false }; save(); render(); };
+    return;
+  }
+  const P = S.probe, A = P.ans, fertig = P.done;
+  // angefangen und liegen gelassen (über 3 Stunden): weitermachen mit neuer Uhr oder neu beginnen
+  if (!fertig && Date.now() - P.start > 3 * 3600 * 1000) {
+    if (confirm('Du hast die Generalprobe vor einer Weile angefangen. Weitermachen? (Abbrechen = neu beginnen)')) P.start = Date.now();
+    else { S.probe = null; save(); return renderProbe(); }
+    save();
+  }
+  let html = `<header class="top"><div class="eyebrow">Generalprobe</div>
+    <div class="th"><h1>📝 Mini-LEK</h1><span class="timer" id="uhr"></span></div></header>`;
+  if (fertig) {
+    const pct = Math.round(100 * P.punkte / PROBE_MAX);
+    html += `<div class="card"><div class="th"><span class="score">${P.punkte} / ${PROBE_MAX} Punkte</span><span class="score">Note ${grade(pct)}</span></div>
+      <p class="small muted">${pct} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrkraft kann anders bewerten – und in der echten LEK schreibst du die Definitionen selbst. Die Mustersätze aus dem Baukasten helfen dir dabei.</p>
+      ${(() => { const k = probeSchwach(A); return k ? `<p>Am meisten Punkte verloren hast du bei <b>${esc(ST[k].name)}</b>.</p><div class="row"><button class="btn ghost" id="nachueben" data-st="${k}">Kurz nachüben: ${ST[k].icon} ${esc(ST[k].name)}</button></div>` : ''; })()}
+      <div class="row"><button class="btn" id="zumK">${S.plan.kartei ? 'Zum Plan' : 'Weiter zu den Karteikarten'}</button><button class="btn ghost" id="neu">Noch einmal von vorn</button></div></div>`;
+  }
+  PROBE.forEach(t => {
+    const pkt = fertig ? `${taskPunkte(t, A)} / ${taskMax(t)} P.` : `${taskMax(t)} P.`;
+    html += `<div class="card" data-t="${t.id}"><div class="th"><h3>${esc(t.h)}</h3><span class="pts">${pkt}</span></div>${probeTask(t, A, fertig)}</div>`;
+  });
+  if (!fertig) html += `<div class="row"><button class="btn" id="abgeben">Abgeben</button></div>`;
+  app.innerHTML = html;
+
+  const uhr = document.getElementById('uhr');
+  const tick = () => { const s = Math.floor(((P.end || Date.now()) - P.start) / 1000); const m = Math.floor(s / 60); uhr.textContent = '⏱ ' + m + ':' + String(s % 60).padStart(2, '0') + (fertig ? '' : m >= 15 ? ' – Zeit um, mach in Ruhe fertig' : ' / 15:00'); };
+  if (timerId) { clearInterval(timerId); timerId = null; }
+  tick(); if (!fertig) timerId = setInterval(tick, 1000);
+
+  if (fertig) {
+    document.getElementById('neu').onclick = () => { if (confirm('Generalprobe neu beginnen?')) { S.probe = null; save(); render(); } };
+    document.getElementById('zumK').onclick = () => go(S.plan.kartei ? 'home' : 'kartei');
+    const nu = document.getElementById('nachueben'); if (nu) nu.onclick = () => startRun(nu.dataset.st);
+    return;
+  }
+  app.querySelectorAll('select[data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = el.value; save(); });
+  app.querySelectorAll('select[data-sb]').forEach(el => el.onchange = () => { A[el.closest('[data-t]').dataset.t + '-' + el.dataset.sb] = el.value; save(); });
+  app.querySelectorAll('input[type=radio][data-k]').forEach(el => el.onchange = () => { A[el.dataset.k] = +el.value; save(); });
+  document.getElementById('abgeben').onclick = () => {
+    const leer = PROBE.reduce((n, t) => n + taskLeer(t, A), 0);
+    if (!confirm(leer ? `Es fehlen noch ${leer} Antworten. Trotzdem abgeben?` : 'LEK abgeben?')) return;
+    P.done = true; P.end = Date.now(); P.punkte = PROBE.reduce((n, t) => n + taskPunkte(t, A), 0);
+    S.plan.probe = true; save(); go('probe');
+  };
+}
+function probeTask(t, A, fertig) {
+  if (t.type === 'schaubild') return `<p class="small muted">Die drei Ämter in derselben Reihenfolge wie im Schaubild M3 im Buch (auf dem Handy untereinander statt nebeneinander).</p>` + sbHtml(SB.map((_, i) => A[t.id + '-' + i] || ''), fertig, true);
+  if (t.type === 'segs') {
+    let n = -1;
+    return `<div class="segs">${t.segs.map(s => {
+      if (s === '|') return '<span style="flex-basis:100%;height:0"></span>';
+      if (!Array.isArray(s)) return `<span class="seg"><span class="w">${esc(s)}</span></span>`;
+      n++; const k = t.id + '-' + n, v = A[k] || '', opts = s[3] ? abc(s[3]) : t.o;
+      const cls = fertig ? (v === s[1] ? 'ok' : 'no') : '';
+      const wort = s[3] ? '' : `<span class="w b">${esc(s[0])}</span>`;
+      return `<span class="seg">${wort}<select data-k="${k}" class="${cls}" ${fertig ? 'disabled' : ''} aria-label="${s[3] ? 'Lücke ' + (n + 1) : esc(s[0])}">${optHtml(opts, v)}</select>${fertig && v !== s[1] ? `<span class="sol">${esc(s[1])}</span>` : ''}</span>`;
+    }).join('')}</div>`;
+  }
+  if (t.type === 'picks') {
+    return t.picks.map((p, i) => { const k = t.id + '-' + i, v = A[k]; return `${p.q ? `<p class="frage">${esc(p.q)}</p>` : ''}<div class="radio">${p.o.map((o, j) => {
+      const cls = fertig ? (j === p.a ? 'ok' : (j === v ? 'no' : '')) : '';
+      return `<label class="${cls}"><input type="radio" name="${k}" data-k="${k}" value="${j}" ${v === j ? 'checked' : ''} ${fertig ? 'disabled' : ''}><span>${esc(o)}</span></label>`; }).join('')}</div>`; }).join('');
+  }
+  return '';
+}
+
+// ===================================================================
+// KARTEIKARTEN – jeden Begriff laut erklären, dann umdrehen
+// ===================================================================
+function renderKartei() {
+  crumb('Karteikarten');
+  if (!KK) { const erst = ST.E.items.filter(it => S.kkErst.includes(it.id)); KK = { queue: shuffle(erst).concat(shuffle(ST.E.items.filter(it => !erst.includes(it)))), idx: 0, offen: false, nochmal: 0 }; }
+  if (KK.idx >= KK.queue.length) {
+    S.plan.kartei = true; S.kkErst = []; save();
+    app.innerHTML = `<header class="top"><div class="eyebrow">Karteikarten</div><h1>Alle Begriffe erklärt 🎉</h1></header>
+      <div class="card"><p>${KK.nochmal ? KK.nochmal + '-mal brauchtest du einen zweiten Anlauf – trotzdem sitzt jetzt jeder Begriff.' : 'Alles beim ersten Mal – du bist bereit.'}</p>
+      <p class="muted">Tipp für heute Abend: Druck dir die Definitionen aus und lies sie vor dem Schlafen einmal durch.</p>
+      <div class="row"><button class="btn" id="druckK">Alle Definitionen drucken</button><button class="btn ghost" id="neuK">Noch eine Runde</button><button class="btn ghost" id="hmK">Zum Plan</button></div></div>`;
+    document.getElementById('druckK').onclick = () => { druckFuellen(); window.print(); };
+    document.getElementById('neuK').onclick = () => { KK = null; render(); };
+    document.getElementById('hmK').onclick = () => { KK = null; go('home'); };
+    return;
+  }
+  const it = KK.queue[KK.idx];
+  app.innerHTML = `<header class="top"><div class="eyebrow">Karteikarten · ${KK.idx + 1} von ${KK.queue.length}</div>
+    <p class="muted small">Erkläre den Begriff laut – so, als würdest du ihn in der LEK aufschreiben. Erst dann umdrehen und ehrlich vergleichen.</p></header>
+    <div class="card kk">${KK.offen ? `<div class="begriff">${esc(it.b)}</div><p class="def">${modell(it, true)}</p>` : `<div class="begriff">${esc(it.b)}</div>`}</div>
+    <div class="row">${KK.offen ? '<button class="btn" id="kon">✓ Konnte ich</button><button class="btn ghost" id="knicht">✗ Noch nicht – später nochmal</button>' : '<button class="btn" id="dreh">Umdrehen</button>'}</div>
+    ${tippBox(esc(it.h), 'Tipp')}
+    <div class="row"><button class="linkbtn" id="druckAlle">🖨️ Alle Definitionen drucken</button></div>`;
+  tippBinden(app);
+  const d = document.getElementById('dreh'); if (d) { d.focus({ preventScroll: true }); d.onclick = () => { KK.offen = true; render(); }; }
+  const on = document.getElementById('kon'); if (on) { on.focus({ preventScroll: true }); on.onclick = () => { KK.idx++; KK.offen = false; render(); }; }
+  const nn = document.getElementById('knicht'); if (nn) nn.onclick = () => { KK.queue.push(it); KK.nochmal++; KK.idx++; KK.offen = false; render(); };
+  document.getElementById('druckAlle').onclick = () => { druckFuellen(); window.print(); };
+}
+
+// Druck (Knopf oder Cmd+P): alle Definitionen auf einem Blatt
+function druckFuellen() {
+  document.getElementById('druck').innerHTML = `<h2>GEWI – alle Definitionen</h2><dl>${ST.E.items.map(it => `<dt>${esc(it.b)}</dt><dd>${modell(it, true)}</dd>`).join('')}</dl>`;
+}
+window.addEventListener('beforeprint', druckFuellen);
+
+render();
+</script>
+</body>
+</html>

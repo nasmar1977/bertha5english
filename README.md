@@ -168,10 +168,25 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 90 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
   Lösungen erst nach dem Abgeben. Speicher: `deutsch-6b-wolf-v1`.
 
+### 🗳️ GEWI
+- **Wiederholung Demokratie** (`gewi.html`, Karte im Hauptmenü): Klasse 6, LEK zu Buch S. 196–199 und Heft. Plan in
+  sieben Schritten (etwa 60 min): Begriffe-Blitz, Check (zwei Aufgaben je Thema), Station „Demokratie in Athen“ (immer,
+  mit Zusatzwissen über das Buch hinaus: Pnyx, Los als gerechtes Verfahren, Richtersold, Ostrakon), die schwächste
+  der übrigen Stationen, Definitionen-Baukasten, Generalprobe, Karteikarten.
+- Stationen: A Antike und Polis, B Demokratie in Athen (Schaubild M3 zum Ausfüllen, Wer durfte mitbestimmen?,
+  Beurteilen dafür/dagegen), C Demokratie heute (Wahlen, Partei, Parlament, Abgeordnetenhaus, Koalition, Opposition,
+  Kompromiss, Grundgesetz), D Gewaltenteilung, E Definitionen-Baukasten (18 Begriffe, jede Lücke mit drei Bausteinen;
+  die Lösung ist der Mustersatz für die Arbeit; fertig, wenn alle einmal richtig sind). Nur Antippen und Auswählen.
+- Gewichtet nach der korrigierten Übungs-LEK (Definitionen Demokratie, Politik, Koalition, Kompromiss,
+  Gewaltenteilung; Abgeordnetenhaus ≠ Reichstag). Beim Pfeil zu den Richtern steht im Buch „Wahl“, im Heft „Los“ –
+  die Seite nimmt „Los“ (historisch richtig) und sagt das dazu.
+- Generalprobe (11 Aufgaben, 51 Punkte, 15 Minuten, Note), Karteikarten mit Selbsteinschätzung, Druck aller
+  Definitionen auf ein Blatt. Speicher: `gewi-6-athen-v1`.
+
 ## 🎯 Aktueller Stand
 
-**Version:** 2.40.0
-**Datum:** 08.11.2026
+**Version:** 2.41.0
+**Datum:** 10.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -198,6 +213,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
+| `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
@@ -221,6 +237,16 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.41.0 (10.11.2026)
+- Neue Seite `gewi.html`: Wiederholung für die GEWI-LEK Kl. 6 „Demokratie“, eigene Kachel im Hauptmenü, eigener
+  Speicher. Kartentypen aus `deutsch.html` übernommen (Auswahl mit Tipps, Stationen mit drei in Folge) und drei neue:
+  Zuordnen (`cardMulti`, mehrere Zeilen mit gemeinsamer Antwortgruppe), Definitions-Baukasten (`cardBau`, Lücken im
+  Mustersatz) und Schaubild Athen (`sbHtml`, in der Generalprobe ohne Hinweise). Karteikarten (im Baukasten
+  Verpatztes zuerst) und Druck aller Definitionen.
+- Vor der Freigabe von zwei Prüfern gelesen (Inhalt gegen Buch und Heft, Code/Bedienung): Antworten nicht mehr an der
+  Länge oder Reihenfolge erkennbar, Tipps verraten nichts, Buch-Formulierungen (Perikles „Regierungschef“, Ansehen
+  und Vermögen beim Scherbengericht) übernommen, Schaubild auf dem Handy untereinander.
 
 ### Version 2.40.0 (08.11.2026)
 - Deutsch: zwei neue Kartentypen. Wörtliche Rede selbst setzen (`cardRede`, `parseRede`: Lücke antippen, Zeichen aus

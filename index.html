@@ -848,6 +848,9 @@
         .lang-card.deutsch {
             background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
         }
+        .lang-card.gewi {
+            background: linear-gradient(135deg, #f6d5b8 0%, #c9e4f5 100%);
+        }
         .lang-icon { font-size: 3em; margin-bottom: 10px; }
         .lang-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; }
         .lang-info { font-size: 1em; color: #666; }
@@ -2865,6 +2868,14 @@
                 <div class="lang-icon">📕</div>
                 <div class="lang-title">Deutsch</div>
                 <div class="lang-info">Satzglieder, Wortarten &amp; „Wolf“</div>
+            </div>
+            <!-- Gabel: eigene Seite, eigener Speicher (gewi.html) -->
+            <div class="lang-card gewi" role="link" tabindex="0"
+                 onclick="location.href='gewi.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='gewi.html'">
+                <div class="lang-icon">🗳️</div>
+                <div class="lang-title">GEWI</div>
+                <div class="lang-info">Demokratie: Athen &amp; heute</div>
             </div>
         </div>
         <div class="taler-display">
@@ -7203,9 +7214,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.40.0';
+        const APP_VERSION = '2.41.0';
 
         const changelogEntries = [
+            {
+                version: '2.41.0',
+                date: '10.11.2026',
+                items: [
+                    '<b>Neu: GEWI</b> 🗳️ – Wiederholung für die LEK „Demokratie“: Antike und Polis, die Anfänge der Demokratie in Athen (mit Zusatzwissen), Demokratie heute, Gewaltenteilung und ein Baukasten, mit dem alle Definitionen sitzen. Dazu eine Mini-LEK mit Note und Karteikarten zum lauten Erklären.'
+                ]
+            },
             {
                 version: '2.40.0',
                 date: '08.11.2026',
