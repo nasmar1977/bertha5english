@@ -2915,7 +2915,8 @@
             0%, 100% { transform: scale(1); }
             50%      { transform: scale(1.06); }
         }
-        #konfettiCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 3000; }
+        #konfettiCanvas { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 3000; }
+        .konfetti-sonde { position: fixed; bottom: 0; height: 0; padding-bottom: env(safe-area-inset-bottom, 0px); visibility: hidden; pointer-events: none; }
         @media (max-width: 520px) {
             .punkte-leiste { top: 10px; left: 10px; gap: 8px; }
             .punkte-pill { height: 40px; padding: 0 12px 0 9px; font-size: 0.95em; }
@@ -7420,9 +7421,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.43.1';
+        const APP_VERSION = '2.43.2';
 
         const changelogEntries = [
+            {
+                version: '2.43.2',
+                date: '12.11.2026',
+                items: [
+                    '<b>Konfetti auf dem iPhone/iPad</b>: Es landet jetzt auf dem sichtbaren Boden über dem Home-Balken, und der Staubsauger fährt dort, wo man ihn sieht.'
+                ]
+            },
             {
                 version: '2.43.1',
                 date: '12.11.2026',
@@ -9490,9 +9498,19 @@
             document.body.appendChild(c);
             const ctx = c.getContext('2d');
             const dpr = Math.min(2, window.devicePixelRatio || 1);
+            const sonde = document.createElement('div');
+            sonde.className = 'konfetti-sonde';
+            document.body.appendChild(sonde);
             let W = 0, H = 0;
             const groesse = () => {
-                W = window.innerWidth; H = window.innerHeight;
+                // iOS: 100vh reicht hinter die Leiste – der Boden ist das, was man wirklich sieht
+                const vv = window.visualViewport;
+                W = Math.round(vv ? vv.width : window.innerWidth);
+                H = Math.round(vv ? vv.height : window.innerHeight);
+                // über dem Home-Balken landen (safe-area unten): Canvas endet dort
+                H -= sonde.offsetHeight;
+                c.style.width = W + 'px'; c.style.height = H + 'px';
+                c.style.top = (vv ? vv.offsetTop : 0) + 'px'; c.style.left = (vv ? vv.offsetLeft : 0) + 'px';
                 c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
                 ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
                 // Beim Drehen: was schon liegt, rutscht auf den neuen Boden
@@ -9500,6 +9518,7 @@
             };
             groesse();
             window.addEventListener('resize', groesse);
+            if (window.visualViewport) { window.visualViewport.addEventListener('resize', groesse); window.visualViewport.addEventListener('scroll', groesse); }
 
             const FARBEN = ['#ef4444', '#f59e0b', '#facc15', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
             const anzahl = ruhig ? 60 : Math.max(120, Math.min(340, Math.round(W * H / 3200)));
@@ -9626,6 +9645,8 @@
                 const fertig = sauger.aktiv && sauger.x < -140 && teile.every(t => t.weg);
                 if (fertig) {
                     window.removeEventListener('resize', groesse);
+                    if (window.visualViewport) { window.visualViewport.removeEventListener('resize', groesse); window.visualViewport.removeEventListener('scroll', groesse); }
+                    sonde.remove();
                     c.remove();
                     return;
                 }
