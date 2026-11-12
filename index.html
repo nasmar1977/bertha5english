@@ -7420,9 +7420,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.43.0';
+        const APP_VERSION = '2.43.1';
 
         const changelogEntries = [
+            {
+                version: '2.43.1',
+                date: '12.11.2026',
+                items: [
+                    '<b>Letzte Vokabel</b> zeigt jetzt immer wirklich die zuletzt beantwortete Vokabel – auch wenn sie falsch war. Kommt sie gleich noch einmal dran, steht das dabei.'
+                ]
+            },
             {
                 version: '2.43.0',
                 date: '12.11.2026',
@@ -9378,7 +9385,7 @@
             }
             return null;
         }
-        // Kommt eine Aufgabe in dieser Übung noch einmal dran? Dann wird ihre Lösung nicht gezeigt.
+        // Kommt eine Aufgabe in dieser Übung noch einmal dran? (Hinweis im Dialog)
         function kommtNochDran(id) {
             const hat = (liste, f) => Array.isArray(liste) && liste.some(x => x && f(x) === id);
             return hat(typeof rocketQueue !== 'undefined' ? rocketQueue : null, x => x.id) ||
@@ -9414,7 +9421,10 @@
         // sonst stünde nach einem Fehlversuch die Lösung der offenen Aufgabe da.
         function letzteVorbei() {
             const jetzt = aktuelleFrage(), jetztId = aktuelleId();
-            return letzteAufgaben.find(a => a.frage !== jetzt && a.id !== jetztId && !kommtNochDran(a.id)) || null;
+            // Immer die zuletzt beantwortete Aufgabe – nie still auf eine ältere ausweichen,
+            // das sah aus wie eine falsche Vokabel. Ihre Lösung war nach der Antwort ohnehin zu sehen.
+            const a = letzteAufgaben.find(x => x.frage !== jetzt && x.id !== jetztId) || null;
+            return a;
         }
 
         const LETZTE_SCREENS = ['gameContainer', 'rocketGameContainer', 'introStage2Screen', 'mitteScreen'];
@@ -9438,7 +9448,8 @@
                 (a.hinweis ? '<div class="letzte-hinweis">' + vhText(a.hinweis) + '</div>' : '');
             document.getElementById('letzteLoesung').innerHTML = vhText(a.loesung);
             const st = document.getElementById('letzteStatus');
-            st.textContent = a.richtig ? '✓ Das hattest du richtig.' : '✗ Das war beim letzten Versuch falsch.';
+            st.textContent = (a.richtig ? '✓ Das hattest du richtig.' : '✗ Das war beim letzten Versuch falsch.') +
+                (kommtNochDran(a.id) ? ' Es kommt gleich noch einmal dran.' : '');
             st.className = 'letzte-status ' + (a.richtig ? 'ok' : 'no');
             const d = document.getElementById('letzteDialog');
             d.hidden = false;

@@ -190,7 +190,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.43.0
+**Version:** 2.43.1
 **Datum:** 12.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -242,6 +242,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.43.1 (12.11.2026)
+- „Letzte Vokabel“ wich still auf eine ältere Vokabel aus, wenn die zuletzt beantwortete noch einmal drankommt
+  (falsch beantwortet → Wiederholung). Das sah aus wie eine falsche Vokabel. Jetzt zeigt der Dialog immer die zuletzt
+  beantwortete; ihre Lösung war nach der Antwort ohnehin zu sehen, ein Hinweis sagt, dass sie wiederkommt.
 
 ### Version 2.43.0 (12.11.2026)
 - Eine Stelle für jede verbuchte Antwort: `antwortVerbucht(richtig, info)`, aufgerufen am Ende von `recordAnswer`,
