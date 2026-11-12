@@ -330,6 +330,39 @@ for (const ch of chapters) {
           [...variants].map(([v,w]) => `${v} (${w})`).join(', '), '');
 }
 
+// =====================================================================
+// 11  Die Form der Lösung darf sie nicht verraten                       (Befund 12.11.2026)
+//     Die Rakete zieht 3 von 4 Distraktoren — steht die Klammer nur bei einem,
+//     fehlt sie in jeder vierten Runde. Deshalb mindestens zwei mit Klammer.
+// =====================================================================
+{
+  const hatKl = s => /\(/.test(s);
+  const teile = s => s.split(/[,;]/).length;
+  let klOpt = 0, klRichtig = 0;
+  for (const ch of chapters) {
+    for (const v of latinData[ch].vocabulary || []) {
+      const ds = v.distractors || [];
+      if (!ds.length) continue;
+      klOpt += ds.filter(hatKl).length + (hatKl(v.german) ? 1 : 0);
+      if (hatKl(v.german)) klRichtig++;
+      if (hatKl(v.german) && ds.filter(hatKl).length < 2)
+        err('verraeter-klammer', `Lösung "${v.german}" hat eine Klammer, höchstens ein Distraktor auch`, `${ch} ${v.latin}`);
+      const t = teile(v.german), tMax = Math.max(...ds.map(teile));
+      if (t >= 3 && tMax < t - 1)
+        warn('verraeter-bedeutungen', `Lösung hat ${t} Bedeutungen, kein Distraktor mehr als ${tMax}`, `${ch} ${v.latin}`);
+      const lMax = Math.max(...ds.map(d => d.length));
+      if (t >= 2 && v.german.length > 1.25 * lMax)
+        warn('verraeter-laenge', `Lösung ${v.german.length} Zeichen, längster Distraktor ${lMax}`, `${ch} ${v.latin}`);
+    }
+    for (const m of latinData[ch].multiWord || [])
+      for (const [ans, ds] of [[m.german, m.germanDistractors || []], [m.latin, m.latinDistractors || []]])
+        if (ds.length && hatKl(ans) && ds.filter(hatKl).length < 2)
+          err('verraeter-klammer', `Lösung "${ans}" hat eine Klammer, höchstens ein Distraktor auch`, `${ch} ${m.latin}`);
+  }
+  if (klOpt)
+    info('verraeter-klammer', `${klRichtig} von ${klOpt} Antworten mit Klammer sind richtig (${Math.round(100*klRichtig/klOpt)} %)`, '');
+}
+
 // ---- Ausgabe ----------------------------------------------------------
 const order = { FEHLER:0, WARNUNG:1, HINWEIS:2 };
 found.sort((a,b) => order[a.lvl]-order[b.lvl] || a.check.localeCompare(b.check));

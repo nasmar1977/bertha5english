@@ -185,8 +185,8 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.41.0
-**Datum:** 10.11.2026
+**Version:** 2.41.1
+**Datum:** 12.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -237,6 +237,18 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.41.1 (12.11.2026)
+- Latein-Distraktoren (Multiple Choice und Rakete) in allen Lektionen überarbeitet, 157 Vokabel- und 12 Wendungslisten.
+  Anlass: Das Kind hatte gemerkt, dass die Antwort mit Klammer immer richtig war (26 von 36 Klammer-Lösungen ohne
+  einen einzigen Klammer-Distraktor) und dass oft die längste Antwort mit den meisten Bedeutungen stimmte (48 %).
+  Jetzt haben Lösungen mit Klammer mindestens zwei Distraktoren mit Klammer (die Rakete zieht 3 von 4), Klammern
+  stehen auch bei falschen Antworten (22 % der Klammer-Antworten sind richtig), die längste Antwort stimmt in 26 %.
+- Dabei Distraktoren ersetzt, die eine echte Nebenbedeutung trafen (cum: „weil/obwohl/nachdem“, causa: „Schuld“,
+  nēscīre: „nicht können“, autem: „ferner“, in + Akk.: „gegenüber“, arma: „Kampf/Rüstung“) und „Diana“ statt „Davus“
+  bei Dāvus Symmachō resistit.
+- `tools/latein-check.mjs`: neue Prüfung `verraeter-klammer` (Fehler) sowie `verraeter-bedeutungen` und
+  `verraeter-laenge` (Warnungen). Zwei Prüfer (Latein-Fachprüfung, Rate-Strategien gemessen) vor der Freigabe.
 
 ### Version 2.41.0 (10.11.2026)
 - Neue Seite `gewi.html`: Wiederholung für die GEWI-LEK Kl. 6 „Demokratie“, eigene Kachel im Hauptmenü, eigener

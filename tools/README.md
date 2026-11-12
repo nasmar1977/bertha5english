@@ -40,6 +40,9 @@ Exit-Code 0 = sauber, 1 = mindestens ein FEHLER.
 | `genitiv` | Deutsche Genitiv-Hilfe nach Zischlaut ohne -es („des Stolzs") |
 | `heft-abgleich` | Vokabelheft und Trainingsdaten sagen verschiedene Dinge |
 | `makronen` | Dasselbe Wort wird an verschiedenen Stellen verschieden geschrieben |
+| `verraeter-klammer` | Lösung hat eine Klammer, aber höchstens ein Distraktor (Fehler). Das Kind hatte gemerkt: „Die mit Klammer ist immer richtig.“ Zwei braucht es, weil die Rakete nur 3 von 4 Distraktoren zieht. |
+| `verraeter-bedeutungen` | Lösung hat mindestens 3 Bedeutungen, kein Distraktor kommt auf eine weniger (Warnung) |
+| `verraeter-laenge` | Lösung mit mehreren Bedeutungen ist über ein Viertel länger als jeder Distraktor (Warnung) |
 
 ## Was der Fehlerfinder NICHT kann
 
@@ -52,6 +55,9 @@ Dafür braucht es Schritt 4 und ein Augenpaar:
 - **Ob eine Bedeutung stimmt.** Der Abgleich merkt nur, dass Heft und Training sich widersprechen,
   nicht wer recht hat.
 - **Ob ein Beispielsatz sinnvoll ist.** „Ich komme mit dem Tempel." ist grammatisch tadellos.
+- **Ob ein Distraktor eine Nebenbedeutung trifft**, die nicht im Buch-Eintrag steht. `cum` (als
+  Subjunktion) heißt später auch „weil“, „obwohl“ und „nachdem“, `causa` auch „Schuld“. Solche
+  Distraktoren lehren später etwas Falsches. Das findet nur ein Blick ins Wörterbuch.
 
 ## Neue Prüfung ergänzen
 
