@@ -745,12 +745,13 @@
             }
         }
 
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
         .mc-option:hover {
             border-color: #667eea;
             background: #eef0ff;
             transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
+        } }
 
         .mc-option .mc-key {
             display: inline-flex;
@@ -1124,10 +1125,11 @@
             transition: all 0.15s;
             min-height: 60px;
         }
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
         .stage2-option:hover:not(:disabled) {
             background: #ede9fe; transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(99,102,241,0.25);
-        }
+        } }
         .stage2-option:disabled { cursor: default; opacity: 0.7; }
         .stage2-option.correct {
             background: #d1fae5; border-color: #10b981; color: #064e3b;
@@ -1362,10 +1364,11 @@
             font-size: 13px; font-family: inherit;
             transition: all 0.15s; line-height: 1.3;
         }
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
         .rocket-answer-btn:hover:not(:disabled) {
             background: rgba(99, 102, 241, 0.3);
             transform: translateY(-1px);
-        }
+        } }
         .rocket-answer-btn:disabled { cursor: default; opacity: 0.5; }
         .rocket-answer-btn.correct {
             background: rgba(34, 197, 94, 0.4);
@@ -2305,7 +2308,8 @@
         body.april-dark .stage2-option {
             background: #1e2030; color: #e8eaf6; border-color: #6366f1;
         }
-        body.april-dark .stage2-option:hover:not(:disabled) { background: #2d3142; }
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
+        body.april-dark .stage2-option:hover:not(:disabled) { background: #2d3142; } }
         body.april-dark .stage2-feedback { color: #c4b5fd; }
         body.april-dark .intro-progress-bar { background: #1e2030; border-color: #5e35b1; }
         body.april-dark .intro-success-modal {
@@ -2393,7 +2397,8 @@
         body.april-dark .mc-option {
             background: #2d3142; color: #e8eaf6; border-color: #5e35b1;
         }
-        body.april-dark .mc-option:hover { background: #3949ab; }
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
+        body.april-dark .mc-option:hover { background: #3949ab; } }
         body.april-dark .mc-option.mc-correct {
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             border-color: #66bb6a; color: #fff;
@@ -2818,7 +2823,8 @@
             border-radius: 12px; border: 2px solid #d6d0ee; background: #fff; color: #333; cursor: pointer;
             transition: background .15s, border-color .15s;
         }
-        .ms-chip:hover:not(:disabled) { border-color: #667eea; }
+        @media (hover: hover) { /* auf dem Touchscreen bliebe der Schatten am zuletzt getippten Feld hängen */
+        .ms-chip:hover:not(:disabled) { border-color: #667eea; } }
         .ms-chip.sel { border-color: #667eea; background: #dde1ff; }
         .ms-chip.ok { border-color: #10b981; background: #d1fae5; }
         .ms-chip.no { border-color: #ef4444; background: #fee2e2; }
@@ -7421,9 +7427,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.43.2';
+        const APP_VERSION = '2.43.3';
 
         const changelogEntries = [
+            {
+                version: '2.43.3',
+                date: '12.11.2026',
+                items: [
+                    '<b>iPhone/iPad</b>: Das Antwortfeld an der Stelle, die du zuletzt angetippt hast, bleibt nicht mehr dunkler hinterlegt. Das war kein Hinweis auf die Lösung, sah aber so aus.'
+                ]
+            },
             {
                 version: '2.43.2',
                 date: '12.11.2026',

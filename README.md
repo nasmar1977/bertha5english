@@ -190,7 +190,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.43.2
+**Version:** 2.43.3
 **Datum:** 12.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -242,6 +242,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.43.3 (12.11.2026)
+- Touchscreens: `:hover` blieb auf iOS am zuletzt angetippten Platz hängen. Die nächste Aufgabe zeigte das Feld an
+  derselben Stelle dunkler (0→100 Stufe 2, auch MC, Rakete, Mittlere Spalte). Hover-Regeln dieser Antwortknöpfe
+  stehen jetzt in `@media (hover: hover)`.
 
 ### Version 2.43.2 (12.11.2026)
 - Konfetti auf iOS: Das Canvas war per CSS `100vh` hoch, auf iOS reicht das hinter die Browserleiste, der Boden lag
