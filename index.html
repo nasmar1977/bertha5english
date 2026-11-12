@@ -2801,6 +2801,68 @@
             .hd-say { font-size: 1.12em; }
             .hd-stat b { font-size: 1.35em; }
         }
+        /* ============ MITTLERE SPALTE (Latein) ============ */
+        .ms-intro { color: #666; margin-top: 10px; font-size: 0.9em; }
+        .ms-progress { display: flex; justify-content: space-between; gap: 10px; font-size: 0.8em; color: #7a6fa8; margin: 0 4px 8px; }
+        .ms-card { background: #f8f9ff; border: 2px solid #e0dcf3; border-radius: 18px; padding: 14px; }
+        .ms-word { font-size: 1.7em; font-weight: bold; color: #5e35b1; text-align: center; overflow-wrap: anywhere; }
+        .ms-mean { text-align: center; color: #666; font-size: 0.9em; margin: 2px 0 10px; }
+        .ms-slot { margin: 12px 0 0; }
+        .ms-slot-label { font-size: 0.75em; font-weight: bold; color: #7a6fa8; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+        .ms-slot-hint { font-size: 0.78em; color: #888; margin: -2px 0 6px; }
+        .ms-slot-hint.ms-mitte { text-align: center; margin-top: 12px; color: #b45309; }
+        #msPackets .vh-packet-btn { min-height: 44px; }
+        .ms-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ms-chip {
+            font-family: inherit; font-size: 1em; min-height: 44px; min-width: 44px; padding: 8px 14px;
+            border-radius: 12px; border: 2px solid #d6d0ee; background: #fff; color: #333; cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+        .ms-chip:hover:not(:disabled) { border-color: #667eea; }
+        .ms-chip.sel { border-color: #667eea; background: #dde1ff; }
+        .ms-chip.ok { border-color: #10b981; background: #d1fae5; }
+        .ms-chip.no { border-color: #ef4444; background: #fee2e2; }
+        .ms-chip.soll { border-color: #10b981; border-style: dashed; border-width: 3px; }
+        .ms-chip:disabled { cursor: default; color: #333; }
+        .ms-chip:focus-visible, .ms-btn:focus-visible { outline: 3px solid #667eea; outline-offset: 2px; }
+        .ms-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+        .ms-btn {
+            font-family: inherit; font-size: 1em; font-weight: bold; padding: 10px 24px; min-height: 44px;
+            border: none; border-radius: 14px; cursor: pointer; color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .ms-btn:disabled { opacity: .45; cursor: default; }
+        .ms-btn.sekundaer { background: #f3f0fa; color: #5e35b1; border: 2px solid #b39ddb; }
+        .ms-rueck { text-align: center; font-weight: bold; margin-top: 14px; }
+        .ms-rueck.ok { color: #059669; }
+        .ms-rueck.no { color: #dc2626; }
+        .ms-heft {
+            margin-top: 8px; padding: 8px 10px; border-radius: 12px; background: #fff; border: 1px solid #e0dcf3;
+            display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px 12px; font-size: 0.9em;
+        }
+        .ms-heft .vh-word { font-weight: bold; color: #5e35b1; }
+        .ms-heft .vh-forms { white-space: pre-line; color: #7a6fa8; }
+        .ms-leer, .ms-ende p { text-align: center; color: #555; }
+        @media (max-width: 600px) {
+            .ms-heft { grid-template-columns: 1fr; }
+            .ms-chip { font-size: 0.95em; padding: 8px 12px; }
+            .ms-word { font-size: 1.45em; }
+        }
+        body.april-dark .ms-card { background: #1e2030; border-color: #5e35b1; }
+        body.april-dark .ms-word, body.april-dark .ms-heft .vh-word { color: #ffd54f; }
+        body.april-dark .ms-mean, body.april-dark .ms-intro, body.april-dark .ms-progress,
+        body.april-dark .ms-slot-label, body.april-dark .ms-leer, body.april-dark .ms-ende p { color: #c4b5fd; }
+        body.april-dark .ms-chip { background: #2d3142; color: #e8eaf6; border-color: #5e35b1; }
+        body.april-dark .ms-chip.sel { background: #3d3f8f; border-color: #a5b4fc; }
+        body.april-dark .ms-chip.ok { background: #065f46; border-color: #34d399; }
+        body.april-dark .ms-chip.no { background: #7f1d1d; border-color: #f87171; }
+        body.april-dark .ms-chip.soll { border-color: #34d399; }
+        body.april-dark .ms-heft { background: #2d3142; border-color: #5e35b1; }
+        body.april-dark .ms-btn.sekundaer { background: #1e2030; color: #e8eaf6; }
+        body.april-dark .ms-rueck.ok { color: #34d399; }
+        body.april-dark .ms-rueck.no { color: #f87171; }
+        body.april-dark .ms-slot-hint { color: #a5a8c0; }
+        body.april-dark .ms-slot-hint.ms-mitte { color: #fbbf24; }
     </style>
 </head>
 <body>
@@ -3058,6 +3120,11 @@
                 <div class="module-title">Vokabelheft</div>
                 <div class="module-info">Nachlesen oder abdecken und selbst ausfüllen<br><small>Wort · Formen · Bedeutung</small></div>
             </div>
+            <div class="module-card mitte-card" onclick="openMittlereSpalte()">
+                <div class="module-icon">🧩</div>
+                <div class="module-title">Mittlere Spalte</div>
+                <div class="module-info">Formen wie im Heft: Genitiv, Geschlecht, 1. Person, Perfekt …<br><small>Das Wort steht da, die Mitte fehlt</small></div>
+            </div>
             <div class="module-card" onclick="startLatinModule('verbs')">
                 <div class="module-icon">✍️</div>
                 <div class="module-title">Verb-Formen</div>
@@ -3105,6 +3172,18 @@
                 <div class="module-info">Nur das Latein-Wort — kein Bild, kein Hinweis<br><small>Härter, schneller, fairer</small></div>
             </div>
         </div>
+    </div>
+
+    <!-- MITTLERE SPALTE (Latein): Formen-Spalte des Vokabelhefts üben -->
+    <div class="game-container" id="mitteScreen" style="display: none;">
+        <button class="back-btn" onclick="backToLatinModules()">← Zurück</button>
+        <div class="header">
+            <h1>🧩 Mittlere Spalte</h1>
+            <div class="current-set" id="msChapterName"></div>
+            <p class="ms-intro">Wort und Bedeutung stehen da. Was steht im Heft in der Mitte?</p>
+        </div>
+        <div class="vh-packets" id="msPackets"></div>
+        <div id="msBody"></div>
     </div>
 
     <!-- VOKABELHEFT (Latein) -->
@@ -7214,9 +7293,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.41.1';
+        const APP_VERSION = '2.42.0';
 
         const changelogEntries = [
+            {
+                version: '2.42.0',
+                date: '12.11.2026',
+                items: [
+                    '<b>Neu in Latein: Mittlere Spalte</b> 🧩 – das Wort und die Bedeutung stehen da, du baust die Mitte aus dem Vokabelheft: Genitiv und Geschlecht, 1. Person und Perfekt, Femininum und Neutrum oder die Angabe wie <i>Adv.</i> oder <i>m. Dat.</i> Für alle Lektionen, nach Päckchen oder alles auf einmal.'
+                ]
+            },
             {
                 version: '2.41.1',
                 date: '12.11.2026',
@@ -9057,6 +9143,378 @@
 
         // Englisch: dasselbe Heft, nur ein anderer Datensatz. englishDvActive
         // muss vor dem Rendern stehen — davon hängt dvContextKey() ab.
+        // ===================================================================
+        // MITTLERE SPALTE — die Formen-Spalte des Vokabelhefts als Baukasten
+        // ===================================================================
+        // Jede Zeile mit Text in der mittleren Spalte wird zu einer Aufgabe aus
+        // Bausteinen ("Slots"). Jeder Baustein hat eine Lösung und Auswahlknöpfe.
+        // Formen-Bausteine bekommen zwei falsche Formen nach typischen Fehlern,
+        // Angaben-Bausteine eine feste Auswahl aus derselben Gruppe.
+        const MS_GENUS = ['m', 'f', 'n', 'Pl.'];
+        const MS_ANSCHLUSS = ['m. Akk.', 'm. Dat.', 'm. Abl.', 'm. Inf.'];
+        const MS_ANGABEN = [
+            ['Adv.', 'Subj.', 'Präp. m. Akk.', 'Präp. m. Abl.'],
+            ['Subj. m. Präs.', 'Subj. m. Perf.', 'Adv.', 'Präp. m. Abl.'],
+            ['Nom.', 'Gen.', 'Dat.', 'Akk.', 'Abl.'],
+            ['1. Pers. Sg.', '3. Pers. Sg.', '1. Pers. Pl.', '3. Pers. Pl.'],
+            ['nachgestellt', 'angehängt', 'Partikel im Fragesatz', 'Adv.'],
+            ['m. Akk.', 'm. Dat.', 'm. Abl.', 'm. Gen.'],
+        ];
+        // Unregelmäßige Verben: 1. Person und Perfekt mit eigenen falschen Formen
+        const MS_UNREGELMAESSIG = {
+            'esse':   { p1: ['est', 'esō'],      pf: ['erī', 'esuī'] },
+            'adesse': { p1: ['adest', 'adesō'],  pf: ['aderī', 'adesuī'] },
+            'deesse': { p1: ['deest', 'deesō'],  pf: ['deerī', 'deesuī'] },
+            'posse':  { p1: ['potest', 'possō'], pf: ['possuī', 'possī'] },
+            'velle':  { p1: ['vult', 'vellō'],   pf: ['vellī', 'volāvī'] },
+            'nōlle':  { p1: ['nōn vult', 'nōllō'], pf: ['nōllī', 'nōlāvī'] },
+            'abesse': { p1: ['abest', 'abesō'],  pf: ['aberī', 'abesuī'] },
+        };
+        // Adjektive und Pronomen, deren falsche Formen man nicht ableiten kann
+        const MS_ADJ_FEST = {
+            'is':       { fem: ['ia', 'id'],                neu: ['ea', 'eum'] },
+            'alius':    { fem: ['aliud', 'alius'],          neu: ['alium', 'alia'] },
+            'plērīque': { fem: ['plēraque', 'plērīque'],    neu: ['plēraeque', 'plērīque'] },
+        };
+
+        // Wo die Ableitung nur Unsinn liefert (flēre: Stamm „fl‑"), stehen die falschen Formen fest
+        const MS_PERFEKT_FALSCH = {
+            'flēre': ['flēsī', 'flēxī'],
+            'reperīre': ['reperīvī', 'reperuī'],   // reperī ist Nebenform von repperī
+        };
+
+        // iaciō gibt es wirklich (iacere, werfen) — bei iacēre deshalb andere Fehler
+        const MS_PRAESENS_FALSCH = { 'iacēre': ['iacō', 'iacuō'] };
+        // Auswahl je Wort anpassen, wo eine zweite Angabe auch stimmen würde
+        const MS_ANGABE_TAUSCH = {
+            '-ne':    ['angehängt', 'Subj.'],        // -ne ist auch angehängt
+            'quoque': ['Adv.', 'Subj.'],             // quoque ist auch ein Adverb
+            'prope':  ['Präp. m. Akk.', 'nachgestellt'], // prope ist auch Präposition
+            'mē':     ['Abl.', null], 'tē': ['Abl.', null], 'nōbīs': ['Abl.', null],
+        };
+
+        const msOhneMakron = s => s.normalize('NFD').replace(/[̄̆]/g, '').normalize('NFC').toLowerCase();
+
+        // Zwei falsche Formen aus den Kandidaten, ohne Dubletten und ohne die Lösung.
+        function msFalsche(richtig, kandidaten, anzahl = 2) {
+            const r = msOhneMakron(richtig), gesehen = new Set([r]), out = [];
+            for (const k of kandidaten) {
+                const o = msOhneMakron(k);
+                if (!k || gesehen.has(o)) continue;
+                gesehen.add(o); out.push(k);
+            }
+            return out.slice(0, anzahl);
+        }
+
+        function msGenitivFalsch(gen, nom) {
+            let m;
+            if ((m = gen.match(/^(.*?)(ōrum|ārum|ium|um)$/)) && /Pl/.test(nom.pl || '')) {
+                const s = m[1];
+                // superum, līberum sind echte Nebenformen von ‑ōrum, darum dort ‑ium
+                return m[2] === 'ōrum' ? [s + 'ārum', s + 'ium'] : [s + 'ōrum', s + 'ārum', s + 'um'];
+            }
+            if ((m = gen.match(/^(.*)ae$/))) return [m[1] + 'ī', m[1] + 'is'];
+            if ((m = gen.match(/^(.*)ī$/))) {
+                // ager → agrī: „agerī" ist der typische Fehler
+                const er = /er$/.test(nom.w) ? [nom.w + 'ī'] : [];
+                return [...er, m[1] + 'is', m[1] + 'ae'];
+            }
+            if ((m = gen.match(/^(.*)is$/))) {
+                // vōx → vōcis: „vōxis" zeigt, ob der Stamm sitzt
+                const vomNom = /^[^ ]+[^aeiouāēīōū]$/.test(nom.w) ? [nom.w + 'is'] : [];
+                return [...vomNom, m[1] + 'ī', m[1] + 'ae'];
+            }
+            return [];
+        }
+
+        function msPraesensFalsch(inf, p1) {
+            const m = inf.match(/^(.*?)(āre|ēre|ere|īre)$/);
+            if (!m) return [];
+            const s = m[1];
+            if (MS_PRAESENS_FALSCH[inf]) return MS_PRAESENS_FALSCH[inf];
+            return [s + 'ō', s + 'eō', s + 'iō'];
+        }
+
+        function msPerfektFalsch(inf, p1) {
+            const m = inf.match(/^(.*?)(āre|ēre|ere|īre)$/);
+            if (!m) return [];
+            const s = m[1], typ = m[2];
+            const basis = p1.replace(/[ie]?ō$/, '');
+            const sPerf = /[cg]$/.test(basis) ? basis.slice(0, -1) + 'xī'
+                        : /(tt|d|t)$/.test(basis) ? (basis.length > 4 ? basis.replace(/(tt|d|t)$/, '') + 'sī' : '')
+                        : basis + 'sī';
+            // ā-Verben bilden fast immer ‑āvī; ein s-Perfekt (‑sī) wäre dort kein typischer Fehler
+            // (‑ī wie „imperī" wäre zugleich ein Genitiv aus dem Heft)
+            if (typ === 'āre') return [s + 'āvī', s + 'uī', s + 'ēvī'];
+            if (MS_PERFEKT_FALSCH[inf]) return MS_PERFEKT_FALSCH[inf];
+            const vPerf = typ === 'ēre' ? s + 'ēvī' : s + 'īvī';
+            // keine Formen, die kein Kind schreiben würde (stud‑ → „stusī" ja, „occurrsī" nein)
+            return [vPerf, basis + 'uī', basis + 'ī', sPerf].filter(x => !/uu|qus|qux|rrs|lls/.test(x));
+        }
+
+        function msAdjektivFalsch(w, fem, neu) {
+            if (MS_ADJ_FEST[w]) return MS_ADJ_FEST[w];
+            const plural = /ī$/.test(w);
+            let femF = [neu, w], neuF = [fem, w];
+            if (/er$/.test(w)) {
+                // pulcher → pulchra (e fällt weg), miser → misera (e bleibt): beides verwechselbar
+                if (/era$/.test(fem)) { femF = [fem.replace(/era$/, 'ra'), neu]; neuF = [neu.replace(/erum$/, 'rum'), fem]; }
+                else { femF = [w + 'a', neu]; neuF = [w + 'um', fem]; }
+            } else if (plural) {
+                femF = [neu, w]; neuF = [fem, w];
+            }
+            return { fem: femF, neu: neuF };
+        }
+
+        // Liefert { w, d, f, teile: [{art, label, richtig, optionen, mehrfach?, fest?}] } oder null
+        function msAufgabe(row) {
+            const w = row.w, f = (row.f || '').trim();
+            if (!f) return null;
+            const teile = [];
+            let rest = f.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+            // Gen. Pl. auf -ium: steht im Heft als Merkhilfe dabei, wird nur gezeigt
+            let fest = '';
+            const gpl = rest.match(/\(_Gen\. Pl\._ ([^)]+)\)/);
+            if (gpl) { fest = '(Gen. Pl. ' + gpl[1] + ')'; rest = rest.replace(gpl[0], '').trim(); }
+
+            // Anschluss eines Verbs: m. Dat. / m. Akk. / m. Abl. / m. Inf. (mit oder ohne Klammer)
+            let anschluss = null;
+            const an = rest.match(/\(?_\(?(m\. (?:Dat|Akk|Abl|Inf)\.)\)?_\)?$/);
+            const formTeil = rest.replace(/_[^_]*_/g, '').replace(/[(),]/g, ' ').trim();
+            if (an && formTeil) { anschluss = an[1]; rest = rest.slice(0, an.index).trim(); }
+
+            const labels = (rest.match(/_[^_]+_/g) || []).map(l => l.slice(1, -1).trim());
+            const formen = rest.replace(/_[^_]+_/g, '').split(',').map(s => s.trim()).filter(Boolean);
+            const verb = /(re|sse|lle)( dē)?$/.test(w);
+
+            const genusLabel = labels.find(l => /^(m|f|n|m f)( Pl\.)?$|^Pl\.$/.test(l));
+            const genusSet = genusLabel ? genusLabel.replace('Pl.', ' Pl.').split(/\s+/).filter(Boolean) : null;
+
+            if (!formen.length && labels.length === 1 && genusSet) {
+                teile.push({ art: 'genus', label: 'Geschlecht', richtig: genusSet, optionen: MS_GENUS, mehrfach: true });
+            } else if (!formen.length && labels.length === 1) {
+                const l = labels[0];
+                const gruppe = MS_ANGABEN.find(g => g.includes(l));
+                if (!gruppe) return { w, d: row.d, f, fehler: 'Angabe ohne Gruppe: ' + l };
+                const tausch = MS_ANGABE_TAUSCH[w];
+                const optionen = tausch ? gruppe.map(o => o === tausch[0] ? tausch[1] : o).filter(Boolean) : gruppe;
+                teile.push({ art: 'angabe', label: 'Angabe', richtig: l, optionen });
+            } else if (formen.length === 1 && genusSet) {
+                // Nomen: Genitiv + Geschlecht
+                const gen = formen[0];
+                const falsch = msFalsche(gen, msGenitivFalsch(gen, { w, pl: genusLabel }));
+                if (falsch.length < 2) return { w, d: row.d, f, fehler: 'Genitiv ohne Ablenkung: ' + gen };
+                teile.push({ art: 'form', label: 'Genitiv', richtig: gen, optionen: [gen, ...falsch] });
+                teile.push({ art: 'genus', label: 'Geschlecht', richtig: genusSet, optionen: MS_GENUS, mehrfach: true });
+            } else if (!verb && formen.length === 1 && !labels.length) {
+                // Pronomen mit Genitiv (nēmō, nēminis)
+                const gen = formen[0];
+                const falsch = msFalsche(gen, msGenitivFalsch(gen, { w }));
+                if (falsch.length < 2) return { w, d: row.d, f, fehler: 'Genitiv ohne Ablenkung: ' + gen };
+                teile.push({ art: 'form', label: 'Genitiv', richtig: gen, optionen: [gen, ...falsch] });
+            } else if (verb && formen.length >= 1 && formen.length <= 2 && !labels.length) {
+                // Verb: 1. Person (+ Perfekt). Bei Wendungen nur das Verb tauschen.
+                const teileW = w.split(' '), vi = teileW.findIndex(t => /(re|sse|lle)$/.test(t));
+                const inf = teileW[vi];
+                const p1voll = formen[0], p1Woerter = p1voll.split(' ');
+                const p1 = p1Woerter[vi] !== undefined ? p1Woerter[vi] : p1voll;
+                const mitWendung = x => p1Woerter.map((t, i) => i === vi ? x : t).join(' ');
+                const unr = MS_UNREGELMAESSIG[inf];
+                const p1Falsch = msFalsche(p1, unr ? unr.p1 : msPraesensFalsch(inf, p1));
+                if (p1Falsch.length < 2) return { w, d: row.d, f, fehler: '1. Person ohne Ablenkung: ' + p1 };
+                teile.push({ art: 'form', label: '1. Pers. Sg.', richtig: p1voll, optionen: [p1voll, ...p1Falsch.map(mitWendung)] });
+                if (formen[1]) {
+                    const pf = formen[1];
+                    const kand = unr ? unr.pf : msPerfektFalsch(inf, p1);
+                    const pfFalsch = msFalsche(pf, kand, 3);
+                    if (pfFalsch.length < 2) return { w, d: row.d, f, fehler: 'Perfekt ohne Ablenkung: ' + pf };
+                    teile.push({ art: 'form', label: 'Perfekt', richtig: pf, optionen: [pf, ...pfFalsch] });
+                }
+            } else if (!verb && formen.length === 2) {
+                // Adjektiv / Pronomen: Femininum, Neutrum
+                const [fem, neu] = formen;
+                const fa = msAdjektivFalsch(w, fem, neu);
+                const ff = msFalsche(fem, fa.fem), nf = msFalsche(neu, fa.neu);
+                if (ff.length < 2 || nf.length < 2) return { w, d: row.d, f, fehler: 'Adjektiv ohne Ablenkung' };
+                teile.push({ art: 'form', label: 'Femininum', richtig: fem, optionen: [fem, ...ff] });
+                teile.push({ art: 'form', label: 'Neutrum', richtig: neu, optionen: [neu, ...nf] });
+                if (labels.includes('Pl.')) fest = 'Pl.';
+            } else {
+                return { w, d: row.d, f, fehler: 'unbekanntes Muster' };
+            }
+            if (anschluss) teile.push({ art: 'angabe', label: 'Anschluss', richtig: anschluss, optionen: MS_ANSCHLUSS });
+            return { w, d: row.d, f, teile, fest };
+        }
+
+        let msZustand = null;
+
+        function openMittlereSpalte() {
+            currentLanguage = 'latin';
+            hideAllScreens();
+            document.getElementById('msChapterName').textContent = currentLatinChapter ? currentLatinChapter.name : '';
+            document.getElementById('mitteScreen').style.display = 'block';
+            hideAprilDarkToggle();
+            applyAprilDarkBody();
+            msStart(0);
+            window.scrollTo(0, 0);
+        }
+
+        function msAufgabenFuer(packetIdx) {
+            const data = vokabelheftData[currentLatinChapterKey];
+            if (!data) return [];
+            const packets = packetIdx === -1 ? data.packets : [data.packets[packetIdx] || data.packets[0]];
+            const out = [];
+            // Zeilennummer gehört in die ID: Lektion 9 hat „nōs" zweimal (Nom. und Akk.)
+            packets.forEach(p => p.rows.forEach((r, idx) => {
+                const a = msAufgabe(r);
+                if (a && a.teile) out.push(Object.assign(a, { id: currentLatinChapterKey + '|' + p.label + '|' + idx }));
+            }));
+            return out;
+        }
+
+        // nurDiese: Wiederholung nur der Wörter, die beim ersten Mal nicht saßen
+        function msStart(packetIdx, nurDiese) {
+            const aufgaben = nurDiese || msAufgabenFuer(packetIdx);
+            msZustand = {
+                packet: packetIdx, alle: aufgaben, queue: shuffleArray(aufgaben),
+                fertig: 0, ersterVersuch: 0, fehler: new Set(),
+                aktuell: null, wahl: [], optionen: [], geprueft: false, richtig: false
+            };
+            msRenderPackets();
+            if (!aufgaben.length) { msRender(); return; }
+            msNaechste();
+        }
+
+        function msRenderPackets() {
+            const data = vokabelheftData[currentLatinChapterKey];
+            const bar = document.getElementById('msPackets');
+            if (!data) { bar.innerHTML = ''; return; }
+            const p = msZustand.packet;
+            bar.innerHTML = data.packets.map((pk, i) =>
+                '<button type="button" class="vh-packet-btn' + (i === p ? ' active' : '') +
+                '" onclick="msStart(' + i + ')">Päckchen ' + vhText(pk.label) + '</button>'
+            ).join('') +
+            '<button type="button" class="vh-packet-btn' + (p === -1 ? ' active' : '') +
+            '" onclick="msStart(-1)">Alle</button>';
+        }
+
+        function msNaechste() {
+            const z = msZustand;
+            if (!z.queue.length) { msEnde(); return; }
+            const a = z.queue.shift();
+            z.aktuell = a;
+            z.wahl = a.teile.map(t => t.mehrfach ? new Set() : null);
+            // Gemischt, nicht alphabetisch: Die falschen Formen haben immer dieselben Endungen,
+            // sortiert stünde die Lösung deshalb immer an derselben Stelle.
+            // Nur das Geschlecht bleibt in der festen Reihenfolge m · f · n · Pl.
+            z.optionen = a.teile.map(t => t.art === 'genus' ? t.optionen
+                : t.art === 'form' ? shuffleArray([t.richtig, ...shuffleArray(t.optionen.slice(1)).slice(0, 2)])
+                : shuffleArray(t.optionen));
+            z.geprueft = false;
+            msRender();
+        }
+
+        function msVollstaendig() {
+            const z = msZustand;
+            return z.aktuell.teile.every((t, i) => t.mehrfach
+                ? [...z.wahl[i]].some(x => x !== 'Pl.')
+                : z.wahl[i] != null);
+        }
+
+        function msWaehle(i, j) {
+            const z = msZustand;
+            if (!z || z.geprueft) return;
+            const t = z.aktuell.teile[i], o = z.optionen[i][j];
+            if (t.mehrfach) { if (z.wahl[i].has(o)) z.wahl[i].delete(o); else z.wahl[i].add(o); }
+            else z.wahl[i] = o;
+            msRender();
+            // Fokus bleibt auf dem angetippten Knopf (für die Tastatur)
+            const k = document.querySelector('#msBody .ms-chip[data-ms="' + i + '-' + j + '"]');
+            if (k) k.focus({ preventScroll: true });
+        }
+
+        function msPruefen() {
+            const z = msZustand;
+            if (!z || z.geprueft || !msVollstaendig()) return;
+            const a = z.aktuell;
+            z.richtig = a.teile.every((t, i) => t.mehrfach
+                ? z.wahl[i].size === t.richtig.length && t.richtig.every(x => z.wahl[i].has(x))
+                : z.wahl[i] === t.richtig);
+            z.geprueft = true;
+            if (z.richtig) {
+                z.fertig++;
+                if (!z.fehler.has(a.id)) z.ersterVersuch++;
+            } else {
+                // kommt nach drei anderen Wörtern noch einmal
+                z.fehler.add(a.id);
+                z.queue.splice(Math.min(3, z.queue.length), 0, a);
+            }
+            msRender();
+        }
+
+        function msRender() {
+            const z = msZustand, body = document.getElementById('msBody');
+            const a = z.aktuell;
+            if (!a) {
+                body.innerHTML = '<div class="ms-card"><p class="ms-leer">Für dieses Päckchen steht im Heft nichts in der mittleren Spalte. Nimm ein anderes Päckchen.</p></div>';
+                return;
+            }
+            let h = '<div class="ms-progress"><span>' + z.fertig + ' von ' + z.alle.length + ' geschafft</span>' +
+                    '<span>beim ersten Versuch: ' + z.ersterVersuch + '</span></div>';
+            h += '<div class="ms-card"><div class="ms-word">' + vhText(a.w) + '</div>' +
+                 '<div class="ms-mean">' + vhText(a.d) + '</div>';
+            a.teile.forEach((t, i) => {
+                const hinweis = t.mehrfach ? 'Nur-Plural-Wörter bekommen zusätzlich „Pl.“'
+                    : t.label === 'Anschluss' ? 'Welcher Fall (oder Infinitiv) folgt? z. B. jemandem gehorchen → m. Dat.' : '';
+                h += '<div class="ms-slot"><div class="ms-slot-label">' + vhText(t.label) + '</div>' +
+                     (hinweis ? '<div class="ms-slot-hint">' + vhText(hinweis) + '</div>' : '') + '<div class="ms-chips">';
+                z.optionen[i].forEach((o, j) => {
+                    const gewaehlt = t.mehrfach ? z.wahl[i].has(o) : z.wahl[i] === o;
+                    const istRichtig = t.mehrfach ? t.richtig.includes(o) : o === t.richtig;
+                    let cls = 'ms-chip' + (gewaehlt ? ' sel' : '');
+                    if (z.geprueft) cls += gewaehlt ? (istRichtig ? ' ok' : ' no') : (istRichtig ? ' soll' : '');
+                    h += '<button type="button" class="' + cls + '"' + (z.geprueft ? ' disabled' : '') +
+                         ' aria-pressed="' + gewaehlt + '" data-ms="' + i + '-' + j + '" onclick="msWaehle(' + i + ',' + j + ')">' + vhText(o) + '</button>';
+                });
+                h += '</div></div>';
+            });
+            if (z.geprueft) {
+                h += '<div class="ms-rueck ' + (z.richtig ? 'ok">Richtig! So steht es im Heft:'
+                      : 'no">Noch nicht ganz. Grün umrandet ist richtig, das Wort kommt gleich noch einmal.') + '</div>' +
+                     '<div class="ms-heft"><div class="vh-word">' + vhText(a.w) + '</div>' +
+                     '<div class="vh-forms">' + vhText(a.f) + '</div>' +
+                     '<div class="vh-mean">' + vhText(a.d) + '</div></div>' +
+                     '<div class="ms-actions"><button type="button" class="ms-btn" id="msWeiterBtn" onclick="msNaechste()">Weiter</button></div>';
+            } else {
+                const nurPl = a.teile.some((t, i) => t.mehrfach && z.wahl[i].size === 1 && z.wahl[i].has('Pl.'));
+                if (nurPl) h += '<div class="ms-slot-hint ms-mitte">Und welches Geschlecht? m, f oder n fehlt noch.</div>';
+                h += '<div class="ms-actions"><button type="button" class="ms-btn" id="msPruefenBtn" onclick="msPruefen()"' +
+                     (msVollstaendig() ? '' : ' disabled') + '>Prüfen</button></div>';
+            }
+            h += '</div>';
+            body.innerHTML = h;
+            if (z.geprueft) { const w = document.getElementById('msWeiterBtn'); if (w) w.focus({ preventScroll: true }); }
+        }
+
+        function msEnde() {
+            const z = msZustand, n = z.alle.length;
+            z.aktuell = null;
+            let h = '<div class="ms-card ms-ende"><div class="ms-word">Geschafft!</div>' +
+                    '<p>' + z.ersterVersuch + ' von ' + n + ' beim ersten Versuch richtig.</p><div class="ms-actions">';
+            if (z.fehler.size) h += '<button type="button" class="ms-btn" onclick="msNurFehler()">Die ' + z.fehler.size +
+                                    (z.fehler.size === 1 ? ' schwierige' : ' schwierigen') + ' nochmal</button>';
+            h += '<button type="button" class="ms-btn sekundaer" onclick="msStart(msZustand.packet)">Alles nochmal</button></div></div>';
+            document.getElementById('msBody').innerHTML = h;
+            const b = document.querySelector('#msBody .ms-btn');
+            if (b) b.focus({ preventScroll: true });
+        }
+
+        function msNurFehler() {
+            const z = msZustand;
+            msStart(z.packet, z.alle.filter(a => z.fehler.has(a.id)));
+        }
+
         function openVokabelheftEnglish() {
             englishDvActive = true;
             openVokabelheft();
@@ -9229,7 +9687,7 @@
         }
 
         function hideAllScreens() {
-            ['changelogSplash','languageSelection','musikSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen','saetzeScreen'].forEach(id => {
+            ['changelogSplash','languageSelection','musikSelection','setSelection','latinChapterSelection','latinModuleSelection','rocketBlockSelection','rocketGameContainer','introPreStart','introStage1Screen','introStage2Screen','gameContainer','vokabelheftScreen','mitteScreen','englishModuleSelection','hoerDetektivScreen','funkzentraleScreen','saetzeScreen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
             hdStopAll();
@@ -13184,6 +13642,7 @@
             const isLatinKap5Screen =
                 inLatin5 && (
                     visible('latinModuleSelection') ||
+                    visible('mitteScreen') ||
                     visible('latinChapterSelection') ||
                     (visible('gameContainer') && currentLanguage === 'latin') ||
                     visible('rocketBlockSelection') ||
@@ -13839,6 +14298,18 @@
             // (Tab, Enter, Buchstaben) — kein Spielmodus darf dazwischenfunken.
             const vhScreenEl = document.getElementById('vokabelheftScreen');
             if (vhScreenEl && vhScreenEl.style.display !== 'none') return;
+
+            // Mittlere Spalte: Enter prüft bzw. geht weiter, sonst nichts
+            const msScreenEl = document.getElementById('mitteScreen');
+            if (msScreenEl && msScreenEl.style.display !== 'none') {
+                // Enter auf einem Päckchen- oder Auswahlknopf drückt diesen Knopf
+                if (event.target.closest && event.target.closest('#msPackets, .ms-chip, .ms-ende')) return;
+                if (event.key === 'Enter' && msZustand && msZustand.aktuell) {
+                    event.preventDefault();
+                    if (msZustand.geprueft) msNaechste(); else msPruefen();
+                }
+                return;
+            }
 
             // Funkzentrale: alles per Antippen, die Tastatur bleibt außen vor.
             const fzScreenEl = document.getElementById('funkzentraleScreen');

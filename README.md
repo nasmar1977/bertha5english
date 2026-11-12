@@ -168,6 +168,11 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - Generalprobe im Aufbau der Übungsarbeit (9 Aufgaben, 90 Punkte, Uhr, Note nach demselben Schlüssel wie Englisch);
   Lösungen erst nach dem Abgeben. Speicher: `deutsch-6b-wolf-v1`.
 
+### 🧩 Latein: Mittlere Spalte
+Das lateinische Wort und die Bedeutung stehen da, gefragt ist die mittlere Spalte des Vokabelhefts, zusammengesetzt
+aus Bausteinen (Genitiv, Geschlecht, 1. Person, Perfekt, Femininum/Neutrum, Angaben). Nach dem Prüfen erscheint die
+Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also automatisch dabei.
+
 ### 🗳️ GEWI
 - **Wiederholung Demokratie** (`gewi.html`, Karte im Hauptmenü): Klasse 6, LEK zu Buch S. 196–199 und Heft. Plan in
   sieben Schritten (etwa 60 min): Begriffe-Blitz, Check (zwei Aufgaben je Thema), Station „Demokratie in Athen“ (immer,
@@ -185,7 +190,7 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.41.1
+**Version:** 2.42.0
 **Datum:** 12.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -237,6 +242,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.42.0 (12.11.2026)
+- Neue Latein-Kachel „🧩 Mittlere Spalte“ (`openMittlereSpalte`, Screen `#mitteScreen`), alle Lektionen, Päckchen
+  wie im Vokabelheft oder „Alle“. Aus jeder Heftzeile mit mittlerer Spalte (358) baut `msAufgabe` Bausteine:
+  Genitiv, Geschlecht (m/f/n/Pl., auch mehrere), 1. Pers. Sg., Perfekt, Femininum/Neutrum, Angabe (Wortart, Kasus,
+  Person, Stellung) und Anschluss (m. Akk./Dat./Abl./Inf.). Falsche Formen nach typischen Fehlern (vōxis, agerī,
+  pulchera, dūceō, dūcī statt dūxī), Sonderfälle fest (`MS_UNREGELMAESSIG`, `MS_PERFEKT_FALSCH`, `MS_ANGABE_TAUSCH`).
+  Falsch Gelöstes kommt drei Wörter später wieder, am Ende „Die schwierigen nochmal“.
+- Zwei Prüfer: Latein (gültige Nebenformen superum, līberum, reperī und doppelt richtige Angaben bei postquam, -ne,
+  quoque, prope entfernt) und Bedienung (Optionen gemischt statt alphabetisch – sortiert hätte die Position 44 % der
+  Aufgaben verraten; leeres Päckchen, doppelte ID bei nōs, Nachtmodus, Tastatur).
 
 ### Version 2.41.1 (12.11.2026)
 - Latein-Distraktoren (Multiple Choice und Rakete) in allen Lektionen überarbeitet, 157 Vokabel- und 12 Wendungslisten.
