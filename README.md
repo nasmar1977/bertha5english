@@ -190,7 +190,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.42.0
+**Version:** 2.43.0
 **Datum:** 12.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -242,6 +242,24 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.43.0 (12.11.2026)
+- Eine Stelle für jede verbuchte Antwort: `antwortVerbucht(richtig, info)`, aufgerufen am Ende von `recordAnswer`,
+  in 0→100 Stufe 2 und in der Mittleren Spalte. Daran hängen:
+  - **Punkte** (10 je richtige Antwort, Vokabelheft 5 je ganz richtiger Zelle einmal pro Sitzung), dauerhaft in
+    localStorage `punkteGesamt`, angezeigt oben links in `#punkteLeiste`. Der alte Rundenzähler im Scoreboard ist
+    ausgeblendet. Keine Punkte in der Wiederholungsrunde; dieselbe Aufgabe zählt innerhalb von 4 s nur einmal
+    (vorher brachte mehrfaches Enter mehrfach Punkte).
+  - **Serie** bis 10 (falsch → 0). Dann wird die Punkte-Pille zum Konfetti-Knopf (`konfettiRegen`: Canvas, Konfetti
+    bleibt am Boden liegen, ein gezeichneter Bodenstaubsauger saugt es weg, keine Emojis; reduzierte Bewegung:
+    ohne Regen).
+  - **Letzte Vokabel** (`#letzteBtn`, `#letzteDialog`): zeigt nur Aufgaben, die vorbei sind und in dieser Übung nicht
+    noch einmal drankommen (Abgleich über die Wort-ID ohne Richtung und die Warteschlangen). Die Rakete hält an,
+    solange der Dialog offen ist.
+- `body` oben mit Platz für die festen Schalter (vorher verdeckte die Leiste auf dem Handy „← Zurück“).
+- 0→100 Stufe 1: „← Voriges Wort“ statt eines zweiten „← Zurück“. Mittlere Spalte: „nur Pl.“ statt „Pl.“
+  (parēns, „Pl. die Eltern“, wurde als Nur-Plural-Wort missverstanden).
+- Zwei Prüfer (Logik: Punkte farmen, Lösung verraten, Rakete; Darstellung: Überlappungen 375–1200 px, Konfetti).
 
 ### Version 2.42.0 (12.11.2026)
 - Neue Latein-Kachel „🧩 Mittlere Spalte“ (`openMittlereSpalte`, Screen `#mitteScreen`), alle Lektionen, Päckchen

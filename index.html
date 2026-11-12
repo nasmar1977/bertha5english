@@ -2863,6 +2863,104 @@
         body.april-dark .ms-rueck.no { color: #f87171; }
         body.april-dark .ms-slot-hint { color: #a5a8c0; }
         body.april-dark .ms-slot-hint.ms-mitte { color: #fbbf24; }
+        /* ============ PUNKTE, KONFETTI, LETZTE VOKABEL ============ */
+        .punkte-leiste {
+            position: fixed; top: 18px; left: 18px; z-index: 20;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .punkte-pill {
+            position: relative; height: 46px; padding: 0 16px 0 12px; border: none; border-radius: 23px;
+            display: flex; align-items: center; gap: 7px; cursor: pointer;
+            background: linear-gradient(135deg, #ffd54f 0%, #ff9800 100%); color: #4a2c00;
+            font-family: inherit; font-size: 1.05em; font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .punkte-pill svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .punkte-pill .serie-badge {
+            position: absolute; bottom: -9px; right: -10px;
+            background: #455a64; color: #fff; border-radius: 12px;
+            padding: 2px 7px; font-size: 12px; font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .punkte-pill .emoji-tooltip {
+            position: absolute; top: 54px; left: 0;
+            background: #263238; color: #fff; padding: 9px 13px; border-radius: 10px;
+            font-size: 13px; font-weight: normal; line-height: 1.35; width: 240px; text-align: left;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .punkte-pill.tip-an .emoji-tooltip { opacity: 1; transform: translateY(0); }
+        @media (hover: hover) { .punkte-pill:hover .emoji-tooltip { opacity: 1; transform: translateY(0); } }
+        /* Oben Platz für die festen Schalter und die Punkte, damit nichts den Zurück-Knopf verdeckt */
+        body { padding-top: 76px; }
+        .punkte-plus {
+            position: absolute; left: 34px; top: 4px; pointer-events: none;
+            font-weight: bold; color: #16a34a; text-shadow: 0 1px 0 #fff;
+            animation: punktePlus 0.9s ease-out forwards;
+        }
+        @keyframes punktePlus {
+            from { opacity: 1; transform: translateY(0); }
+            to   { opacity: 0; transform: translateY(26px); }
+        }
+        .punkte-pill .konfetti-text { display: none; }
+        .punkte-pill.bereit {
+            color: #fff; background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            box-shadow: 0 0 16px rgba(236, 72, 153, 0.7), 0 2px 6px rgba(0,0,0,0.2);
+            animation: konfettiPuls 1.6s ease-in-out infinite;
+        }
+        .punkte-pill.bereit .konfetti-text { display: inline; }
+        .punkte-pill.bereit .serie-badge { background: #be185d; }
+        @keyframes konfettiPuls {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.06); }
+        }
+        #konfettiCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 3000; }
+        @media (max-width: 520px) {
+            .punkte-leiste { top: 10px; left: 10px; gap: 8px; }
+            .punkte-pill { height: 40px; padding: 0 12px 0 9px; font-size: 0.95em; }
+            body { padding-top: 58px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .punkte-pill.bereit { animation: none; }
+        }
+
+        /* „Letzte Vokabel“: oben rechts in der Übung, hell mit Rahmen –
+           bewusst anders als der lila „← Zurück“-Knopf oben links */
+        #introStage2Screen, #mitteScreen { position: relative; }
+        .letzte-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 5;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 12px; cursor: pointer;
+            background: #fff; color: #0f766e; border: 2px solid #14b8a6;
+            font-family: inherit; font-size: 0.8em; font-weight: bold;
+        }
+        .letzte-btn[hidden] { display: none; }
+        .letzte-btn svg { width: 18px; height: 18px; }
+        .letzte-btn:hover { background: #f0fdfa; }
+        .letzte-btn:focus-visible { outline: 3px solid #14b8a6; outline-offset: 2px; }
+        .letzte-dialog {
+            position: fixed; inset: 0; z-index: 2000; background: rgba(15, 23, 42, 0.45);
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        .letzte-dialog[hidden] { display: none; }
+        .letzte-karte {
+            background: #fff; border-radius: 18px; padding: 18px 20px; width: min(100%, 380px);
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.35); border-top: 6px solid #14b8a6;
+        }
+        .letzte-titel { font-size: 0.8em; font-weight: bold; color: #0f766e; text-transform: uppercase; letter-spacing: .04em; }
+        .letzte-frage { font-size: 1.5em; font-weight: bold; color: #5e35b1; margin-top: 8px; overflow-wrap: anywhere; }
+        .letzte-hinweis { font-size: 0.55em; font-weight: normal; color: #64748b; margin-top: 2px; }
+        .letzte-pfeil { color: #94a3b8; margin: 2px 0; }
+        .letzte-loesung { font-size: 1.1em; color: #1f2937; white-space: pre-line; overflow-wrap: anywhere; }
+        .letzte-status { margin: 10px 0 14px; font-size: 0.9em; font-weight: bold; }
+        .letzte-status.ok { color: #059669; }
+        .letzte-status.no { color: #dc2626; }
+        .score-board .punkte-alt { display: none; }
+        body.april-dark .letzte-btn { background: #1e2030; color: #5eead4; border-color: #14b8a6; }
+        body.april-dark .letzte-karte { background: #1e2030; }
+        body.april-dark .letzte-frage { color: #ffd54f; }
+        body.april-dark .letzte-loesung { color: #e8eaf6; }
     </style>
 </head>
 <body>
@@ -3600,7 +3698,7 @@
         </div>
         <div class="stage1-meta" id="stage1Meta">Pass 1 von 2 · Wort 1 von 9</div>
         <div class="stage1-nav">
-            <button class="stage1-btn stage1-btn-secondary" id="stage1PrevBtn" onclick="prevIntroStage1Card()">← Zurück</button>
+            <button class="stage1-btn stage1-btn-secondary" id="stage1PrevBtn" onclick="prevIntroStage1Card()">← Voriges Wort</button>
             <button class="stage1-btn stage1-btn-primary" onclick="nextIntroStage1Card()">Weiter →</button>
         </div>
     </div>
@@ -3666,6 +3764,33 @@
         <span class="dark-tooltip" id="aprilDarkTooltip">Sammle 5 richtige Antworten in Folge, dann kannst du den Nachtmodus einschalten. Eine falsche Antwort setzt den Zähler zurück!</span>
     </button>
 
+    <!-- Punkte für jede richtige Antwort, Serie bis zum Konfetti -->
+    <div class="punkte-leiste" id="punkteLeiste">
+        <button type="button" class="punkte-pill" id="punktePill" onclick="punktePillKlick(event)" aria-describedby="punkteTip">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" stroke="#b45309" stroke-width="1.2" d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17.1 6.1 20.3l1.3-6.5L2.5 9.3l6.6-.8z"/></svg>
+            <span id="punkteZahl">0</span>
+            <span class="konfetti-text">Konfetti!</span>
+            <span class="serie-badge" id="serieBadge">0/10</span>
+            <span class="emoji-tooltip" id="punkteTip" role="tooltip"></span>
+        </button>
+    </div>
+
+    <!-- „Letzte Vokabel“: wird in die laufende Übung gehängt, nur zum Anschauen -->
+    <button type="button" class="letzte-btn" id="letzteBtn" hidden onclick="letzteOeffnen()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+        Letzte Vokabel
+    </button>
+    <div class="letzte-dialog" id="letzteDialog" hidden role="dialog" aria-modal="true" aria-labelledby="letzteTitel">
+        <div class="letzte-karte">
+            <div class="letzte-titel" id="letzteTitel">Letzte Vokabel · nur zum Anschauen</div>
+            <div class="letzte-frage" id="letzteFrage"></div>
+            <div class="letzte-pfeil" aria-hidden="true">↓</div>
+            <div class="letzte-loesung" id="letzteLoesung"></div>
+            <div class="letzte-status" id="letzteStatus"></div>
+            <button type="button" class="ms-btn" id="letzteZu" onclick="letzteSchliessen()">Weiter üben</button>
+        </div>
+    </div>
+
     <div class="game-container" id="gameContainer" style="display: none; position: relative;">
         <button class="back-btn" id="gameBackBtn" onclick="backFromGame()">← Zurück</button>
         <div class="header">
@@ -3674,7 +3799,7 @@
         </div>
 
         <div class="score-board">
-            <div class="score-item">
+            <div class="score-item punkte-alt">
                 <div class="label">Punkte</div>
                 <div class="value" id="score">0</div>
             </div>
@@ -7226,12 +7351,14 @@
                 progress[key].wrong++;
             }
             progress[key].lastSeen = Date.now();
-            saveProgress(progress);
+            try { saveProgress(progress); } catch (e) {}   // voller oder gesperrter Speicher: Punkte trotzdem
             if (isCorrect) dvOnCorrect(key);
             // Streak für Latein-Kap-5-Nachtmodus mitzählen (April-Englisch wird in eigenen Handlern gezählt)
             if (typeof isInLatinKap5 === 'function' && isInLatinKap5()) {
                 aprilOnAnswer(isCorrect);
             }
+            // Punkte, Konfetti-Serie und „Letzte Vokabel“
+            antwortVerbucht(isCorrect, aufgabeJetzt());
         }
 
         function weightedSample(pool, n, progressData) {
@@ -7293,9 +7420,19 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.42.0';
+        const APP_VERSION = '2.43.0';
 
         const changelogEntries = [
+            {
+                version: '2.43.0',
+                date: '12.11.2026',
+                items: [
+                    '<b>Punkte überall</b> ⭐ – jede richtige Antwort bringt 10 Punkte, in allen Latein-Kacheln (auch Rakete, 0 → 100, Vokabelheft und Mittlere Spalte) und in Englisch. Der Punktestand steht jetzt immer oben links.',
+                    '<b>Konfetti!</b> Schaffst du 10 richtige Antworten in Folge (die Zahl unter den Punkten zählt mit), wird der Punkte-Knopf bunt. Tipp drauf, wann du willst – dann regnet es Konfetti, und ein Staubsauger räumt auf. Eine falsche Antwort setzt die Serie auf null.',
+                    '<b>Letzte Vokabel</b> 👁️ – oben rechts in den Übungen kannst du dir die vorige Vokabel mit Lösung noch einmal ansehen. Ändern geht nicht.',
+                    'In „0 → 100“ heißt der Knopf in der Karte jetzt „← Voriges Wort“, damit man ihn nicht mit „← Zurück“ verwechselt. In der Mittleren Spalte heißt „Pl.“ jetzt „nur Pl.“.'
+                ]
+            },
             {
                 version: '2.42.0',
                 date: '12.11.2026',
@@ -9144,13 +9281,373 @@
         // Englisch: dasselbe Heft, nur ein anderer Datensatz. englishDvActive
         // muss vor dem Rendern stehen — davon hängt dvContextKey() ab.
         // ===================================================================
+        // PUNKTE, KONFETTI-SERIE, LETZTE VOKABEL
+        // Eine Stelle für jede verbuchte Antwort (antwortVerbucht): recordAnswer
+        // ruft sie auf, dazu 0→100 Stufe 2 und die Mittlere Spalte direkt.
+        // ===================================================================
+        const PUNKTE_KEY = 'punkteGesamt';
+        const PUNKTE_JE_ANTWORT = 10;
+        const SERIE_ZIEL = 10;           // so viele richtige in Folge → Konfetti
+        let punkteGesamt = 0;
+        try { punkteGesamt = Math.max(0, parseInt(localStorage.getItem(PUNKTE_KEY), 10) || 0); } catch (e) {}
+        let serie = 0;
+        let konfettiBereit = false;
+        let letzteAufgaben = [];         // neueste zuerst: { frage, loesung, richtig }
+        const vhBelohnt = new Set();     // Vokabelheft: jede Zelle bringt pro Sitzung einmal Punkte
+        let vhPunkteOffen = 0;           // beim Vergleichen gesammelt, nach dem Zeichnen gutgeschrieben
+
+        function punkteDazu(n) {
+            if (!n) return;
+            // frisch lesen: ein zweiter Tab soll nichts überschreiben
+            try { punkteGesamt = Math.max(punkteGesamt, parseInt(localStorage.getItem(PUNKTE_KEY), 10) || 0); } catch (e) {}
+            punkteGesamt += n;
+            try { localStorage.setItem(PUNKTE_KEY, String(punkteGesamt)); } catch (e) {}
+            punkteAnzeigen(n);
+        }
+
+        let zuletztRichtig = { id: null, zeit: 0 };
+        function antwortVerbucht(richtig, info) {
+            const id = info && info.id;
+            if (richtig) {
+                // Nochmal Enter auf derselben, schon gelösten Aufgabe zählt nicht
+                if (id && zuletztRichtig.id === id && Date.now() - zuletztRichtig.zeit < 4000) return;
+                zuletztRichtig = { id, zeit: Date.now() };
+                serie++;
+                if (serie >= SERIE_ZIEL) konfettiBereit = true;
+                // In der Wiederholungsrunde keine Punkte: erst falsch soll sich nicht lohnen
+                if (typeof isRepeatPhase !== 'undefined' && isRepeatPhase && sichtbar('gameContainer')) punkteAnzeigen(0);
+                else punkteDazu(PUNKTE_JE_ANTWORT);
+            } else {
+                serie = 0;       // eine falsche dazwischen: wieder von vorn
+                punkteAnzeigen(0);
+            }
+            if (info && info.frage) {
+                letzteAufgaben.unshift({ id: info.id || info.frage, frage: info.frage, hinweis: info.hinweis || '', loesung: info.loesung || '', richtig: !!richtig });
+                letzteAufgaben = letzteAufgaben.slice(0, 6);
+            }
+            letzteKnopfAnzeigen();
+        }
+
+        function punkteAnzeigen(neu) {
+            const zahl = document.getElementById('punkteZahl');
+            if (!zahl) return;
+            zahl.textContent = punkteGesamt.toLocaleString('de-DE');
+            const s = Math.min(serie, SERIE_ZIEL);
+            document.getElementById('serieBadge').textContent = s + '/' + SERIE_ZIEL;
+            document.getElementById('punkteTip').textContent = konfettiBereit
+                ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das Konfetti gehört dir!'
+                : 'Für jede richtige Antwort gibt es ' + PUNKTE_JE_ANTWORT + ' Punkte. Schaffst du ' + SERIE_ZIEL +
+                  ' richtige in Folge, gibt es Konfetti – im Moment ' + s + ' von ' + SERIE_ZIEL +
+                  '. Eine falsche Antwort setzt die Serie auf null.';
+            // Ist die Serie voll, wird die Punkte-Pille selbst zum Konfetti-Knopf
+            const pill = document.getElementById('punktePill');
+            pill.classList.toggle('bereit', konfettiBereit);
+            pill.setAttribute('aria-label', konfettiBereit ? 'Konfetti regnen lassen' : punkteGesamt + ' Punkte, Serie ' + s + ' von ' + SERIE_ZIEL);
+            if (neu > 0) {
+                const plus = document.createElement('span');
+                plus.className = 'punkte-plus';
+                plus.textContent = '+' + neu;
+                document.getElementById('punkteLeiste').appendChild(plus);
+                setTimeout(() => plus.remove(), 900);
+            }
+        }
+
+        // Was steht gerade als Aufgabe auf dem Schirm? Daran erkennt der Knopf
+        // „Letzte Vokabel“, welche Aufgabe schon vorbei ist (und welche nicht).
+        function sichtbar(id) {
+            const el = document.getElementById(id);
+            return !!el && el.style.display !== 'none' && el.style.display !== '';
+        }
+        function aktuelleFrage() {
+            if (sichtbar('rocketGameContainer')) return (document.getElementById('rocketWordLatin') || {}).textContent || '';
+            if (sichtbar('introStage2Screen')) return (document.getElementById('stage2Latin') || {}).textContent || '';
+            if (sichtbar('mitteScreen')) return msZustand && msZustand.aktuell ? msZustand.aktuell.w : '';
+            if (sichtbar('gameContainer')) return (document.getElementById('wordGerman') || {}).textContent || '';
+            return '';
+        }
+
+        // Wort-ID ohne Richtung: ein Wort, das gleich in anderer Richtung kommt, gilt als offen
+        function aktuelleId() {
+            if (sichtbar('rocketGameContainer')) return rocketCurrentItem ? rocketCurrentItem.id : null;
+            if (sichtbar('introStage2Screen')) { const q = introState && introState.stage2Queue; return q && q[0] ? q[0].id : null; }
+            if (sichtbar('mitteScreen')) return msZustand && msZustand.aktuell ? msZustand.aktuell.id : null;
+            if (sichtbar('gameContainer')) {
+                if (currentLanguage === 'latin') return currentLatinItem ? (currentLatinItem.dvWord || currentLatinItem.id) : null;
+                const w = typeof shuffledVocabulary !== 'undefined' ? shuffledVocabulary[currentWordIndex] : null;
+                return w && w.english ? 'en:' + w.english : null;
+            }
+            return null;
+        }
+        // Kommt eine Aufgabe in dieser Übung noch einmal dran? Dann wird ihre Lösung nicht gezeigt.
+        function kommtNochDran(id) {
+            const hat = (liste, f) => Array.isArray(liste) && liste.some(x => x && f(x) === id);
+            return hat(typeof rocketQueue !== 'undefined' ? rocketQueue : null, x => x.id) ||
+                   hat(introState && introState.stage2Queue, x => x.id) ||
+                   hat(msZustand && msZustand.queue, x => x.id) ||
+                   hat(typeof wordsToRepeat !== 'undefined' ? wordsToRepeat : null,
+                       x => x.english ? 'en:' + x.english : (x.dvWord || x.id));
+        }
+
+        // Aufgabe und Lösung im Moment der Antwort festhalten
+        function aufgabeJetzt() {
+            if (sichtbar('rocketGameContainer') && typeof rocketCurrentItem !== 'undefined' && rocketCurrentItem)
+                return { id: rocketCurrentItem.id, frage: rocketCurrentItem.latin, loesung: rocketCurrentItem.correct };
+            if (!sichtbar('gameContainer')) return null;
+            if (currentMode === 'table' || currentMode === 'snake' || isPhraseMode) return null;
+            const frage = (document.getElementById('wordGerman') || {}).textContent || '';
+            const mcArea = document.getElementById('mcArea');
+            const mcOk = mcArea && mcArea.style.display !== 'none'
+                ? document.querySelector('#mcOptions .mc-option[data-correct="true"] .mc-text') : null;
+            let loesung = mcOk ? mcOk.textContent : '';
+            if (!loesung && currentLanguage === 'latin' && currentLatinItem)
+                loesung = currentLatinItem.displayAnswer || currentLatinItem.answer || '';
+            if (!loesung && currentLanguage !== 'latin' && typeof shuffledVocabulary !== 'undefined') {
+                const w = shuffledVocabulary[currentWordIndex];
+                if (w) loesung = w.english || '';
+            }
+            const hinweis = currentLanguage === 'latin' && currentLatinItem && currentLatinItem.type === 'verb'
+                ? (document.getElementById('wordHint') || {}).textContent || '' : '';
+            return frage && loesung ? { id: aktuelleId(), frage, hinweis, loesung } : null;
+        }
+
+        // Nur Aufgaben, die schon vorbei sind: die gerade gezeigte bleibt außen vor,
+        // sonst stünde nach einem Fehlversuch die Lösung der offenen Aufgabe da.
+        function letzteVorbei() {
+            const jetzt = aktuelleFrage(), jetztId = aktuelleId();
+            return letzteAufgaben.find(a => a.frage !== jetzt && a.id !== jetztId && !kommtNochDran(a.id)) || null;
+        }
+
+        const LETZTE_SCREENS = ['gameContainer', 'rocketGameContainer', 'introStage2Screen', 'mitteScreen'];
+        function letzteKnopfAnzeigen() {
+            const btn = document.getElementById('letzteBtn');
+            if (!btn) return;
+            const ziel = LETZTE_SCREENS.find(sichtbar);
+            if (ziel && document.getElementById(ziel) !== btn.parentElement) document.getElementById(ziel).appendChild(btn);
+            btn.hidden = !ziel || !letzteVorbei();
+        }
+
+        // Die Rakete steht, solange der Dialog offen ist (rocketTick fragt das ab)
+        function letzteDialogOffen() {
+            const d = document.getElementById('letzteDialog');
+            return !!d && !d.hidden;
+        }
+        function letzteOeffnen() {
+            const a = letzteVorbei();
+            if (!a) return;
+            document.getElementById('letzteFrage').innerHTML = vhText(a.frage) +
+                (a.hinweis ? '<div class="letzte-hinweis">' + vhText(a.hinweis) + '</div>' : '');
+            document.getElementById('letzteLoesung').innerHTML = vhText(a.loesung);
+            const st = document.getElementById('letzteStatus');
+            st.textContent = a.richtig ? '✓ Das hattest du richtig.' : '✗ Das war beim letzten Versuch falsch.';
+            st.className = 'letzte-status ' + (a.richtig ? 'ok' : 'no');
+            const d = document.getElementById('letzteDialog');
+            d.hidden = false;
+            document.getElementById('letzteZu').focus({ preventScroll: true });
+        }
+
+        function letzteSchliessen() {
+            document.getElementById('letzteDialog').hidden = true;
+            const btn = document.getElementById('letzteBtn');
+            if (btn && !btn.hidden) btn.focus({ preventScroll: true });
+        }
+
+        // ---- Konfetti mit Staubsauger (alles gezeichnet, keine Emojis) ----
+        let punkteTipUhr = null;
+        function punktePillKlick(ev) {
+            if (ev) ev.stopPropagation();
+            const pill = document.getElementById('punktePill');
+            if (konfettiBereit) { pill.classList.remove('tip-an'); konfettiAusloesen(); return; }
+            pill.classList.toggle('tip-an');
+            clearTimeout(punkteTipUhr);
+            if (pill.classList.contains('tip-an')) punkteTipUhr = setTimeout(() => pill.classList.remove('tip-an'), 5000);
+        }
+
+        function konfettiAusloesen() {
+            if (!konfettiBereit) return;
+            konfettiBereit = false;
+            serie = 0;
+            punkteAnzeigen(0);
+            konfettiRegen();
+        }
+
+        function konfettiRegen() {
+            if (document.getElementById('konfettiCanvas')) return;
+            const ruhig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const c = document.createElement('canvas');
+            c.id = 'konfettiCanvas';
+            c.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(c);
+            const ctx = c.getContext('2d');
+            const dpr = Math.min(2, window.devicePixelRatio || 1);
+            let W = 0, H = 0;
+            const groesse = () => {
+                W = window.innerWidth; H = window.innerHeight;
+                c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                // Beim Drehen: was schon liegt, rutscht auf den neuen Boden
+                if (typeof teile !== 'undefined') teile.forEach(t => { if (t.liegt && !t.saug) t.y = H - t.abstand; });
+            };
+            groesse();
+            window.addEventListener('resize', groesse);
+
+            const FARBEN = ['#ef4444', '#f59e0b', '#facc15', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+            const anzahl = ruhig ? 60 : Math.max(120, Math.min(340, Math.round(W * H / 3200)));
+            var teile = [];
+            for (let i = 0; i < anzahl; i++) {
+                teile.push({
+                    x: Math.random() * W, y: -10 - Math.random() * H * 0.9,
+                    vx: (Math.random() - 0.5) * 1.4, vy: 1 + Math.random() * 2,
+                    w: 6 + Math.random() * 6, h: 3 + Math.random() * 3,
+                    rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.25,
+                    farbe: FARBEN[i % FARBEN.length], rund: Math.random() < 0.25,
+                    phase: Math.random() * Math.PI * 2, abstand: 2 + Math.random() * 12,
+                    liegt: false, weg: false, saug: 0
+                });
+                if (ruhig) { const t = teile[teile.length - 1]; t.liegt = true; t.y = H - t.abstand; t.rot = 0; }
+            }
+
+            const sauger = { x: 0, aktiv: false, richtung: -1, start: 0 };
+            const t0 = performance.now();
+            let zuletzt = t0;
+
+            function zeichneTeil(t, s) {
+                ctx.save();
+                ctx.translate(t.x, t.y);
+                ctx.rotate(t.rot);
+                ctx.scale(s, s);
+                ctx.fillStyle = t.farbe;
+                if (t.rund) { ctx.beginPath(); ctx.arc(0, 0, t.h, 0, Math.PI * 2); ctx.fill(); }
+                else ctx.fillRect(-t.w / 2, -t.h / 2, t.w, t.h);
+                ctx.restore();
+            }
+
+            // Bodenstaubsauger, fährt nach links; Düse vorne, Schlauch zum Gerät
+            function zeichneSauger(x, zeit, saugt) {
+                const boden = H - 2, wackel = saugt ? Math.sin(zeit / 40) * 0.8 : 0;
+                ctx.save();
+                ctx.translate(0, wackel);
+                // Schlauch
+                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(x + 8, boden - 34);
+                ctx.bezierCurveTo(x - 20, boden - 70, x - 52, boden - 66, x - 62, boden - 48); ctx.stroke();
+                // Saugrohr
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 5;
+                ctx.beginPath(); ctx.moveTo(x - 62, boden - 48); ctx.lineTo(x - 74, boden - 12); ctx.stroke();
+                // Düse
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath(); ctx.moveTo(x - 98, boden); ctx.lineTo(x - 54, boden);
+                ctx.lineTo(x - 62, boden - 12); ctx.lineTo(x - 88, boden - 12); ctx.closePath(); ctx.fill();
+                // Gerät
+                ctx.fillStyle = '#e11d48';
+                ctx.beginPath(); ctx.moveTo(x + 6, boden - 14);
+                ctx.lineTo(x + 6, boden - 40); ctx.quadraticCurveTo(x + 8, boden - 58, x + 40, boden - 58);
+                ctx.lineTo(x + 96, boden - 58); ctx.quadraticCurveTo(x + 118, boden - 58, x + 118, boden - 36);
+                ctx.lineTo(x + 118, boden - 14); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#9f1239'; ctx.fillRect(x + 6, boden - 22, 112, 8);
+                // Griff
+                ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 5;
+                ctx.beginPath(); ctx.moveTo(x + 46, boden - 58); ctx.quadraticCurveTo(x + 64, boden - 78, x + 84, boden - 58); ctx.stroke();
+                // Lüftungsschlitze
+                ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 2;
+                for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(x + 90 + i * 7, boden - 48); ctx.lineTo(x + 90 + i * 7, boden - 30); ctx.stroke(); }
+                // Räder
+                [x + 28, x + 96].forEach(rx => {
+                    ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.arc(rx, boden - 10, 10, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.arc(rx, boden - 10, 3.5, 0, Math.PI * 2); ctx.fill();
+                });
+                // Sog-Striche vor der Düse
+                if (saugt) {
+                    ctx.strokeStyle = 'rgba(100,116,139,0.55)'; ctx.lineWidth = 2;
+                    for (let i = 0; i < 3; i++) {
+                        const off = ((zeit / 6) + i * 9) % 26;
+                        ctx.beginPath(); ctx.moveTo(x - 128 + off, boden - 6 - i * 5); ctx.lineTo(x - 116 + off, boden - 6 - i * 5); ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+
+            function bild(jetzt) {
+                const k = Math.min(3, (jetzt - zuletzt) / 16.7);
+                zuletzt = jetzt;
+                ctx.clearRect(0, 0, W, H);
+                let fallend = 0;
+                for (const t of teile) {
+                    if (t.weg) continue;
+                    if (!t.liegt) {
+                        fallend++;
+                        t.vy = Math.min(3.4, t.vy + 0.045 * k);
+                        t.x += (t.vx + Math.sin(t.phase + t.y / 45) * 0.7) * k;
+                        t.y += t.vy * k;
+                        t.rot += t.vr * k;
+                        if (t.y >= H - t.abstand) {
+                            t.y = H - t.abstand; t.liegt = true;
+                            t.rot = Math.round(t.rot / Math.PI) * Math.PI + (Math.random() - 0.5) * 0.5;
+                        }
+                    }
+                }
+                // Der Sauger kommt, wenn alles liegt (spätestens nach 9 s)
+                const alter = jetzt - t0;
+                if (!sauger.aktiv && (fallend === 0 || alter > 9000)) {
+                    sauger.aktiv = true; sauger.x = W + 140; sauger.start = jetzt;
+                    teile.forEach(t => { if (!t.liegt) { t.liegt = true; t.y = H - t.abstand; } });
+                }
+                let saugt = false;
+                if (sauger.aktiv) {
+                    sauger.x -= (ruhig ? 6 : 2.1) * k;
+                    const mund = sauger.x - 76;
+                    for (const t of teile) {
+                        if (t.weg || !t.liegt) continue;
+                        if (t.saug > 0 || (t.x > mund - 34 && t.x < mund + 30)) {
+                            t.saug = Math.min(1, t.saug + 0.09 * k);
+                            t.x += (mund - t.x) * 0.25 * k;
+                            t.y += (H - 8 - t.y) * 0.25 * k;
+                            saugt = true;
+                            if (t.saug >= 1) t.weg = true;
+                        } else if (t.x > mund + 30) {
+                            // schon überfahren, ohne erfasst zu werden: nachträglich einsaugen
+                            t.saug = 0.01;
+                        }
+                    }
+                }
+                for (const t of teile) if (!t.weg) zeichneTeil(t, 1 - t.saug * 0.8);
+                if (sauger.aktiv) zeichneSauger(sauger.x, jetzt - sauger.start, saugt);
+
+                const fertig = sauger.aktiv && sauger.x < -140 && teile.every(t => t.weg);
+                if (fertig) {
+                    window.removeEventListener('resize', groesse);
+                    c.remove();
+                    return;
+                }
+                requestAnimationFrame(bild);
+            }
+            requestAnimationFrame(bild);
+        }
+
+        function punkteInit() {
+            punkteAnzeigen(0);
+            // Sobald die nächste Aufgabe erscheint, ist die vorige „vorbei“ und der Knopf darf kommen
+            if (window.MutationObserver) {
+                const beob = new MutationObserver(() => letzteKnopfAnzeigen());
+                ['wordGerman', 'rocketWordLatin', 'stage2Latin', 'msBody'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) beob.observe(el, { childList: true, characterData: true, subtree: true });
+                });
+            }
+            const d = document.getElementById('letzteDialog');
+            d.addEventListener('click', e => { if (e.target === d) letzteSchliessen(); });
+            // Tooltip der Punkte schließt beim Tippen irgendwo anders
+            document.addEventListener('click', () => document.getElementById('punktePill').classList.remove('tip-an'));
+        }
+        punkteInit();
+
+        // ===================================================================
         // MITTLERE SPALTE — die Formen-Spalte des Vokabelhefts als Baukasten
         // ===================================================================
         // Jede Zeile mit Text in der mittleren Spalte wird zu einer Aufgabe aus
         // Bausteinen ("Slots"). Jeder Baustein hat eine Lösung und Auswahlknöpfe.
         // Formen-Bausteine bekommen zwei falsche Formen nach typischen Fehlern,
         // Angaben-Bausteine eine feste Auswahl aus derselben Gruppe.
-        const MS_GENUS = ['m', 'f', 'n', 'Pl.'];
+        const MS_GENUS = ['m', 'f', 'n', 'nur Pl.'];
         const MS_ANSCHLUSS = ['m. Akk.', 'm. Dat.', 'm. Abl.', 'm. Inf.'];
         const MS_ANGABEN = [
             ['Adv.', 'Subj.', 'Präp. m. Akk.', 'Präp. m. Abl.'],
@@ -9289,7 +9786,7 @@
             const verb = /(re|sse|lle)( dē)?$/.test(w);
 
             const genusLabel = labels.find(l => /^(m|f|n|m f)( Pl\.)?$|^Pl\.$/.test(l));
-            const genusSet = genusLabel ? genusLabel.replace('Pl.', ' Pl.').split(/\s+/).filter(Boolean) : null;
+            const genusSet = genusLabel ? genusLabel.replace('Pl.', ' Pl.').split(/\s+/).filter(Boolean).map(x => x === 'Pl.' ? 'nur Pl.' : x) : null;
 
             if (!formen.length && labels.length === 1 && genusSet) {
                 teile.push({ art: 'genus', label: 'Geschlecht', richtig: genusSet, optionen: MS_GENUS, mehrfach: true });
@@ -9418,7 +9915,7 @@
         function msVollstaendig() {
             const z = msZustand;
             return z.aktuell.teile.every((t, i) => t.mehrfach
-                ? [...z.wahl[i]].some(x => x !== 'Pl.')
+                ? [...z.wahl[i]].some(x => x !== 'nur Pl.')
                 : z.wahl[i] != null);
         }
 
@@ -9442,6 +9939,7 @@
                 ? z.wahl[i].size === t.richtig.length && t.richtig.every(x => z.wahl[i].has(x))
                 : z.wahl[i] === t.richtig);
             z.geprueft = true;
+            antwortVerbucht(z.richtig, { id: a.id, frage: a.w, loesung: a.f });
             if (z.richtig) {
                 z.fertig++;
                 if (!z.fehler.has(a.id)) z.ersterVersuch++;
@@ -9465,7 +9963,7 @@
             h += '<div class="ms-card"><div class="ms-word">' + vhText(a.w) + '</div>' +
                  '<div class="ms-mean">' + vhText(a.d) + '</div>';
             a.teile.forEach((t, i) => {
-                const hinweis = t.mehrfach ? 'Nur-Plural-Wörter bekommen zusätzlich „Pl.“'
+                const hinweis = t.mehrfach ? '„nur Pl.“ nur bei Wörtern, die es nur im Plural gibt (wie arma) – nicht, wenn die Bedeutung bloß einen Plural nennt'
                     : t.label === 'Anschluss' ? 'Welcher Fall (oder Infinitiv) folgt? z. B. jemandem gehorchen → m. Dat.' : '';
                 h += '<div class="ms-slot"><div class="ms-slot-label">' + vhText(t.label) + '</div>' +
                      (hinweis ? '<div class="ms-slot-hint">' + vhText(hinweis) + '</div>' : '') + '<div class="ms-chips">';
@@ -9487,7 +9985,7 @@
                      '<div class="vh-mean">' + vhText(a.d) + '</div></div>' +
                      '<div class="ms-actions"><button type="button" class="ms-btn" id="msWeiterBtn" onclick="msNaechste()">Weiter</button></div>';
             } else {
-                const nurPl = a.teile.some((t, i) => t.mehrfach && z.wahl[i].size === 1 && z.wahl[i].has('Pl.'));
+                const nurPl = a.teile.some((t, i) => t.mehrfach && z.wahl[i].size === 1 && z.wahl[i].has('nur Pl.'));
                 if (nurPl) h += '<div class="ms-slot-hint ms-mitte">Und welches Geschlecht? m, f oder n fehlt noch.</div>';
                 h += '<div class="ms-actions"><button type="button" class="ms-btn" id="msPruefenBtn" onclick="msPruefen()"' +
                      (msVollstaendig() ? '' : ' disabled') + '>Prüfen</button></div>';
@@ -9582,6 +10080,7 @@
                 (hasStar ? '<div class="vh-note">* = grammatikalische Besonderheit</div>' : '');
 
             renderVhModeBar();
+            if (vhPunkteOffen) { punkteDazu(vhPunkteOffen); vhPunkteOffen = 0; }
             renderVhHint();
             if (vhMode === 'compare') {
                 feedback.innerHTML = vhFeedbackHtml(vhStats);
@@ -9643,6 +10142,9 @@
                     vhStats.meanTotal += expMeans.length;
                     formGrade.exp.forEach(s => { if (s === 'got') vhStats.formGot++; else if (s === 'typo') vhStats.formTypo++; });
                     meanGrade.exp.forEach(s => { if (s === 'got') vhStats.meanGot++; else if (s === 'typo') vhStats.meanTypo++; });
+                    // Punkte: je ganz richtiger Zelle 5, pro Sitzung nur einmal (Nochmal-Vergleichen zählt nicht)
+                    if (expForms.length && formGrade.exp.every(s => s === 'got') && !vhBelohnt.has(key + '|f')) { vhBelohnt.add(key + '|f'); vhPunkteOffen += 5; }
+                    if (expMeans.length && meanGrade.exp.every(s => s === 'got') && !vhBelohnt.has(key + '|d')) { vhBelohnt.add(key + '|d'); vhPunkteOffen += 5; }
                     if ((answers.f || '').trim()) vhStats.filled++;
                     if ((answers.d || '').trim()) vhStats.filled++;
                 }
@@ -9696,6 +10198,10 @@
             hdUpdateVoiceToggle();
             const overlay = document.getElementById('introSuccessOverlay');
             if (overlay) overlay.style.display = 'none';
+            // „Letzte Vokabel“ gilt nur innerhalb einer Übung
+            letzteAufgaben = [];
+            const ld = document.getElementById('letzteDialog');
+            if (ld) ld.hidden = true;
         }
 
         function selectLanguage(lang) {
@@ -10217,6 +10723,8 @@
 
         function rocketTick(now) {
             if (rocketIsCrashed || rocketIsPaused) return;
+            // „Letzte Vokabel“ offen: Rakete hält an, Zeit läuft nicht weiter
+            if (letzteDialogOffen()) { rocketLastTickTime = now; rocketRafId = requestAnimationFrame(rocketTick); return; }
             const dt = now - rocketLastTickTime;
             rocketLastTickTime = now;
             const frac = rocketPositionFrac();
@@ -10760,6 +11268,7 @@
                 btn.classList.add('correct');
                 if (typeof playSound === 'function') { try { playSound('correct'); } catch(e){} }
                 if (typeof aprilOnAnswer === 'function') aprilOnAnswer(true);
+                antwortVerbucht(true, { frage: item.latin, loesung: item.correct });
                 if (!introState.stage2WrongIds.includes(item.id)) {
                     introState.stage2CorrectFirstTry++;
                 }
@@ -10775,6 +11284,7 @@
                 });
                 if (typeof playSound === 'function') { try { playSound('wrong'); } catch(e){} }
                 if (typeof aprilOnAnswer === 'function') aprilOnAnswer(false);
+                antwortVerbucht(false, { frage: item.latin, loesung: item.correct });
                 if (!introState.stage2WrongIds.includes(item.id)) {
                     introState.stage2WrongIds.push(item.id);
                 }
@@ -13626,6 +14136,7 @@
         // sowie in allen Latein-Kap-5-Screens (Modul-Auswahl, Spiel, Rakete, 0→100).
         function applyAprilDarkBody() {
             dvUpdateToggle();   // läuft bei jedem Bildschirmwechsel mit
+            if (typeof letzteKnopfAnzeigen === 'function') letzteKnopfAnzeigen();
             if (typeof hdUpdateVoiceToggle === 'function') hdUpdateVoiceToggle();
             if (!aprilDarkActive) {
                 document.body.classList.remove('april-dark');
@@ -14294,6 +14805,13 @@
         // ===================================================================
 
         document.addEventListener('keydown', (event) => {
+            // „Letzte Vokabel“ offen: nur anschauen, keine Antwort per Taste
+            const letzteD = document.getElementById('letzteDialog');
+            if (letzteD && !letzteD.hidden) {
+                if (event.key === 'Escape') { event.preventDefault(); letzteSchliessen(); }
+                return;
+            }
+
             // Vokabelheft: dort gehört die Tastatur den Lücken auf dem Abdeckblatt
             // (Tab, Enter, Buchstaben) — kein Spielmodus darf dazwischenfunken.
             const vhScreenEl = document.getElementById('vokabelheftScreen');
