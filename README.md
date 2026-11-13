@@ -206,7 +206,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.44.0
+**Version:** 2.44.1
 **Datum:** 13.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -259,6 +259,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.44.1 (13.11.2026)
+- NAWI, Station Rollen: Knobelaufgabe „Mann auf dem Boot“ (Seil vom Rumpf um eine feste Rolle an der Wand zurück
+  in seine Hand) als Auswahl- und Zahlenkarte mit eigener Zeichnung, dazu ein Merksatz. Steht der Ziehende auf der
+  Last, ziehen zwei Seilstücke an ihr: halbe Kraft, doppelter Seilweg. Anlass: Auf dem Klett-Blatt „Feste und lose
+  Rollen“ stand im Heft „Kraftersparnis 0“.
 
 ### Version 2.44.0 (13.11.2026)
 - Neue Seite `nawi.html`: NAWI Kl. 6 „Kräfte, Hebel, Rollen“, eigene Kachel im Hauptmenü, eigener Speicher. Ein

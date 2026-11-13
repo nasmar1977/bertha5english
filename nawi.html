@@ -601,6 +601,20 @@ const genItem = g => Object.assign(GEN[g](), { gen: g });
 // dieselbe Aufgabe noch einmal: Rechenaufgaben mit neuen Zahlen, sonst eine Kopie mit neuer ID (leere Felder)
 const frisch = (it, st) => it.gen ? genItem(it.gen) : Object.assign({ st }, it, { id: (st || 'x') + '_' + Math.random().toString(36).slice(2) });
 
+// Knobelaufgabe Boot: Rolle an der Wand, Seil vom Rumpf um die Rolle zurück in die Hand des Mannes AUF dem Boot
+function bootSvg() {
+  let s = `<svg viewBox="0 0 340 165" width="340" role="img" aria-label="Boot an einer Rolle an der Wand. Das Seil ist am Rumpf festgeknotet, läuft um die Rolle und zurück in die Hand des Mannes, der auf dem Boot steht.">`;
+  s += `<rect x="6" y="20" width="12" height="140" class="f-muted"/>`;
+  s += `<line x1="18" x2="40" y1="96" y2="96" class="s-ink" stroke-width="2"/><circle cx="56" cy="96" r="22" class="f-paper"/><circle cx="56" cy="96" r="2.5" class="f-ink"/>`;
+  s += `<path d="M56 74 A22 22 0 0 0 56 118" class="s-ink" stroke-width="2"/>`;
+  s += `<line x1="56" x2="214" y1="74" y2="74" class="s-ink" stroke-width="2"/><line x1="56" x2="186" y1="118" y2="118" class="s-ink" stroke-width="2"/>`;
+  s += `<path d="M18 132 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" class="s-blau" stroke-width="2"/>`;
+  s += `<path d="M180 112 L320 112 L304 140 L196 140 Z" class="f-holz"/><circle cx="185" cy="118" r="3.5" class="f-ink"/>`;
+  s += `<line x1="270" x2="270" y1="30" y2="112" class="s-ink" stroke-width="3"/><path d="M272 34 L272 104 L318 104 Z" class="f-paper"/>`;
+  s += `<circle cx="222" cy="62" r="7" class="f-paper"/><line x1="222" x2="222" y1="69" y2="96" class="s-ink" stroke-width="3"/><line x1="222" x2="214" y1="76" y2="74" class="s-ink" stroke-width="3"/><line x1="222" x2="216" y1="96" y2="112" class="s-ink" stroke-width="3"/><line x1="222" x2="228" y1="96" y2="112" class="s-ink" stroke-width="3"/>`;
+  return s + '</svg>';
+}
+
 // ===================================================================
 // STATIONEN
 // ===================================================================
@@ -705,6 +719,7 @@ const ST = {
       '<b>Lose Rolle</b>: hängt mit der Last am Seil und bewegt sich mit. Die Last hängt an zwei Seilstücken, jedes trägt die Hälfte. Man braucht nur die <b>halbe Kraft</b>, muss aber <b>doppelt so viel Seil</b> ziehen.',
       '<b>Flaschenzug</b>: feste und lose Rollen zusammen. Zähle die Seilstücke, an denen die Last mit den losen Rollen hängt – zähle Seilstücke, nicht Rollen! Bei <b>n tragenden Seilstücken</b> gilt: <b>F = F<sub>G</sub> : n</b> und <b>Seilweg s = n · h</b>.',
       '<b>Goldene Regel der Mechanik</b>: Was man an Kraft spart, muss man an Weg zusetzen.',
+      '<span class="hl">Knobelfall Boot:</span> Steht der Ziehende selbst auf der Last (Mann auf dem Boot, Seil vom Rumpf um eine Rolle an der Wand zurück in seine Hand), ziehen zwei Seilstücke an der Last. Das liegt nicht an der Rolle, sondern daran, dass er selbst mit auf der Last steht. Immer zählen: Wie viele Seilstücke ziehen an der Last?',
       '<span class="hl">Zusatzwissen:</span> In echt kommen noch das Gewicht der losen Rollen und etwas Reibung dazu. In der Schule lässt man das meist weg.'
     ],
     items: [
@@ -716,7 +731,14 @@ const ST = {
       W('Warum heißt die feste Rolle auch Umlenkrolle?', ['Weil sie die Kraft in eine andere Richtung lenkt', 'Weil man sie an der Decke in jede Richtung drehen kann', 'Weil sie sich beim Ziehen jedes Mal einmal umdreht', 'Weil sie die Last in die Höhe lenkt'], 0, 'Sie lenkt die Kraft um: Man zieht nach unten, die Last geht nach oben.'),
       M('Welche Sätze stimmen? Tippe alle richtigen an.', ['Was man an Kraft spart, muss man an Weg zusetzen.', 'Eine lose Rolle halbiert die nötige Kraft.', 'Eine feste Rolle halbiert den Seilweg.', 'Mit einem Flaschenzug spart man Kraft und Weg.'], [0, 1], 'Die goldene Regel: Kraft sparen kostet Weg. Die feste Rolle ändert weder Kraft noch Weg, nur die Richtung.'),
       N('Bei einem Flaschenzug hängt die Last mit den losen Rollen an 4 Seilstücken. Die Last ist 80 N. Welche Kraft brauchst du?', 20, 'N', '80 N : 4 = 20 N.'),
-      W('Ist eine feste Rolle ein Kraftwandler?', ['Nein – sie spart keine Kraft, sie lenkt nur um.', 'Ja – sie halbiert die Kraft, genau wie eine lose Rolle.', 'Ja – aber nur bei sehr schweren Lasten.', 'Nein – sie verdoppelt die nötige Kraft.'], 0, 'Ein Kraftwandler spart Kraft (Hebel, lose Rolle, Flaschenzug). Die feste Rolle ändert nur die Richtung, darum ist sie kein Kraftwandler.')
+      W('Ist eine feste Rolle ein Kraftwandler?', ['Nein – sie spart keine Kraft, sie lenkt nur um.', 'Ja – sie halbiert die Kraft, genau wie eine lose Rolle.', 'Ja – aber nur bei sehr schweren Lasten.', 'Nein – sie verdoppelt die nötige Kraft.'], 0, 'Ein Kraftwandler spart Kraft (Hebel, lose Rolle, Flaschenzug). Die feste Rolle ändert nur die Richtung, darum ist sie kein Kraftwandler.'),
+      Object.assign(W('<b>Knobelaufgabe:</b> Ein Mann steht auf seinem Boot. Das Seil ist vorn am Rumpf festgeknotet, läuft zu einer festen Rolle an der Wand, um sie herum und zurück in seine Hand. Er zieht sich mit dem Boot zur Wand. Wie viel Kraft spart er im Vergleich dazu, das Boot an einem einfachen Seil heranzuziehen, das an der Wand festgeknotet ist?',
+        ['Er braucht nur die halbe Kraft.', 'Gar keine – eine feste Rolle lenkt nur um.', 'Er braucht doppelt so viel Kraft.', 'Er braucht gar keine Kraft, das Boot schwimmt ja.'], 0,
+        'Der Mann steht auf dem Boot – er gehört zur „Last“. Er zieht mit z. B. 100 N, dann hat das ganze Seil 100 N Spannung: Ein Seilstück zieht am Rumpf, das andere an seiner Hand. Zusammen ziehen also <b>zwei Seilstücke</b> mit 200 N am Boot. Das ist wie bei der losen Rolle: halbe Kraft, doppelter Seilweg. Stünde der Mann an Land, würde die Rolle nur umlenken. Es liegt also nicht an der Rolle, sondern daran, dass er selbst auf der Last steht.',
+        'Zähle, wie viele Seilstücke am Boot (mit dem Mann darauf) ziehen.'), { fig: bootSvg() }),
+      Object.assign(N('Ein Mann steht auf seinem Boot. Das Seil ist am Rumpf festgeknotet, läuft um eine feste Rolle an der Wand und zurück in seine Hand. Er zieht 6 m Seil durch seine Hände. Wie viele Meter kommt das Boot näher an die Wand?', 3, 'm',
+        'Zwei Seilstücke werden kürzer, jedes um gleich viel: 6 m : 2 = 3 m. Halbe Kraft, doppelter Seilweg – die goldene Regel.',
+        'Wie viele Seilstücke werden kürzer, wenn das Boot näher kommt?'), { fig: bootSvg() })
     ]
   },
   X: {
