@@ -206,7 +206,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.44.1
+**Version:** 2.44.2
 **Datum:** 13.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -259,6 +259,10 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.44.2 (13.11.2026)
+- NAWI: Knobelaufgabe „Mann auf dem Boot“ aus 2.44.1 wieder entfernt (`nawi.html` auf Stand 2.44.0). Für die
+  Klassenarbeit gilt die Ebene des Arbeitsblatts: feste Rolle = Umlenkrolle, keine Kraftersparnis.
 
 ### Version 2.44.1 (13.11.2026)
 - NAWI, Station Rollen: Knobelaufgabe „Mann auf dem Boot“ (Seil vom Rumpf um eine feste Rolle an der Wand zurück
