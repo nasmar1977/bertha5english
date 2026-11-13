@@ -206,7 +206,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.44.2
+**Version:** 2.44.3
 **Datum:** 13.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -259,6 +259,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.44.3 (13.11.2026)
+- NAWI-Labor Feder/Gummiband: Schalter Feder–Gummiband und Erde–Mond unabhängig (vorher erzwang Gummiband die Erde
+  und Mond die Feder, was wie ein Defekt wirkte). Gummiband auf dem Mond: Beispielwerte linear zwischen den
+  Stützstellen abgelesen, eigene Messreihe „Gummiband (Mond)“.
+- NAWI-Labor Hebel: Die Neige-Animation ersetzte pro Bild das ganze SVG samt Tippflächen, schnelle Tipps gingen
+  dadurch verloren. Jetzt wird einmal gezeichnet und nur der Balken gedreht.
 
 ### Version 2.44.2 (13.11.2026)
 - NAWI: Knobelaufgabe „Mann auf dem Boot“ aus 2.44.1 wieder entfernt (`nawi.html` auf Stand 2.44.0). Für die

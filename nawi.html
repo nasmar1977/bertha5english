@@ -1009,7 +1009,7 @@ function it0(item, id) { item.id = id; return item; }
 // ---------- Labor: Feder und Gummiband ----------
 function labFeder(host) {
   const GUMMI = [0, 0.8, 2.0, 3.8, 6.0, 8.4, 10.0]; // Beispielwerte in cm für 0 … 6 Stücke à 50 g (Modell)
-  const st = LAB.st || (LAB.st = { n: 0, art: 'feder', ort: 'erde', mess: { feder: {}, gummi: {}, mond: {} } });
+  const st = LAB.st || (LAB.st = { n: 0, art: 'feder', ort: 'erde', mess: { feder: {}, gummi: {}, mond: {}, gummiMond: {} } });
   host.innerHTML = `<p class="small muted">Jedes Gewichtsstück hat 50 g. Tippe auf <b>+</b> und <b>−</b>. Jede Messung landet automatisch in der Tabelle.</p>
     <div class="row"><div class="seg" id="art"><button data-v="feder">Schraubenfeder</button><button data-v="gummi">Gummiband</button></div>
     <div class="seg" id="ort"><button data-v="erde">🌍 Erde</button><button data-v="mond">🌙 Mond</button></div></div>
@@ -1018,12 +1018,13 @@ function labFeder(host) {
     <div class="anzeige" id="anz"></div>
     <div class="tabwrap" id="tab"></div>`;
   const F = () => st.n * 0.5 / (st.ort === 'mond' ? 6 : 1);
-  const ext = () => st.art === 'gummi' ? GUMMI[st.n] : F() * 3; // Feder: 3 cm pro N
-  const mkey = () => st.ort === 'mond' ? 'mond' : st.art;
+  // Gummiband: Beispielwerte zwischen den Stützstellen (je 0,5 N) linear ablesen – so auch auf dem Mond
+  const gummi = f => { const k = Math.min(6, f / 0.5), i = Math.floor(k); return i >= 6 ? GUMMI[6] : GUMMI[i] + (GUMMI[i + 1] - GUMMI[i]) * (k - i); };
+  const ext = () => st.art === 'gummi' ? Math.round(gummi(F()) * 100) / 100 : F() * 3; // Feder: 3 cm pro N
+  const mkey = () => st.ort === 'mond' ? (st.art === 'feder' ? 'mond' : 'gummiMond') : st.art;
   const draw = () => {
     host.querySelectorAll('#art button').forEach(b => b.classList.toggle('on', b.dataset.v === st.art));
     host.querySelectorAll('#ort button').forEach(b => b.classList.toggle('on', b.dataset.v === st.ort));
-    if (st.art === 'gummi' && st.ort === 'mond') st.ort = 'erde';
     const x = ext(), sc = 14, top = 30, L0 = 70, bot = top + L0 + x * sc;
     let s = `<svg viewBox="0 0 320 ${top + L0 + 10 * sc + 120}" role="img" aria-label="${st.art === 'feder' ? 'Feder' : 'Gummiband'} mit ${st.n} Gewichtsstücken">`;
     s += `<rect x="40" y="10" width="160" height="10" class="f-muted"/><line x1="120" x2="120" y1="20" y2="${top}" class="s-ink" stroke-width="2"/>`;
@@ -1051,23 +1052,23 @@ function labFeder(host) {
     tabelle();
     if (Object.keys(st.mess.feder).length >= 4) erledigt(0);
     if (st.gummiFrage && Object.keys(st.mess.gummi).length >= 4) erledigt(2);
-    if (st.ort === 'mond' && st.n > 0) erledigt(3);
+    if (st.ort === 'mond' && st.art === 'feder' && st.n > 0) erledigt(3);
   };
   const tabelle = () => {
-    const rows = [['feder', 'Feder (Erde)'], ['gummi', 'Gummiband (Erde)'], ['mond', 'Feder (Mond)']].filter(r => Object.keys(st.mess[r[0]]).length);
+    const rows = [['feder', 'Feder (Erde)'], ['gummi', 'Gummiband (Erde)'], ['mond', 'Feder (Mond)'], ['gummiMond', 'Gummiband (Mond)']].filter(r => Object.keys(st.mess[r[0]]).length);
     host.querySelector('#tab').innerHTML = rows.map(r => `<p class="small"><b>${r[1]}</b></p><table class="mess"><tr><th>Masse</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${n * 50} g</td>`).join('')}</tr>
-      <tr><th>Kraft</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${r[0] === 'mond' ? '≈ ' : ''}${zahl(st.mess[r[0]][n][0])} N</td>`).join('')}</tr>
-      <tr><th>Verlängerung</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${zahl(st.mess[r[0]][n][1])} cm</td>`).join('')}</tr></table>`).join('');
+      <tr><th>Kraft</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${r[0] === 'mond' || r[0] === 'gummiMond' ? '≈ ' : ''}${zahl(st.mess[r[0]][n][0])} N</td>`).join('')}</tr>
+      <tr><th>Verlängerung</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${zahl(st.mess[r[0]][n][1])} cm</td>`).join('')}</tr></table>${r[0] === 'gummiMond' ? '<p class="small muted">Auf dem Mond sind die Kräfte so klein, dass man nur den Anfang der Dehnung misst. Wie ungleichmäßig sich das Gummiband dehnt, siehst du besser auf der Erde.</p>' : ''}`).join('');
   };
   host.querySelector('#plus').onclick = () => { if (st.n < 6) { st.n++; draw(); } };
   host.querySelector('#minus').onclick = () => { if (st.n > 0) { st.n--; draw(); } };
-  host.querySelectorAll('#art button').forEach(b => b.onclick = () => { st.art = b.dataset.v; if (st.art === 'gummi') st.ort = 'erde'; draw(); });
-  host.querySelectorAll('#ort button').forEach(b => b.onclick = () => { st.ort = b.dataset.v; if (st.ort === 'mond') st.art = 'feder'; draw(); });
+  host.querySelectorAll('#art button').forEach(b => b.onclick = () => { st.art = b.dataset.v; draw(); });
+  host.querySelectorAll('#ort button').forEach(b => b.onclick = () => { st.ort = b.dataset.v; draw(); });
   draw();
   labFrage(host, 'lf1', { q: '<b>Frage zur Feder:</b> Vergleiche in der Tabelle 1 Gewichtsstück mit 2 und 4 Gewichtsstücken. Was fällt dir auf?',
     fields: [{ t: 'wahl', o: ['Doppelte Kraft – doppelte Verlängerung', 'Doppelte Kraft – gleiche Verlängerung', 'Doppelte Kraft – halbe Verlängerung', 'Die Verlängerung ist jedes Mal zufällig'], a: 0 }],
     e: 'Genau: Die Verlängerung ist proportional zur Kraft – das Hookesche Gesetz.' }, () => erledigt(1));
-  labFrage(host, 'lf2', { q: '<b>Frage zum Gummiband:</b> Vergleiche die Schritte von Gewichtsstück zu Gewichtsstück. Wie dehnt sich das Gummiband?',
+  labFrage(host, 'lf2', { q: '<b>Frage zum Gummiband:</b> Vergleiche in der Tabelle <b>Gummiband (Erde)</b> die Schritte von Gewichtsstück zu Gewichtsstück. Wie dehnt sich das Gummiband?',
     fields: [{ t: 'wahl', o: ['ungleichmäßig – jeder Schritt ist anders groß', 'genau gleichmäßig, genauso wie die Schraubenfeder', 'gar nicht – es bleibt gleich lang', 'immer genau 1,5 cm pro Gewichtsstück'], a: 0 }],
     e: 'Beim Gummiband sind die Schritte verschieden groß. Deshalb baut man Kraftmesser mit Federn. (Die Gummiband-Werte hier sind Beispielwerte – jedes Gummiband verhält sich etwas anders.)' }, () => { st.gummiFrage = true; if (Object.keys(st.mess.gummi).length >= 4) erledigt(2); });
 }
@@ -1118,11 +1119,14 @@ function labHebel(host) {
       return s;
     };
     const fig = host.querySelector('#fig');
+    // einmal zeichnen, danach nur den Balken drehen – sonst würden die Tippflächen in jedem Bild ersetzt und schnelle Tipps gingen verloren
+    fig.innerHTML = svgTxt(st.ang);
+    fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const p = +h.dataset.p; if (st.tool === 'plus') { if (Nsum(st.R) < 12) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); });
+    const balken = fig.querySelector('g');
     const anim = () => {
       st.ang += (ziel - st.ang) * 0.18;
-      fig.innerHTML = svgTxt(st.ang);
-      fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const p = +h.dataset.p; if (st.tool === 'plus') { if (Nsum(st.R) < 12) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); });
       if (Math.abs(ziel - st.ang) > 0.05) animId = requestAnimationFrame(anim); else { st.ang = ziel; animId = null; }
+      balken.setAttribute('transform', `rotate(${st.ang.toFixed(2)} 180 120)`);
     };
     if (animId) cancelAnimationFrame(animId);
     anim();
