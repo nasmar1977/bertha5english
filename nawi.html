@@ -212,7 +212,7 @@ input[type=range]{width:100%;min-height:40px;accent-color:var(--acc)}
 const KEY = 'nawi-6-kraft-v1';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
-const blank = () => ({ plan: {}, stat: {}, lab: {}, probe: {} });
+const blank = () => ({ plan: {}, stat: {}, lab: {}, probe: {}, rekord: {} });
 function load() {
   try {
     const o = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -221,6 +221,7 @@ function load() {
     if (isObj(o.plan)) s.plan = o.plan;
     if (isObj(o.stat)) Object.keys(o.stat).forEach(k => { const r = o.stat[k]; if (isObj(r) && +r.n >= 0) { const n = Math.floor(+r.n || 0); s.stat[k] = { r: Math.min(n, Math.max(0, Math.floor(+r.r || 0))), n }; } });
     if (isObj(o.lab)) Object.keys(o.lab).forEach(k => { const a = isObj(o.lab[k]) && Array.isArray(o.lab[k].a) ? o.lab[k].a : null; if (a) s.lab[k] = { a: [...new Set(a.filter(x => Number.isInteger(x) && x >= 0 && x < 6))] }; });
+    if (isObj(o.rekord) && Number.isInteger(o.rekord.labH) && o.rekord.labH >= 0 && o.rekord.labH <= 50) s.rekord.labH = o.rekord.labH;
     if (isObj(o.probe)) ['A', 'B'].forEach(k => {
       const p = o.probe[k];
       if (isObj(p) && isObj(p.ans) && +p.start > 0 && +p.start <= Date.now()) {
@@ -955,8 +956,8 @@ function renderRunEnd() {
 const LABS = {
   labF: { name: 'Feder und Gummiband', icon: '🧪', sub: 'Gewichte anhängen, auf dem Mond messen',
     auftraege: ['Hänge an die Feder nacheinander mindestens vier verschiedene Anzahlen von Gewichtsstücken.', 'Beantworte die Frage zur Feder.', 'Miss auch mit dem Gummiband mindestens vier Werte und beantworte die Frage dazu.', 'Bring die Feder auf den Mond und häng etwas an.'] },
-  labH: { name: 'Hebel', icon: '⚖️', sub: 'Balken ins Gleichgewicht bringen',
-    auftraege: ['Zweiseitiger Hebel: Bring den Balken dreimal ins Gleichgewicht.', 'Einseitiger Hebel: Finde zweimal die richtige Stelle für den Kraftmesser.', 'Beantworte die Frage zum einseitigen Hebel.'] },
+  labH: { name: 'Hebel', icon: '⚖️', sub: 'Gleichgewicht mit möglichst wenig Gewichten',
+    auftraege: ['Zweiseitiger Hebel: Spiel alle 5 Runden – mit möglichst wenigen Gewichtsstücken.', 'Einseitiger Hebel: Finde zweimal die richtige Stelle für den Kraftmesser.', 'Beantworte die Frage zum einseitigen Hebel.'] },
   labR: { name: 'Rollen und Flaschenzug', icon: '🪝', sub: 'Seil ziehen, Kraft und Weg vergleichen',
     auftraege: ['Zieh die Last mit jeder der vier Anordnungen mindestens 1 m hoch.', 'Beantworte die Rechenfrage.'] },
   labT: { name: 'Masse im Weltall', icon: '🚀', sub: 'Trägheitswaage: Masse durch Schwingen bestimmen',
@@ -1075,12 +1076,21 @@ function labFeder(host) {
 
 // ---------- Labor: Hebel ----------
 function labHebel(host) {
-  const st = LAB.st || (LAB.st = { mode: 'zwei', tool: 'plus', L: {}, R: {}, ang: 0, zw: 0, ew: 0, ein: null, okZwei: false, okEin: false });
+  const RUNDEN = 5;
+  const mom = o => Object.keys(o).reduce((s, p) => s + p * o[p], 0);
+  const Nsum = o => Object.keys(o).reduce((s, p) => s + o[p], 0);
+  const st = LAB.st || (LAB.st = { mode: 'zwei', tool: 'plus', L: {}, R: {}, ang: 0, ew: 0, ein: null, okEin: false, runde: 1, punkte: 0, erg: null });
+  // Spiel: links eine Mischung aus Gewichten; rechts mit möglichst wenigen Stücken ausgleichen.
+  // Bestlösung: so viele Stücke wie nötig ganz außen (Loch 5) – also ⌈Moment : 5⌉ Stücke.
   const neueZwei = () => {
-    st.L = {}; st.R = {};
-    const g = rnd(1, 2);
-    for (let i = 0; i < g; i++) { const p = rnd(1, 5); st.L[p] = (st.L[p] || 0) + rnd(1, 3); }
-    st.okZwei = false;
+    for (;;) {
+      st.L = {};
+      const g = rnd(2, 3), loecher = shuffle([1, 2, 3, 4, 5]).slice(0, g);
+      loecher.forEach(p => st.L[p] = rnd(1, 3));
+      const M = mom(st.L), kmin = Math.ceil(M / 5);
+      if (M >= 8 && M <= 40 && Nsum(st.L) > kmin) break; // Spiegeln darf nie die Bestlösung sein
+    }
+    st.R = {}; st.erg = null; st.ang = 0;
   };
   const neueEin = () => {
     for (;;) { const G = pick([2, 3, 4, 6, 8]), p = rnd(2, 5), k = rnd(p + 1, 8), F = G * p / k; if (F === Math.round(F) && k !== p) { st.ein = { G, p, k: null, ziel: F, sol: k }; break; } }
@@ -1092,28 +1102,53 @@ function labHebel(host) {
     <p class="small muted" id="anl"></p>
     <div class="labfig" id="fig"></div>
     <div class="row" id="tools"></div>
-    <div class="anzeige" id="anz"></div>`;
-  const mom = o => Object.keys(o).reduce((s, p) => s + p * o[p], 0);
-  const Nsum = o => Object.keys(o).reduce((s, p) => s + o[p], 0);
+    <div class="anzeige" id="anz"></div>
+    <div id="sfb"></div>`;
   const draw = () => {
+    host.querySelector('#sfb').innerHTML = '';
     host.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === st.mode));
     if (st.mode === 'zwei') return drawZwei();
     return drawEin();
   };
   const drawZwei = () => {
-    host.querySelector('#anl').innerHTML = 'Links hängen schon Gewichtsstücke (je <b>1 N</b>). Tippe rechts auf die Löcher, um Gewichtsstücke anzuhängen. Der Abstand von Loch zu Loch ist <b>10 cm</b>.';
-    host.querySelector('#tools').innerHTML = `<div class="seg" id="tool"><button data-v="plus">➕ anhängen</button><button data-v="minus">➖ abnehmen</button></div><button class="btn ghost" id="neu">Neue Aufgabe</button>`;
-    host.querySelectorAll('#tool button').forEach(b => { b.classList.toggle('on', b.dataset.v === st.tool); b.onclick = () => { st.tool = b.dataset.v; draw(); }; });
-    host.querySelector('#neu').onclick = () => { neueZwei(); st.ang = 0; draw(); };
     const ml = mom(st.L), mr = mom(st.R), ziel = Math.max(-14, Math.min(14, (mr - ml) * 2.2));
+    const gl = ml === mr && mr > 0, nR = Nsum(st.R), kmin = Math.ceil(ml / 5), ende = st.runde > RUNDEN;
+    host.querySelector('#anl').innerHTML = `<b>Hebel-Spiel – Runde ${Math.min(st.runde, RUNDEN)} von ${RUNDEN}</b> · ${st.punkte} ${st.punkte === 1 ? 'Punkt' : 'Punkte'}${S.rekord.labH != null ? ` · Rekord: ${S.rekord.labH}` : ''}<br>Links hängen Gewichtsstücke (je <b>1 N</b>). Bring den Balken ins Gleichgewicht – mit <b>so wenigen Stücken wie möglich</b> rechts. Die Zahlen am Balken sind die Abstände vom Drehpunkt in <b>cm</b>.<br><span class="small">Punkte: Bestlösung 10 · ein Stück mehr 7 · zwei mehr 5 · sonst 3. Linke Seite einfach spiegeln: 3 Punkte Abzug.</span>`;
+    const tools = host.querySelector('#tools');
+    if (ende) {
+      tools.innerHTML = `<button class="btn" id="neuSpiel">Neues Spiel</button>`;
+      tools.querySelector('#neuSpiel').onclick = () => { st.runde = 1; st.punkte = 0; neueZwei(); draw(); };
+    } else if (st.erg) {
+      tools.innerHTML = `<button class="btn" id="weiterR">${st.runde < RUNDEN ? 'Nächste Runde' : 'Zum Ergebnis'}</button>`;
+      tools.querySelector('#weiterR').onclick = () => {
+        st.runde++;
+        if (st.runde > RUNDEN) {
+          const neu = S.rekord.labH == null || st.punkte > S.rekord.labH;
+          st.rekordNeu = neu; if (neu) { S.rekord.labH = st.punkte; save(); }
+          erledigt(0);
+        } else neueZwei();
+        draw();
+      };
+    } else {
+      tools.innerHTML = `<div class="seg" id="tool"><button data-v="plus">➕ anhängen</button><button data-v="minus">➖ abnehmen</button></div><button class="btn" id="abgeben" ${gl ? '' : 'disabled'}>Abgeben</button><button class="btn ghost" id="leeren" ${nR ? '' : 'disabled'}>Rechts leeren</button>`;
+      tools.querySelectorAll('#tool button').forEach(b => { b.classList.toggle('on', b.dataset.v === st.tool); b.onclick = () => { st.tool = b.dataset.v; draw(); }; });
+      tools.querySelector('#leeren').onclick = () => { st.R = {}; draw(); };
+      tools.querySelector('#abgeben').onclick = () => {
+        const kopie = Object.keys(st.L).length === Object.keys(st.R).length && Object.keys(st.L).every(p => st.R[p] === st.L[p]);
+        const diff = nR - kmin, basis = diff <= 0 ? 10 : diff === 1 ? 7 : diff === 2 ? 5 : 3;
+        const pkt = kopie ? Math.max(1, basis - 3) : basis, abzug = basis - pkt;
+        st.punkte += pkt; st.erg = { pkt, diff, kopie, abzug, n: nR, kmin };
+        draw();
+      };
+    }
     const svgTxt = (ang) => {
-      let s = `<svg viewBox="0 0 360 250" role="img" aria-label="Zweiseitiger Hebel"><path d="M180 128 l-18 60 h36 z" class="f-ton"/><rect x="120" y="188" width="120" height="8" class="f-muted"/>`;
+      let s = `<svg viewBox="0 54 360 300" role="img" aria-label="Zweiseitiger Hebel"><path d="M180 128 l-18 60 h36 z" class="f-ton"/><rect x="120" y="188" width="120" height="8" class="f-muted"/>`;
       s += `<g transform="rotate(${ang.toFixed(2)} 180 120)"><rect x="20" y="114" width="320" height="12" rx="3" class="f-holz"/>`;
       for (let k = 1; k <= 5; k++) for (const sd of [-1, 1]) {
         const x = 180 + sd * k * 30, o = sd < 0 ? st.L : st.R, n = o[k] || 0;
-        s += `<circle cx="${x}" cy="120" r="3.2" class="f-ink"/><text x="${x}" y="107" text-anchor="middle" font-size="13" class="f-muted">${k}</text>`;
-        if (n) { s += `<line x1="${x}" x2="${x}" y1="120" y2="134" class="s-ink" stroke-width="1.5"/>`; for (let i = 0; i < n; i++) s += `<rect x="${x - 9}" y="${134 + i * 11}" width="18" height="10" rx="2" class="${sd < 0 ? 'f-blau' : 'f-metall'}"/>`; }
-        if (sd > 0) s += `<rect class="hit" data-p="${k}" x="${x - 15}" y="88" width="30" height="${Math.max(80, 50 + n * 11)}" rx="6"/>`;
+        s += `<circle cx="${x}" cy="120" r="3.2" class="f-ink"/><text x="${x}" y="107" text-anchor="middle" font-size="13" class="f-muted">${k * 10}</text>`;
+        if (n) { s += `<line x1="${x}" x2="${x}" y1="120" y2="133" class="s-ink" stroke-width="1.5"/>`; for (let i = 0; i < n; i++) s += `<rect x="${x - 13}" y="${133 + i * 17}" width="26" height="16" rx="2" fill="${sd < 0 ? '#9cc0ee' : '#c9cfd2'}" stroke="#333" stroke-width=".8"/><text x="${x}" y="${145.5 + i * 17}" text-anchor="middle" font-size="11" font-weight="700" style="fill:#111">1 N</text>`; }
+        if (sd > 0 && !st.erg && st.runde <= RUNDEN) s += `<rect class="hit" data-p="${k}" x="${x - 15}" y="88" width="30" height="${Math.max(80, 50 + n * 17)}" rx="6"/>`;
       }
       s += `</g><circle cx="180" cy="120" r="5" class="f-ink"/></svg>`;
       return s;
@@ -1121,7 +1156,7 @@ function labHebel(host) {
     const fig = host.querySelector('#fig');
     // einmal zeichnen, danach nur den Balken drehen – sonst würden die Tippflächen in jedem Bild ersetzt und schnelle Tipps gingen verloren
     fig.innerHTML = svgTxt(st.ang);
-    fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const p = +h.dataset.p; if (st.tool === 'plus') { if (Nsum(st.R) < 12) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); });
+    fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { if (st.erg || ende) return; const p = +h.dataset.p; if (st.tool === 'plus') { if (Nsum(st.R) < 12 && (st.R[p] || 0) < 9) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); });
     const balken = fig.querySelector('g');
     const anim = () => {
       st.ang += (ziel - st.ang) * 0.18;
@@ -1130,23 +1165,37 @@ function labHebel(host) {
     };
     if (animId) cancelAnimationFrame(animId);
     anim();
-    const gl = ml === mr && mr > 0;
     const teil = o => Object.keys(o).sort().map(p => `${o[p]} N · ${p * 10} cm`).join(' + ') || '0';
-    host.querySelector('#anz').innerHTML = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span>${gl ? '<span class="gut">✓ Gleichgewicht!</span>' : ''}`;
-    if (gl && !st.okZwei) { st.okZwei = true; st.zw++; if (st.zw >= 3) erledigt(0); }
+    let anz = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span><span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg && !ende ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}`;
+    let sfb = '';
+    const best = M => { const v = Math.floor(M / 5), rest = M % 5; return [v ? `${v} ${v === 1 ? 'Stück' : 'Stücke'} bei 50 cm` : '', rest ? `1 Stück bei ${rest * 10} cm` : ''].filter(Boolean).join(' + '); };
+    if (st.erg && !ende) {
+      const e = st.erg;
+      const lob = e.diff <= 0 ? pick(['Perfekt – weniger geht nicht! 🎯', 'Volltreffer, das ist die Bestlösung! ⭐', 'Hebelprofi! Genau so wenige wie nötig. 💪'])
+        : e.diff === 1 ? 'Gleichgewicht! Ganz knapp – mit einem Stück weniger wäre es perfekt gewesen.'
+        : 'Gleichgewicht geschafft! Es geht aber mit weniger Stücken.';
+      sfb = `<div class="fb"><div class="msg ok"><b>+${e.pkt} ${e.pkt === 1 ? 'Punkt' : 'Punkte'}.</b> ${lob}${e.kopie ? ` Du hast die linke Seite gespiegelt – das klappt immer, darum <b>−${e.abzug}</b>.` : ''}${e.diff > 0 ? `<br>Eine Bestlösung mit <b>${e.kmin}</b> ${e.kmin === 1 ? 'Stück' : 'Stücken'}: ${best(ml)}. Merke: Weiter außen wirkt jedes Stück stärker.` : ''}</div></div>`;
+    }
+    if (ende) {
+      const P = st.punkte, max = RUNDEN * 10;
+      const urteil = P === max ? 'Perfektes Spiel! Du bist ein Hebel-Meister. 🏆' : P >= 40 ? 'Super gespielt! 🥇' : P >= 30 ? 'Gut gemacht! 🥈 Mit weniger Stücken holst du noch mehr.' : 'Geschafft! Probier es noch einmal – häng die Stücke weiter nach außen. 🙂';
+      sfb = `<div class="fb"><div class="msg ok"><b>Ergebnis: ${P} von ${max} Punkten.</b> ${urteil}${st.rekordNeu ? ' <b>Neuer Rekord!</b>' : ''}</div></div>`;
+    }
+    host.querySelector('#anz').innerHTML = anz;
+    host.querySelector('#sfb').innerHTML = sfb;
   };
   const drawEin = () => {
     if (animId) { cancelAnimationFrame(animId); animId = null; } // Balken-Animation des zweiseitigen Hebels stoppen
     const e = st.ein;
-    host.querySelector('#anl').innerHTML = `Der Drehpunkt ist ganz links. Bei Loch <b>${e.p}</b> hängt eine Last von <b>${e.G} N</b>. Tippe auf ein Loch, um dort den Kraftmesser einzuhaken. Er soll genau <b>${e.ziel} N</b> anzeigen.`;
+    host.querySelector('#anl').innerHTML = `Der Drehpunkt ist ganz links. Bei <b>${e.p * 10} cm</b> hängt eine Last von <b>${e.G} N</b>. Die Zahlen am Balken sind die Abstände vom Drehpunkt in <b>cm</b>. Tippe auf ein Loch, um dort den Kraftmesser einzuhaken. Er soll genau <b>${e.ziel} N</b> anzeigen.`;
     host.querySelector('#tools').innerHTML = `<button class="btn ghost" id="neu">Neue Aufgabe</button>`;
     host.querySelector('#neu').onclick = () => { neueEin(); draw(); };
     const F = e.k ? e.G * e.p / e.k : null;
     let s = `<svg viewBox="0 0 360 250" role="img" aria-label="Einseitiger Hebel"><rect x="14" y="90" width="12" height="130" class="f-muted"/><rect x="20" y="124" width="324" height="12" rx="3" class="f-holz"/><circle cx="26" cy="130" r="7" class="f-ton"/>`;
     const X = k => 26 + k * 38;
-    for (let k = 1; k <= 8; k++) s += `<circle cx="${X(k)}" cy="130" r="3.2" class="f-ink"/><text x="${X(k) + 9}" y="152" text-anchor="middle" font-size="13" class="f-muted">${k}</text>`;
+    for (let k = 1; k <= 8; k++) s += `<circle cx="${X(k)}" cy="130" r="3.2" class="f-ink"/><text x="${X(k) + 9}" y="152" text-anchor="middle" font-size="13" class="f-muted">${k * 10}</text>`;
     const xl = X(e.p); s += `<line x1="${xl}" x2="${xl}" y1="130" y2="170" class="s-ink" stroke-width="1.5"/>`;
-    for (let i = 0; i < e.G; i++) s += `<rect x="${xl - 9}" y="${170 + i * 9}" width="18" height="8" rx="2" class="f-blau"/>`;
+    s += `<rect x="${xl - 18}" y="170" width="36" height="${22 + e.G * 3}" rx="3" fill="#9cc0ee" stroke="#333" stroke-width=".8"/><text x="${xl}" y="${185 + e.G * 1.5}" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">${e.G} N</text>`;
     if (e.k) {
       const xk = X(e.k), len = Math.min(18 + F * 6, 80);
       s += `<line x1="${xk}" x2="${xk}" y1="130" y2="${100 - len}" class="s-ink" stroke-width="1.5"/><rect x="${xk - 10}" y="${8}" width="20" height="${100 - len - 8 + 4}" rx="4" class="f-paper"/>`;

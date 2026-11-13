@@ -206,7 +206,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.44.3
+**Version:** 2.45.0
 **Datum:** 13.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -259,6 +259,17 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.45.0 (13.11.2026)
+- NAWI-Labor Hebel, zweiseitig: Spiel über 5 Runden. Links 2–3 Löcher mit gemischten Gewichten (Moment 8–40),
+  rechts mit möglichst wenigen 1-N-Stücken ausgleichen; Bestlösung ⌈M : 5⌉ Stücke. Punkte 10/7/5/3 je nach
+  Abstand zur Bestlösung, Spiegeln der linken Seite −3 (mind. 1 Punkt; der Generator sorgt dafür, dass Spiegeln
+  nie die Bestlösung ist). Nach jeder Runde eine Bestlösung zum Nachvollziehen, am Ende Urteil und Rekord
+  (`rekord.labH` im Speicher). Höchstens 9 Stücke pro Loch.
+- Beschriftung: Gewichtsstücke tragen „1 N“, beide Hebel zeigen Abstände in cm statt Lochnummern, die Last am
+  einseitigen Hebel ist ein beschrifteter Block.
+- Von zwei Prüfern gelesen (Technik, Didaktik); Regeln stehen jetzt vorab in der Anleitung, Abzug wird mit dem
+  tatsächlichen Wert und ohne roten Fehlerkasten gezeigt.
 
 ### Version 2.44.3 (13.11.2026)
 - NAWI-Labor Feder/Gummiband: Schalter Feder–Gummiband und Erde–Mond unabhängig (vorher erzwang Gummiband die Erde
