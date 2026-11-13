@@ -188,10 +188,26 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 - Generalprobe (11 Aufgaben, 51 Punkte, 15 Minuten, Note), Karteikarten mit Selbsteinschätzung, Druck aller
   Definitionen auf ein Blatt. Speicher: `gewi-6-athen-v1`.
 
+### ⚖️ NAWI
+- **Kräfte, Hebel, Rollen** (`nawi.html`, Karte im Hauptmenü): Klasse 6, Klassenarbeit nach Themenliste, Heft und
+  Arbeitsblättern (eigene Formulierungen und Zahlen). Plan in 13 Schritten, verteilt auf mehrere Tage.
+- Stationen: Kraft und ihre Wirkungen (mit Beschleunigung, Trägheit, Kraftpfeil mit Maßstab), Gewichtskraft und Masse,
+  Federkraftmesser (Hookesches Gesetz, Skalen ablesen), Hebel und Hebelgesetz, Rollen und Flaschenzug. Geschafft bei
+  mindestens sechs Aufgaben und drei richtigen in Folge.
+- Rechenwerkstatt: Generatoren mit immer neuen Zahlen und Zwischenschritten (Masse ↔ Gewichtskraft, Umrechnen,
+  Hooke, Wippe, Gleichgewicht prüfen, Nussknacker, Schubkarre mit cm/m-Falle, Kraftarm über eine Differenz,
+  Hebebaum mit Wasser und Gesamtlänge, Leiter, Flaschenzug, Seilstücke zählen). Falsch Beantwortetes kommt drei
+  Karten später mit neuen Zahlen wieder.
+- Labore: Feder und Gummiband (Messtabelle, Mond), Hebel (zweiseitig Gewichte anhängen, einseitig Kraftmesser
+  einhaken), Rollen und Flaschenzug (Seil ziehen, Hand sinkt um n · h), Trägheitswaage (Masse im Weltall,
+  Rätselkörper). Jedes Labor hat Aufträge, die sich selbst abhaken.
+- Zwei Probearbeiten (A 12 Aufgaben/40 Punkte, B 12 Aufgaben/43 Punkte, 45 Minuten, Note), auch als Papierfassung mit
+  gemischten Antworten und Lösungsblatt. Speicher: `nawi-6-kraft-v1`.
+
 ## 🎯 Aktueller Stand
 
-**Version:** 2.43.3
-**Datum:** 12.11.2026
+**Version:** 2.44.0
+**Datum:** 13.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -219,6 +235,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
 | `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
+| `nawi.html` | NAWI Kl. 6: Kräfte, Hebel, Rollen – Stationen, Labore, Rechenwerkstatt, zwei Probearbeiten, Karte im Hauptmenü |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
@@ -242,6 +259,19 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.44.0 (13.11.2026)
+- Neue Seite `nawi.html`: NAWI Kl. 6 „Kräfte, Hebel, Rollen“, eigene Kachel im Hauptmenü, eigener Speicher. Ein
+  gemeinsames Feldmodell (Zahl, Auswahl, Mehrfachauswahl, Zuordnen) für Übungskarten, Laborfragen und Probearbeiten;
+  Zahleingabe nimmt Komma, Tausenderpunkt und eine angehängte Einheit („30 N“).
+- Vor der Freigabe von zwei Prüfern gelesen (Fach gegen Heft/Arbeitsblätter, Technik im Browser). Daraufhin u. a.:
+  Flaschenzug-Zeichnung mit durchgehendem Seil (n/2 feste, n/2 lose Rollen), Skalen mit höchstens 25 Strichen,
+  „Kraftwandler“ nach Heft (feste Rolle ist keiner), Beschleunigung als eigener Merksatz und in beiden
+  Probearbeiten, Probearbeiten mit neuen Beispielen statt der Übungsaufgaben und ohne vorgegebenen Rechenweg bei je
+  einer Aufgabe, Massen als Klötze statt kg an Kraftpfeilen, Dunkelmodus der Nebenknöpfe, Druck immer hell,
+  Doppeltipp-Sperre nach „Weiter“, größere Tippziele im Hebel-Labor, robusteres `load()`.
+- Abweichungen im Heft, die die Seite nicht übernimmt: „1 kg ≙ 100 N“ (richtig 10 N), Gummi „gleichmäßig“ (dehnt
+  sich ungleichmäßig), Bruch F₁/F₂ = l₁/l₂ (richtig l₂/l₁; der Faktor im Heft stimmt).
 
 ### Version 2.43.3 (12.11.2026)
 - Touchscreens: `:hover` blieb auf iOS am zuletzt angetippten Platz hängen. Die nächste Aufgabe zeigte das Feld an

@@ -852,6 +852,9 @@
         .lang-card.gewi {
             background: linear-gradient(135deg, #f6d5b8 0%, #c9e4f5 100%);
         }
+        .lang-card.nawi {
+            background: linear-gradient(135deg, #c8f0dc 0%, #f3e3c3 100%);
+        }
         .lang-icon { font-size: 3em; margin-bottom: 10px; }
         .lang-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; }
         .lang-info { font-size: 1em; color: #666; }
@@ -3043,6 +3046,14 @@
                 <div class="lang-icon">🗳️</div>
                 <div class="lang-title">GEWI</div>
                 <div class="lang-info">Demokratie: Athen &amp; heute</div>
+            </div>
+            <!-- Gabel: eigene Seite, eigener Speicher (nawi.html) -->
+            <div class="lang-card nawi" role="link" tabindex="0"
+                 onclick="location.href='nawi.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='nawi.html'">
+                <div class="lang-icon">⚖️</div>
+                <div class="lang-title">NAWI</div>
+                <div class="lang-info">Kräfte, Hebel &amp; Rollen</div>
             </div>
         </div>
         <div class="taler-display">
@@ -7427,9 +7438,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.43.3';
+        const APP_VERSION = '2.44.0';
 
         const changelogEntries = [
+            {
+                version: '2.44.0',
+                date: '13.11.2026',
+                items: [
+                    '<b>Neu: NAWI</b> ⚖️ – Training für die Klassenarbeit „Kräfte“: Kraft und ihre Wirkungen, Gewichtskraft, Federkraftmesser, Hebel mit dem Hebelgesetz, Rollen und Flaschenzug. Mit vier Laboren zum Ausprobieren (Feder und Gummiband, Hebel, Flaschenzug, Masse im Weltall), einer Rechenwerkstatt mit immer neuen Zahlen und zwei Probearbeiten mit Note – auch zum Ausdrucken.'
+                ]
+            },
             {
                 version: '2.43.3',
                 date: '12.11.2026',

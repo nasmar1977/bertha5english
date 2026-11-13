@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NAWI: Kräfte, Hebel, Rollen</title>
+<!-- NAWI Kl. 6: Kraft und Wirkungen, Gewichtskraft und Masse, Federkraftmesser, Hebel (ein-/zweiseitig, Hebelgesetz),
+     feste/lose Rolle, Flaschenzug, Trägheit/Beschleunigung. Nach Heft und Arbeitsblättern, eigene Formulierungen und Zahlen.
+     Speicher: localStorage „nawi-6-kraft-v1“. -->
+<style>
+:root{
+  --bg:#f3f4f1; --paper:#ffffff; --ink:#1c2321; --muted:#5d6763; --line:#d6dad4;
+  --acc:#2c6b5a; --acc-soft:#dcefe8; --ton:#b4532a; --ton-soft:#f8e3d6; --blau:#2f5d9c; --blau-soft:#dfe8f6;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --holz:#c99a5b; --metall:#8a9399;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12;
+  --holz:#a77c45; --metall:#9aa4aa; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12;
+  --holz:#a77c45; --metall:#9aa4aa; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.7rem,5.5vw,2.5rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:820px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;min-height:40px;display:inline-flex;align-items:center}
+@media (max-width:560px){.bar .crumb{display:none}}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* Plan */
+.plan{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.plan li{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.plan li.next{border:2px solid var(--acc)}
+.plan li .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.9rem}
+.plan li.done .n{background:var(--ok-soft);color:var(--ok)}
+.plan li .t{font-weight:700}
+.plan li .d{font-size:.85rem;color:var(--muted)}
+.plan li .m{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--blau-soft);color:var(--blau);vertical-align:middle;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--acc-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc)}
+
+/* Karten */
+.frage{font-weight:700}
+.q{font-size:1.05rem}
+.q b{color:var(--acc)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:40px;text-align:left}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.fehlt{border:2px dashed var(--ok)}
+.opt:disabled{cursor:default;opacity:1}
+.fld{display:grid;gap:6px}
+.fl{font-size:.92rem;color:var(--muted)}
+.fnum{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fnum .fl{color:var(--ink);font-weight:700}
+.fnum input{font:inherit;font-size:18px;width:7.5em;min-height:44px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);text-align:right}
+.fnum input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fnum input.no{border-color:var(--bad);background:var(--bad-soft)}
+.fnum .u{font-weight:700}
+.sol{font-size:.85rem;color:var(--bad);font-weight:700}
+.mrow{display:grid;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .mt{font-weight:700;font-size:.98rem}
+.fb{display:grid;gap:10px}
+.fb .msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.fb .msg.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.fb .msg.no{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.weg{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.93rem;font-variant-numeric:tabular-nums}
+.weg div{margin:2px 0}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.dots{display:flex;gap:4px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.tippbox{display:grid;gap:6px}
+.tipps{margin:0;padding:10px 12px 10px 28px;background:var(--acc-soft);border-radius:8px;font-size:.9rem;display:grid;gap:4px}
+.tipps[hidden]{display:none}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.merk ul{margin:6px 0 0;padding-left:20px}
+.merk li{margin:4px 0}
+.hl{color:var(--ton);font-weight:700}
+.formel{font-family:var(--display);font-size:1.15rem;font-weight:700;text-align:center;padding:8px;border:2px dashed var(--ton);border-radius:10px;background:var(--paper)}
+.fig{display:flex;justify-content:center}
+.fig svg{max-width:100%;height:auto}
+
+/* SVG-Grundfarben (hell/dunkel) */
+svg text{fill:var(--ink);font-family:var(--body)}
+.s-ink{stroke:var(--ink);fill:none}
+.s-line{stroke:var(--line)}
+.s-muted{stroke:var(--muted);fill:none}
+.f-holz{fill:var(--holz);stroke:var(--ink);stroke-width:1}
+.f-metall{fill:var(--metall);stroke:var(--ink);stroke-width:1}
+.f-paper{fill:var(--paper);stroke:var(--ink);stroke-width:1.2}
+.f-acc{fill:var(--acc)}
+.f-ton{fill:var(--ton)}
+.s-ton{stroke:var(--ton);fill:none}
+.s-blau{stroke:var(--blau);fill:none}
+.f-blau{fill:var(--blau)}
+.f-ink{fill:var(--ink)}
+.f-muted{fill:var(--muted)}
+.f-bg{fill:var(--bg)}
+.f-ok{fill:var(--ok)}
+.hit{fill:transparent;cursor:pointer}
+@media (hover:hover){.hit:hover{fill:var(--acc-soft);opacity:.6}}
+
+/* Labor */
+.lab{display:grid;gap:12px}
+.labfig{background:var(--bg);border-radius:10px;padding:8px;display:flex;justify-content:center;touch-action:manipulation}
+.labfig svg{width:100%;max-width:520px;height:auto;user-select:none;-webkit-user-select:none}
+.anzeige{display:flex;gap:8px;flex-wrap:wrap}
+.anzeige span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.anzeige span.gut{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{border:0;background:var(--bg);padding:7px 14px;min-height:40px;font-size:.92rem;white-space:nowrap}
+.seg button.on{background:var(--acc);color:#fff;font-weight:700}
+:root[data-theme="dark"] .seg button.on{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#0f1518}}
+.auftrag{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.auftrag li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;font-size:.95rem}
+.auftrag li .c{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:.8rem;margin-top:2px}
+.auftrag li.done .c{background:var(--ok);border-color:var(--ok);color:#fff}
+:root[data-theme="dark"] .auftrag li.done .c{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .auftrag li.done .c{color:#0f1518}}
+.auftrag li.done{color:var(--muted)}
+table.mess{border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+table.mess th,table.mess td{border:1px solid var(--line);padding:4px 10px;text-align:right;white-space:nowrap}
+table.mess th{background:var(--bg)}
+.tabwrap{overflow-x:auto}
+input[type=range]{width:100%;min-height:40px;accent-color:var(--acc)}
+.lfrage{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}
+
+/* Probearbeit */
+.timer{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums}
+.pts{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.th{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:1.6rem;font-weight:800}
+.erkl{font-size:.9rem;background:var(--bg);border-radius:8px;padding:8px 12px}
+
+#druck{display:none}
+@media print{
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff; --paper:#fff; --ink:#000; --muted:#444; --line:#999; --acc:#2c6b5a; --acc-soft:#eef5f2; --ton:#b4532a; --ton-soft:#fbeee6;
+    --blau:#2f5d9c; --blau-soft:#eef2f9; --ok:#2e7d4f; --ok-soft:#eef7f1; --bad:#b3372e; --bad-soft:#fbefed; --holz:#c99a5b; --metall:#8a9399; color-scheme:light}
+  body{background:#fff;color:#000;padding:0}
+  .bar{display:none!important}
+  body.druckt #app{display:none!important}
+  body:not(.druckt) #druck{display:none!important}
+  #druck{display:block;font-size:11pt;padding:6mm 8mm}
+  #druck h2{font-size:15pt;margin:0 0 4pt}
+  #druck .pa{break-inside:avoid;border-top:1px solid #999;padding:6pt 0}
+  #druck .pa h3{font-size:11.5pt;margin:0 0 3pt;display:flex;justify-content:space-between}
+  #druck .lin{border-bottom:1px solid #777;display:inline-block;min-width:24mm;height:1.2em}
+  #druck svg{max-width:85mm;height:auto}
+  #druck svg text{fill:#000}
+  #druck .neu{break-before:page}
+  #druck .box{display:inline-block;width:3.2mm;height:3.2mm;border:1px solid #000;margin-right:4px;vertical-align:-1px}
+  #druck .zt td{padding:2pt 8pt 2pt 0}
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <button class="linkbtn" id="homeBtn" type="button">📋 Plan</button>
+  <span class="crumb" id="crumb"></span>
+</div></div>
+<main class="wrap" id="app"></main>
+<div id="druck"></div>
+<script>
+'use strict';
+// ===================================================================
+// SPEICHER
+// ===================================================================
+const KEY = 'nawi-6-kraft-v1';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+const blank = () => ({ plan: {}, stat: {}, lab: {}, probe: {} });
+function load() {
+  try {
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!isObj(o)) return blank();
+    const s = blank();
+    if (isObj(o.plan)) s.plan = o.plan;
+    if (isObj(o.stat)) Object.keys(o.stat).forEach(k => { const r = o.stat[k]; if (isObj(r) && +r.n >= 0) { const n = Math.floor(+r.n || 0); s.stat[k] = { r: Math.min(n, Math.max(0, Math.floor(+r.r || 0))), n }; } });
+    if (isObj(o.lab)) Object.keys(o.lab).forEach(k => { const a = isObj(o.lab[k]) && Array.isArray(o.lab[k].a) ? o.lab[k].a : null; if (a) s.lab[k] = { a: [...new Set(a.filter(x => Number.isInteger(x) && x >= 0 && x < 6))] }; });
+    if (isObj(o.probe)) ['A', 'B'].forEach(k => {
+      const p = o.probe[k];
+      if (isObj(p) && isObj(p.ans) && +p.start > 0 && +p.start <= Date.now()) {
+        s.probe[k] = { ans: p.ans, start: +p.start, done: !!p.done };
+        if (p.done) { s.probe[k].end = +p.end || +p.start; s.probe[k].punkte = +p.punkte || 0; }
+      }
+    });
+    return s;
+  } catch (e) {}
+  return blank();
+}
+let S = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+// Zahl deutsch schreiben, höchstens zwei Nachkommastellen
+const zahl = x => { const r = Math.round(x * 100) / 100; return String(r).replace('.', ','); };
+const parseZahl = s => {
+  s = String(s || '').trim().replace(/[\u2212\u2013]/g, '-').replace(/\s*[a-zA-ZäöüÄÖÜµ²]+\.?$/, '').trim(); // „30 N“ → 30
+  if (/\d\s+\d/.test(s)) return NaN;                         // „1 2“ ist keine Zahl
+  s = s.replace(/\s/g, '');
+  if (!s.includes(',') && /^[-+]?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, ''); // 2.500 → 2500
+  s = s.replace(',', '.').replace(/\.$/, '');                 // „5,“ → 5
+  if (!/^[-+]?\d*\.?\d+$/.test(s)) return NaN; return parseFloat(s);
+};
+
+// ===================================================================
+// ANTWORTFELDER (für Übungskarten und Probearbeiten gleich)
+//  num:    { t:'num', l, a, u, tol? }      Zahl eintippen
+//  wahl:   { t:'wahl', l?, o:[...], a }    eine Antwort antippen
+//  multi:  { t:'multi', l?, o:[...], a:[] } alle richtigen antippen
+//  zuord:  { t:'zuord', cats:[...], rows:[[text, catIdx], ...] }
+//  Antworten liegen in A[key], die gemischte Reihenfolge in A[key+'#o'].
+// ===================================================================
+const fkey = (it, i) => it.id + '|' + i;
+function feldMax(f) { return f.p || (f.t === 'zuord' ? f.rows.length : f.t === 'multi' ? f.a.length : 1); }
+function ordnung(f, A, k, n) {
+  const o = A[k + '#o'];
+  const gut = Array.isArray(o) && o.length === n && [...o].sort((x, y) => x - y).every((x, i) => x === i);
+  if (!gut) A[k + '#o'] = f.fix ? [...Array(n).keys()] : shuffle([...Array(n).keys()]);
+  return A[k + '#o'];
+}
+function feldHtml(it, i, A, fertig) {
+  const f = it.fields[i], k = fkey(it, i), v = A[k];
+  const lab = f.l ? `<span class="fl">${f.l}</span>` : '';
+  if (f.t === 'num') {
+    const ev = fertig ? feldWert(f, v) : null;
+    return `<div class="fld"><label class="fnum">${lab}<input data-k="${k}" inputmode="decimal" autocomplete="off" value="${esc(v || '')}" ${fertig ? 'disabled' : ''} class="${ev ? (ev.ok ? 'ok' : 'no') : ''}" aria-label="${esc((f.l || 'Antwort').replace(/<[^>]+>/g, ''))}">${f.u ? `<span class="u">${f.u}</span>` : ''}</label>${ev && !ev.ok ? `<span class="sol">richtig: ${zahl(f.a)} ${f.u || ''}</span>` : ''}</div>`;
+  }
+  if (f.t === 'wahl' || f.t === 'multi') {
+    const ord = ordnung(f, A, k, f.o.length), multi = f.t === 'multi';
+    const sel = multi ? (Array.isArray(v) ? v : []) : v;
+    const lang = f.o.some(o => o.length > 28);
+    return `<div class="fld">${lab}<div class="opts ${lang ? 'liste' : ''}" data-k="${k}" data-multi="${multi ? 1 : 0}">${ord.map(j => {
+      const an = multi ? sel.includes(j) : sel === j;
+      let cls = an ? 'sel' : '';
+      if (fertig) { const rich = multi ? f.a.includes(j) : f.a === j; cls = rich ? (an ? 'ok' : 'fehlt') : (an ? 'no' : ''); }
+      return `<button type="button" class="opt ${cls}" data-j="${j}" ${fertig ? 'disabled' : ''} aria-pressed="${an}">${esc(f.o[j])}</button>`;
+    }).join('')}</div></div>`;
+  }
+  if (f.t === 'zuord') {
+    const ord = ordnung(f, A, k, f.rows.length), w = isObj(v) ? v : {};
+    return `<div class="fld">${lab}${ord.map(r => {
+      const row = f.rows[r];
+      return `<div class="mrow"><span class="mt">${esc(row[0])}</span><div class="opts" data-k="${k}" data-r="${r}">${f.cats.map((c, j) => {
+        const an = w[r] === j; let cls = an ? 'sel' : '';
+        if (fertig) cls = row[1] === j ? (an ? 'ok' : 'fehlt') : (an ? 'no' : '');
+        return `<button type="button" class="opt ${cls}" data-j="${j}" ${fertig ? 'disabled' : ''} aria-pressed="${an}">${esc(c)}</button>`;
+      }).join('')}</div></div>`;
+    }).join('')}</div>`;
+  }
+  return '';
+}
+// bewertet ein Feld: { ok, pts, max, leer }
+function feldWert(f, v) {
+  const max = feldMax(f);
+  if (f.t === 'num') {
+    const x = parseZahl(v); if (isNaN(x)) return { ok: false, pts: 0, max, leer: !String(v || '').trim() };
+    const tol = f.tol != null ? f.tol : Math.max(Math.abs(f.a) * 0.005, 1e-6);
+    const ok = Math.abs(x - f.a) <= tol + 1e-9; return { ok, pts: ok ? max : 0, max, leer: false };
+  }
+  if (f.t === 'wahl') { const ok = v === f.a; return { ok, pts: ok ? max : 0, max, leer: v == null }; }
+  if (f.t === 'multi') {
+    const sel = Array.isArray(v) ? v : []; const r = sel.filter(j => f.a.includes(j)).length, w = sel.length - r;
+    const ok = r === f.a.length && w === 0; return { ok, pts: Math.max(0, r - w), max, leer: !sel.length };
+  }
+  if (f.t === 'zuord') {
+    const w = isObj(v) ? v : {}; const r = f.rows.filter((row, i) => w[i] === row[1]).length;
+    return { ok: r === f.rows.length, pts: Math.round(r * max / f.rows.length), max, leer: f.rows.some((row, i) => w[i] == null) };
+  }
+  return { ok: false, pts: 0, max, leer: true };
+}
+const itemWert = (it, A) => it.fields.map((f, i) => feldWert(f, A[fkey(it, i)]));
+function itemHtml(it, A, fertig) {
+  return `${it.q ? `<div class="q">${it.q}</div>` : ''}${it.fig ? `<div class="fig">${it.fig}</div>` : ''}${it.fields.map((f, i) => feldHtml(it, i, A, fertig)).join('')}`;
+}
+function felderBinden(host, A, onChange) {
+  const t0 = performance.now();
+  host.querySelectorAll('input[data-k]').forEach(el => el.oninput = () => { A[el.dataset.k] = el.value; onChange && onChange(); });
+  host.querySelectorAll('.opts[data-k]').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (performance.now() - t0 < 350) return; // zweiter Tipp von „Weiter“ soll nicht schon antworten
+    const k = g.dataset.k, j = +b.dataset.j;
+    if (g.dataset.r != null) { const w = isObj(A[k]) ? A[k] : (A[k] = {}); w[g.dataset.r] = j; g.querySelectorAll('.opt').forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); }); }
+    else if (g.dataset.multi === '1') { const a = Array.isArray(A[k]) ? A[k] : (A[k] = []); const p = a.indexOf(j); if (p >= 0) a.splice(p, 1); else a.push(j); b.classList.toggle('sel', p < 0); b.setAttribute('aria-pressed', p < 0); }
+    else { A[k] = j; g.querySelectorAll('.opt').forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); }); }
+    onChange && onChange();
+  }));
+}
+function tippBox(h, label) { return h ? `<div class="tippbox"><div class="row"><button type="button" class="linkbtn tippbtn">💡 ${label || 'Tipp'}</button></div><ul class="tipps" hidden>${[].concat(h).map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''; }
+function tippBinden(host) { host.querySelectorAll('.tippbox .tippbtn').forEach(tb => { tb.onclick = () => { const l = tb.closest('.tippbox').querySelector('.tipps'); l.hidden = !l.hidden; }; }); }
+
+// kleine Helfer für Aufgaben
+const W = (q, o, a, e, h) => ({ q, fields: [{ t: 'wahl', o, a }], e, h });
+const N = (q, a, u, e, h, tol) => ({ q, fields: [{ t: 'num', a, u, tol }], e, h });
+const M = (q, o, a, e, h) => ({ q, fields: [{ t: 'multi', o, a }], e, h });
+const Z = (q, cats, rows, e, h) => ({ q, fields: [{ t: 'zuord', cats, rows }], e, h });
+const VB = ['Verformung', 'Bewegungsänderung'];
+const EP = ['elastisch', 'plastisch'];
+const EZ = ['einseitig', 'zweiseitig'];
+const FL = ['feste Rolle', 'lose Rolle'];
+
+// ===================================================================
+// ZEICHNUNGEN (SVG)
+// ===================================================================
+// Federkraftmesser-Skala: max, Einheit, Wert pro kleinem Strich, Wert pro beschriftetem Strich, angezeigter Wert
+function skalaSvg(max, u, klein, gross, wert) {
+  const H = 250, y0 = 30, y1 = y0 + H, n = Math.round(max / klein);
+  const y = v => y0 + (v / max) * H;
+  let s = `<svg viewBox="0 0 150 ${y1 + 50}" width="150" role="img" aria-label="Federkraftmesser, Skala bis ${zahl(max)} ${u}">`;
+  s += `<rect x="40" y="6" width="70" height="${y1 - 2}" rx="8" class="f-paper"/>`;
+  s += `<text x="75" y="22" text-anchor="middle" font-size="13" font-weight="700">${zahl(max)} ${u}</text>`;
+  for (let i = 0; i <= n; i++) {
+    const v = i * klein, yy = y(v), g = Math.abs(v / gross - Math.round(v / gross)) < 1e-6;
+    s += `<line x1="${g ? 52 : 60}" x2="80" y1="${yy}" y2="${yy}" class="s-ink" stroke-width="${g ? 1.6 : 0.9}"/>`;
+    if (g) s += `<text x="86" y="${yy + 4}" font-size="11">${zahl(v)}</text>`;
+  }
+  // Zugstange mit roter Marke bis zum Wert
+  const yw = y(wert);
+  s += `<rect x="64" y="${y0 - 4}" width="12" height="${yw - y0 + 4}" class="f-metall" opacity=".55"/>`;
+  s += `<line x1="46" x2="104" y1="${yw}" y2="${yw}" stroke="#d33" stroke-width="2.4"/>`;
+  s += `<path d="M70 ${y1 - 2} v14 a8 8 0 1 0 8 8" class="s-ink" stroke-width="2"/>`;
+  return s + '</svg>';
+}
+// Hebel-Skizze: typ 'zwei' oder 'ein'; links/rechts {F:'…', l:'…'} als Beschriftung
+function hebelSvg(o) {
+  const W2 = 340;
+  let s = `<svg viewBox="0 0 ${W2} 170" width="${W2}" role="img" aria-label="${o.typ === 'ein' ? 'Einseitiger' : 'Zweiseitiger'} Hebel">`;
+  if (o.typ === 'zwei') {
+    // o.ll/o.lr (Zahlen): maßstäblich zeichnen; sonst feste Lage
+    let dp = o.dp || 170, xl = o.xl || 40, xr = o.xr || 300;
+    if (o.ll && o.lr) { const sc = 270 / (o.ll + o.lr); xl = 35; dp = xl + o.ll * sc; xr = dp + o.lr * sc; }
+    s += `<rect x="20" y="70" width="300" height="10" rx="3" class="f-holz"/><path d="M${dp} 80 l-16 30 h32 z" class="f-ton"/>`;
+    // Massen als Klötze auf dem Balken (an einen Kraftpfeil gehört eine Kraft in N, keine Masse in kg)
+    const seite = (x, F) => /kg/.test(F)
+      ? `<rect x="${x - 22}" y="44" width="44" height="26" rx="4" class="f-metall"/><text x="${x}" y="62" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">${F}</text>`
+      : `<line x1="${x}" x2="${x}" y1="80" y2="125" class="s-blau" stroke-width="3"/><path d="M${x - 6} 119 l6 10 l6 -10 z" class="f-blau"/><text x="${x}" y="148" text-anchor="middle" font-size="13" font-weight="700">${F}</text>`;
+    s += seite(xl, o.links.F) + seite(xr, o.rechts.F);
+    s += `<line x1="${xl}" x2="${dp}" y1="30" y2="30" class="s-muted"/><text x="${(xl + dp) / 2}" y="24" text-anchor="middle" font-size="12">${o.links.l}</text>`;
+    s += `<line x1="${dp}" x2="${xr}" y1="30" y2="30" class="s-muted"/><text x="${(dp + xr) / 2}" y="24" text-anchor="middle" font-size="12">${o.rechts.l}</text>`;
+    [xl, dp, xr].forEach(x => s += `<line x1="${x}" x2="${x}" y1="25" y2="35" class="s-muted"/>`);
+    s += `<text x="${dp}" y="130" text-anchor="middle" font-size="11" class="f-muted">Drehpunkt</text>`;
+  } else {
+    const dp = 30, xl = o.xl || 120, xk = o.xk || 300;
+    s += `<rect x="24" y="80" width="300" height="10" rx="3" class="f-holz"/><circle cx="${dp}" cy="85" r="7" class="f-ton"/>`;
+    s += `<line x1="${xl}" x2="${xl}" y1="90" y2="135" class="s-blau" stroke-width="3"/><path d="M${xl - 6} 129 l6 10 l6 -10 z" class="f-blau"/><text x="${xl}" y="158" text-anchor="middle" font-size="13" font-weight="700">${o.last.F}</text>`;
+    s += `<line x1="${xk}" x2="${xk}" y1="80" y2="35" class="s-ton" stroke-width="3"/><path d="M${xk - 6} 41 l6 -10 l6 10 z" class="f-ton"/><text x="${xk}" y="24" text-anchor="middle" font-size="13" font-weight="700">${o.kraft.F}</text>`;
+    s += `<line x1="${dp}" x2="${xl}" y1="112" y2="112" class="s-muted"/>` + (xl - dp < 70
+      ? `<text x="${xl - 10}" y="128" text-anchor="end" font-size="12">${o.last.l}</text>`
+      : `<text x="${(dp + xl) / 2}" y="128" text-anchor="middle" font-size="12">${o.last.l}</text>`);
+    s += `<line x1="${dp}" x2="${xk}" y1="65" y2="65" class="s-muted"/><text x="${(dp + xk) / 2 + 20}" y="60" text-anchor="middle" font-size="12">${o.kraft.l}</text>`;
+    s += `<text x="${dp - 8}" y="106" text-anchor="middle" font-size="11" class="f-muted">DP</text>`;
+  }
+  return s + '</svg>';
+}
+// Rollen und Flaschenzug: n tragende Seilstücke (1 = nur feste Rolle), h = gehobene Höhe in m.
+// Ein durchgehendes Seil: Ende oben am Block, abwechselnd unten und oben um die Rollen, zuletzt von der
+// letzten festen Rolle hinunter zur Hand. n/2 feste und n/2 lose Rollen. Die Hand sinkt um n · h.
+// opt: last (Beschriftung), F (Anzeige), zaehl (Beschriftung „n tragende Seilstücke“), neutral (Seil nicht einfärben)
+function rollenSvg(n, h, opt) {
+  opt = opt || {};
+  const px = 35, H = 400, hy = h * px, sy = n * h * px;
+  const trag = opt.neutral ? 's-ink' : 's-ton', tw = opt.neutral ? 2 : 3;
+  let s = `<svg viewBox="0 0 320 ${H}" width="320" role="img" aria-label="${n === 1 ? 'Feste Rolle' : n === 2 ? 'Lose Rolle mit fester Rolle' : 'Flaschenzug mit ' + n / 2 + ' festen und ' + n / 2 + ' losen Rollen'}">`;
+  s += `<rect x="10" y="4" width="300" height="10" class="f-muted"/>`;
+  for (let i = 0; i < 15; i++) s += `<line x1="${14 + i * 20}" x2="${24 + i * 20}" y1="14" y2="4" class="s-line"/>`;
+  const lastBox = (cx, top) => `<line x1="${cx}" x2="${cx}" y1="${top - 14}" y2="${top}" class="s-ink" stroke-width="2"/><rect x="${cx - 34}" y="${top}" width="68" height="44" rx="4" class="f-metall"/><text x="${cx}" y="${top + 27}" text-anchor="middle" font-size="13" font-weight="700" style="fill:#111">${opt.last || ''}</text>`;
+  const kraft = (x, y) => `<rect x="${x - 9}" y="${y}" width="18" height="46" rx="4" class="f-paper"/><line x1="${x}" x2="${x}" y1="${y + 46}" y2="${y + 62}" class="s-ink" stroke-width="2"/><text x="${x + 14}" y="${y + 28}" font-size="13" font-weight="700" style="fill:var(--ton)">${opt.F || ''}</text>`;
+  const rolle = (cx, cy, r) => `<circle cx="${cx}" cy="${cy}" r="${r}" class="f-paper"/><circle cx="${cx}" cy="${cy}" r="2.5" class="f-ink"/>`;
+  if (n === 1) {
+    const cx = 150, cy = 48, r = 22, top = 250 - hy, hand = 110 + sy;
+    s += `<line x1="${cx}" x2="${cx}" y1="14" y2="${cy}" class="s-ink" stroke-width="2"/>` + rolle(cx, cy, r);
+    s += `<line x1="${cx - r}" x2="${cx - r}" y1="${cy}" y2="${top - 14}" class="${trag}" stroke-width="${tw}"/>`;
+    s += `<path d="M${cx - r} ${cy} A${r} ${r} 0 0 1 ${cx + r} ${cy}" class="s-ink" stroke-width="2"/>`;
+    s += `<line x1="${cx + r}" x2="${cx + r}" y1="${cy}" y2="${hand}" class="s-ink" stroke-width="2"/>` + kraft(cx + r, hand);
+    return s + lastBox(cx - r, top) + '</svg>';
+  }
+  const k = n / 2, r = 14, ty = 52, by = 200 - hy;
+  const bx = i => 130 - (2 * k - 1) * r + i * 4 * r;  // lose Rollen
+  const tx = i => bx(i) + 2 * r;                      // feste Rollen, versetzt
+  const links = bx(0) - r, rechts = tx(k - 1) + r;
+  // oberer Block an der Decke
+  s += `<rect x="${links - 6}" y="20" width="${rechts - links + 12}" height="6" class="f-muted"/><line x1="${(links + rechts) / 2}" x2="${(links + rechts) / 2}" y1="14" y2="20" class="s-ink" stroke-width="2"/>`;
+  for (let i = 0; i < k; i++) s += `<line x1="${tx(i)}" x2="${tx(i)}" y1="26" y2="${ty}" class="s-ink" stroke-width="2"/>`;
+  // Seilende am Block, dann die tragenden Stücke
+  s += `<circle cx="${links}" cy="28" r="3" class="f-ink"/>`;
+  for (let i = 0; i < k; i++) {
+    s += `<line x1="${bx(i) - r}" x2="${bx(i) - r}" y1="${i ? ty : 28}" y2="${by}" class="${trag}" stroke-width="${tw}"/>`;
+    s += `<line x1="${bx(i) + r}" x2="${bx(i) + r}" y1="${by}" y2="${ty}" class="${trag}" stroke-width="${tw}"/>`;
+  }
+  for (let i = 0; i < k; i++) {
+    s += rolle(tx(i), ty, r) + `<path d="M${tx(i) - r} ${ty} A${r} ${r} 0 0 1 ${tx(i) + r} ${ty}" class="s-ink" stroke-width="2"/>`;
+    s += rolle(bx(i), by, r) + `<path d="M${bx(i) - r} ${by} A${r} ${r} 0 0 0 ${bx(i) + r} ${by}" class="s-ink" stroke-width="2"/>`;
+  }
+  // unterer Block mit Last
+  const bl = bx(0) - r - 4, br = bx(k - 1) + r + 4;
+  for (let i = 0; i < k; i++) s += `<line x1="${bx(i)}" x2="${bx(i)}" y1="${by}" y2="${by + r + 4}" class="s-ink" stroke-width="2"/>`;
+  s += `<rect x="${bl}" y="${by + r + 4}" width="${br - bl}" height="6" class="f-muted"/>`;
+  s += lastBox((bl + br) / 2, by + r + 24);
+  // Zugseil von der letzten festen Rolle hinunter zur Hand
+  const hand = 90 + sy;
+  s += `<line x1="${rechts}" x2="${rechts}" y1="${ty}" y2="${hand}" class="s-ink" stroke-width="2"/>` + kraft(rechts, hand);
+  if (opt.zaehl && !opt.neutral && links > 90) s += `<text x="${links - 12}" y="${(ty + by) / 2}" text-anchor="end" font-size="12" style="fill:var(--ton)" font-weight="700">${n} tragende</text><text x="${links - 12}" y="${(ty + by) / 2 + 15}" text-anchor="end" font-size="12" style="fill:var(--ton)" font-weight="700">Seilstücke</text>`;
+  return s + '</svg>';
+}
+
+// ===================================================================
+// AUFGABEN-GENERATOREN (Rechnen mit immer neuen Zahlen)
+// ===================================================================
+let GID = 0;
+const gid = p => 'g' + p + (++GID) + '_' + Date.now().toString(36);
+const GEN = {
+  // Masse -> Gewichtskraft
+  mF() {
+    const g = Math.random() < .5;
+    const m = g ? pick([200, 300, 450, 500, 750, 800, 1200, 2500]) : pick([2, 3.5, 6, 12, 25, 40, 65]);
+    const kg = g ? m / 1000 : m;
+    return { id: gid('mF'), st: 'G', q: `Ein Körper hat die Masse <b>${zahl(m)} ${g ? 'g' : 'kg'}</b>. Wie groß ist seine Gewichtskraft auf der Erde?`, fields: [{ t: 'num', l: 'F<sub>G</sub> ≈', a: kg * 10, u: 'N' }],
+      e: g ? `${zahl(m)} g sind ${zahl(m / 100)}-mal 100 g. Jede 100 g bringen etwa 1 N, also ${zahl(kg * 10)} N.` : `1 kg ≈ 10 N, also ${zahl(m)} kg ≈ ${zahl(m)} · 10 N = ${zahl(kg * 10)} N.`, h: '100 g ≈ 1 N und 1 kg ≈ 10 N' };
+  },
+  // Gewichtskraft -> Masse
+  Fm() {
+    const F = pick([5, 8, 12.5, 30, 45, 75, 120, 350, 600, 900]);
+    return { id: gid('Fm'), st: 'G', q: `Ein Paket hat eine Gewichtskraft von <b>${zahl(F)} N</b>. Welche Masse hat es?`, fields: [{ t: 'num', l: 'm =', a: F / 10, u: 'kg' }],
+      e: `Rückwärts rechnen: 10 N gehören zu 1 kg. ${zahl(F)} N : 10 = ${zahl(F / 10)} kg. Die Einheit kg nicht vergessen!`, h: 'Pro 10 N ist es 1 kg. Teile also durch 10.' };
+  },
+  // Umrechnen kN, N, cN
+  einh() {
+    const t = pick([
+      () => { const x = pick([0.6, 1.2, 2.5, 15, 0.08]); return [`${zahl(x)} kN`, x * 1000, 'N', '1 kN = 1000 N, also mal 1000.']; },
+      () => { const x = pick([750, 2400, 15000, 300]); return [`${zahl(x)} N`, x / 1000, 'kN', '1000 N = 1 kN, also durch 1000.']; },
+      () => { const x = pick([3, 0.7, 1.5, 4.2]); return [`${zahl(x)} N`, x * 100, 'cN', '1 N = 100 cN, also mal 100.']; },
+      () => { const x = pick([250, 70, 135, 400]); return [`${zahl(x)} cN`, x / 100, 'N', '100 cN = 1 N, also durch 100.']; }
+    ])();
+    return { id: gid('ei'), st: 'G', q: `Rechne um: <b>${t[0]}</b>`, fields: [{ t: 'num', l: t[0] + ' =', a: t[1], u: t[2] }], e: t[3], h: 'k (Kilo) heißt tausend, c (Zenti) heißt ein Hundertstel.' };
+  },
+  // Hookesches Gesetz: Verlängerung proportional zur Kraft
+  hooke() {
+    const F1 = pick([0.5, 1, 2, 1.5]), x1 = pick([2, 3, 4, 5]), f = pick([2, 3, 4, 2.5]);
+    const F2 = F1 * f, x2 = x1 * f;
+    if (Math.random() < .5) return { id: gid('ho'), st: 'F', q: `Eine Feder wird bei <b>${zahl(F1)} N</b> um <b>${zahl(x1)} cm</b> länger. Um wie viel wird sie bei <b>${zahl(F2)} N</b> länger?`, fields: [{ t: 'num', l: 'Verlängerung', a: x2, u: 'cm' }],
+      e: `${zahl(F2)} N ist das ${zahl(f)}-Fache von ${zahl(F1)} N. Also wird auch die Verlängerung ${zahl(f)}-mal so groß: ${zahl(x1)} cm · ${zahl(f)} = ${zahl(x2)} cm.`, h: 'Doppelte Kraft – doppelte Verlängerung. Wievielmal so groß ist die neue Kraft?' };
+    return { id: gid('ho'), st: 'F', q: `Eine Feder wird bei <b>${zahl(F1)} N</b> um <b>${zahl(x1)} cm</b> länger. Welche Kraft dehnt sie um <b>${zahl(x2)} cm</b>?`, fields: [{ t: 'num', l: 'F =', a: F2, u: 'N' }],
+      e: `${zahl(x2)} cm ist das ${zahl(f)}-Fache von ${zahl(x1)} cm. Also braucht es die ${zahl(f)}-fache Kraft: ${zahl(F1)} N · ${zahl(f)} = ${zahl(F2)} N.`, h: 'Wievielmal so lang ist die neue Verlängerung?' };
+  },
+  // Kraftmesser ablesen
+  ablesen() {
+    const sk = pick([[10, 'N', 0.5, 1], [5, 'N', 0.2, 1], [200, 'cN', 10, 50], [500, 'cN', 20, 100], [2, 'N', 0.1, 0.5]]);
+    const n = Math.round(sk[0] / sk[2]); const w = sk[2] * rnd(Math.ceil(n * .15), Math.floor(n * .9));
+    return { id: gid('ab'), st: 'F', q: 'Welche Kraft zeigt der Federkraftmesser an? Die rote Linie ist die Anzeige.', fig: skalaSvg(sk[0], sk[1], sk[2], sk[3], w), fields: [{ t: 'num', l: 'Anzeige', a: Math.round(w * 1000) / 1000, u: sk[1], tol: sk[2] * 0.51 }],
+      e: `Ein kleiner Strich bedeutet hier ${zahl(sk[2])} ${sk[1]}. Die Anzeige steht bei ${zahl(w)} ${sk[1]}.`, h: 'Zähle zuerst, wie viele kleine Striche zwischen zwei Zahlen liegen. Was ist dann ein Strich wert?' };
+  },
+  // Wippe: gesuchter Abstand
+  wippeL() {
+    for (;;) {
+      const m1 = pick([25, 30, 32, 35, 40, 45]), m2 = pick([50, 60, 64, 70, 75, 80]), l1 = pick([1.5, 2, 2.4, 2.5, 3]);
+      const l2 = m1 * l1 / m2; if (Math.abs(l2 * 10 - Math.round(l2 * 10)) > 1e-6 || l2 < .6) continue;
+      const F1 = m1 * 10, F2 = m2 * 10, Mo = F1 * l1;
+      return { id: gid('wl'), st: 'H', q: `Auf einer Wippe sitzt ein Kind (<b>${m1} kg</b>) <b>${zahl(l1)} m</b> vom Drehpunkt entfernt. Auf der anderen Seite will sich ein Erwachsener (<b>${m2} kg</b>) hinsetzen. Wie weit vom Drehpunkt muss er sitzen, damit die Wippe im Gleichgewicht ist?`,
+        fig: hebelSvg({ typ: 'zwei', links: { F: m1 + ' kg', l: zahl(l1) + ' m' }, rechts: { F: m2 + ' kg', l: '? m' }, xl: 40, xr: 255 }),
+        fields: [{ t: 'num', l: 'Gewichtskraft Kind F₁ =', a: F1, u: 'N' }, { t: 'num', l: 'Gewichtskraft Erwachsener F₂ =', a: F2, u: 'N' }, { t: 'num', l: 'F₁ · l₁ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'l₂ =', a: l2, u: 'm', tol: .01 }],
+        e: `Hebelgesetz F₁ · l₁ = F₂ · l₂. Kind: ${F1} N · ${zahl(l1)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${F2} N = ${zahl(l2)} m.`, h: ['Erst die Massen in Gewichtskräfte umrechnen (1 kg ≈ 10 N).', 'Dann die bekannte Seite ausrechnen: F₁ · l₁.', 'Zum Schluss durch F₂ teilen.'] };
+    }
+  },
+  // Wippe: Gleichgewicht prüfen
+  wippeCheck() {
+    const m1 = pick([30, 35, 40, 45]), m2 = pick([25, 30, 35, 50]), l1 = pick([1.5, 2, 2.5]), l2 = pick([1.5, 2, 2.2, 2.5, 3]);
+    const M1 = m1 * 10 * l1, M2 = m2 * 10 * l2, a = M1 > M2 ? 0 : M1 < M2 ? 1 : 2;
+    return { id: gid('wc'), st: 'H', q: `Links sitzt ein Kind mit <b>${m1} kg</b>, <b>${zahl(l1)} m</b> vom Drehpunkt. Rechts sitzt ein Kind mit <b>${m2} kg</b>, <b>${zahl(l2)} m</b> vom Drehpunkt. Ist die Wippe im Gleichgewicht?`,
+      fig: hebelSvg({ typ: 'zwei', links: { F: m1 + ' kg', l: zahl(l1) + ' m' }, rechts: { F: m2 + ' kg', l: zahl(l2) + ' m' }, ll: l1, lr: l2 }),
+      fields: [{ t: 'num', l: 'links: F · l =', a: M1, u: 'Nm' }, { t: 'num', l: 'rechts: F · l =', a: M2, u: 'Nm' }, { t: 'wahl', l: 'Was passiert?', o: ['links geht nach unten', 'rechts geht nach unten', 'Gleichgewicht'], a, fix: 1 }],
+      e: `Links: ${m1 * 10} N · ${zahl(l1)} m = ${zahl(M1)} Nm. Rechts: ${m2 * 10} N · ${zahl(l2)} m = ${zahl(M2)} Nm. ${a === 2 ? 'Beide gleich – Gleichgewicht.' : 'Die Seite mit dem größeren Wert geht nach unten: ' + (a === 0 ? 'links' : 'rechts') + '.'}`, h: 'Rechne für jede Seite Kraft mal Abstand. Die größere Seite gewinnt.' };
+  },
+  // einseitiger Hebel (Nussknacker, Schubkarre, Flaschenöffner)
+  einseitig() {
+    const ctx = pick([
+      { n: 'Nussknacker', k: 'die Hand', nom: 'Die Nuss', l: 'die Nuss', F: [20, 25, 30, 40], lk: [12, 15, 16, 18, 20], ll: [2, 3, 4, 5], u: 'cm' },
+      { n: 'Flaschenöffner', k: 'die Hand', nom: 'Der Kronkorken', l: 'den Kronkorken', F: [10, 12, 15, 20], lk: [8, 9, 10, 12], ll: [1, 2, 3], u: 'cm' }
+    ]);
+    for (;;) {
+      const F1 = pick(ctx.F), l1 = pick(ctx.lk), l2 = pick(ctx.ll), Mo = F1 * l1, F2 = Mo / l2;
+      if (F2 !== Math.round(F2)) continue;
+      return { id: gid('es'), st: 'H', q: `Beim <b>${ctx.n}</b> drückt ${ctx.k} mit <b>${F1} N</b>, <b>${l1} cm</b> vom Drehpunkt entfernt. ${ctx.nom} sitzt <b>${l2} cm</b> vom Drehpunkt. Wie groß ist die Kraft auf ${ctx.l}?`,
+        fig: hebelSvg({ typ: 'ein', last: { F: '? N', l: l2 + ' cm' }, kraft: { F: F1 + ' N', l: l1 + ' cm' }, xl: 30 + Math.round(l2 / l1 * 270), xk: 300 }),
+        fields: [{ t: 'num', l: 'F₁ · l₁ =', a: Mo, u: 'Ncm' }, { t: 'num', l: 'F₂ =', a: F2, u: 'N' }],
+        e: `Hebelgesetz: ${F1} N · ${l1} cm = ${Mo} Ncm. Dann ${Mo} Ncm : ${l2} cm = ${F2} N. Der ${ctx.n} verstärkt die Kraft ${zahl(l1 / l2)}-fach.`, h: ['Beide Längen sind in cm – dann ist die Einheit Ncm.', 'Bekannte Seite: F₁ · l₁. Dann durch l₂ teilen.'] };
+    }
+  },
+  // Schubkarre mit Einheiten-Falle
+  schubkarre() {
+    for (;;) {
+      const L = pick([400, 500, 600, 800]), ll = pick([30, 40, 50]), lk = pick([1.2, 1.5, 1, 1.6]);
+      const Mo = L * ll / 100, F = Mo / lk; if (F !== Math.round(F)) continue;
+      return { id: gid('sk'), st: 'H', q: `In einer Schubkarre liegen Steine mit <b>${L} N</b>. Ihr Schwerpunkt ist <b>${ll} cm</b> von der Radachse (Drehpunkt) entfernt. Die Griffe sind <b>${zahl(lk)} m</b> von der Achse entfernt. Mit welcher Kraft musst du die Griffe hochheben?`,
+        fields: [{ t: 'num', l: `${ll} cm =`, a: ll / 100, u: 'm' }, { t: 'num', l: 'F₂ · l₂ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'F₁ =', a: F, u: 'N' }],
+        e: `Erst gleiche Einheiten: ${ll} cm = ${zahl(ll / 100)} m. Last-Seite: ${L} N · ${zahl(ll / 100)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${zahl(lk)} m = ${F} N.`, h: ['Achtung: cm und m gemischt! Erst umrechnen.', 'Die Schubkarre ist ein einseitiger Hebel: Last und Hände sind auf derselben Seite der Achse.'] };
+    }
+  },
+  // einseitiger Hebel: Kraftarm über eine Differenz („greift 1,2 m weiter weg an als die Last“)
+  hebelDiff() {
+    for (;;) {
+      const l2 = pick([0.2, 0.3, 0.4, 0.5]), d = pick([0.6, 0.8, 1, 1.2, 1.5]), F2 = pick([300, 400, 500, 600, 800, 900, 1000]);
+      const l1 = Math.round((l2 + d) * 10) / 10, Mo = F2 * l2, F1 = Mo / l1; if (F1 !== Math.round(F1)) continue;
+      return { id: gid('hd'), st: 'H', q: `Bei einem einseitigen Hebel hängt <b>${zahl(l2 * 100)} cm</b> vom Drehpunkt eine Last von <b>${F2} N</b>. Die Kraft greift <b>${zahl(d)} m weiter</b> vom Drehpunkt entfernt an als die Last. Wie groß muss die Kraft sein?`,
+        fields: [{ t: 'num', l: 'Kraftarm l₁ =', a: l1, u: 'm' }, { t: 'num', l: 'F₂ · l₂ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'F₁ =', a: F1, u: 'N' }],
+        e: `Kraftarm: ${zahl(l2)} m + ${zahl(d)} m = ${zahl(l1)} m (cm in m umrechnen!). Last-Seite: ${F2} N · ${zahl(l2)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${zahl(l1)} m = ${F1} N.`, h: ['„Weiter entfernt“ heißt: Die Strecke kommt zum Lastarm dazu.', 'Erst alles in Meter umrechnen.'] };
+    }
+  },
+  // Hebebaum am Brunnen: Eimer plus Wasser (1 l Wasser ≈ 1 kg ≈ 10 N), gesucht ist die ganze Länge
+  hebebaum() {
+    for (;;) {
+      const V = pick([3, 4, 5]), E = pick([8, 10, 12, 15, 20]), L = E + 10 * V, a = pick([0.5, 0.6, 0.75, 0.8, 1]), l = pick([2, 2.5, 3, 4]);
+      const S = L * l / a; if (S !== Math.round(S)) continue;
+      return { id: gid('hb'), st: 'H', q: `Mit einem Hebebaum holt man Wasser aus dem Brunnen. Der Eimer wiegt <b>${E} N</b> und fasst <b>${V} Liter</b> Wasser (1 l Wasser hat etwa 1 kg). Am anderen Ende sitzt <b>${zahl(a)} m</b> vom Drehpunkt ein Stein mit <b>${zahl(S)} N</b>. Er hält den vollen Eimer genau im Gleichgewicht. Wie lang ist der Hebebaum insgesamt?`,
+        fields: [{ t: 'num', l: 'Eimer mit Wasser F =', a: L, u: 'N' }, { t: 'num', l: 'Stein: F · l =', a: S * a, u: 'Nm' }, { t: 'num', l: 'Abstand des Eimers =', a: l, u: 'm' }, { t: 'num', l: 'ganze Länge =', a: l + a, u: 'm' }],
+        e: `${V} l Wasser ≈ ${V} kg ≈ ${V * 10} N, mit Eimer ${L} N. Stein: ${zahl(S)} N · ${zahl(a)} m = ${zahl(S * a)} Nm. Eimer-Abstand: ${zahl(S * a)} Nm : ${L} N = ${zahl(l)} m. Ganze Länge: ${zahl(l)} m + ${zahl(a)} m = ${zahl(l + a)} m.`, h: ['Wasser in Newton: 1 l ≈ 1 kg ≈ 10 N. Den Eimer dazuzählen.', 'Gefragt ist die ganze Länge: beide Arme zusammen.'] };
+    }
+  },
+  // Leiter: einseitiger Hebel, Abstand von der „falschen“ Seite gemessen
+  leiter() {
+    for (;;) {
+      const Lg = pick([4, 5, 6]), d = pick([1, 1.5, 2, 3]), G = pick([300, 320, 400, 450, 500, 600]);
+      if (d >= Lg) continue;
+      const arm = Lg - d, F = G * arm / Lg; if (F !== Math.round(F)) continue;
+      return { id: gid('le'), st: 'H', q: `Eine <b>${Lg} m</b> lange Leiter liegt waagerecht mit einem Ende auf einer Mauer (Drehpunkt). Das andere Ende trägt eine Person. <b>${zahl(d)} m von der Person entfernt</b> setzt sich ein Kind (<b>${G} N</b>) auf die Leiter. Wie viel muss die Person zusätzlich tragen?`,
+        fields: [{ t: 'num', l: 'Abstand Kind – Mauer =', a: arm, u: 'm' }, { t: 'num', l: 'F =', a: F, u: 'N' }],
+        e: `Der Drehpunkt ist die Mauer. Das Kind sitzt ${Lg} m − ${zahl(d)} m = ${zahl(arm)} m von der Mauer. Die Person trägt am Ende, ${Lg} m von der Mauer: F · ${Lg} m = ${G} N · ${zahl(arm)} m, also F = ${zahl(G * arm)} Nm : ${Lg} m = ${F} N.`, h: ['Wo ist der Drehpunkt? Von dort aus misst man beide Arme.', 'Der Abstand ist von der Person aus angegeben – rechne ihn auf die Mauer um.'] };
+    }
+  },
+  // Kraftpfeil mit Maßstab
+  pfeil() {
+    const m = pick([5, 10, 20, 50]), cm = pick([2, 3, 4, 5, 6]), F = m * cm;
+    const fig = `<svg viewBox="0 0 260 70" width="260" role="img" aria-label="Kraftpfeil, ${cm} cm lang"><rect x="10" y="22" width="40" height="34" rx="3" class="f-holz"/>`
+      + `<line x1="50" x2="${50 + cm * 30 - 10}" y1="39" y2="39" class="s-ton" stroke-width="3"/><path d="M${50 + cm * 30 - 12} 32 l12 7 l-12 7 z" class="f-ton"/>`
+      + Array.from({ length: cm + 1 }, (_, i) => `<line x1="${50 + i * 30}" x2="${50 + i * 30}" y1="56" y2="62" class="s-muted"/>`).join('')
+      + `<text x="${50 + cm * 15}" y="16" text-anchor="middle" font-size="12">${cm} cm</text></svg>`;
+    if (Math.random() < .5) return { id: gid('pf'), st: 'K', q: `Maßstab: <b>1 cm ≙ ${m} N</b>. Der Kraftpfeil ist <b>${cm} cm</b> lang. Wie groß ist die Kraft?`, fig, fields: [{ t: 'num', l: 'F =', a: F, u: 'N' }],
+      e: `${cm} cm · ${m} N pro cm = ${F} N.`, h: 'Jeder Zentimeter Pfeil steht für die Kraft aus dem Maßstab.' };
+    return { id: gid('pf'), st: 'K', q: `Maßstab: <b>1 cm ≙ ${m} N</b>. Wie lang musst du einen Kraftpfeil für <b>${F} N</b> zeichnen?`, fields: [{ t: 'num', l: 'Länge', a: cm, u: 'cm' }],
+      e: `${F} N : ${m} N pro cm = ${cm} cm.`, h: 'Wie oft passt die Kraft aus dem Maßstab in die gesuchte Kraft?' };
+  },
+  // Flaschenzug: Kraft und Seilweg
+  flaschenzug() {
+    const n = pick([2, 4, 6]), F = pick([20, 30, 40, 50, 60]), L = F * n, h = pick([0.5, 1, 1.5, 2, 3]);
+    return { id: gid('fz'), st: 'R', q: `Eine Last von <b>${L} N</b> hängt an einem Flaschenzug mit <b>${n} tragenden Seilstücken</b>. Sie soll <b>${zahl(h)} m</b> hoch gehoben werden.`,
+      fig: rollenSvg(n, 0, { last: L + ' N', zaehl: true }), // hier darf gefärbt sein: gefragt sind Kraft und Weg
+      fields: [{ t: 'num', l: 'Zugkraft F =', a: F, u: 'N' }, { t: 'num', l: 'Seil ziehen s =', a: n * h, u: 'm' }],
+      e: `Die Last verteilt sich auf ${n} Seilstücke: ${L} N : ${n} = ${F} N. Dafür muss jedes Seilstück um ${zahl(h)} m kürzer werden: ${n} · ${zahl(h)} m = ${zahl(n * h)} m Seil.`, h: ['F = Last : Anzahl der tragenden Seilstücke', 's = Höhe · Anzahl der tragenden Seilstücke'] };
+  },
+  // Flaschenzug rückwärts: wie viele Seilstücke?
+  seile() {
+    const n = pick([2, 3, 4, 6]), F = pick([25, 40, 50, 75, 100]), L = n * F;
+    return { id: gid('se'), st: 'R', q: `Mit einem Flaschenzug hebst du <b>${L} N</b> und brauchst dafür nur <b>${F} N</b> Zugkraft. An wie vielen Seilstücken hängt die Last?`, fields: [{ t: 'num', l: 'Anzahl', a: n, u: 'Seilstücke', tol: 0 }],
+      e: `${L} N : ${F} N = ${n}. Die Last hängt an ${n} tragenden Seilstücken.`, h: 'Wievielmal passt die Zugkraft in die Last?' };
+  }
+};
+const genItem = g => Object.assign(GEN[g](), { gen: g });
+// dieselbe Aufgabe noch einmal: Rechenaufgaben mit neuen Zahlen, sonst eine Kopie mit neuer ID (leere Felder)
+const frisch = (it, st) => it.gen ? genItem(it.gen) : Object.assign({ st }, it, { id: (st || 'x') + '_' + Math.random().toString(36).slice(2) });
+
+// ===================================================================
+// STATIONEN
+// ===================================================================
+const ST = {
+  K: {
+    name: 'Kraft und ihre Wirkungen', icon: '💥', sub: 'Verformung, Bewegungsänderung, Kraftpfeil',
+    merk: [
+      'Eine Kraft kann man nicht sehen. Man erkennt sie an ihrer <b>Wirkung</b>.',
+      'Wirkung 1 – <b>Verformung</b>: Der Körper ändert seine Form. Geht sie von allein zurück (Feder, Gummiband, Trampolin), ist sie <b>elastisch</b>. Bleibt sie (Knete, Delle im Auto), ist sie <b>plastisch</b>.',
+      'Wirkung 2 – <b>Bewegungsänderung</b>: Der Körper wird schneller (beschleunigt), langsamer (abgebremst) oder ändert seine Richtung.',
+      '<b>Beschleunigung</b>: Je größer die Kraft, desto stärker wird ein Körper beschleunigt. Bei gleicher Kraft wird ein Körper mit größerer Masse weniger stark beschleunigt.',
+      'Je größer die Masse, desto schwerer lässt sich ein Körper beschleunigen oder abbremsen. Diese Eigenschaft heißt <b>Trägheit</b>.',
+      'Eine Kraft hat einen <b>Betrag</b> (wie groß), eine <b>Richtung</b> und einen <b>Angriffspunkt</b>. Man zeichnet sie als Pfeil: Länge = Betrag, Spitze = Richtung, Anfang = Angriffspunkt.',
+      'Formelzeichen <b>F</b> (englisch <i>force</i>), Einheit <b>1 Newton (1 N)</b> – benannt nach Isaac Newton.'
+    ],
+    items: [
+      Z('Welche Wirkung hat die Kraft vor allem?', VB, [['Ein Torwart fängt den Ball.', 1], ['Knete wird zu einer Kugel gerollt.', 0], ['Ein Radfahrer biegt um die Ecke.', 1]], 'Fangen bremst den Ball ab, Abbiegen ändert die Richtung – beides sind Bewegungsänderungen. Die Knete ändert ihre Form.'),
+      Z('Welche Wirkung hat die Kraft vor allem?', VB, [['Ein Bogen wird gespannt.', 0], ['Ein Fußball wird abgeschossen.', 1], ['Ein Auto bremst an der Ampel.', 1]], 'Der Bogen verbiegt sich (Verformung). Abschießen macht den Ball schneller, Bremsen macht das Auto langsamer.'),
+      Z('Wie ist die Verformung?', EP, [['Ein Gummiband wird gedehnt und losgelassen.', 0], ['Ein Auto bekommt eine Delle.', 1], ['Eine Feder im Kraftmesser wird gezogen.', 0], ['Ein Blatt Papier wird zerknüllt.', 1]], 'Elastisch: geht von allein zurück (Gummiband, Feder). Plastisch: bleibt verformt (Delle, zerknülltes Papier).', 'Was passiert, wenn die Kraft aufhört?'),
+      W('Woran erkennt man, dass eine Kraft wirkt?', ['an einer Verformung oder Bewegungsänderung', 'an einem Lichtblitz genau an der Stelle, wo sie wirkt', 'an der Farbe des Körpers', 'an einem kurzen Knall, wenn sich Körper berühren'], 0, 'Kräfte selbst sind unsichtbar. Man sieht nur, was sie bewirken: eine Verformung oder eine Bewegungsänderung.'),
+      M('Was gehört zu den Kennzeichen einer Kraft? Tippe alle richtigen an.', ['Betrag', 'Richtung', 'Angriffspunkt', 'Farbe', 'Temperatur'], [0, 1, 2], 'Eine Kraft hat Betrag, Richtung und Angriffspunkt – deshalb zeichnet man sie als Pfeil.'),
+      W('Ein Kraftpfeil ist doppelt so lang wie ein anderer. Was bedeutet das?', ['Die Kraft ist doppelt so groß.', 'Die Kraft wirkt doppelt so lange.', 'Die Kraft zeigt in die Gegenrichtung.', 'Der Angriffspunkt liegt höher.'], 0, 'Die Länge des Pfeils zeigt den Betrag, also wie groß die Kraft ist.'),
+      W('Ein Ball rollt geradeaus. Du stupst ihn von der Seite an. Was ändert sich vor allem?', ['seine Richtung', 'seine Masse', 'seine Form und Farbe', 'gar nichts davon'], 0, 'Ein Stoß von der Seite lenkt den Ball ab – eine Bewegungsänderung in Form einer Richtungsänderung.'),
+      W('Welche Einheit hat die Kraft?', ['Newton (N)', 'Kilogramm (kg)', 'Meter (m)', 'Newtonmeter (Nm)'], 0, 'Kräfte misst man in Newton. Kilogramm ist die Einheit der Masse. Newtonmeter kommt beim Hebel vor: Kraft mal Abstand.'),
+      W('Wofür steht das Formelzeichen F?', ['für force, englisch für Kraft', 'für Feder, weil man sie mit Federn misst', 'für Fallen', 'für Fläche'], 0, 'F kommt vom englischen Wort force = Kraft. Die Gewichtskraft schreibt man F<sub>G</sub>.'),
+      W('Ein leerer und ein voll beladener Einkaufswagen bekommen den gleichen Schubs. Welcher ist danach schneller?', ['der leere', 'der volle', 'beide gleich schnell', 'keiner von beiden'], 0, 'Der volle Wagen hat mehr Masse und ist träger. Mit gleicher Kraft wird er weniger stark beschleunigt.', 'Denk an Trägheit.'),
+      { gen: 'pfeil' }, { gen: 'pfeil' },
+      W('Du schubst denselben Roller einmal leicht und einmal kräftig. Wann wird er stärker beschleunigt?', ['beim kräftigen Schubs', 'beim leichten Schubs', 'beide Male gleich stark', 'gar nicht, er ist zu schwer'], 0, 'Größere Kraft – stärkere Beschleunigung. Der Roller ist danach schneller.'),
+      M('Welche dieser Bewegungsänderungen bewirkt eine Kraft? Tippe alle richtigen an.', ['schneller werden', 'langsamer werden', 'die Richtung ändern', 'die Masse ändern'], [0, 1, 2], 'Eine Kraft kann einen Körper schneller oder langsamer machen oder seine Richtung ändern. Seine Masse ändert sie nicht.'),
+      W('Was zeigt die Pfeilspitze eines Kraftpfeils?', ['die Richtung der Kraft', 'die Größe (den Betrag) der Kraft', 'die Masse des Körpers', 'die Geschwindigkeit'], 0, 'Die Spitze zeigt, wohin die Kraft wirkt. Wie groß sie ist, zeigt die Länge.'),
+      W('Ein Schlitten steht. Ein Hund zieht ihn an. Welche Wirkung hat die Zugkraft?', ['Der Schlitten wird schneller.', 'Der Schlitten wird dauerhaft verbogen.', 'Der Schlitten wird leichter.', 'Sie hat keine Wirkung.'], 0, 'Aus dem Stillstand wird Bewegung: Der Schlitten wird beschleunigt.')
+    ]
+  },
+  G: {
+    name: 'Gewichtskraft und Masse', icon: '🌍', sub: 'kg und N, Erde und Mond, umrechnen',
+    merk: [
+      'Die <b>Masse m</b> gibt an, wie schwer und wie träge ein Körper ist. Einheit: <b>Kilogramm (kg)</b>. Sie ist überall gleich – auf der Erde, auf dem Mond, im Weltall.',
+      'Die <b>Gewichtskraft F<sub>G</sub></b> ist die Kraft, mit der die Erde einen Körper anzieht – man sagt auch <b>Erdanziehungskraft</b>. Sie zeigt immer zum <b>Erdmittelpunkt</b>. Einheit: <b>Newton (N)</b>.',
+      'Die Gewichtskraft hängt von der <b>Masse</b> und vom <b>Ort</b> ab. Auf dem Mond ist sie etwa <b>sechsmal kleiner</b> als auf der Erde.',
+      'Faustregel auf der Erde: <b>100 g ≈ 1 N</b> und <b>1 kg ≈ 10 N</b>.',
+      'Umrechnen: <b>1 kN = 1000 N</b> und <b>1 N = 100 cN</b>.',
+      '<span class="hl">Zusatzwissen:</span> Genau sind es bei uns etwa 9,81 N pro Kilogramm. Im Unterricht rechnet man mit 10.',
+      'Im Weltall zeigt ein Federkraftmesser nichts an. Die Masse misst man dort mit einer <b>Trägheitswaage</b>: Je größer die Masse, desto langsamer schwingt sie hin und her.'
+    ],
+    items: [
+      { gen: 'mF' }, { gen: 'mF' }, { gen: 'Fm' }, { gen: 'Fm' }, { gen: 'einh' }, { gen: 'einh' },
+      W('Eine Astronautin hat auf der Erde eine Masse von 60 kg. Welche Masse hat sie auf dem Mond?', ['60 kg', '10 kg', '360 kg', '0 kg'], 0, 'Die Masse ändert sich nicht. Nur die Gewichtskraft ist auf dem Mond kleiner.'),
+      W('Auf der Erde hat sie eine Gewichtskraft von etwa 600 N. Wie groß ist die Gewichtskraft auf dem Mond ungefähr?', ['100 N', '600 N', '3600 N', '0 N'], 0, 'Auf dem Mond ist die Gewichtskraft etwa sechsmal kleiner: 600 N : 6 = 100 N.'),
+      M('Welche Aussagen stimmen? Tippe alle richtigen an.', ['Die Gewichtskraft hängt von der Masse und vom Ort ab.', 'Körper mit gleicher Masse werden am selben Ort gleich stark angezogen.', 'Alle Körper werden auf der Erde gleich stark angezogen.', 'Körper mit gleicher Masse werden überall auf der Erde genau gleich stark angezogen.', 'Auf dem Mond hat ein Körper eine kleinere Masse.'], [0, 1], 'Am selben Ort zieht die Erde gleiche Massen gleich stark an. Verschiedene Massen werden verschieden stark angezogen. Und weil es auf den Ort ankommt, ist die Anziehung am Nordpol etwas stärker als am Äquator. Die Masse selbst bleibt überall gleich.'),
+      W('Wie nennt man die Gewichtskraft noch?', ['Erdanziehungskraft', 'Federkraft', 'Muskelkraft', 'Reibungskraft am Boden'], 0, 'Die Gewichtskraft ist die Kraft, mit der die Erde einen Körper anzieht – die Erdanziehungskraft.'),
+      W('In welche Richtung zeigt die Gewichtskraft?', ['zum Erdmittelpunkt', 'immer in Richtung Norden', 'von der Erde weg', 'zur Sonne'], 0, 'Überall auf der Erde zeigt die Gewichtskraft zum Erdmittelpunkt – auch in Australien, deshalb fällt dort niemand herunter.'),
+      W('Wie kann man im Weltall die Masse bestimmen?', ['mit einer Trägheitswaage, die hin und her schwingt', 'mit einem besonders empfindlichen kleinen Federkraftmesser', 'mit einer gewöhnlichen Küchenwaage', 'gar nicht – im Weltall hat nichts eine Masse'], 0, 'Die Gewichtskraft fehlt im Weltall, die Trägheit nicht. Eine große Masse schwingt langsamer – das kann man stoppen.'),
+      W('Auf den Schwingwagen einer Trägheitswaage kommt eine größere Masse. Wie schwingt er dann?', ['langsamer', 'schneller', 'genauso schnell', 'gar nicht mehr'], 0, 'Mehr Masse ist träger. Der Wagen braucht länger für eine Schwingung.')
+    ]
+  },
+  F: {
+    name: 'Federkraftmesser', icon: '🧷', sub: 'Hookesches Gesetz, Skalen ablesen',
+    merk: [
+      'Ein <b>Federkraftmesser</b> enthält eine Schraubenfeder. Je größer die Kraft, desto stärker wird die Feder gedehnt.',
+      'Doppelte Kraft → doppelte Verlängerung, dreifache Kraft → dreifache Verlängerung. Die Verlängerung ist <b>proportional</b> zur Kraft. Das ist das <b>Hookesche Gesetz</b> (nach Robert Hooke).',
+      'Ein <b>Gummiband</b> dehnt sich <b>nicht gleichmäßig</b>. Zum Messen taugt es deshalb nicht.',
+      'Vor dem Messen: Nullpunkt einstellen und einen passenden Messbereich wählen. Zu viel Kraft überdehnt die Feder – danach misst sie falsch.',
+      'Ablesen: Erst herausfinden, was ein kleiner Strich bedeutet. Manche Skalen zeigen <b>cN</b> statt N (100 cN = 1 N).'
+    ],
+    items: [
+      { gen: 'ablesen' }, { gen: 'ablesen' }, { gen: 'ablesen' }, { gen: 'hooke' }, { gen: 'hooke' },
+      M('Welche Sätze stimmen für eine Schraubenfeder? Tippe alle richtigen an.', ['Doppelte Kraft bewirkt doppelte Verlängerung.', 'Die Verlängerung ist proportional zur Kraft.', 'Ein Gummiband dehnt sich genauso gleichmäßig.', 'Je größer die Kraft, desto kürzer die Feder.'], [0, 1], 'Bei der Feder wächst die Verlängerung gleichmäßig mit der Kraft. Beim Gummiband nicht.'),
+      W('Wie heißt das Gesetz „Die Verlängerung einer Feder ist proportional zur Kraft“?', ['Hookesches Gesetz', 'Hebelgesetz', 'Gesetz der losen Rolle', 'Gesetz der Trägheit'], 0, 'Benannt nach dem Engländer Robert Hooke.'),
+      W('Was passiert, wenn man einen Kraftmesser viel zu stark belastet?', ['Die Feder wird überdehnt und misst danach falsch.', 'Er zeigt dann einfach doppelt so viel an wie sonst.', 'Nichts – Federn halten jede Kraft aus.', 'Die Skala rutscht ein Stück nach oben.'], 0, 'Über den Messbereich hinaus wird die Feder plastisch verformt. Danach stimmt die Anzeige nicht mehr.'),
+      W('Warum nimmt man für Kraftmesser Federn und keine Gummibänder?', ['Weil Gummi sich nicht gleichmäßig dehnt', 'Weil Gummibänder zu teuer für die Schule sind', 'Weil Gummi sich gar nicht dehnt', 'Weil Gummi zu schwer ist'], 0, 'Nur wenn die Dehnung gleichmäßig mit der Kraft wächst, kann man eine Skala mit gleichen Abständen benutzen.'),
+      N('Rechne um: 1 N = ? cN', 100, 'cN', 'Zenti heißt ein Hundertstel: 1 N = 100 cN.'),
+      W('Ein Stein zeigt am Kraftmesser auf der Erde 6 N an. Was zeigt derselbe Kraftmesser auf dem Mond ungefähr an?', ['1 N', '6 N', '36 N', '0 N'], 0, 'Auf dem Mond ist die Gewichtskraft etwa sechsmal kleiner: 6 N : 6 = 1 N. Die Masse des Steins bleibt gleich.')
+    ]
+  },
+  H: {
+    name: 'Hebel und Hebelgesetz', icon: '⚖️', sub: 'einseitig, zweiseitig, F₁ · l₁ = F₂ · l₂',
+    merk: [
+      'Ein <b>Hebel</b> ist eine feste Stange, die sich um einen <b>Drehpunkt</b> drehen kann.',
+      '<b>Kraftarm l₁</b>: Abstand vom Drehpunkt bis zur Kraft. <b>Lastarm l₂</b>: Abstand vom Drehpunkt bis zur Last.',
+      '<b>Zweiseitiger Hebel</b>: Kraft und Last greifen auf verschiedenen Seiten des Drehpunkts an – Wippe, Schere, Kneifzange, Hebebaum am Brunnen.',
+      '<b>Einseitiger Hebel</b>: Kraft und Last greifen auf derselben Seite an – Nussknacker, Schubkarre, Flaschenöffner. Die Kraft zeigt dann entgegengesetzt zur Last, oft nach oben.',
+      '<b>Hebelgesetz</b>: Kraft mal Kraftarm = Last mal Lastarm, also <b>F₁ · l₁ = F₂ · l₂</b> (im Heft: l₁ · F₁ = l₂ · F₂ – dasselbe). Dann ist der Hebel im Gleichgewicht.',
+      'Ein Hebel ist ein <b>Kraftwandler</b>: Ist der Kraftarm fünfmal so lang wie der Lastarm, braucht man nur ein Fünftel der Kraft.',
+      'Rechenweg: 1. Massen in Kräfte umrechnen. 2. Die bekannte Seite ausrechnen (F · l, Einheit Nm oder Ncm). 3. Durch die bekannte Größe der anderen Seite teilen. <b>Beide Längen in derselben Einheit!</b>'
+    ],
+    items: [
+      Z('Einseitig oder zweiseitig?', EZ, [['Schere', 1], ['Nussknacker', 0], ['Wippe', 1], ['Schubkarre', 0]], 'Bei Schere und Wippe liegt der Drehpunkt zwischen Kraft und Last. Beim Nussknacker und bei der Schubkarre liegen beide auf derselben Seite.', 'Wo liegt der Drehpunkt? Zwischen Kraft und Last oder am Ende?'),
+      Z('Einseitig oder zweiseitig?', EZ, [['Kneifzange', 1], ['Flaschenöffner', 0], ['Hebebaum am Ziehbrunnen', 1]], 'Kneifzange und Hebebaum haben den Drehpunkt in der Mitte. Beim Flaschenöffner liegt der Drehpunkt am Ende, Kraft und Kronkorken auf derselben Seite.'),
+      { gen: 'wippeL' }, { gen: 'wippeCheck' }, { gen: 'einseitig' }, { gen: 'schubkarre' }, { gen: 'hebelDiff' }, { gen: 'hebebaum' }, { gen: 'leiter' },
+      W('Was ist der Kraftarm?', ['der Abstand vom Drehpunkt bis zur Kraft', 'der Abstand vom Drehpunkt bis zur Last', 'die Länge der ganzen Stange vom einen zum anderen Ende', 'der Abstand zwischen Kraft und Last'], 0, 'Kraftarm: Drehpunkt bis Kraft. Lastarm: Drehpunkt bis Last.'),
+      W('Du willst mit einer Zange einen dicken Draht durchknipsen. Wie geht es am leichtesten?', ['Draht nah am Drehpunkt, Hände weit hinten', 'Draht vorn an der Spitze, Hände weit hinten', 'Draht und Hände nah am Drehpunkt', 'Das ist egal, die Kraft bleibt gleich.'], 0, 'Kurzer Lastarm und langer Kraftarm: Dann wird deine Handkraft am stärksten verstärkt.'),
+      W('Beim einseitigen Hebel zieht die Last nach unten. In welche Richtung muss deine Kraft wirken?', ['nach oben', 'nach unten', 'waagerecht zur Seite', 'zum Drehpunkt hin'], 0, 'Beim einseitigen Hebel sind Kraft und Last auf derselben Seite – damit der Hebel nicht kippt, muss die Kraft entgegengesetzt wirken.'),
+      W('Kraftarm 0,5 m, Lastarm 20 cm. Was musst du vor dem Rechnen tun?', ['beide Längen in dieselbe Einheit umrechnen', 'die beiden Längen zuerst miteinander addieren', 'den längeren Arm halbieren', 'nichts, man kann gleich rechnen'], 0, '0,5 m = 50 cm. Erst wenn beide Längen dieselbe Einheit haben, darf man sie ins Hebelgesetz setzen.'),
+      N('Der Kraftarm ist viermal so lang wie der Lastarm. Die Last ist 200 N. Wie groß muss die Kraft sein?', 50, 'N', 'Viermal so langer Kraftarm – ein Viertel der Kraft: 200 N : 4 = 50 N.'),
+      W('Wie heißt das Hebelgesetz?', ['F₁ · l₁ = F₂ · l₂', 'F₁ + l₁ = F₂ + l₂', 'F₁ : l₁ = F₂ · l₂', 'F₁ · F₂ = l₁ · l₂'], 0, 'Kraft mal Kraftarm gleich Last mal Lastarm.')
+    ]
+  },
+  R: {
+    name: 'Rollen und Flaschenzug', icon: '🪝', sub: 'feste und lose Rolle, Seilstücke zählen',
+    merk: [
+      '<b>Feste Rolle</b>: hängt fest an der Decke. Sie lenkt die Kraft nur um (ziehen nach unten statt heben nach oben). Der Betrag bleibt gleich – <b>keine Kraftersparnis</b>. Deshalb heißt sie auch <b>Umlenkrolle</b>. Eine feste Rolle ist <b>kein Kraftwandler</b>.',
+      '<b>Lose Rolle</b>: hängt mit der Last am Seil und bewegt sich mit. Die Last hängt an zwei Seilstücken, jedes trägt die Hälfte. Man braucht nur die <b>halbe Kraft</b>, muss aber <b>doppelt so viel Seil</b> ziehen.',
+      '<b>Flaschenzug</b>: feste und lose Rollen zusammen. Zähle die Seilstücke, an denen die Last mit den losen Rollen hängt – zähle Seilstücke, nicht Rollen! Bei <b>n tragenden Seilstücken</b> gilt: <b>F = F<sub>G</sub> : n</b> und <b>Seilweg s = n · h</b>.',
+      '<b>Goldene Regel der Mechanik</b>: Was man an Kraft spart, muss man an Weg zusetzen.',
+      '<span class="hl">Zusatzwissen:</span> In echt kommen noch das Gewicht der losen Rollen und etwas Reibung dazu. In der Schule lässt man das meist weg.'
+    ],
+    items: [
+      W('Was bewirkt eine feste Rolle?', ['Sie ändert nur die Richtung der Kraft.', 'Sie halbiert die nötige Kraft.', 'Sie verdoppelt die nötige Kraft.', 'Sie macht die Last selbst um die Hälfte leichter.'], 0, 'Die feste Rolle ist eine Umlenkrolle: gleiche Kraft, andere Richtung.'),
+      W('Eine Last von 100 N hängt an einer losen Rolle. Wie viel Kraft brauchst du?', ['50 N', '100 N', '200 N', '25 N'], 0, 'Zwei Seilstücke tragen die Last, jedes die Hälfte: 100 N : 2 = 50 N.'),
+      N('Mit einer losen Rolle soll eine Last 2 m hoch. Wie viel Seil musst du ziehen?', 4, 'm', 'Halbe Kraft, doppelter Weg: 2 · 2 m = 4 m.'),
+      Z('Feste oder lose Rolle?', FL, [['hängt fest an der Decke', 0], ['bewegt sich mit der Last nach oben', 1], ['spart die Hälfte der Kraft', 1], ['ändert nur die Richtung der Kraft', 0]], 'Fest: an der Decke, nur Umlenken. Lose: wandert mit der Last, halbe Kraft.'),
+      { gen: 'flaschenzug' }, { gen: 'flaschenzug' }, { gen: 'seile' },
+      W('Warum heißt die feste Rolle auch Umlenkrolle?', ['Weil sie die Kraft in eine andere Richtung lenkt', 'Weil man sie an der Decke in jede Richtung drehen kann', 'Weil sie sich beim Ziehen jedes Mal einmal umdreht', 'Weil sie die Last in die Höhe lenkt'], 0, 'Sie lenkt die Kraft um: Man zieht nach unten, die Last geht nach oben.'),
+      M('Welche Sätze stimmen? Tippe alle richtigen an.', ['Was man an Kraft spart, muss man an Weg zusetzen.', 'Eine lose Rolle halbiert die nötige Kraft.', 'Eine feste Rolle halbiert den Seilweg.', 'Mit einem Flaschenzug spart man Kraft und Weg.'], [0, 1], 'Die goldene Regel: Kraft sparen kostet Weg. Die feste Rolle ändert weder Kraft noch Weg, nur die Richtung.'),
+      N('Bei einem Flaschenzug hängt die Last mit den losen Rollen an 4 Seilstücken. Die Last ist 80 N. Welche Kraft brauchst du?', 20, 'N', '80 N : 4 = 20 N.'),
+      W('Ist eine feste Rolle ein Kraftwandler?', ['Nein – sie spart keine Kraft, sie lenkt nur um.', 'Ja – sie halbiert die Kraft, genau wie eine lose Rolle.', 'Ja – aber nur bei sehr schweren Lasten.', 'Nein – sie verdoppelt die nötige Kraft.'], 0, 'Ein Kraftwandler spart Kraft (Hebel, lose Rolle, Flaschenzug). Die feste Rolle ändert nur die Richtung, darum ist sie kein Kraftwandler.')
+    ]
+  },
+  X: {
+    name: 'Rechenwerkstatt', icon: '🧮', sub: 'immer neue Zahlen, Schritt für Schritt', rechnen: true,
+    merk: [
+      'Hier kommen nur Rechenaufgaben – jedes Mal mit neuen Zahlen.',
+      'Schreib dir wie in der Arbeit zuerst auf: <b>Gegeben</b>, <b>Gesucht</b>, <b>Formel</b>. Dann rechnen.',
+      'Massen zuerst in Kräfte umrechnen: <b>1 kg ≈ 10 N</b>.',
+      'Hebel: <b>F₁ · l₁ = F₂ · l₂</b>. Flaschenzug: <b>F = F<sub>G</sub> : n</b>, <b>s = n · h</b>.',
+      'Zum Schluss: Passt das Ergebnis? Ein Nussknacker muss die Kraft vergrößern, ein Flaschenzug muss sie verkleinern.'
+    ],
+    items: ['mF', 'Fm', 'hooke', 'pfeil', 'wippeL', 'wippeCheck', 'einseitig', 'schubkarre', 'hebelDiff', 'hebebaum', 'leiter', 'flaschenzug', 'seile', 'einh'].map(g => ({ gen: g }))
+  }
+};
+const ST_KEYS = ['K', 'G', 'F', 'H', 'R'];
+
+// Begriffe-Blitz zum Aufwärmen
+const BEGRIFFE = [
+  ['Newton', 'die Einheit der Kraft'],
+  ['Masse', 'gibt an, wie schwer ein Körper ist, Einheit kg'],
+  ['Gewichtskraft', 'die Kraft, mit der die Erde einen Körper anzieht'],
+  ['Drehpunkt', 'die Stelle, um die sich ein Hebel dreht'],
+  ['Kraftarm', 'Abstand vom Drehpunkt bis zur Kraft'],
+  ['Lastarm', 'Abstand vom Drehpunkt bis zur Last'],
+  ['Umlenkrolle', 'feste Rolle: ändert nur die Richtung der Kraft'],
+  ['lose Rolle', 'wandert mit der Last und halbiert die Kraft'],
+  ['Kraftwandler', 'Gerät, mit dem man Kraft einsparen kann (z. B. Hebel, Flaschenzug)'],
+  ['Hookesches Gesetz', 'Verlängerung einer Feder ist proportional zur Kraft'],
+  ['elastisch', 'Verformung, die von allein wieder zurückgeht'],
+  ['plastisch', 'Verformung, die bleibt'],
+  ['Trägheit', 'ein Körper will seine Bewegung beibehalten'],
+  ['Federkraftmesser', 'Messgerät für Kräfte mit einer Schraubenfeder']
+];
+// Paare, die nie zusammen als Antworten kommen, weil die Erklärung des einen auch auf den anderen passt
+const NIE_ZUSAMMEN = [['Kraftwandler', 'lose Rolle'], ['Kraftwandler', 'Umlenkrolle'], ['Masse', 'Trägheit'], ['Newton', 'Federkraftmesser']];
+const vertraeglich = (a, b) => !NIE_ZUSAMMEN.some(p => p.includes(a) && p.includes(b));
+// gefragt wird umgekehrt: Erklärung gegeben, Begriff wählen (die Erklärung soll das Wort nicht verraten)
+function warmItems() {
+  return shuffle(BEGRIFFE).slice(0, 8).map((b, i) => {
+    const andere = shuffle(BEGRIFFE.filter(x => x !== b && vertraeglich(x[0], b[0]))).slice(0, 3).map(x => x[0]);
+    return { id: 'w' + i + Date.now(), st: 'W', q: `Welcher Begriff passt? <b>„${b[1]}“</b>`, fields: [{ t: 'wahl', o: [b[0], ...andere], a: 0 }], e: `${b[0]}: ${b[1]}.` };
+  });
+}
+
+// ===================================================================
+// PLAN UND NAVIGATION
+// ===================================================================
+const app = document.getElementById('app');
+let VIEW = 'home', RUN = null, LAB = null, PKEY = 'A', timerId = null, animId = null;
+document.getElementById('homeBtn').onclick = () => go('home');
+function stopAll() { if (timerId) { clearInterval(timerId); timerId = null; } if (animId) { cancelAnimationFrame(animId); animId = null; } }
+function go(v) { stopAll(); VIEW = v; render(); window.scrollTo(0, 0); }
+function crumb(t) { document.getElementById('crumb').textContent = t || ''; }
+
+const PLAN = [
+  { k: 'warm', t: 'Aufwärmen: Begriffe-Blitz', d: 'Acht Fachbegriffe – was bedeuten sie?', min: 4 },
+  { k: 'K', t: 'Station: Kraft und ihre Wirkungen', d: 'Verformung, Bewegungsänderung, Kraftpfeil', min: 8 },
+  { k: 'G', t: 'Station: Gewichtskraft und Masse', d: 'kg und N, Erde und Mond', min: 8 },
+  { k: 'labF', t: 'Labor: Feder und Gummiband', d: 'Gewichte anhängen, messen, vergleichen', min: 8, lab: 1 },
+  { k: 'F', t: 'Station: Federkraftmesser', d: 'Hookesches Gesetz und Skalen ablesen', min: 8 },
+  { k: 'labH', t: 'Labor: Hebel', d: 'Gewichte anhängen, bis der Balken waagerecht ist', min: 10, lab: 1 },
+  { k: 'H', t: 'Station: Hebel und Hebelgesetz', d: 'einseitig, zweiseitig, rechnen', min: 12 },
+  { k: 'labR', t: 'Labor: Rollen und Flaschenzug', d: 'Seil ziehen und Kraft ablesen', min: 8, lab: 1 },
+  { k: 'R', t: 'Station: Rollen und Flaschenzug', d: 'feste und lose Rolle, Seilstücke zählen', min: 8 },
+  { k: 'labT', t: 'Labor: Masse im Weltall', d: 'Trägheit und Beschleunigung mit der Schwingwaage', min: 6, lab: 1 },
+  { k: 'X', t: 'Rechenwerkstatt', d: 'Rechenaufgaben mit immer neuen Zahlen', min: 12 },
+  { k: 'probeA', t: 'Probearbeit A', d: 'wie eine echte Klassenarbeit, mit Uhr und Note', min: 45 },
+  { k: 'probeB', t: 'Probearbeit B', d: 'andere Aufgaben, gleiche Themen', min: 45 }
+];
+function planStep(k) {
+  if (k === 'warm') startRun('warm');
+  else if (k in ST) startRun(k);
+  else if (k.startsWith('lab')) startLab(k);
+  else if (k === 'probeA') { PKEY = 'A'; go('probe'); }
+  else if (k === 'probeB') { PKEY = 'B'; go('probe'); }
+}
+
+function render() {
+  try {
+    if (VIEW === 'home') return renderHome();
+    if (VIEW === 'run') return renderRun();
+    if (VIEW === 'lab') return renderLab();
+    if (VIEW === 'probe') return renderProbe();
+  } catch (e) {
+    console.error(e);
+    app.innerHTML = `<header class="top"><h1>Hoppla</h1><p class="muted">Hier ist etwas schiefgegangen. Meist hilft es, den gespeicherten Stand zurückzusetzen.</p></header>
+      <div class="row"><button class="btn" id="resetAll">Speicher zurücksetzen</button><button class="btn ghost" id="hmE">Zum Plan</button></div>`;
+    document.getElementById('resetAll').onclick = () => { if (confirm('Alles zurücksetzen?')) { S = blank(); save(); go('home'); } };
+    document.getElementById('hmE').onclick = () => { VIEW = 'home'; try { renderHome(); } catch (e2) {} };
+  }
+}
+
+function renderHome() {
+  crumb('');
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  const stat = k => { const r = S.stat[k] || { r: 0, n: 0 }; return r.n ? Math.round(100 * r.r / r.n) : null; };
+  const pinfo = k => { const p = S.probe[k]; return p && p.done ? `Ergebnis: ${p.punkte} / ${PROBEN[k].max} Punkte · Note ${grade(Math.round(100 * p.punkte / PROBEN[k].max))}` : p ? 'angefangen' : '45 Minuten, mit Note'; };
+  app.innerHTML = `
+  <header class="top">
+    <div class="eyebrow">NAWI · Klasse 6 · Klassenarbeit</div>
+    <h1>Kräfte, Hebel, Rollen</h1>
+    <p class="muted">Kraft und ihre Wirkungen, Gewichtskraft, Federkraftmesser, ein- und zweiseitiger Hebel mit dem Hebelgesetz, feste und lose Rollen und der Flaschenzug. Du rechnest selbst, probierst im Labor aus und schreibst zum Schluss zwei Probearbeiten. Nicht alles an einem Tag – der Plan merkt sich, wo du bist.</p>
+  </header>
+  <section>
+    <h2>📋 Dein Plan</h2>
+    <ol class="plan">${PLAN.map((p, i) => `<li class="${S.plan[p.k] ? 'done' : ''} ${i === nextIdx ? 'next' : ''}" data-k="${p.k}" tabindex="0" role="button">
+        <span class="n">${S.plan[p.k] ? '✓' : i + 1}</span>
+        <span><span class="t">${p.lab ? '<span class="tag">Labor</span>' : ''}${esc(p.t.replace(/^Labor: /, ''))}</span><br><span class="d">${esc(p.k.startsWith('probe') ? pinfo(p.k.slice(5)) : p.d)}</span></span>
+        <span class="m">${p.min} min</span></li>`).join('')}</ol>
+    <div class="row">
+      ${nextIdx >= 0 ? `<button class="btn" id="weiter">${nextIdx === 0 ? 'Los geht’s' : 'Weiter mit Schritt ' + (nextIdx + 1)}</button>` : '<p><b>🎉 Alles geschafft – du bist bereit für die Arbeit!</b></p>'}
+      ${Object.keys(S.plan).length ? '<button class="btn ghost" id="planReset">Plan neu starten</button>' : ''}
+    </div>
+  </section>
+  <section>
+    <h2>🎯 Frei üben</h2>
+    <div class="grid">
+      ${ST_KEYS.concat('X').map(k => { const p = stat(k); return `<button class="tile" data-st="${k}"><b>${ST[k].icon} ${esc(ST[k].name)}</b><span>${esc(ST[k].sub)}</span>
+        ${p === null ? '<span>noch nicht geübt</span>' : `<span>${p} % richtig</span><div class="meter"><i style="width:${p}%"></i></div>`}</button>`; }).join('')}
+    </div>
+    <h2>🔬 Labor</h2>
+    <div class="grid">
+      ${Object.keys(LABS).map(k => `<button class="tile" data-lab="${k}"><b>${LABS[k].icon} ${esc(LABS[k].name)}</b><span>${esc(LABS[k].sub)}</span><span>${labFertig(k) ? '✓ alle Aufträge erledigt' : labStand(k)}</span></button>`).join('')}
+    </div>
+    <h2>📝 Probearbeiten</h2>
+    <div class="grid">
+      ${['A', 'B'].map(k => `<button class="tile" data-probe="${k}"><b>📝 Probearbeit ${k}</b><span>${esc(pinfo(k))}</span></button>`).join('')}
+    </div>
+  </section>`;
+  app.querySelectorAll('.plan li').forEach(li => { li.onclick = () => planStep(li.dataset.k); li.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); planStep(li.dataset.k); } }; });
+  const wb = document.getElementById('weiter'); if (wb) wb.onclick = () => planStep(PLAN[nextIdx].k);
+  const pr = document.getElementById('planReset'); if (pr) pr.onclick = () => { if (confirm('Plan von vorn beginnen? Die Häkchen verschwinden, Labor-Aufträge und Probearbeiten starten neu.')) { S.plan = {}; S.lab = {}; S.probe = {}; save(); render(); } };
+  app.querySelectorAll('[data-st]').forEach(b => b.onclick = () => startRun(b.dataset.st));
+  app.querySelectorAll('[data-lab]').forEach(b => b.onclick = () => startLab(b.dataset.lab));
+  app.querySelectorAll('[data-probe]').forEach(b => b.onclick = () => { PKEY = b.dataset.probe; go('probe'); });
+}
+
+// ===================================================================
+// ÜBUNGSLAUF
+// ===================================================================
+function startRun(kind) {
+  let queue;
+  if (kind === 'warm') queue = warmItems();
+  else queue = shuffle(ST[kind].items).map(it => frisch(it, kind));
+  RUN = { kind, queue, idx: 0, streak: 0, count: 0, right: 0, finished: false, showMerk: kind in ST, A: {} };
+  go('run');
+}
+const runTitle = () => RUN.kind === 'warm' ? 'Aufwärmen: Begriffe-Blitz' : ST[RUN.kind].icon + ' ' + (RUN.kind === 'X' ? '' : 'Station: ') + ST[RUN.kind].name;
+const merkBox = k => `<div class="merk"><b>Das musst du wissen</b><ul>${ST[k].merk.map(m => `<li>${m}</li>`).join('')}</ul></div>`;
+
+function renderRun() {
+  crumb(runTitle());
+  if (RUN.finished) return renderRunEnd();
+  const isSt = RUN.kind in ST;
+  if (RUN.showMerk) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">${RUN.kind === 'X' ? 'Rechnen' : 'Station'}</div><h1>${esc(runTitle())}</h1></header>
+      ${merkBox(RUN.kind)}
+      <p class="muted small">Geschafft, wenn du mindestens sechs Aufgaben gemacht hast und die letzten drei hintereinander richtig sind.${RUN.kind === 'X' || RUN.kind === 'H' ? ' Papier und Stift bereitlegen – hier wird gerechnet.' : ''}</p>
+      <div class="row"><button class="btn" id="los">Los</button></div>`;
+    const l = document.getElementById('los'); l.focus({ preventScroll: true }); l.onclick = () => { RUN.showMerk = false; render(); };
+    return;
+  }
+  // Generatoraufgaben, die wiederkommen, bekommen neue Zahlen
+  const it = RUN.queue[RUN.idx];
+  const prog = isSt ? `<span>Richtig in Folge:</span><span class="dots">${[0, 1, 2].map(i => `<i class="${i < RUN.streak ? 'on' : ''}"></i>`).join('')}</span><span>· ${RUN.count} gemacht</span>`
+    : `<span>Aufgabe ${RUN.idx + 1} von ${RUN.queue.length}</span>`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div></header>
+    <div class="progress">${prog}${isSt ? '<button class="linkbtn" id="merkAuf" style="margin-left:auto">Merkwissen</button>' : ''}</div>
+    <div class="card" id="karte"></div><div id="merkHier"></div>`;
+  if (isSt) document.getElementById('merkAuf').onclick = () => { const m = document.getElementById('merkHier'); m.innerHTML = m.innerHTML ? '' : merkBox(RUN.kind); };
+  karte(document.getElementById('karte'), it, RUN.A, ok => answered(it, ok));
+}
+// eine Übungskarte: Felder, Prüfen, Rückmeldung mit Rechenweg
+function karte(host, it, A, done) {
+  const zeichne = fertig => {
+    host.innerHTML = itemHtml(it, A, fertig) + (fertig ? '' : tippBox(it.h ? [].concat(it.h) : null, 'Tipp')) + `<div class="fb" aria-live="polite">${fertig ? '' : '<div class="row"><button class="btn" id="pruef">Prüfen</button><span class="small muted" id="fehlt"></span></div>'}</div>`;
+    tippBinden(host);
+  };
+  zeichne(false);
+  felderBinden(host, A);
+  const pruefen = () => {
+    const w = itemWert(it, A);
+    if (w.some(x => x.leer)) { document.getElementById('fehlt').textContent = 'Erst alles ausfüllen bzw. antippen.'; return; }
+    const ok = w.every(x => x.ok);
+    zeichne(true);
+    const fb = host.querySelector('.fb');
+    fb.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Noch nicht ganz.'}</b> ${it.e || ''}</div><div class="row"><button class="btn" id="weiterK">Weiter</button></div>`;
+    const b = document.getElementById('weiterK'); b.focus({ preventScroll: true }); b.onclick = () => done(ok);
+  };
+  document.getElementById('pruef').onclick = pruefen;
+  host.querySelectorAll('input[data-k]').forEach(el => el.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return; e.preventDefault();
+    const ins = [...host.querySelectorAll('input[data-k]')], i = ins.indexOf(el);
+    if (i < ins.length - 1 && !ins[i + 1].value) ins[i + 1].focus(); else pruefen();
+  }));
+  const erste = host.querySelector('input[data-k]'); if (erste && matchMedia('(hover: hover)').matches) erste.focus({ preventScroll: true });
+}
+
+function answered(it, ok) {
+  RUN.count++;
+  if (ok) { RUN.right++; RUN.streak++; } else RUN.streak = 0;
+  const st = RUN.kind === 'warm' ? null : RUN.kind;
+  if (st) { const s = S.stat[st] || (S.stat[st] = { r: 0, n: 0 }); s.n++; if (ok) s.r++; }
+  const isSt = RUN.kind in ST;
+  // falsch beantwortete Aufgabe kommt drei Karten später noch einmal – Rechenaufgaben mit neuen Zahlen
+  if (!ok && isSt) RUN.queue.splice(Math.min(RUN.idx + 3, RUN.queue.length), 0, frisch(it, RUN.kind));
+  RUN.idx++;
+  // Station: Nachschub, falls die Karten ausgehen, bevor drei in Folge sitzen
+  if (isSt && RUN.idx >= RUN.queue.length && RUN.count < 14) RUN.queue.push(...shuffle(ST[RUN.kind].items).map(x => frisch(x, RUN.kind)));
+  RUN.geschafft = isSt && RUN.streak >= 3 && RUN.count >= 6;
+  if ((isSt && (RUN.geschafft || RUN.count >= 14)) || (!isSt && RUN.idx >= RUN.queue.length)) {
+    RUN.finished = true;
+    if (!isSt || RUN.geschafft) S.plan[RUN.kind] = true;
+  }
+  save(); render(); window.scrollTo(0, 0);
+}
+function renderRunEnd() {
+  const isSt = RUN.kind in ST, nicht = isSt && !RUN.geschafft;
+  const nextIdx = PLAN.findIndex(p => !S.plan[p.k]);
+  app.innerHTML = `<header class="top"><div class="eyebrow">${esc(runTitle())}</div><h1>${nicht ? 'Noch nicht ganz' : 'Geschafft'}</h1></header>
+    <div class="card"><p><b>${RUN.right} von ${RUN.count}</b> richtig.${RUN.geschafft ? ' Drei in Folge – Station geschafft! 🎉' : ''}</p>
+    ${nicht ? '<p class="muted">Lies das Merkwissen noch einmal und mach noch eine Runde – erst dann ist der Schritt im Plan abgehakt.</p>' : ''}</div>
+    <div class="row">${nicht ? '<button class="btn" id="nochmal">Noch eine Runde</button>' : ''}
+    ${!nicht && nextIdx >= 0 ? `<button class="btn" id="nx">Weiter: ${esc(PLAN[nextIdx].t)}</button>` : ''}
+    ${!nicht && isSt ? '<button class="btn ghost" id="nochmal">Noch eine Runde</button>' : ''}
+    <button class="btn ghost" id="hm">Zum Plan</button></div>`;
+  const nx = document.getElementById('nx'); if (nx) nx.onclick = () => planStep(PLAN[nextIdx].k);
+  const nm = document.getElementById('nochmal'); if (nm) nm.onclick = () => startRun(RUN.kind);
+  document.getElementById('hm').onclick = () => go('home');
+}
+
+// ===================================================================
+// LABORE
+// ===================================================================
+// Jedes Labor hat Aufträge; erledigte stehen in S.lab[k].a (Liste der Nummern)
+const LABS = {
+  labF: { name: 'Feder und Gummiband', icon: '🧪', sub: 'Gewichte anhängen, auf dem Mond messen',
+    auftraege: ['Hänge an die Feder nacheinander mindestens vier verschiedene Anzahlen von Gewichtsstücken.', 'Beantworte die Frage zur Feder.', 'Miss auch mit dem Gummiband mindestens vier Werte und beantworte die Frage dazu.', 'Bring die Feder auf den Mond und häng etwas an.'] },
+  labH: { name: 'Hebel', icon: '⚖️', sub: 'Balken ins Gleichgewicht bringen',
+    auftraege: ['Zweiseitiger Hebel: Bring den Balken dreimal ins Gleichgewicht.', 'Einseitiger Hebel: Finde zweimal die richtige Stelle für den Kraftmesser.', 'Beantworte die Frage zum einseitigen Hebel.'] },
+  labR: { name: 'Rollen und Flaschenzug', icon: '🪝', sub: 'Seil ziehen, Kraft und Weg vergleichen',
+    auftraege: ['Zieh die Last mit jeder der vier Anordnungen mindestens 1 m hoch.', 'Beantworte die Rechenfrage.'] },
+  labT: { name: 'Masse im Weltall', icon: '🚀', sub: 'Trägheitswaage: Masse durch Schwingen bestimmen',
+    auftraege: ['Miss die Schwingzeit für mindestens zwei verschiedene Massen.', 'Beantworte die Frage zur Trägheit.', 'Bestimme die Masse des Rätselkörpers.', 'Beantworte die Frage zum Weltall.'] }
+};
+const labA = k => (S.lab[k] && Array.isArray(S.lab[k].a)) ? S.lab[k].a : [];
+const labFertig = k => labA(k).length >= LABS[k].auftraege.length;
+const labStand = k => { const n = labA(k).length; return n ? `${n} von ${LABS[k].auftraege.length} Aufträgen` : 'noch nicht ausprobiert'; };
+function erledigt(i) {
+  const k = LAB.k, a = labA(k);
+  if (a.includes(i)) return;
+  S.lab[k] = { a: a.concat(i) };
+  if (labFertig(k)) S.plan[k] = true;
+  save(); auftragZeigen();
+}
+function auftragZeigen() {
+  const el = document.getElementById('auftrag'); if (!el) return;
+  const a = labA(LAB.k), L = LABS[LAB.k];
+  el.innerHTML = `<b>Aufträge</b><ul class="auftrag">${L.auftraege.map((t, i) => `<li class="${a.includes(i) ? 'done' : ''}"><span class="c">${a.includes(i) ? '✓' : ''}</span><span>${t}</span></li>`).join('')}</ul>
+    ${labFertig(LAB.k) ? `<p><b>🎉 Alle Aufträge erledigt!</b></p><div class="row"><button class="btn" id="labWeiter">Zum Plan</button></div>` : ''}`;
+  const b = document.getElementById('labWeiter'); if (b) b.onclick = () => go('home');
+}
+function startLab(k) { LAB = { k }; go('lab'); }
+function renderLab() {
+  const L = LABS[LAB.k];
+  crumb('Labor: ' + L.name);
+  app.innerHTML = `<header class="top"><div class="eyebrow">Labor</div><h1>${L.icon} ${esc(L.name)}</h1></header>
+    <div class="card lab" id="labBox"></div><div class="card" id="auftrag"></div>`;
+  auftragZeigen();
+  ({ labF: labFeder, labH: labHebel, labR: labRollen, labT: labTraeg })[LAB.k](document.getElementById('labBox'));
+}
+// kleine Frage im Labor: wahl- oder num-Feld mit sofortiger Prüfung
+function labFrage(host, id, item, onOk) {
+  const A = {}; it0(item, id);
+  const box = document.createElement('div'); box.className = 'lfrage'; host.appendChild(box);
+  const zeig = (fertig, ok) => {
+    box.innerHTML = itemHtml(item, A, fertig) + (fertig ? `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig!' : '✗ Noch nicht.'}</b> ${ok ? item.e : 'Schau dir das Experiment noch einmal genau an.'}</div>${ok ? '' : '<div class="row"><button class="btn ghost" type="button" data-nochmal>Noch einmal</button></div>'}</div>` : '<div class="row"><button class="btn" type="button" data-pruef>Prüfen</button><span class="small muted" data-fehlt></span></div>');
+    felderBinden(box, A);
+    const p = box.querySelector('[data-pruef]');
+    if (p) {
+      p.onclick = () => { const w = itemWert(item, A); if (w.some(x => x.leer)) { box.querySelector('[data-fehlt]').textContent = 'Erst alles ausfüllen bzw. antippen.'; return; } const ok2 = w.every(x => x.ok); zeig(true, ok2); if (ok2) onOk(); };
+      box.querySelectorAll('input[data-k]').forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); p.click(); } }));
+    }
+    const n = box.querySelector('[data-nochmal]'); if (n) n.onclick = () => { Object.keys(A).forEach(k => { if (!k.endsWith('#o')) delete A[k]; }); zeig(false); };
+  };
+  zeig(false);
+}
+function it0(item, id) { item.id = id; return item; }
+
+// ---------- Labor: Feder und Gummiband ----------
+function labFeder(host) {
+  const GUMMI = [0, 0.8, 2.0, 3.8, 6.0, 8.4, 10.0]; // Beispielwerte in cm für 0 … 6 Stücke à 50 g (Modell)
+  const st = LAB.st || (LAB.st = { n: 0, art: 'feder', ort: 'erde', mess: { feder: {}, gummi: {}, mond: {} } });
+  host.innerHTML = `<p class="small muted">Jedes Gewichtsstück hat 50 g. Tippe auf <b>+</b> und <b>−</b>. Jede Messung landet automatisch in der Tabelle.</p>
+    <div class="row"><div class="seg" id="art"><button data-v="feder">Schraubenfeder</button><button data-v="gummi">Gummiband</button></div>
+    <div class="seg" id="ort"><button data-v="erde">🌍 Erde</button><button data-v="mond">🌙 Mond</button></div></div>
+    <div class="labfig" id="fig"></div>
+    <div class="row"><button class="btn ghost" id="minus" aria-label="Gewichtsstück abnehmen">−</button><button class="btn" id="plus" aria-label="Gewichtsstück anhängen">+ Gewichtsstück</button></div>
+    <div class="anzeige" id="anz"></div>
+    <div class="tabwrap" id="tab"></div>`;
+  const F = () => st.n * 0.5 / (st.ort === 'mond' ? 6 : 1);
+  const ext = () => st.art === 'gummi' ? GUMMI[st.n] : F() * 3; // Feder: 3 cm pro N
+  const mkey = () => st.ort === 'mond' ? 'mond' : st.art;
+  const draw = () => {
+    host.querySelectorAll('#art button').forEach(b => b.classList.toggle('on', b.dataset.v === st.art));
+    host.querySelectorAll('#ort button').forEach(b => b.classList.toggle('on', b.dataset.v === st.ort));
+    if (st.art === 'gummi' && st.ort === 'mond') st.ort = 'erde';
+    const x = ext(), sc = 14, top = 30, L0 = 70, bot = top + L0 + x * sc;
+    let s = `<svg viewBox="0 0 320 ${top + L0 + 10 * sc + 120}" role="img" aria-label="${st.art === 'feder' ? 'Feder' : 'Gummiband'} mit ${st.n} Gewichtsstücken">`;
+    s += `<rect x="40" y="10" width="160" height="10" class="f-muted"/><line x1="120" x2="120" y1="20" y2="${top}" class="s-ink" stroke-width="2"/>`;
+    if (st.art === 'feder') {
+      const w = 14, turns = 12, len = bot - top - 20; let d = `M120 ${top} v10`;
+      for (let i = 0; i < turns; i++) { const y = top + 10 + len * (i + .5) / turns; d += ` L${120 + (i % 2 ? -w : w)} ${y}`; }
+      d += ` L120 ${bot - 10} V${bot}`; s += `<path d="${d}" class="s-ink" stroke-width="2.2" stroke-linejoin="round"/>`;
+    } else {
+      const wB = Math.max(3, 9 - x * .5); s += `<path d="M${120 - wB} ${top} Q${120 - wB - 4} ${(top + bot) / 2} ${120 - 2} ${bot} L${120 + 2} ${bot} Q${120 + wB + 4} ${(top + bot) / 2} ${120 + wB} ${top} Z" fill="#c75b39" stroke="#7a2e19" stroke-width="1.2"/>`;
+    }
+    // Lineal: 0 bei der unbelasteten Länge
+    const z = top + L0;
+    s += `<rect x="200" y="${z - 8}" width="56" height="${10 * sc + 16}" class="f-paper"/>`;
+    for (let c = 0; c <= 10; c++) { const y = z + c * sc; s += `<line x1="200" x2="${c % 5 ? 212 : 220}" y1="${y}" y2="${y}" class="s-ink"/><text x="226" y="${y + 4}" font-size="11">${c}</text>`; }
+    s += `<text x="228" y="${z - 14}" font-size="11" text-anchor="middle">cm</text>`;
+    s += `<line x1="128" x2="200" y1="${bot}" y2="${bot}" stroke="#d33" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+    // Haken und Gewichte
+    s += `<path d="M120 ${bot} v6 a5 5 0 1 0 5 5" class="s-ink" stroke-width="2"/>`;
+    for (let i = 0; i < st.n; i++) s += `<rect x="104" y="${bot + 16 + i * 13}" width="32" height="12" rx="2" class="f-metall"/>`;
+    if (st.ort === 'mond') s += `<text x="20" y="${top + 40}" font-size="22">🌙</text>`;
+    host.querySelector('#fig').innerHTML = s + '</svg>';
+    const m = st.n * 50;
+    host.querySelector('#anz').innerHTML = `<span>Masse: <b>${m} g</b></span><span>Gewichtskraft: <b>${st.ort === 'mond' ? '≈ ' : ''}${zahl(F())} N</b></span><span>Verlängerung: <b>${zahl(x)} cm</b></span>`;
+    if (st.n > 0) st.mess[mkey()][st.n] = [F(), x];
+    tabelle();
+    if (Object.keys(st.mess.feder).length >= 4) erledigt(0);
+    if (st.gummiFrage && Object.keys(st.mess.gummi).length >= 4) erledigt(2);
+    if (st.ort === 'mond' && st.n > 0) erledigt(3);
+  };
+  const tabelle = () => {
+    const rows = [['feder', 'Feder (Erde)'], ['gummi', 'Gummiband (Erde)'], ['mond', 'Feder (Mond)']].filter(r => Object.keys(st.mess[r[0]]).length);
+    host.querySelector('#tab').innerHTML = rows.map(r => `<p class="small"><b>${r[1]}</b></p><table class="mess"><tr><th>Masse</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${n * 50} g</td>`).join('')}</tr>
+      <tr><th>Kraft</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${r[0] === 'mond' ? '≈ ' : ''}${zahl(st.mess[r[0]][n][0])} N</td>`).join('')}</tr>
+      <tr><th>Verlängerung</th>${Object.keys(st.mess[r[0]]).sort((a, b) => a - b).map(n => `<td>${zahl(st.mess[r[0]][n][1])} cm</td>`).join('')}</tr></table>`).join('');
+  };
+  host.querySelector('#plus').onclick = () => { if (st.n < 6) { st.n++; draw(); } };
+  host.querySelector('#minus').onclick = () => { if (st.n > 0) { st.n--; draw(); } };
+  host.querySelectorAll('#art button').forEach(b => b.onclick = () => { st.art = b.dataset.v; if (st.art === 'gummi') st.ort = 'erde'; draw(); });
+  host.querySelectorAll('#ort button').forEach(b => b.onclick = () => { st.ort = b.dataset.v; if (st.ort === 'mond') st.art = 'feder'; draw(); });
+  draw();
+  labFrage(host, 'lf1', { q: '<b>Frage zur Feder:</b> Vergleiche in der Tabelle 1 Gewichtsstück mit 2 und 4 Gewichtsstücken. Was fällt dir auf?',
+    fields: [{ t: 'wahl', o: ['Doppelte Kraft – doppelte Verlängerung', 'Doppelte Kraft – gleiche Verlängerung', 'Doppelte Kraft – halbe Verlängerung', 'Die Verlängerung ist jedes Mal zufällig'], a: 0 }],
+    e: 'Genau: Die Verlängerung ist proportional zur Kraft – das Hookesche Gesetz.' }, () => erledigt(1));
+  labFrage(host, 'lf2', { q: '<b>Frage zum Gummiband:</b> Vergleiche die Schritte von Gewichtsstück zu Gewichtsstück. Wie dehnt sich das Gummiband?',
+    fields: [{ t: 'wahl', o: ['ungleichmäßig – jeder Schritt ist anders groß', 'genau gleichmäßig, genauso wie die Schraubenfeder', 'gar nicht – es bleibt gleich lang', 'immer genau 1,5 cm pro Gewichtsstück'], a: 0 }],
+    e: 'Beim Gummiband sind die Schritte verschieden groß. Deshalb baut man Kraftmesser mit Federn. (Die Gummiband-Werte hier sind Beispielwerte – jedes Gummiband verhält sich etwas anders.)' }, () => { st.gummiFrage = true; if (Object.keys(st.mess.gummi).length >= 4) erledigt(2); });
+}
+
+// ---------- Labor: Hebel ----------
+function labHebel(host) {
+  const st = LAB.st || (LAB.st = { mode: 'zwei', tool: 'plus', L: {}, R: {}, ang: 0, zw: 0, ew: 0, ein: null, okZwei: false, okEin: false });
+  const neueZwei = () => {
+    st.L = {}; st.R = {};
+    const g = rnd(1, 2);
+    for (let i = 0; i < g; i++) { const p = rnd(1, 5); st.L[p] = (st.L[p] || 0) + rnd(1, 3); }
+    st.okZwei = false;
+  };
+  const neueEin = () => {
+    for (;;) { const G = pick([2, 3, 4, 6, 8]), p = rnd(2, 5), k = rnd(p + 1, 8), F = G * p / k; if (F === Math.round(F) && k !== p) { st.ein = { G, p, k: null, ziel: F, sol: k }; break; } }
+    st.okEin = false;
+  };
+  if (!Object.keys(st.L).length) neueZwei();
+  if (!st.ein) neueEin();
+  host.innerHTML = `<div class="row"><div class="seg" id="mode"><button data-v="zwei">zweiseitig</button><button data-v="ein">einseitig</button></div></div>
+    <p class="small muted" id="anl"></p>
+    <div class="labfig" id="fig"></div>
+    <div class="row" id="tools"></div>
+    <div class="anzeige" id="anz"></div>`;
+  const mom = o => Object.keys(o).reduce((s, p) => s + p * o[p], 0);
+  const Nsum = o => Object.keys(o).reduce((s, p) => s + o[p], 0);
+  const draw = () => {
+    host.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === st.mode));
+    if (st.mode === 'zwei') return drawZwei();
+    return drawEin();
+  };
+  const drawZwei = () => {
+    host.querySelector('#anl').innerHTML = 'Links hängen schon Gewichtsstücke (je <b>1 N</b>). Tippe rechts auf die Löcher, um Gewichtsstücke anzuhängen. Der Abstand von Loch zu Loch ist <b>10 cm</b>.';
+    host.querySelector('#tools').innerHTML = `<div class="seg" id="tool"><button data-v="plus">➕ anhängen</button><button data-v="minus">➖ abnehmen</button></div><button class="btn ghost" id="neu">Neue Aufgabe</button>`;
+    host.querySelectorAll('#tool button').forEach(b => { b.classList.toggle('on', b.dataset.v === st.tool); b.onclick = () => { st.tool = b.dataset.v; draw(); }; });
+    host.querySelector('#neu').onclick = () => { neueZwei(); st.ang = 0; draw(); };
+    const ml = mom(st.L), mr = mom(st.R), ziel = Math.max(-14, Math.min(14, (mr - ml) * 2.2));
+    const svgTxt = (ang) => {
+      let s = `<svg viewBox="0 0 360 250" role="img" aria-label="Zweiseitiger Hebel"><path d="M180 128 l-18 60 h36 z" class="f-ton"/><rect x="120" y="188" width="120" height="8" class="f-muted"/>`;
+      s += `<g transform="rotate(${ang.toFixed(2)} 180 120)"><rect x="20" y="114" width="320" height="12" rx="3" class="f-holz"/>`;
+      for (let k = 1; k <= 5; k++) for (const sd of [-1, 1]) {
+        const x = 180 + sd * k * 30, o = sd < 0 ? st.L : st.R, n = o[k] || 0;
+        s += `<circle cx="${x}" cy="120" r="3.2" class="f-ink"/><text x="${x}" y="107" text-anchor="middle" font-size="13" class="f-muted">${k}</text>`;
+        if (n) { s += `<line x1="${x}" x2="${x}" y1="120" y2="134" class="s-ink" stroke-width="1.5"/>`; for (let i = 0; i < n; i++) s += `<rect x="${x - 9}" y="${134 + i * 11}" width="18" height="10" rx="2" class="${sd < 0 ? 'f-blau' : 'f-metall'}"/>`; }
+        if (sd > 0) s += `<rect class="hit" data-p="${k}" x="${x - 15}" y="88" width="30" height="${Math.max(80, 50 + n * 11)}" rx="6"/>`;
+      }
+      s += `</g><circle cx="180" cy="120" r="5" class="f-ink"/></svg>`;
+      return s;
+    };
+    const fig = host.querySelector('#fig');
+    const anim = () => {
+      st.ang += (ziel - st.ang) * 0.18;
+      fig.innerHTML = svgTxt(st.ang);
+      fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const p = +h.dataset.p; if (st.tool === 'plus') { if (Nsum(st.R) < 12) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); });
+      if (Math.abs(ziel - st.ang) > 0.05) animId = requestAnimationFrame(anim); else { st.ang = ziel; animId = null; }
+    };
+    if (animId) cancelAnimationFrame(animId);
+    anim();
+    const gl = ml === mr && mr > 0;
+    const teil = o => Object.keys(o).sort().map(p => `${o[p]} N · ${p * 10} cm`).join(' + ') || '0';
+    host.querySelector('#anz').innerHTML = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span>${gl ? '<span class="gut">✓ Gleichgewicht!</span>' : ''}`;
+    if (gl && !st.okZwei) { st.okZwei = true; st.zw++; if (st.zw >= 3) erledigt(0); }
+  };
+  const drawEin = () => {
+    if (animId) { cancelAnimationFrame(animId); animId = null; } // Balken-Animation des zweiseitigen Hebels stoppen
+    const e = st.ein;
+    host.querySelector('#anl').innerHTML = `Der Drehpunkt ist ganz links. Bei Loch <b>${e.p}</b> hängt eine Last von <b>${e.G} N</b>. Tippe auf ein Loch, um dort den Kraftmesser einzuhaken. Er soll genau <b>${e.ziel} N</b> anzeigen.`;
+    host.querySelector('#tools').innerHTML = `<button class="btn ghost" id="neu">Neue Aufgabe</button>`;
+    host.querySelector('#neu').onclick = () => { neueEin(); draw(); };
+    const F = e.k ? e.G * e.p / e.k : null;
+    let s = `<svg viewBox="0 0 360 250" role="img" aria-label="Einseitiger Hebel"><rect x="14" y="90" width="12" height="130" class="f-muted"/><rect x="20" y="124" width="324" height="12" rx="3" class="f-holz"/><circle cx="26" cy="130" r="7" class="f-ton"/>`;
+    const X = k => 26 + k * 38;
+    for (let k = 1; k <= 8; k++) s += `<circle cx="${X(k)}" cy="130" r="3.2" class="f-ink"/><text x="${X(k) + 9}" y="152" text-anchor="middle" font-size="13" class="f-muted">${k}</text>`;
+    const xl = X(e.p); s += `<line x1="${xl}" x2="${xl}" y1="130" y2="170" class="s-ink" stroke-width="1.5"/>`;
+    for (let i = 0; i < e.G; i++) s += `<rect x="${xl - 9}" y="${170 + i * 9}" width="18" height="8" rx="2" class="f-blau"/>`;
+    if (e.k) {
+      const xk = X(e.k), len = Math.min(18 + F * 6, 80);
+      s += `<line x1="${xk}" x2="${xk}" y1="130" y2="${100 - len}" class="s-ink" stroke-width="1.5"/><rect x="${xk - 10}" y="${8}" width="20" height="${100 - len - 8 + 4}" rx="4" class="f-paper"/>`;
+      s += `<text x="${xk + (xk > 290 ? -14 : 14)}" y="30" font-size="13" font-weight="700" text-anchor="${xk > 290 ? 'end' : 'start'}" style="fill:var(--ton)">${zahl(F)} N</text>`;
+    }
+    for (let k = 1; k <= 8; k++) s += `<rect class="hit" data-p="${k}" x="${X(k) - 19}" y="96" width="38" height="64" rx="6"/>`;
+    const fig = host.querySelector('#fig'); fig.innerHTML = s + '</svg>';
+    fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const k = +h.dataset.p; if (k === e.p) return; e.k = k; draw(); });
+    const gut = F !== null && Math.abs(F - e.ziel) < 1e-9;
+    host.querySelector('#anz').innerHTML = e.k ? `<span>Last: ${e.G} N · ${e.p * 10} cm = <b>${e.G * e.p * 10} Ncm</b></span><span>Kraftmesser: ${zahl(F)} N · ${e.k * 10} cm = <b>${zahl(F * e.k * 10)} Ncm</b></span>${gut ? '<span class="gut">✓ Genau ' + e.ziel + ' N!</span>' : `<span>Ziel: ${e.ziel} N</span>`}` : '<span>Noch kein Kraftmesser eingehakt.</span>';
+    if (gut && !st.okEin) { st.okEin = true; st.ew++; if (st.ew >= 2) erledigt(1); }
+  };
+  host.querySelectorAll('#mode button').forEach(b => b.onclick = () => { st.mode = b.dataset.v; draw(); });
+  draw();
+  labFrage(host, 'lh1', { q: '<b>Frage:</b> Beim einseitigen Hebel hängst du den Kraftmesser weiter weg vom Drehpunkt. Was passiert mit der Anzeige?',
+    fields: [{ t: 'wahl', o: ['Sie wird kleiner.', 'Sie wird größer.', 'Sie bleibt gleich.', 'Sie springt auf null.'], a: 0 }],
+    e: 'Längerer Kraftarm – weniger Kraft. Das Produkt Kraft mal Kraftarm bleibt gleich.' }, () => erledigt(2));
+}
+
+// ---------- Labor: Rollen und Flaschenzug ----------
+function labRollen(host) {
+  const st = LAB.st || (LAB.st = { n: 1, last: 120, s: 0, geschafft: {} });
+  host.innerHTML = `<p class="small muted">Wähle eine Anordnung und zieh am Regler – so ziehst du am Seil. Orange sind die Seilstücke, die die Last tragen.</p>
+    <div class="row"><div class="seg" id="anord"><button data-v="1">feste Rolle</button><button data-v="2">lose Rolle</button><button data-v="4">4 Seile</button><button data-v="6">6 Seile</button></div></div>
+    <div class="row"><span class="small">Last:</span><div class="seg" id="last"><button data-v="60">60 N</button><button data-v="120">120 N</button><button data-v="240">240 N</button></div></div>
+    <div class="labfig" id="fig"></div>
+    <label class="small" for="zug">Seil ziehen</label><input type="range" id="zug" min="0" max="100" step="1" value="0">
+    <div class="anzeige" id="anz"></div>`;
+  const zug = host.querySelector('#zug');
+  const draw = () => {
+    host.querySelectorAll('#anord button').forEach(b => b.classList.toggle('on', +b.dataset.v === st.n));
+    host.querySelectorAll('#last button').forEach(b => b.classList.toggle('on', +b.dataset.v === st.last));
+    const sMax = st.n * 1.2, s = sMax * zug.value / 100, h = s / st.n, F = st.last / st.n;
+    host.querySelector('#fig').innerHTML = rollenSvg(st.n, h, { last: st.last + ' N', F: zahl(F) + ' N', zaehl: st.n > 1 });
+    host.querySelector('#anz').innerHTML = `<span>tragende Seilstücke: <b>${st.n}</b></span><span>Zugkraft: <b>${zahl(F)} N</b></span><span>Seil gezogen: <b>${zahl(s)} m</b></span><span class="${h >= 1 ? 'gut' : ''}">Last gehoben: <b>${zahl(h)} m</b></span>`;
+    if (h >= 1 - 1e-9) { st.geschafft[st.n] = true; if (Object.keys(st.geschafft).length >= 4) erledigt(0); }
+  };
+  host.querySelectorAll('#anord button').forEach(b => b.onclick = () => { st.n = +b.dataset.v; zug.value = 0; draw(); });
+  host.querySelectorAll('#last button').forEach(b => b.onclick = () => { st.last = +b.dataset.v; draw(); });
+  zug.oninput = draw;
+  draw();
+  labFrage(host, 'lr1', { q: '<b>Rechenfrage:</b> Ein Flaschenzug hat 6 tragende Seilstücke. Eine Last von 300 N soll 2 m hoch. Welche Kraft brauchst du und wie viel Seil musst du ziehen?',
+    fields: [{ t: 'num', l: 'F =', a: 50, u: 'N' }, { t: 'num', l: 's =', a: 12, u: 'm' }],
+    e: '300 N : 6 = 50 N. Seil: 6 · 2 m = 12 m. Kraft gespart, Weg dazu – die goldene Regel.' }, () => erledigt(1));
+}
+
+// ---------- Labor: Trägheitswaage (Masse im Weltall) ----------
+function labTraeg(host) {
+  const MASSEN = [100, 200, 400, 800];
+  const st = LAB.st || (LAB.st = { m: 100, mess: {}, raetsel: pick(MASSEN), laeuft: false });
+  const T = m => 0.5 * Math.sqrt(m / 100); // Modell: 100 g → 0,5 s
+  host.innerHTML = `<p class="small muted">So misst man im Weltall die Masse: Ein Wagen hängt zwischen zwei Federn. Man stößt ihn an und stoppt die Zeit für <b>5 Schwingungen</b> (einmal hin und zurück = eine Schwingung). Das Gewicht spielt dabei keine Rolle – nur die Trägheit.</p>
+    <div class="row"><div class="seg" id="masse">${MASSEN.map(m => `<button data-v="${m}">${m} g</button>`).join('')}<button data-v="x">❓ Rätsel</button></div></div>
+    <div class="labfig" id="fig"></div>
+    <div class="row"><button class="btn" id="stoss">Anstoßen und 5 Schwingungen stoppen</button><span class="timer" id="uhr">0,00 s</span></div>
+    <div class="tabwrap" id="tab"></div>`;
+  const masse = () => st.m === 'x' ? st.raetsel : st.m;
+  const bild = x => {
+    const cx = 180 + x, L = 30, R = 330;
+    const feder = (a, b) => { let d = `M${a} 92`; const n = 12; for (let i = 1; i < n; i++) d += ` L${a + (b - a) * i / n} ${92 + (i % 2 ? -8 : 8)}`; return d + ` L${b} 92`; };
+    let s = `<svg viewBox="0 0 360 150" role="img" aria-label="Trägheitswaage"><rect x="20" y="118" width="320" height="6" class="f-muted"/><rect x="20" y="60" width="10" height="64" class="f-muted"/><rect x="330" y="60" width="10" height="64" class="f-muted"/>`;
+    s += `<path d="${feder(L, cx - 26)}" class="s-ink" stroke-width="1.8"/><path d="${feder(cx + 26, R)}" class="s-ink" stroke-width="1.8"/>`;
+    s += `<rect x="${cx - 26}" y="80" width="52" height="26" rx="4" class="f-holz"/><circle cx="${cx - 14}" cy="110" r="6" class="f-ink"/><circle cx="${cx + 14}" cy="110" r="6" class="f-ink"/>`;
+    const m = masse(), hk = st.m === 'x' ? 30 : 10 + Math.sqrt(m) * 1.4; // Rätselkörper verrät sich nicht durch seine Größe
+    s += `<rect x="${cx - 14}" y="${80 - hk}" width="28" height="${hk}" rx="3" class="f-metall"/><text x="${cx}" y="${80 - hk / 2 + 4}" text-anchor="middle" font-size="10" style="fill:#111">${st.m === 'x' ? '?' : m + ' g'}</text>`;
+    return s + '</svg>';
+  };
+  const fig = host.querySelector('#fig'), uhr = host.querySelector('#uhr');
+  const tab = () => {
+    const ks = Object.keys(st.mess);
+    host.querySelector('#tab').innerHTML = ks.length ? `<table class="mess"><tr><th>Körper</th>${ks.map(k => `<td>${k === 'x' ? '❓ Rätsel' : k + ' g'}</td>`).join('')}</tr><tr><th>Zeit für 5 Schwingungen</th>${ks.map(k => `<td>${zahl(st.mess[k])} s</td>`).join('')}</tr></table>` : '';
+  };
+  const draw = () => { host.querySelectorAll('#masse button').forEach(b => b.classList.toggle('on', String(st.m) === b.dataset.v)); fig.innerHTML = bild(0); tab(); };
+  host.querySelectorAll('#masse button').forEach(b => b.onclick = () => { if (st.laeuft) return; st.m = b.dataset.v === 'x' ? 'x' : +b.dataset.v; uhr.textContent = '0,00 s'; draw(); });
+  host.querySelector('#stoss').onclick = () => {
+    if (st.laeuft) return; st.laeuft = true;
+    const per = T(masse()), dauer = 5 * per, t0 = performance.now();
+    const step = now => {
+      const t = Math.min((now - t0) / 1000, dauer);
+      fig.innerHTML = bild(60 * Math.sin(2 * Math.PI * t / per));
+      uhr.textContent = zahl(t) + ' s';
+      if (t < dauer) animId = requestAnimationFrame(step);
+      else {
+        animId = null; st.laeuft = false; st.mess[st.m] = Math.round(dauer * 100) / 100; tab();
+        if (Object.keys(st.mess).filter(k => k !== 'x').length >= 2) erledigt(0);
+        if (st.raetselOk && st.mess.x) erledigt(2);
+      }
+    };
+    animId = requestAnimationFrame(step);
+  };
+  draw();
+  labFrage(host, 'lt1', { q: '<b>Frage zur Trägheit:</b> Vergleiche deine Messungen. Was stimmt?',
+    fields: [{ t: 'wahl', o: ['Je größer die Masse, desto länger dauert eine Schwingung.', 'Je größer die Masse, desto schneller schwingt der Wagen.', 'Die Masse hat keinen Einfluss auf das Schwingen.', 'Nur leichte Körper schwingen überhaupt.'], a: 0 }],
+    e: 'Eine große Masse ist träge: Sie lässt sich schwer beschleunigen und abbremsen und schwingt deshalb langsamer.' }, () => erledigt(1));
+  labFrage(host, 'lt2', { q: '<b>Rätselkörper:</b> Miss den Rätselkörper und vergleiche mit deinen anderen Messungen. Welche Masse hat er?',
+    fields: [{ t: 'wahl', o: MASSEN.map(m => m + ' g'), a: MASSEN.indexOf(st.raetsel), fix: 1 }],
+    e: 'Gleiche Schwingzeit – gleiche Masse. Genau so wiegen Astronauten sich auf der Raumstation.' }, () => { st.raetselOk = true; if (st.mess.x) erledigt(2); });
+  labFrage(host, 'lt3', { q: '<b>Frage zum Weltall:</b> Warum funktioniert diese Waage auch im Weltall, ein Federkraftmesser aber nicht?',
+    fields: [{ t: 'wahl', o: ['Sie misst die Trägheit, und die gibt es auch ohne Gewichtskraft.', 'Im Weltall sind alle Körper schwerer als auf der Erde.', 'Die Federn sind im Weltall länger und messen besser.', 'Sie funktioniert im Weltall leider genauso wenig wie der Kraftmesser.'], a: 0 }],
+    e: 'Im Weltall fehlt die Gewichtskraft, darum zeigt der Kraftmesser nichts an. Die Masse und damit die Trägheit bleiben aber.' }, () => erledigt(3));
+}
+
+// ===================================================================
+// PROBEARBEITEN
+// ===================================================================
+const P = (id, h, q, fields, e, fig) => ({ id, h, q, fields, e, fig });
+const PROBEN = {
+  A: { titel: 'Probearbeit A', items: [
+    P('a1', '1. Wirkungen einer Kraft', 'Welche Wirkung hat die Kraft vor allem?', [{ t: 'zuord', cats: VB, rows: [['Eine Getränkedose wird zerdrückt.', 0], ['Wind treibt ein Segelboot an.', 1], ['Ein Kissen wird zusammengedrückt.', 0], ['Ein Skateboard wird auf ebener Straße abgebremst.', 1]] }],
+      'Wind beschleunigt das Boot, Bremsen macht das Skateboard langsamer – Bewegungsänderungen. Dose und Kissen werden verformt.'),
+    P('a2', '2. Kennzeichen einer Kraft', 'Kreuze alle Kennzeichen einer Kraft an.', [{ t: 'multi', o: ['Betrag', 'Richtung', 'Angriffspunkt', 'Farbe', 'Masse'], a: [0, 1, 2], p: 3 }],
+      'Betrag, Richtung und Angriffspunkt – deshalb zeichnet man Kräfte als Pfeile.'),
+    P('a3', '3. Gewichtskraft und Masse', 'Rechne mit 1 kg ≈ 10 N.', [{ t: 'num', l: '3 kg ≈', a: 30, u: 'N' }, { t: 'num', l: '450 g ≈', a: 4.5, u: 'N' }, { t: 'num', l: '120 N ≈', a: 12, u: 'kg' }, { t: 'num', l: '2,5 kN =', a: 2500, u: 'N' }],
+      '3 kg · 10 = 30 N; 450 g = 4,5 · 100 g → 4,5 N; 120 N : 10 = 12 kg; 1 kN = 1000 N, also 2500 N.'),
+    P('a4', '4. Auf dem Mond', 'Ein Astronaut hat auf der Erde eine Masse von 72 kg.', [{ t: 'wahl', l: 'Welche Masse hat er auf dem Mond?', o: ['72 kg', '12 kg', '720 kg', '0 kg'], a: 0 }, { t: 'wahl', l: 'Welche Gewichtskraft hat er auf dem Mond ungefähr?', o: ['120 N', '720 N', '12 N', '4320 N'], a: 0 }],
+      'Die Masse bleibt 72 kg. Auf der Erde: 720 N, auf dem Mond etwa ein Sechstel: 720 N : 6 = 120 N.'),
+    P('a5', '5. Federkraftmesser ablesen', 'Lies die beiden Kraftmesser ab.', [{ t: 'num', l: 'links:', a: 6.5, u: 'N', tol: .25 }, { t: 'num', l: 'rechts:', a: 140, u: 'cN', tol: 5 }],
+      'Links ist ein kleiner Strich 0,5 N wert, rechts 10 cN.', `<div class="row" style="justify-content:center">${skalaSvg(10, 'N', 0.5, 1, 6.5)}${skalaSvg(200, 'cN', 10, 50, 140)}</div>`),
+    P('a6', '6. Hookesches Gesetz', 'Eine Feder wird bei 2 N um 3 cm länger.', [{ t: 'num', l: 'Verlängerung bei 5 N:', a: 7.5, u: 'cm' }, { t: 'num', l: 'Kraft bei 12 cm Verlängerung:', a: 8, u: 'N' }],
+      'Pro 1 N sind es 1,5 cm. 5 N → 7,5 cm. 12 cm : 1,5 cm = 8, also 8 N.'),
+    P('a7', '7. Hebelarten', 'Einseitiger oder zweiseitiger Hebel?', [{ t: 'zuord', cats: EZ, rows: [['Heckenschere', 1], ['Knoblauchpresse', 0], ['Balkenwaage', 1], ['Pinzette', 0]] }],
+      'Zweiseitig: Der Drehpunkt liegt zwischen Kraft und Last (Heckenschere, Balkenwaage). Einseitig: Drehpunkt am Ende, Kraft und Last auf derselben Seite (Knoblauchpresse, Pinzette).'),
+    P('a8', '8. Die Wippe', 'Ein Kind (32 kg) sitzt 2,5 m vom Drehpunkt einer Wippe entfernt. Auf der anderen Seite will sich ein Erwachsener (80 kg) hinsetzen. Wie weit vom Drehpunkt muss er sitzen, damit die Wippe im Gleichgewicht ist? Schreib Gegeben, Gesucht, Hebelgesetz und Rechnung auf dein Papier – hier trägst du nur das Ergebnis ein.',
+      [{ t: 'num', l: 'l₂ =', a: 1, u: 'm', p: 6 }],
+      'Gegeben: F₁ = 320 N, l₁ = 2,5 m, F₂ = 800 N. Gesucht: l₂. F₁ · l₁ = F₂ · l₂ → 320 N · 2,5 m = 800 Nm; 800 Nm : 800 N = 1 m.', hebelSvg({ typ: 'zwei', links: { F: '32 kg', l: '2,5 m' }, rechts: { F: '80 kg', l: '? m' }, xl: 40, xr: 230 })),
+    P('a9', '9. Der Nussknacker', 'Die Hand drückt mit 30 N, 16 cm vom Drehpunkt entfernt. Die Nuss liegt 4 cm vom Drehpunkt entfernt. Mit welcher Kraft wird die Nuss gedrückt?',
+      [{ t: 'num', l: 'F₁ · l₁ =', a: 480, u: 'Ncm', p: 2 }, { t: 'num', l: 'F₂ =', a: 120, u: 'N', p: 2 }],
+      '30 N · 16 cm = 480 Ncm. 480 Ncm : 4 cm = 120 N.', hebelSvg({ typ: 'ein', last: { F: '? N', l: '4 cm' }, kraft: { F: '30 N', l: '16 cm' }, xl: 98, xk: 300 })),
+    P('a10', '10. Feste und lose Rolle', '', [{ t: 'wahl', l: 'Eine feste Rolle …', o: ['ändert nur die Richtung der Kraft.', 'halbiert die nötige Kraft.', 'verdoppelt den Seilweg.', 'macht die Last selbst um die Hälfte leichter.'], a: 0 }, { t: 'wahl', l: 'Mit einer losen Rolle braucht man …', o: ['die halbe Kraft und doppelt so viel Seil.', 'die doppelte Kraft und halb so viel Seil.', 'die gleiche Kraft und gleich viel Seil.', 'gar keine Kraft mehr.'], a: 0 }, { t: 'wahl', l: 'Ist die feste Rolle ein Kraftwandler?', o: ['nein', 'ja'], a: 0, fix: 1 }],
+      'Feste Rolle = Umlenkrolle, sie spart keine Kraft und ist darum kein Kraftwandler. Lose Rolle: halbe Kraft, doppelter Weg.'),
+    P('a11', '11. Der Flaschenzug', 'Eine Last von 240 N soll mit dem abgebildeten Flaschenzug 1,5 m hoch gehoben werden.',
+      [{ t: 'num', l: 'Anzahl der tragenden Seilstücke:', a: 4, u: '', tol: 0 }, { t: 'num', l: 'Zugkraft F =', a: 60, u: 'N' }, { t: 'num', l: 'Seilweg s =', a: 6, u: 'm', p: 2 }],
+      'Die Last hängt an 4 Seilstücken. 240 N : 4 = 60 N. Seil: 4 · 1,5 m = 6 m.', rollenSvg(4, 0, { last: '240 N', neutral: true })),
+    P('a12', '12. Beschleunigung und Trägheit', '', [{ t: 'wahl', l: 'Ein leerer und ein vollgepackter Bollerwagen werden gleich stark angeschoben. Welcher wird stärker beschleunigt?', o: ['der leere', 'der volle', 'beide gleich'], a: 0, fix: 1 }, { t: 'wahl', l: 'Welche Eigenschaft eines Körpers ist der Grund dafür?', o: ['seine Trägheit', 'seine Farbe', 'seine Form', 'seine Temperatur'], a: 0 }],
+      'Bei gleicher Kraft wird der Körper mit der kleineren Masse stärker beschleunigt. Grund: Trägheit – je mehr Masse, desto träger.')
+  ] },
+  B: { titel: 'Probearbeit B', items: [
+    P('b1', '1. Wirkungen einer Kraft', 'Welche Wirkung hat die Kraft vor allem?', [{ t: 'zuord', cats: VB, rows: [['Ein Radfahrer bremst.', 1], ['Ein Auto bekommt eine Delle.', 0], ['Ein Schwamm wird zusammengedrückt.', 0], ['Ein Hund zieht einen Schlitten an.', 1]] }],
+      'Bremsen und Anziehen ändern die Bewegung. Delle und Schwamm sind Verformungen.'),
+    P('b2', '2. Elastisch oder plastisch?', 'Wie ist die Verformung?', [{ t: 'zuord', cats: EP, rows: [['Trampolin beim Springen', 0], ['Delle im Fahrradhelm', 1], ['gedehntes Gummiband', 0], ['Figur aus Knete', 1]] }],
+      'Elastisch geht von allein zurück, plastisch bleibt.'),
+    P('b3', '3. Umrechnen', 'Rechne mit 1 kg ≈ 10 N.', [{ t: 'num', l: '750 g ≈', a: 7.5, u: 'N' }, { t: 'num', l: '45 N ≈', a: 4.5, u: 'kg' }, { t: 'num', l: '0,8 kN =', a: 800, u: 'N' }, { t: 'num', l: '3 N =', a: 300, u: 'cN' }],
+      '750 g → 7,5 N; 45 N : 10 = 4,5 kg; 0,8 kN = 800 N; 1 N = 100 cN, also 300 cN.'),
+    P('b4', '4. Masse und Gewichtskraft', 'Kreuze alle richtigen Aussagen an.', [{ t: 'multi', o: ['Die Gewichtskraft zeigt zum Erdmittelpunkt.', 'Die Masse ist auf dem Mond dieselbe wie auf der Erde.', 'Die Gewichtskraft hängt vom Ort ab.', 'Ein Körper mit 1 kg hat überall 10 N Gewichtskraft.', 'Im Weltall hat ein Körper keine Masse mehr.'], a: [0, 1, 2], p: 3 }],
+      'Masse bleibt überall gleich, die Gewichtskraft hängt vom Ort ab und zeigt zum Erdmittelpunkt.'),
+    P('b5', '5. Federkraftmesser ablesen', 'Lies die beiden Kraftmesser ab.', [{ t: 'num', l: 'links:', a: 3.6, u: 'N', tol: .1 }, { t: 'num', l: 'rechts:', a: 340, u: 'cN', tol: 10 }],
+      'Links ist ein kleiner Strich 0,2 N wert, rechts 20 cN.', `<div class="row" style="justify-content:center">${skalaSvg(5, 'N', 0.2, 1, 3.6)}${skalaSvg(500, 'cN', 20, 100, 340)}</div>`),
+    P('b6', '6. Feder und Gummiband', 'Eine Feder wird bei 1,5 N um 6 cm länger.', [{ t: 'num', l: 'Verlängerung bei 4,5 N:', a: 18, u: 'cm' }, { t: 'wahl', l: 'Warum baut man Kraftmesser nicht mit Gummibändern?', o: ['Gummi dehnt sich nicht gleichmäßig.', 'Gummi ist zu schwer.', 'Gummi dehnt sich gar nicht.', 'Gummibänder sind viel zu teuer für Kraftmesser.'], a: 0 }],
+      '4,5 N ist das Dreifache von 1,5 N, also 3 · 6 cm = 18 cm. Gummi dehnt sich ungleichmäßig.'),
+    P('b7', '7. Ist die Wippe im Gleichgewicht?', 'Links sitzt ein Kind (40 kg) 1,5 m vom Drehpunkt. Rechts sitzt ein Kind (30 kg) 2,2 m vom Drehpunkt.',
+      [{ t: 'num', l: 'links: F · l =', a: 600, u: 'Nm', p: 2 }, { t: 'num', l: 'rechts: F · l =', a: 660, u: 'Nm', p: 2 }, { t: 'wahl', l: 'Was passiert?', o: ['links geht nach unten', 'rechts geht nach unten', 'Gleichgewicht'], a: 1, fix: 1 }],
+      'Links 400 N · 1,5 m = 600 Nm, rechts 300 N · 2,2 m = 660 Nm. Rechts ist mehr, also geht rechts nach unten.', hebelSvg({ typ: 'zwei', links: { F: '40 kg', l: '1,5 m' }, rechts: { F: '30 kg', l: '2,2 m' }, ll: 1.5, lr: 2.2 })),
+    P('b8', '8. Der Ziehbrunnen', 'Am Hebebaum eines Ziehbrunnens hängt 3 m vom Drehpunkt ein Eimer mit Wasser (150 N). Auf der anderen Seite soll ein Stein (450 N) den Eimer im Gleichgewicht halten.',
+      [{ t: 'num', l: 'F · l (Eimer) =', a: 450, u: 'Nm', p: 2 }, { t: 'num', l: 'Abstand des Steins l =', a: 1, u: 'm', p: 2 }, { t: 'wahl', l: 'Der Hebebaum ist ein …', o: EZ.map(x => x + 'er Hebel'), a: 1, fix: 1 }],
+      '150 N · 3 m = 450 Nm. 450 Nm : 450 N = 1 m. Der Drehpunkt liegt zwischen Stein und Eimer: zweiseitiger Hebel.'),
+    P('b9', '9. Die Schubkarre', 'In einer Schubkarre liegen Steine mit 600 N, 40 cm von der Radachse (Drehpunkt) entfernt. Die Griffe sind 1,2 m von der Achse entfernt. Mit welcher Kraft musst du die Griffe hochheben? Rechenweg auf dein Papier, hier nur das Ergebnis.',
+      [{ t: 'num', l: 'F₁ =', a: 200, u: 'N', p: 4 }],
+      '40 cm = 0,4 m. 600 N · 0,4 m = 240 Nm. 240 Nm : 1,2 m = 200 N.'),
+    P('b10', '10. Feste oder lose Rolle?', 'Ordne zu.', [{ t: 'zuord', cats: FL, rows: [['spart keine Kraft, ist kein Kraftwandler', 0], ['man muss doppelt so viel Seil ziehen', 1], ['hängt am Haken der Last', 1], ['man zieht nach unten, die Last geht nach oben – sonst ändert sich nichts', 0]] }],
+      'Fest: lenkt nur um, spart keine Kraft. Lose: hängt an der Last, halbe Kraft, doppelter Seilweg.'),
+    P('b11', '11. Der Flaschenzug', 'Mit einem Flaschenzug hebst du eine Last von 360 N. Du brauchst dafür nur 60 N.',
+      [{ t: 'num', l: 'Anzahl der tragenden Seilstücke:', a: 6, u: '', tol: 0, p: 2 }, { t: 'num', l: 'Seilweg, wenn die Last 0,5 m steigt:', a: 3, u: 'm', p: 2 }],
+      '360 N : 60 N = 6 Seilstücke. Seil: 6 · 0,5 m = 3 m.'),
+    P('b12', '12. Masse im Weltall', 'Auf einer Raumstation zeigt ein Federkraftmesser nichts an. Die Astronauten bestimmen ihre Masse mit einer Schwingwaage.', [{ t: 'wahl', l: 'Ein schwerer Astronaut schwingt auf der Waage …', o: ['langsamer als ein leichter', 'schneller als ein leichter', 'genauso schnell wie ein leichter'], a: 0, fix: 1 }, { t: 'wahl', l: 'Was misst die Schwingwaage eigentlich?', o: ['die Trägheit', 'die Gewichtskraft', 'die Größe', 'die Temperatur'], a: 0 }],
+      'Mehr Masse ist träger und schwingt langsamer. Die Waage misst die Trägheit – die gibt es auch ohne Gewichtskraft.')
+  ] }
+};
+Object.values(PROBEN).forEach(p => { p.max = p.items.reduce((n, it) => n + it.fields.reduce((m, f) => m + feldMax(f), 0), 0); });
+function grade(pct) { return pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 25 ? '5' : '6'; }
+const itemPunkte = (it, A) => itemWert(it, A).reduce((n, w) => n + w.pts, 0);
+const itemMax = it => it.fields.reduce((n, f) => n + feldMax(f), 0);
+
+function renderProbe() {
+  const PR = PROBEN[PKEY];
+  crumb(PR.titel);
+  const P0 = S.probe[PKEY];
+  if (!P0) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">${PR.titel}</div><h1>📝 Klassenarbeit üben</h1>
+      <p class="muted">${PR.items.length} Aufgaben, ${PR.max} Punkte, 45 Minuten. Leg Papier und Stift für Nebenrechnungen bereit. Erst nach dem Abgeben siehst du, was richtig war.</p></header>
+      <div class="row"><button class="btn" id="start">Uhr starten</button><button class="btn ghost" id="papier">🖨️ Auf Papier drucken</button></div>
+      <p class="small muted">Auf Papier: Die Arbeit wird ohne Lösungen gedruckt, die Lösungen kommen auf einer eigenen Seite dahinter.</p>`;
+    document.getElementById('start').onclick = () => { S.probe[PKEY] = { ans: {}, start: Date.now(), done: false }; save(); render(); };
+    document.getElementById('papier').onclick = () => { druckFuellen(PKEY); window.print(); };
+    return;
+  }
+  const A = P0.ans, fertig = P0.done;
+  if (!fertig && Date.now() - P0.start > 3 * 3600 * 1000) {
+    if (confirm('Du hast die Probearbeit vor einer Weile angefangen. Weitermachen? (Abbrechen = neu beginnen)')) P0.start = Date.now();
+    else { delete S.probe[PKEY]; save(); return renderProbe(); }
+    save();
+  }
+  let html = `<header class="top"><div class="eyebrow">${PR.titel}</div><div class="th"><h1>📝 Klassenarbeit</h1><span class="timer" id="uhr"></span></div></header>`;
+  if (fertig) {
+    const pct = Math.round(100 * P0.punkte / PR.max);
+    html += `<div class="card"><div class="th"><span class="score">${P0.punkte} / ${PR.max} Punkte</span><span class="score">Note ${grade(pct)}</span></div>
+      <p class="small muted">${pct} % · Schlüssel: 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %. Deine Lehrkraft bewertet vielleicht anders – und in der echten Arbeit zählt auch der Rechenweg.</p>
+      <div class="row"><button class="btn" id="hmP">Zum Plan</button><button class="btn ghost" id="neu">Noch einmal von vorn</button>${PKEY === 'A' ? '<button class="btn ghost" id="andere">Probearbeit B</button>' : ''}</div></div>`;
+  }
+  PR.items.forEach(it => {
+    const pk = fertig ? `${itemPunkte(it, A)} / ${itemMax(it)} P.` : `${itemMax(it)} P.`;
+    html += `<div class="card" data-t="${it.id}"><div class="th"><h3>${esc(it.h)}</h3><span class="pts">${pk}</span></div>${itemHtml(it, A, fertig)}${fertig ? `<div class="erkl"><b>Lösung:</b> ${it.e}</div>` : ''}</div>`;
+  });
+  if (!fertig) html += `<div class="row"><button class="btn" id="abgeben">Abgeben</button></div>`;
+  app.innerHTML = html;
+  const uhr = document.getElementById('uhr');
+  const tick = () => { const s = Math.floor(((P0.end || Date.now()) - P0.start) / 1000); const m = Math.floor(s / 60); uhr.textContent = '⏱ ' + m + ':' + String(s % 60).padStart(2, '0') + (fertig ? '' : m >= 45 ? ' – Zeit um' : ' / 45:00'); };
+  stopAll(); tick(); if (!fertig) timerId = setInterval(tick, 1000);
+  if (fertig) {
+    document.getElementById('hmP').onclick = () => go('home');
+    document.getElementById('neu').onclick = () => { if (confirm('Probearbeit neu beginnen?')) { delete S.probe[PKEY]; save(); render(); } };
+    const an = document.getElementById('andere'); if (an) an.onclick = () => { PKEY = 'B'; go('probe'); };
+    return;
+  }
+  felderBinden(app, A, save);
+  document.getElementById('abgeben').onclick = () => {
+    const leer = PR.items.reduce((n, it) => n + itemWert(it, A).filter(w => w.leer).length, 0);
+    if (!confirm(leer ? `${leer} Antworten fehlen noch. Trotzdem abgeben?` : 'Probearbeit abgeben?')) return;
+    P0.done = true; P0.end = Date.now(); P0.punkte = PR.items.reduce((n, it) => n + itemPunkte(it, A), 0);
+    S.plan['probe' + PKEY] = true; save(); go('probe');
+  };
+}
+
+// Papierfassung: Aufgaben mit Schreiblinien, Lösungen auf eigener Seite
+function druckFuellen(k) {
+  const PR = PROBEN[k];
+  const feldPapier = f => {
+    if (f.t === 'num') return `<div>${f.l || ''} <span class="lin"></span> ${f.u || ''}</div>`;
+    if (f.t === 'wahl' || f.t === 'multi') return `${f.l ? `<div>${f.l}</div>` : ''}${(f.fix ? f.o : shuffle(f.o)).map(o => `<div><span class="box"></span>${esc(o)}</div>`).join('')}`;
+    if (f.t === 'zuord') return `<table class="zt"><tr><td></td>${f.cats.map(c => `<td><b>${esc(c)}</b></td>`).join('')}</tr>${shuffle(f.rows).map(r => `<tr><td>${esc(r[0])}</td>${f.cats.map(() => '<td><span class="box"></span></td>').join('')}</tr>`).join('')}</table>`;
+    return '';
+  };
+  const loes = f => f.t === 'num' ? `${f.l || ''} ${zahl(f.a)} ${f.u || ''}` : f.t === 'wahl' ? `${f.l ? f.l + ' ' : ''}${f.o[f.a]}` : f.t === 'multi' ? f.a.map(j => f.o[j]).join(' · ') : f.rows.map(r => `${r[0]} → ${f.cats[r[1]]}`).join(' · ');
+  document.body.classList.add('druckt');
+  document.getElementById('druck').innerHTML = `<h2>NAWI – ${PR.titel} (${PR.max} Punkte, 45 Minuten)</h2><p>Name: ____________________ &nbsp; Datum: __________</p>
+    ${PR.items.map(it => `<div class="pa"><h3><span>${esc(it.h)}</span><span>/ ${itemMax(it)} P.</span></h3>${it.q ? `<div>${it.q}</div>` : ''}${it.fig || ''}${it.fields.map(feldPapier).join('')}</div>`).join('')}
+    <div class="neu"><h2>Lösungen – ${PR.titel}</h2>${PR.items.map(it => `<div class="pa"><b>${esc(it.h)}</b><div>${it.fields.map(loes).join('<br>')}</div><div><i>${it.e}</i></div></div>`).join('')}
+    <p>Notenschlüssel (Anhaltspunkt): 1 ab 92 %, 2 ab 81 %, 3 ab 67 %, 4 ab 50 %, 5 ab 25 %.</p></div>`;
+}
+window.addEventListener('beforeprint', () => { if (VIEW === 'probe' && !document.getElementById('druck').innerHTML) druckFuellen(PKEY); });
+window.addEventListener('afterprint', () => { document.getElementById('druck').innerHTML = ''; document.body.classList.remove('druckt'); });
+
+render();
+</script>
+</body>
+</html>
