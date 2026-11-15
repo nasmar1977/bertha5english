@@ -208,7 +208,7 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.46.0
+**Version:** 2.46.1
 **Datum:** 15.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -237,8 +237,9 @@ Vokabeln April: 24) + 27 Redewendungen
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
 | `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
-| `nawi.html` | NAWI Kl. 6: Kräfte, Hebel, Rollen – Stationen, Labore, Rechenwerkstatt, zwei Probearbeiten, Karte im Hauptmenü |
-| `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über die Karte oben in `nawi.html` |
+| `nawi-menu.html` | NAWI-Zwischenmenü (Ziel der NAWI-Karte im Hauptmenü): vorn die neueste Fassung, daneben Version 1; zeigt den Stand beider Speicher |
+| `nawi.html` | NAWI Kl. 6, Version 1: Kräfte, Hebel, Rollen – Stationen, Labore, Rechenwerkstatt, zwei Probearbeiten |
+| `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über `nawi-menu.html` |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
@@ -262,6 +263,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.46.1 (15.11.2026)
+- Neues Zwischenmenü `nawi-menu.html`: Die NAWI-Karte im Hauptmenü führt dorthin. Erste, hervorgehobene Kachel ist
+  die zuletzt entwickelte Fassung (Mission Kräfte), daneben Version 1 (`nawi.html`). Die Seite liest nur den Stand
+  beider Speicher (Sterne bzw. Plan-Schritte). „Zurück“ in beiden NAWI-Seiten führt ins Zwischenmenü; die Karte zur
+  Mission oben in `nawi.html` ist dadurch entfallen.
+- Mission Kräfte: Blitzer-Challenge als „⭐ Plus-Wissen“ gekennzeichnet (Rechnen mit m/s liegt über dem KA-Stoff).
 
 ### Version 2.46.0 (15.11.2026)
 - Neue Seite `nawi-mission.html` („Mission Kräfte“): das NAWI-Thema didaktisch neu aufgebaut, das bisherige

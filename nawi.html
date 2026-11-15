@@ -198,7 +198,7 @@ input[type=range]{width:100%;min-height:40px;accent-color:var(--acc)}
 </head>
 <body>
 <div class="bar"><div class="in">
-  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <a href="nawi-menu.html">← NAWI-Auswahl</a>
   <button class="linkbtn" id="homeBtn" type="button">📋 Plan</button>
   <span class="crumb" id="crumb"></span>
 </div></div>
@@ -821,9 +821,6 @@ function renderHome() {
     <h1>Kräfte, Hebel, Rollen</h1>
     <p class="muted">Kraft und ihre Wirkungen, Gewichtskraft, Federkraftmesser, ein- und zweiseitiger Hebel mit dem Hebelgesetz, feste und lose Rollen und der Flaschenzug. Du rechnest selbst, probierst im Labor aus und schreibst zum Schluss zwei Probearbeiten. Nicht alles an einem Tag – der Plan merkt sich, wo du bist.</p>
   </header>
-  <section>
-    <a class="tile" href="nawi-mission.html" style="text-decoration:none;border-color:var(--acc);border-width:2px"><b>🚀 Neu: Mission Kräfte – kurz &amp; knackig</b><span>Dieselben Themen in fünf kurzen Missionen: erst tippen, dann sehen, dann spielen. Mit Blitzrunde, Endgegnern und Spickzettel.</span></a>
-  </section>
   <section>
     <h2>📋 Dein Plan</h2>
     <ol class="plan">${PLAN.map((p, i) => `<li class="${S.plan[p.k] ? 'done' : ''} ${i === nextIdx ? 'next' : ''}" data-k="${p.k}" tabindex="0" role="button">

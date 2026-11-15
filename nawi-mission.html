@@ -207,6 +207,8 @@ button,.opt,.chip,input[type=range]{touch-action:manipulation}
 .lochrow .opt{flex:1 1 0;max-width:72px;min-height:44px;padding:6px 0;text-align:center;font-weight:700}
 .sterne i,.tile .sterne i{font-style:normal;color:var(--line)}
 .dots i.jetzt{background:var(--acc)}
+.pluswissen{background:var(--mark);color:var(--ink);border-radius:999px;padding:2px 10px;letter-spacing:0;text-transform:none;margin-left:6px;white-space:nowrap}
+.plusbox{background:var(--mark);border-radius:8px;padding:8px 12px;font-size:.88rem}
 .labfig.schmal svg{max-width:340px}
 .opt.x{opacity:.55}
 .regler{display:grid;gap:6px}
@@ -231,7 +233,7 @@ ul.plus{font-size:.92rem;color:var(--muted)}
 </head>
 <body>
 <div class="bar"><div class="in">
-  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <a href="nawi-menu.html">← NAWI-Auswahl</a>
   <button class="linkbtn" id="homeBtn" type="button">🚀 Übersicht</button>
   <span class="crumb" id="crumb"></span>
 </div></div>
@@ -732,7 +734,7 @@ const MIS = {
       { t: 'tipp', q: 'Zwei Einkaufswagen bekommen genau den gleichen Schubs – einer ist leer, einer voll beladen. Was passiert?', o: ['Der leere wird schneller.', 'Der volle wird schneller.', 'Beide werden gleich schnell.'], a: 0,
         e: 'Gleiche Kraft, aber mehr Masse: Der volle Wagen wird weniger stark beschleunigt. Körper mit großer Masse sind <b>träge</b>.',
         fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = wagenSvg(20, 20); return; } anim(1600, t => { el.innerHTML = wagenSvg(20 + 260 * ease(t), 20 + 95 * ease(t)); }, fertig); } },
-      { t: 'spiel', titel: 'Blitzer-Challenge', run: spielSchub },
+      { t: 'spiel', titel: 'Blitzer-Challenge', plus: true, run: spielSchub },
       { t: 'merk' }
     ] },
   G: { icon: '🌙', name: 'Erde, Mond, Weltall', thema: 'Masse und Gewichtskraft', hook: 'Wie schwer ist deine Schultasche auf dem Mond?',
@@ -800,7 +802,7 @@ const MIS = {
 function spielSchub(host, fertig) {
   const runden = [{ m: 1, v: pick([3, 4, 5]) }, { m: 2, v: pick([2, 3]) }, { m: 3, v: pick([1, 2]) }];
   let i = 0, F = 1, fehler = 0, laeuft = false;
-  host.innerHTML = `<p class="small muted"><b>Testfahrt:</b> 1 N schiebt den 1-kg-Wagen eine Sekunde lang an – danach fährt er <b>1 m/s</b> (1 Meter pro Sekunde). Stell die Schubkraft so ein, dass der Blitzer genau das Ziel-Tempo misst. <span class="small">Das ist eine Spielregel. Für die Arbeit reicht: mehr Kraft – stärkere Beschleunigung, mehr Masse – träger.</span></p>
+  host.innerHTML = `<p class="small muted"><b>Testfahrt:</b> 1 N schiebt den 1-kg-Wagen eine Sekunde lang an – danach fährt er <b>1 m/s</b> (1 Meter pro Sekunde). Stell die Schubkraft so ein, dass der Blitzer genau das Ziel-Tempo misst. </p><p class="plusbox"><b>⭐ Plus-Wissen:</b> Das Rechnen mit m/s geht über den Stoff der Klassenarbeit hinaus. Für die Arbeit reicht: mehr Kraft – stärkere Beschleunigung, mehr Masse – träger.</p>
     <div class="anzeige" id="sa"></div><div class="labfig" id="sf"></div>
     <label class="regler"><span>Schubkraft: <b id="kv"></b> <span class="small muted">(je länger der Pfeil, desto größer die Kraft)</span></span><input type="range" id="kraft" min="1" max="6" step="1" value="1"></label>
     <div class="row"><button class="btn" id="los">Schub!</button></div><div id="sfb" aria-live="polite"></div>`;
@@ -1024,7 +1026,7 @@ function renderMis() {
       });
     });
   } else if (st.t === 'spiel') {
-    box.innerHTML = `<div class="eyebrow">Spiel · ${st.titel}</div><div id="sp" class="spiel"></div>`;
+    box.innerHTML = `<div class="eyebrow">Spiel · ${st.titel}${st.plus ? ' <span class="pluswissen">⭐ Plus-Wissen</span>' : ''}</div><div id="sp" class="spiel"></div>`;
     st.run(box.querySelector('#sp'), (stars, info) => { MR.stars = stars; MR.info = info; next(); });
   } else renderMerk(box);
 }
