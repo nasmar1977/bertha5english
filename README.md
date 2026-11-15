@@ -189,6 +189,8 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
   Definitionen auf ein Blatt. Speicher: `gewi-6-athen-v1`.
 
 ### ⚖️ NAWI
+- **Mission Kräfte** (`nawi-mission.html`, Karte oben im NAWI-Training): derselbe Stoff als fünf kurze Missionen
+  (Tipp → Experiment → Spiel → Merksatz) mit Blitzrunde, Endgegnern und Spickzettel. Speicher: `nawi-6-mission-v1`.
 - **Kräfte, Hebel, Rollen** (`nawi.html`, Karte im Hauptmenü): Klasse 6, Klassenarbeit nach Themenliste, Heft und
   Arbeitsblättern (eigene Formulierungen und Zahlen). Plan in 13 Schritten, verteilt auf mehrere Tage.
 - Stationen: Kraft und ihre Wirkungen (mit Beschleunigung, Trägheit, Kraftpfeil mit Maßstab), Gewichtskraft und Masse,
@@ -206,8 +208,8 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.45.0
-**Datum:** 13.11.2026
+**Version:** 2.46.0
+**Datum:** 15.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -236,6 +238,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
 | `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
 | `nawi.html` | NAWI Kl. 6: Kräfte, Hebel, Rollen – Stationen, Labore, Rechenwerkstatt, zwei Probearbeiten, Karte im Hauptmenü |
+| `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über die Karte oben in `nawi.html` |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
 | `tools/` | Hilfsskripte rund um die Vokabeldaten |
@@ -259,6 +262,25 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.46.0 (15.11.2026)
+- Neue Seite `nawi-mission.html` („Mission Kräfte“): das NAWI-Thema didaktisch neu aufgebaut, das bisherige
+  `nawi.html` bleibt unverändert daneben (dort oben eine Karte zur Mission; im Hauptmenü weiter eine NAWI-Kachel).
+  Eigener Speicher `nawi-6-mission-v1`.
+- Aufbau: fünf Missionen (Kraft/Trägheit, Masse/Gewichtskraft, Feder/Hooke, Hebel, Rollen), je drei Schritte:
+  „Tipp ab“ (Vorhersage, dann Animation; ein falscher Tipp kostet nichts), ein Spiel mit bis zu drei Sternen
+  (Blitzer-Challenge, Ansage!, Rätselsteine, Wippen-Duell, Kran-Chef) und „Merksatz bauen“ (Lücken mit Wort-Chips).
+  Faktenwissen läuft in der Blitzrunde (45 s, Treffer +1, Fehler −1, am Ende nur die Fehler), Rechnen bei elf
+  „Endgegnern“ (die Aufgabengeneratoren aus `nawi.html`; ein Typ gilt nach einer richtigen Lösung als geschafft,
+  bei Fehler Rechenweg und Rückkehr mit neuen Zahlen). Der Spickzettel füllt sich mit jeder Mission und ist druckbar.
+- Antwortfelder, Zeichenfunktionen und Generatoren sind aus `nawi.html` kopiert (keine gemeinsame Datei –
+  Änderungen dort wirken hier nicht automatisch).
+- Von zwei Prüfern gelesen (Fach/Didaktik, Technik). Daraufhin u. a.: Regler-Startwert und Kran-Aufträge verraten
+  die Lösung nicht mehr (auch die feste Rolle kann richtig sein), Blitzrunde belohnt Raten nicht, Einheiten cN/kN
+  als Endgegner, Begriffe Schwingwaage und Kraftwandler im Spickzettel, Kraftpfeil setzt am Wagen an,
+  Enter überspringt keine Rückmeldung, große Knöpfe „rechts bei 10 … 50 cm“ für die Wippe auf dem Handy.
+  Das Blitzer-Spiel rechnet mit Tempo = Kraft : Masse – ausdrücklich als Spielregel gekennzeichnet, im Heft steht
+  das nur qualitativ.
 
 ### Version 2.45.0 (13.11.2026)
 - NAWI-Labor Hebel, zweiseitig: Spiel über 5 Runden. Links 2–3 Löcher mit gemischten Gewichten (Moment 8–40),

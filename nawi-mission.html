@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NAWI-Mission: Kräfte</title>
+<!-- NAWI Kl. 6, zweite Fassung „Mission“: derselbe Stoff wie nawi.html (Kraft und Wirkungen, Gewichtskraft und Masse,
+     Federkraftmesser, Hebel, Rollen), aber anders aufgebaut: erst tippen, dann das Experiment sehen, ein Spiel pro Thema,
+     Merksatz selbst bauen. Faktenwissen in der Blitzrunde, Rechnen bei den Endgegnern.
+     Zeichenfunktionen, Antwortfelder und Aufgabengeneratoren sind aus nawi.html übernommen.
+     Speicher: localStorage „nawi-6-mission-v1“. -->
+<style>
+:root{
+  --bg:#f3f4f1; --paper:#ffffff; --ink:#1c2321; --muted:#5d6763; --line:#d6dad4;
+  --acc:#2c6b5a; --acc-soft:#dcefe8; --ton:#b4532a; --ton-soft:#f8e3d6; --blau:#2f5d9c; --blau-soft:#dfe8f6;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --holz:#c99a5b; --metall:#8a9399;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12;
+  --holz:#a77c45; --metall:#9aa4aa; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#5a4d12;
+  --holz:#a77c45; --metall:#9aa4aa; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.7rem,5.5vw,2.5rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:820px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;min-height:40px;display:inline-flex;align-items:center}
+@media (max-width:560px){.bar .crumb{display:none}}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* Plan */
+.plan{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.plan li{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.plan li.next{border:2px solid var(--acc)}
+.plan li .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.9rem}
+.plan li.done .n{background:var(--ok-soft);color:var(--ok)}
+.plan li .t{font-weight:700}
+.plan li .d{font-size:.85rem;color:var(--muted)}
+.plan li .m{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--blau-soft);color:var(--blau);vertical-align:middle;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--acc-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc)}
+
+/* Karten */
+.frage{font-weight:700}
+.q{font-size:1.05rem}
+.q b{color:var(--acc)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:40px;text-align:left}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.fehlt{border:2px dashed var(--ok)}
+.opt:disabled{cursor:default;opacity:1}
+.fld{display:grid;gap:6px}
+.fl{font-size:.92rem;color:var(--muted)}
+.fnum{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fnum .fl{color:var(--ink);font-weight:700}
+.fnum input{font:inherit;font-size:18px;width:7.5em;min-height:44px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);text-align:right}
+.fnum input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fnum input.no{border-color:var(--bad);background:var(--bad-soft)}
+.fnum .u{font-weight:700}
+.sol{font-size:.85rem;color:var(--bad);font-weight:700}
+.mrow{display:grid;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .mt{font-weight:700;font-size:.98rem}
+.fb{display:grid;gap:10px}
+.fb .msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.fb .msg.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.fb .msg.no{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.weg{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.93rem;font-variant-numeric:tabular-nums}
+.weg div{margin:2px 0}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.dots{display:flex;gap:4px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.tippbox{display:grid;gap:6px}
+.tipps{margin:0;padding:10px 12px 10px 28px;background:var(--acc-soft);border-radius:8px;font-size:.9rem;display:grid;gap:4px}
+.tipps[hidden]{display:none}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.merk ul{margin:6px 0 0;padding-left:20px}
+.merk li{margin:4px 0}
+.hl{color:var(--ton);font-weight:700}
+.formel{font-family:var(--display);font-size:1.15rem;font-weight:700;text-align:center;padding:8px;border:2px dashed var(--ton);border-radius:10px;background:var(--paper)}
+.fig{display:flex;justify-content:center}
+.fig svg{max-width:100%;height:auto}
+
+/* SVG-Grundfarben (hell/dunkel) */
+svg text{fill:var(--ink);font-family:var(--body)}
+.s-ink{stroke:var(--ink);fill:none}
+.s-line{stroke:var(--line)}
+.s-muted{stroke:var(--muted);fill:none}
+.f-holz{fill:var(--holz);stroke:var(--ink);stroke-width:1}
+.f-metall{fill:var(--metall);stroke:var(--ink);stroke-width:1}
+.f-paper{fill:var(--paper);stroke:var(--ink);stroke-width:1.2}
+.f-acc{fill:var(--acc)}
+.f-ton{fill:var(--ton)}
+.s-ton{stroke:var(--ton);fill:none}
+.s-blau{stroke:var(--blau);fill:none}
+.f-blau{fill:var(--blau)}
+.f-ink{fill:var(--ink)}
+.f-muted{fill:var(--muted)}
+.f-bg{fill:var(--bg)}
+.f-ok{fill:var(--ok)}
+.hit{fill:transparent;cursor:pointer}
+@media (hover:hover){.hit:hover{fill:var(--acc-soft);opacity:.6}}
+
+/* Labor */
+.lab{display:grid;gap:12px}
+.labfig{background:var(--bg);border-radius:10px;padding:8px;display:flex;justify-content:center;touch-action:manipulation}
+.labfig svg{width:100%;max-width:520px;height:auto;user-select:none;-webkit-user-select:none}
+.anzeige{display:flex;gap:8px;flex-wrap:wrap}
+.anzeige span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.anzeige span.gut{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{border:0;background:var(--bg);padding:7px 14px;min-height:40px;font-size:.92rem;white-space:nowrap}
+.seg button.on{background:var(--acc);color:#fff;font-weight:700}
+:root[data-theme="dark"] .seg button.on{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#0f1518}}
+.auftrag{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.auftrag li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;font-size:.95rem}
+.auftrag li .c{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:.8rem;margin-top:2px}
+.auftrag li.done .c{background:var(--ok);border-color:var(--ok);color:#fff}
+:root[data-theme="dark"] .auftrag li.done .c{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .auftrag li.done .c{color:#0f1518}}
+.auftrag li.done{color:var(--muted)}
+table.mess{border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+table.mess th,table.mess td{border:1px solid var(--line);padding:4px 10px;text-align:right;white-space:nowrap}
+table.mess th{background:var(--bg)}
+.tabwrap{overflow-x:auto}
+input[type=range]{width:100%;min-height:40px;accent-color:var(--acc)}
+.lfrage{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}
+
+/* Probearbeit */
+.timer{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums}
+.pts{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.th{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:1.6rem;font-weight:800}
+.erkl{font-size:.9rem;background:var(--bg);border-radius:8px;padding:8px 12px}
+
+#druck{display:none}
+@media print{
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff; --paper:#fff; --ink:#000; --muted:#444; --line:#999; --acc:#2c6b5a; --acc-soft:#eef5f2; --ton:#b4532a; --ton-soft:#fbeee6;
+    --blau:#2f5d9c; --blau-soft:#eef2f9; --ok:#2e7d4f; --ok-soft:#eef7f1; --bad:#b3372e; --bad-soft:#fbefed; --holz:#c99a5b; --metall:#8a9399; color-scheme:light}
+  body{background:#fff;color:#000;padding:0}
+  .bar{display:none!important}
+  body.druckt #app{display:none!important}
+  body:not(.druckt) #druck{display:none!important}
+  #druck{display:block;font-size:11pt;padding:6mm 8mm}
+  #druck h2{font-size:15pt;margin:0 0 4pt}
+  #druck .pa{break-inside:avoid;border-top:1px solid #999;padding:6pt 0}
+  #druck .pa h3{font-size:11.5pt;margin:0 0 3pt;display:flex;justify-content:space-between}
+  #druck .lin{border-bottom:1px solid #777;display:inline-block;min-width:24mm;height:1.2em}
+  #druck svg{max-width:85mm;height:auto}
+  #druck svg text{fill:#000}
+  #druck .neu{break-before:page}
+  #druck .box{display:inline-block;width:3.2mm;height:3.2mm;border:1px solid #000;margin-right:4px;vertical-align:-1px}
+  #druck .zt td{padding:2pt 8pt 2pt 0}
+}
+/* ---- NAWI-Mission ---- */
+a.tile{text-decoration:none}
+.tile.done{border-color:var(--ok)}
+.tile .tag{justify-self:start}
+.btn.gross{font-size:1.05rem;padding:14px 22px}
+.sterne,.tile .sterne{color:#e2a400;letter-spacing:2px;font-size:1.05rem}
+button,.opt,.chip,input[type=range]{touch-action:manipulation}
+.lochrow{display:flex;gap:6px;align-items:center;justify-content:center}
+.lochrow .opt{flex:1 1 0;max-width:72px;min-height:44px;padding:6px 0;text-align:center;font-weight:700}
+.sterne i,.tile .sterne i{font-style:normal;color:var(--line)}
+.dots i.jetzt{background:var(--acc)}
+.labfig.schmal svg{max-width:340px}
+.opt.x{opacity:.55}
+.regler{display:grid;gap:6px}
+.msatz{font-size:1.05rem;line-height:1.9}
+.gap{display:inline-block;min-width:3.2em;text-align:center;border-bottom:2px solid var(--line);padding:0 6px;border-radius:4px}
+.gap.dran{background:var(--mark);border-color:var(--acc)}
+.gap.voll{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;min-height:44px;font-weight:700}
+.chip.wackel{animation:wackel .35s;border-color:var(--bad)}
+@keyframes wackel{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+@media (prefers-reduced-motion:reduce){.chip.wackel{animation:none}}
+.blitz{text-align:center}
+.blitz .anzeige{justify-content:center}
+.bsatz{font-family:var(--display);font-size:1.45rem;font-weight:700;min-height:3.6em;display:grid;place-items:center;text-wrap:balance}
+.bwahl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bwahl .opt{min-height:64px;font-weight:700;font-size:1.02rem;text-align:center;justify-content:center}
+ul.fehler,ul.plus{margin:0;padding-left:1.2em;display:grid;gap:4px}
+ul.plus{font-size:.92rem;color:var(--muted)}
+@media print{.bar,.btn,.linkbtn{display:none!important}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html">← Zurück zum Vokabeltrainer</a>
+  <button class="linkbtn" id="homeBtn" type="button">🚀 Übersicht</button>
+  <span class="crumb" id="crumb"></span>
+</div></div>
+<main class="wrap" id="app"></main>
+<script>
+'use strict';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+// Zahl deutsch schreiben, höchstens zwei Nachkommastellen
+const zahl = x => { const r = Math.round(x * 100) / 100; return String(r).replace('.', ','); };
+const parseZahl = s => {
+  s = String(s || '').trim().replace(/[\u2212\u2013]/g, '-').replace(/\s*[a-zA-ZäöüÄÖÜµ²]+\.?$/, '').trim(); // „30 N“ → 30
+  if (/\d\s+\d/.test(s)) return NaN;                         // „1 2“ ist keine Zahl
+  s = s.replace(/\s/g, '');
+  if (!s.includes(',') && /^[-+]?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, ''); // 2.500 → 2500
+  s = s.replace(',', '.').replace(/\.$/, '');                 // „5,“ → 5
+  if (!/^[-+]?\d*\.?\d+$/.test(s)) return NaN; return parseFloat(s);
+};
+// ===================================================================
+// ANTWORTFELDER (für Übungskarten und Probearbeiten gleich)
+//  num:    { t:'num', l, a, u, tol? }      Zahl eintippen
+//  wahl:   { t:'wahl', l?, o:[...], a }    eine Antwort antippen
+//  multi:  { t:'multi', l?, o:[...], a:[] } alle richtigen antippen
+//  zuord:  { t:'zuord', cats:[...], rows:[[text, catIdx], ...] }
+//  Antworten liegen in A[key], die gemischte Reihenfolge in A[key+'#o'].
+// ===================================================================
+const fkey = (it, i) => it.id + '|' + i;
+function feldMax(f) { return f.p || (f.t === 'zuord' ? f.rows.length : f.t === 'multi' ? f.a.length : 1); }
+function ordnung(f, A, k, n) {
+  const o = A[k + '#o'];
+  const gut = Array.isArray(o) && o.length === n && [...o].sort((x, y) => x - y).every((x, i) => x === i);
+  if (!gut) A[k + '#o'] = f.fix ? [...Array(n).keys()] : shuffle([...Array(n).keys()]);
+  return A[k + '#o'];
+}
+function feldHtml(it, i, A, fertig) {
+  const f = it.fields[i], k = fkey(it, i), v = A[k];
+  const lab = f.l ? `<span class="fl">${f.l}</span>` : '';
+  if (f.t === 'num') {
+    const ev = fertig ? feldWert(f, v) : null;
+    return `<div class="fld"><label class="fnum">${lab}<input data-k="${k}" inputmode="decimal" autocomplete="off" value="${esc(v || '')}" ${fertig ? 'disabled' : ''} class="${ev ? (ev.ok ? 'ok' : 'no') : ''}" aria-label="${esc((f.l || 'Antwort').replace(/<[^>]+>/g, ''))}">${f.u ? `<span class="u">${f.u}</span>` : ''}</label>${ev && !ev.ok ? `<span class="sol">richtig: ${zahl(f.a)} ${f.u || ''}</span>` : ''}</div>`;
+  }
+  if (f.t === 'wahl' || f.t === 'multi') {
+    const ord = ordnung(f, A, k, f.o.length), multi = f.t === 'multi';
+    const sel = multi ? (Array.isArray(v) ? v : []) : v;
+    const lang = f.o.some(o => o.length > 28);
+    return `<div class="fld">${lab}<div class="opts ${lang ? 'liste' : ''}" data-k="${k}" data-multi="${multi ? 1 : 0}">${ord.map(j => {
+      const an = multi ? sel.includes(j) : sel === j;
+      let cls = an ? 'sel' : '';
+      if (fertig) { const rich = multi ? f.a.includes(j) : f.a === j; cls = rich ? (an ? 'ok' : 'fehlt') : (an ? 'no' : ''); }
+      return `<button type="button" class="opt ${cls}" data-j="${j}" ${fertig ? 'disabled' : ''} aria-pressed="${an}">${esc(f.o[j])}</button>`;
+    }).join('')}</div></div>`;
+  }
+  if (f.t === 'zuord') {
+    const ord = ordnung(f, A, k, f.rows.length), w = isObj(v) ? v : {};
+    return `<div class="fld">${lab}${ord.map(r => {
+      const row = f.rows[r];
+      return `<div class="mrow"><span class="mt">${esc(row[0])}</span><div class="opts" data-k="${k}" data-r="${r}">${f.cats.map((c, j) => {
+        const an = w[r] === j; let cls = an ? 'sel' : '';
+        if (fertig) cls = row[1] === j ? (an ? 'ok' : 'fehlt') : (an ? 'no' : '');
+        return `<button type="button" class="opt ${cls}" data-j="${j}" ${fertig ? 'disabled' : ''} aria-pressed="${an}">${esc(c)}</button>`;
+      }).join('')}</div></div>`;
+    }).join('')}</div>`;
+  }
+  return '';
+}
+// bewertet ein Feld: { ok, pts, max, leer }
+function feldWert(f, v) {
+  const max = feldMax(f);
+  if (f.t === 'num') {
+    const x = parseZahl(v); if (isNaN(x)) return { ok: false, pts: 0, max, leer: !String(v || '').trim() };
+    const tol = f.tol != null ? f.tol : Math.max(Math.abs(f.a) * 0.005, 1e-6);
+    const ok = Math.abs(x - f.a) <= tol + 1e-9; return { ok, pts: ok ? max : 0, max, leer: false };
+  }
+  if (f.t === 'wahl') { const ok = v === f.a; return { ok, pts: ok ? max : 0, max, leer: v == null }; }
+  if (f.t === 'multi') {
+    const sel = Array.isArray(v) ? v : []; const r = sel.filter(j => f.a.includes(j)).length, w = sel.length - r;
+    const ok = r === f.a.length && w === 0; return { ok, pts: Math.max(0, r - w), max, leer: !sel.length };
+  }
+  if (f.t === 'zuord') {
+    const w = isObj(v) ? v : {}; const r = f.rows.filter((row, i) => w[i] === row[1]).length;
+    return { ok: r === f.rows.length, pts: Math.round(r * max / f.rows.length), max, leer: f.rows.some((row, i) => w[i] == null) };
+  }
+  return { ok: false, pts: 0, max, leer: true };
+}
+const itemWert = (it, A) => it.fields.map((f, i) => feldWert(f, A[fkey(it, i)]));
+function itemHtml(it, A, fertig) {
+  return `${it.q ? `<div class="q">${it.q}</div>` : ''}${it.fig ? `<div class="fig">${it.fig}</div>` : ''}${it.fields.map((f, i) => feldHtml(it, i, A, fertig)).join('')}`;
+}
+function felderBinden(host, A, onChange) {
+  const t0 = performance.now();
+  host.querySelectorAll('input[data-k]').forEach(el => el.oninput = () => { A[el.dataset.k] = el.value; onChange && onChange(); });
+  host.querySelectorAll('.opts[data-k]').forEach(g => g.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    if (performance.now() - t0 < 350) return; // zweiter Tipp von „Weiter“ soll nicht schon antworten
+    const k = g.dataset.k, j = +b.dataset.j;
+    if (g.dataset.r != null) { const w = isObj(A[k]) ? A[k] : (A[k] = {}); w[g.dataset.r] = j; g.querySelectorAll('.opt').forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); }); }
+    else if (g.dataset.multi === '1') { const a = Array.isArray(A[k]) ? A[k] : (A[k] = []); const p = a.indexOf(j); if (p >= 0) a.splice(p, 1); else a.push(j); b.classList.toggle('sel', p < 0); b.setAttribute('aria-pressed', p < 0); }
+    else { A[k] = j; g.querySelectorAll('.opt').forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); }); }
+    onChange && onChange();
+  }));
+}
+function tippBox(h, label) { return h ? `<div class="tippbox"><div class="row"><button type="button" class="linkbtn tippbtn">💡 ${label || 'Tipp'}</button></div><ul class="tipps" hidden>${[].concat(h).map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''; }
+function tippBinden(host) { host.querySelectorAll('.tippbox .tippbtn').forEach(tb => { tb.onclick = () => { const l = tb.closest('.tippbox').querySelector('.tipps'); l.hidden = !l.hidden; }; }); }
+
+// kleine Helfer für Aufgaben
+const W = (q, o, a, e, h) => ({ q, fields: [{ t: 'wahl', o, a }], e, h });
+const N = (q, a, u, e, h, tol) => ({ q, fields: [{ t: 'num', a, u, tol }], e, h });
+const M = (q, o, a, e, h) => ({ q, fields: [{ t: 'multi', o, a }], e, h });
+const Z = (q, cats, rows, e, h) => ({ q, fields: [{ t: 'zuord', cats, rows }], e, h });
+const VB = ['Verformung', 'Bewegungsänderung'];
+const EP = ['elastisch', 'plastisch'];
+const EZ = ['einseitig', 'zweiseitig'];
+const FL = ['feste Rolle', 'lose Rolle'];
+// ===================================================================
+// ZEICHNUNGEN (SVG)
+// ===================================================================
+// Federkraftmesser-Skala: max, Einheit, Wert pro kleinem Strich, Wert pro beschriftetem Strich, angezeigter Wert
+function skalaSvg(max, u, klein, gross, wert) {
+  const H = 250, y0 = 30, y1 = y0 + H, n = Math.round(max / klein);
+  const y = v => y0 + (v / max) * H;
+  let s = `<svg viewBox="0 0 150 ${y1 + 50}" width="150" role="img" aria-label="Federkraftmesser, Skala bis ${zahl(max)} ${u}">`;
+  s += `<rect x="40" y="6" width="70" height="${y1 - 2}" rx="8" class="f-paper"/>`;
+  s += `<text x="75" y="22" text-anchor="middle" font-size="13" font-weight="700">${zahl(max)} ${u}</text>`;
+  for (let i = 0; i <= n; i++) {
+    const v = i * klein, yy = y(v), g = Math.abs(v / gross - Math.round(v / gross)) < 1e-6;
+    s += `<line x1="${g ? 52 : 60}" x2="80" y1="${yy}" y2="${yy}" class="s-ink" stroke-width="${g ? 1.6 : 0.9}"/>`;
+    if (g) s += `<text x="86" y="${yy + 4}" font-size="11">${zahl(v)}</text>`;
+  }
+  // Zugstange mit roter Marke bis zum Wert
+  const yw = y(wert);
+  s += `<rect x="64" y="${y0 - 4}" width="12" height="${yw - y0 + 4}" class="f-metall" opacity=".55"/>`;
+  s += `<line x1="46" x2="104" y1="${yw}" y2="${yw}" stroke="#d33" stroke-width="2.4"/>`;
+  s += `<path d="M70 ${y1 - 2} v14 a8 8 0 1 0 8 8" class="s-ink" stroke-width="2"/>`;
+  return s + '</svg>';
+}
+// Hebel-Skizze: typ 'zwei' oder 'ein'; links/rechts {F:'…', l:'…'} als Beschriftung
+function hebelSvg(o) {
+  const W2 = 340;
+  let s = `<svg viewBox="0 0 ${W2} 170" width="${W2}" role="img" aria-label="${o.typ === 'ein' ? 'Einseitiger' : 'Zweiseitiger'} Hebel">`;
+  if (o.typ === 'zwei') {
+    // o.ll/o.lr (Zahlen): maßstäblich zeichnen; sonst feste Lage
+    let dp = o.dp || 170, xl = o.xl || 40, xr = o.xr || 300;
+    if (o.ll && o.lr) { const sc = 270 / (o.ll + o.lr); xl = 35; dp = xl + o.ll * sc; xr = dp + o.lr * sc; }
+    s += `<rect x="20" y="70" width="300" height="10" rx="3" class="f-holz"/><path d="M${dp} 80 l-16 30 h32 z" class="f-ton"/>`;
+    // Massen als Klötze auf dem Balken (an einen Kraftpfeil gehört eine Kraft in N, keine Masse in kg)
+    const seite = (x, F) => /kg/.test(F)
+      ? `<rect x="${x - 22}" y="44" width="44" height="26" rx="4" class="f-metall"/><text x="${x}" y="62" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">${F}</text>`
+      : `<line x1="${x}" x2="${x}" y1="80" y2="125" class="s-blau" stroke-width="3"/><path d="M${x - 6} 119 l6 10 l6 -10 z" class="f-blau"/><text x="${x}" y="148" text-anchor="middle" font-size="13" font-weight="700">${F}</text>`;
+    s += seite(xl, o.links.F) + seite(xr, o.rechts.F);
+    s += `<line x1="${xl}" x2="${dp}" y1="30" y2="30" class="s-muted"/><text x="${(xl + dp) / 2}" y="24" text-anchor="middle" font-size="12">${o.links.l}</text>`;
+    s += `<line x1="${dp}" x2="${xr}" y1="30" y2="30" class="s-muted"/><text x="${(dp + xr) / 2}" y="24" text-anchor="middle" font-size="12">${o.rechts.l}</text>`;
+    [xl, dp, xr].forEach(x => s += `<line x1="${x}" x2="${x}" y1="25" y2="35" class="s-muted"/>`);
+    s += `<text x="${dp}" y="130" text-anchor="middle" font-size="11" class="f-muted">Drehpunkt</text>`;
+  } else {
+    const dp = 30, xl = o.xl || 120, xk = o.xk || 300;
+    s += `<rect x="24" y="80" width="300" height="10" rx="3" class="f-holz"/><circle cx="${dp}" cy="85" r="7" class="f-ton"/>`;
+    s += `<line x1="${xl}" x2="${xl}" y1="90" y2="135" class="s-blau" stroke-width="3"/><path d="M${xl - 6} 129 l6 10 l6 -10 z" class="f-blau"/><text x="${xl}" y="158" text-anchor="middle" font-size="13" font-weight="700">${o.last.F}</text>`;
+    s += `<line x1="${xk}" x2="${xk}" y1="80" y2="35" class="s-ton" stroke-width="3"/><path d="M${xk - 6} 41 l6 -10 l6 10 z" class="f-ton"/><text x="${xk}" y="24" text-anchor="middle" font-size="13" font-weight="700">${o.kraft.F}</text>`;
+    s += `<line x1="${dp}" x2="${xl}" y1="112" y2="112" class="s-muted"/>` + (xl - dp < 70
+      ? `<text x="${xl - 10}" y="128" text-anchor="end" font-size="12">${o.last.l}</text>`
+      : `<text x="${(dp + xl) / 2}" y="128" text-anchor="middle" font-size="12">${o.last.l}</text>`);
+    s += `<line x1="${dp}" x2="${xk}" y1="65" y2="65" class="s-muted"/><text x="${(dp + xk) / 2 + 20}" y="60" text-anchor="middle" font-size="12">${o.kraft.l}</text>`;
+    s += `<text x="${dp - 8}" y="106" text-anchor="middle" font-size="11" class="f-muted">DP</text>`;
+  }
+  return s + '</svg>';
+}
+// Rollen und Flaschenzug: n tragende Seilstücke (1 = nur feste Rolle), h = gehobene Höhe in m.
+// Ein durchgehendes Seil: Ende oben am Block, abwechselnd unten und oben um die Rollen, zuletzt von der
+// letzten festen Rolle hinunter zur Hand. n/2 feste und n/2 lose Rollen. Die Hand sinkt um n · h.
+// opt: last (Beschriftung), F (Anzeige), zaehl (Beschriftung „n tragende Seilstücke“), neutral (Seil nicht einfärben)
+function rollenSvg(n, h, opt) {
+  opt = opt || {};
+  const px = 35, H = 400, hy = h * px, sy = n * h * px;
+  const trag = opt.neutral ? 's-ink' : 's-ton', tw = opt.neutral ? 2 : 3;
+  let s = `<svg viewBox="0 0 320 ${H}" width="320" role="img" aria-label="${n === 1 ? 'Feste Rolle' : n === 2 ? 'Lose Rolle mit fester Rolle' : 'Flaschenzug mit ' + n / 2 + ' festen und ' + n / 2 + ' losen Rollen'}">`;
+  s += `<rect x="10" y="4" width="300" height="10" class="f-muted"/>`;
+  for (let i = 0; i < 15; i++) s += `<line x1="${14 + i * 20}" x2="${24 + i * 20}" y1="14" y2="4" class="s-line"/>`;
+  const lastBox = (cx, top) => `<line x1="${cx}" x2="${cx}" y1="${top - 14}" y2="${top}" class="s-ink" stroke-width="2"/><rect x="${cx - 34}" y="${top}" width="68" height="44" rx="4" class="f-metall"/><text x="${cx}" y="${top + 27}" text-anchor="middle" font-size="13" font-weight="700" style="fill:#111">${opt.last || ''}</text>`;
+  const kraft = (x, y) => `<rect x="${x - 9}" y="${y}" width="18" height="46" rx="4" class="f-paper"/><line x1="${x}" x2="${x}" y1="${y + 46}" y2="${y + 62}" class="s-ink" stroke-width="2"/><text x="${x + 14}" y="${y + 28}" font-size="13" font-weight="700" style="fill:var(--ton)">${opt.F || ''}</text>`;
+  const rolle = (cx, cy, r) => `<circle cx="${cx}" cy="${cy}" r="${r}" class="f-paper"/><circle cx="${cx}" cy="${cy}" r="2.5" class="f-ink"/>`;
+  if (n === 1) {
+    const cx = 150, cy = 48, r = 22, top = 250 - hy, hand = 110 + sy;
+    s += `<line x1="${cx}" x2="${cx}" y1="14" y2="${cy}" class="s-ink" stroke-width="2"/>` + rolle(cx, cy, r);
+    s += `<line x1="${cx - r}" x2="${cx - r}" y1="${cy}" y2="${top - 14}" class="${trag}" stroke-width="${tw}"/>`;
+    s += `<path d="M${cx - r} ${cy} A${r} ${r} 0 0 1 ${cx + r} ${cy}" class="s-ink" stroke-width="2"/>`;
+    s += `<line x1="${cx + r}" x2="${cx + r}" y1="${cy}" y2="${hand}" class="s-ink" stroke-width="2"/>` + kraft(cx + r, hand);
+    return s + lastBox(cx - r, top) + '</svg>';
+  }
+  const k = n / 2, r = 14, ty = 52, by = 200 - hy;
+  const bx = i => 130 - (2 * k - 1) * r + i * 4 * r;  // lose Rollen
+  const tx = i => bx(i) + 2 * r;                      // feste Rollen, versetzt
+  const links = bx(0) - r, rechts = tx(k - 1) + r;
+  // oberer Block an der Decke
+  s += `<rect x="${links - 6}" y="20" width="${rechts - links + 12}" height="6" class="f-muted"/><line x1="${(links + rechts) / 2}" x2="${(links + rechts) / 2}" y1="14" y2="20" class="s-ink" stroke-width="2"/>`;
+  for (let i = 0; i < k; i++) s += `<line x1="${tx(i)}" x2="${tx(i)}" y1="26" y2="${ty}" class="s-ink" stroke-width="2"/>`;
+  // Seilende am Block, dann die tragenden Stücke
+  s += `<circle cx="${links}" cy="28" r="3" class="f-ink"/>`;
+  for (let i = 0; i < k; i++) {
+    s += `<line x1="${bx(i) - r}" x2="${bx(i) - r}" y1="${i ? ty : 28}" y2="${by}" class="${trag}" stroke-width="${tw}"/>`;
+    s += `<line x1="${bx(i) + r}" x2="${bx(i) + r}" y1="${by}" y2="${ty}" class="${trag}" stroke-width="${tw}"/>`;
+  }
+  for (let i = 0; i < k; i++) {
+    s += rolle(tx(i), ty, r) + `<path d="M${tx(i) - r} ${ty} A${r} ${r} 0 0 1 ${tx(i) + r} ${ty}" class="s-ink" stroke-width="2"/>`;
+    s += rolle(bx(i), by, r) + `<path d="M${bx(i) - r} ${by} A${r} ${r} 0 0 0 ${bx(i) + r} ${by}" class="s-ink" stroke-width="2"/>`;
+  }
+  // unterer Block mit Last
+  const bl = bx(0) - r - 4, br = bx(k - 1) + r + 4;
+  for (let i = 0; i < k; i++) s += `<line x1="${bx(i)}" x2="${bx(i)}" y1="${by}" y2="${by + r + 4}" class="s-ink" stroke-width="2"/>`;
+  s += `<rect x="${bl}" y="${by + r + 4}" width="${br - bl}" height="6" class="f-muted"/>`;
+  s += lastBox((bl + br) / 2, by + r + 24);
+  // Zugseil von der letzten festen Rolle hinunter zur Hand
+  const hand = 90 + sy;
+  s += `<line x1="${rechts}" x2="${rechts}" y1="${ty}" y2="${hand}" class="s-ink" stroke-width="2"/>` + kraft(rechts, hand);
+  if (opt.zaehl && !opt.neutral && links > 90) s += `<text x="${links - 12}" y="${(ty + by) / 2}" text-anchor="end" font-size="12" style="fill:var(--ton)" font-weight="700">${n} tragende</text><text x="${links - 12}" y="${(ty + by) / 2 + 15}" text-anchor="end" font-size="12" style="fill:var(--ton)" font-weight="700">Seilstücke</text>`;
+  return s + '</svg>';
+}
+// ===================================================================
+// AUFGABEN-GENERATOREN (Rechnen mit immer neuen Zahlen)
+// ===================================================================
+let GID = 0;
+const gid = p => 'g' + p + (++GID) + '_' + Date.now().toString(36);
+const GEN = {
+  // Masse -> Gewichtskraft
+  mF() {
+    const g = Math.random() < .5;
+    const m = g ? pick([200, 300, 450, 500, 750, 800, 1200, 2500]) : pick([2, 3.5, 6, 12, 25, 40, 65]);
+    const kg = g ? m / 1000 : m;
+    return { id: gid('mF'), st: 'G', q: `Ein Körper hat die Masse <b>${zahl(m)} ${g ? 'g' : 'kg'}</b>. Wie groß ist seine Gewichtskraft auf der Erde?`, fields: [{ t: 'num', l: 'F<sub>G</sub> ≈', a: kg * 10, u: 'N' }],
+      e: g ? `${zahl(m)} g sind ${zahl(m / 100)}-mal 100 g. Jede 100 g bringen etwa 1 N, also ${zahl(kg * 10)} N.` : `1 kg ≈ 10 N, also ${zahl(m)} kg ≈ ${zahl(m)} · 10 N = ${zahl(kg * 10)} N.`, h: '100 g ≈ 1 N und 1 kg ≈ 10 N' };
+  },
+  // Gewichtskraft -> Masse
+  Fm() {
+    const F = pick([5, 8, 12.5, 30, 45, 75, 120, 350, 600, 900]);
+    return { id: gid('Fm'), st: 'G', q: `Ein Paket hat eine Gewichtskraft von <b>${zahl(F)} N</b>. Welche Masse hat es?`, fields: [{ t: 'num', l: 'm =', a: F / 10, u: 'kg' }],
+      e: `Rückwärts rechnen: 10 N gehören zu 1 kg. ${zahl(F)} N : 10 = ${zahl(F / 10)} kg. Die Einheit kg nicht vergessen!`, h: 'Pro 10 N ist es 1 kg. Teile also durch 10.' };
+  },
+  // Umrechnen kN, N, cN
+  einh() {
+    const t = pick([
+      () => { const x = pick([0.6, 1.2, 2.5, 15, 0.08]); return [`${zahl(x)} kN`, x * 1000, 'N', '1 kN = 1000 N, also mal 1000.']; },
+      () => { const x = pick([750, 2400, 15000, 300]); return [`${zahl(x)} N`, x / 1000, 'kN', '1000 N = 1 kN, also durch 1000.']; },
+      () => { const x = pick([3, 0.7, 1.5, 4.2]); return [`${zahl(x)} N`, x * 100, 'cN', '1 N = 100 cN, also mal 100.']; },
+      () => { const x = pick([250, 70, 135, 400]); return [`${zahl(x)} cN`, x / 100, 'N', '100 cN = 1 N, also durch 100.']; }
+    ])();
+    return { id: gid('ei'), st: 'G', q: `Rechne um: <b>${t[0]}</b>`, fields: [{ t: 'num', l: t[0] + ' =', a: t[1], u: t[2] }], e: t[3], h: 'k (Kilo) heißt tausend, c (Zenti) heißt ein Hundertstel.' };
+  },
+  // Hookesches Gesetz: Verlängerung proportional zur Kraft
+  hooke() {
+    const F1 = pick([0.5, 1, 2, 1.5]), x1 = pick([2, 3, 4, 5]), f = pick([2, 3, 4, 2.5]);
+    const F2 = F1 * f, x2 = x1 * f;
+    if (Math.random() < .5) return { id: gid('ho'), st: 'F', q: `Eine Feder wird bei <b>${zahl(F1)} N</b> um <b>${zahl(x1)} cm</b> länger. Um wie viel wird sie bei <b>${zahl(F2)} N</b> länger?`, fields: [{ t: 'num', l: 'Verlängerung', a: x2, u: 'cm' }],
+      e: `${zahl(F2)} N ist das ${zahl(f)}-Fache von ${zahl(F1)} N. Also wird auch die Verlängerung ${zahl(f)}-mal so groß: ${zahl(x1)} cm · ${zahl(f)} = ${zahl(x2)} cm.`, h: 'Doppelte Kraft – doppelte Verlängerung. Wievielmal so groß ist die neue Kraft?' };
+    return { id: gid('ho'), st: 'F', q: `Eine Feder wird bei <b>${zahl(F1)} N</b> um <b>${zahl(x1)} cm</b> länger. Welche Kraft dehnt sie um <b>${zahl(x2)} cm</b>?`, fields: [{ t: 'num', l: 'F =', a: F2, u: 'N' }],
+      e: `${zahl(x2)} cm ist das ${zahl(f)}-Fache von ${zahl(x1)} cm. Also braucht es die ${zahl(f)}-fache Kraft: ${zahl(F1)} N · ${zahl(f)} = ${zahl(F2)} N.`, h: 'Wievielmal so lang ist die neue Verlängerung?' };
+  },
+  // Kraftmesser ablesen
+  ablesen() {
+    const sk = pick([[10, 'N', 0.5, 1], [5, 'N', 0.2, 1], [200, 'cN', 10, 50], [500, 'cN', 20, 100], [2, 'N', 0.1, 0.5]]);
+    const n = Math.round(sk[0] / sk[2]); const w = sk[2] * rnd(Math.ceil(n * .15), Math.floor(n * .9));
+    return { id: gid('ab'), st: 'F', q: 'Welche Kraft zeigt der Federkraftmesser an? Die rote Linie ist die Anzeige.', fig: skalaSvg(sk[0], sk[1], sk[2], sk[3], w), fields: [{ t: 'num', l: 'Anzeige', a: Math.round(w * 1000) / 1000, u: sk[1], tol: sk[2] * 0.51 }],
+      e: `Ein kleiner Strich bedeutet hier ${zahl(sk[2])} ${sk[1]}. Die Anzeige steht bei ${zahl(w)} ${sk[1]}.`, h: 'Zähle zuerst, wie viele kleine Striche zwischen zwei Zahlen liegen. Was ist dann ein Strich wert?' };
+  },
+  // Wippe: gesuchter Abstand
+  wippeL() {
+    for (;;) {
+      const m1 = pick([25, 30, 32, 35, 40, 45]), m2 = pick([50, 60, 64, 70, 75, 80]), l1 = pick([1.5, 2, 2.4, 2.5, 3]);
+      const l2 = m1 * l1 / m2; if (Math.abs(l2 * 10 - Math.round(l2 * 10)) > 1e-6 || l2 < .6) continue;
+      const F1 = m1 * 10, F2 = m2 * 10, Mo = F1 * l1;
+      return { id: gid('wl'), st: 'H', q: `Auf einer Wippe sitzt ein Kind (<b>${m1} kg</b>) <b>${zahl(l1)} m</b> vom Drehpunkt entfernt. Auf der anderen Seite will sich ein Erwachsener (<b>${m2} kg</b>) hinsetzen. Wie weit vom Drehpunkt muss er sitzen, damit die Wippe im Gleichgewicht ist?`,
+        fig: hebelSvg({ typ: 'zwei', links: { F: m1 + ' kg', l: zahl(l1) + ' m' }, rechts: { F: m2 + ' kg', l: '? m' }, xl: 40, xr: 255 }),
+        fields: [{ t: 'num', l: 'Gewichtskraft Kind F₁ =', a: F1, u: 'N' }, { t: 'num', l: 'Gewichtskraft Erwachsener F₂ =', a: F2, u: 'N' }, { t: 'num', l: 'F₁ · l₁ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'l₂ =', a: l2, u: 'm', tol: .01 }],
+        e: `Hebelgesetz F₁ · l₁ = F₂ · l₂. Kind: ${F1} N · ${zahl(l1)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${F2} N = ${zahl(l2)} m.`, h: ['Erst die Massen in Gewichtskräfte umrechnen (1 kg ≈ 10 N).', 'Dann die bekannte Seite ausrechnen: F₁ · l₁.', 'Zum Schluss durch F₂ teilen.'] };
+    }
+  },
+  // Wippe: Gleichgewicht prüfen
+  wippeCheck() {
+    const m1 = pick([30, 35, 40, 45]), m2 = pick([25, 30, 35, 50]), l1 = pick([1.5, 2, 2.5]), l2 = pick([1.5, 2, 2.2, 2.5, 3]);
+    const M1 = m1 * 10 * l1, M2 = m2 * 10 * l2, a = M1 > M2 ? 0 : M1 < M2 ? 1 : 2;
+    return { id: gid('wc'), st: 'H', q: `Links sitzt ein Kind mit <b>${m1} kg</b>, <b>${zahl(l1)} m</b> vom Drehpunkt. Rechts sitzt ein Kind mit <b>${m2} kg</b>, <b>${zahl(l2)} m</b> vom Drehpunkt. Ist die Wippe im Gleichgewicht?`,
+      fig: hebelSvg({ typ: 'zwei', links: { F: m1 + ' kg', l: zahl(l1) + ' m' }, rechts: { F: m2 + ' kg', l: zahl(l2) + ' m' }, ll: l1, lr: l2 }),
+      fields: [{ t: 'num', l: 'links: F · l =', a: M1, u: 'Nm' }, { t: 'num', l: 'rechts: F · l =', a: M2, u: 'Nm' }, { t: 'wahl', l: 'Was passiert?', o: ['links geht nach unten', 'rechts geht nach unten', 'Gleichgewicht'], a, fix: 1 }],
+      e: `Links: ${m1 * 10} N · ${zahl(l1)} m = ${zahl(M1)} Nm. Rechts: ${m2 * 10} N · ${zahl(l2)} m = ${zahl(M2)} Nm. ${a === 2 ? 'Beide gleich – Gleichgewicht.' : 'Die Seite mit dem größeren Wert geht nach unten: ' + (a === 0 ? 'links' : 'rechts') + '.'}`, h: 'Rechne für jede Seite Kraft mal Abstand. Die größere Seite gewinnt.' };
+  },
+  // einseitiger Hebel (Nussknacker, Schubkarre, Flaschenöffner)
+  einseitig() {
+    const ctx = pick([
+      { n: 'Nussknacker', k: 'die Hand', nom: 'Die Nuss', l: 'die Nuss', F: [20, 25, 30, 40], lk: [12, 15, 16, 18, 20], ll: [2, 3, 4, 5], u: 'cm' },
+      { n: 'Flaschenöffner', k: 'die Hand', nom: 'Der Kronkorken', l: 'den Kronkorken', F: [10, 12, 15, 20], lk: [8, 9, 10, 12], ll: [1, 2, 3], u: 'cm' }
+    ]);
+    for (;;) {
+      const F1 = pick(ctx.F), l1 = pick(ctx.lk), l2 = pick(ctx.ll), Mo = F1 * l1, F2 = Mo / l2;
+      if (F2 !== Math.round(F2)) continue;
+      return { id: gid('es'), st: 'H', q: `Beim <b>${ctx.n}</b> drückt ${ctx.k} mit <b>${F1} N</b>, <b>${l1} cm</b> vom Drehpunkt entfernt. ${ctx.nom} sitzt <b>${l2} cm</b> vom Drehpunkt. Wie groß ist die Kraft auf ${ctx.l}?`,
+        fig: hebelSvg({ typ: 'ein', last: { F: '? N', l: l2 + ' cm' }, kraft: { F: F1 + ' N', l: l1 + ' cm' }, xl: 30 + Math.round(l2 / l1 * 270), xk: 300 }),
+        fields: [{ t: 'num', l: 'F₁ · l₁ =', a: Mo, u: 'Ncm' }, { t: 'num', l: 'F₂ =', a: F2, u: 'N' }],
+        e: `Hebelgesetz: ${F1} N · ${l1} cm = ${Mo} Ncm. Dann ${Mo} Ncm : ${l2} cm = ${F2} N. Der ${ctx.n} verstärkt die Kraft ${zahl(l1 / l2)}-fach.`, h: ['Beide Längen sind in cm – dann ist die Einheit Ncm.', 'Bekannte Seite: F₁ · l₁. Dann durch l₂ teilen.'] };
+    }
+  },
+  // Schubkarre mit Einheiten-Falle
+  schubkarre() {
+    for (;;) {
+      const L = pick([400, 500, 600, 800]), ll = pick([30, 40, 50]), lk = pick([1.2, 1.5, 1, 1.6]);
+      const Mo = L * ll / 100, F = Mo / lk; if (F !== Math.round(F)) continue;
+      return { id: gid('sk'), st: 'H', q: `In einer Schubkarre liegen Steine mit <b>${L} N</b>. Ihr Schwerpunkt ist <b>${ll} cm</b> von der Radachse (Drehpunkt) entfernt. Die Griffe sind <b>${zahl(lk)} m</b> von der Achse entfernt. Mit welcher Kraft musst du die Griffe hochheben?`,
+        fields: [{ t: 'num', l: `${ll} cm =`, a: ll / 100, u: 'm' }, { t: 'num', l: 'F₂ · l₂ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'F₁ =', a: F, u: 'N' }],
+        e: `Erst gleiche Einheiten: ${ll} cm = ${zahl(ll / 100)} m. Last-Seite: ${L} N · ${zahl(ll / 100)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${zahl(lk)} m = ${F} N.`, h: ['Achtung: cm und m gemischt! Erst umrechnen.', 'Die Schubkarre ist ein einseitiger Hebel: Last und Hände sind auf derselben Seite der Achse.'] };
+    }
+  },
+  // einseitiger Hebel: Kraftarm über eine Differenz („greift 1,2 m weiter weg an als die Last“)
+  hebelDiff() {
+    for (;;) {
+      const l2 = pick([0.2, 0.3, 0.4, 0.5]), d = pick([0.6, 0.8, 1, 1.2, 1.5]), F2 = pick([300, 400, 500, 600, 800, 900, 1000]);
+      const l1 = Math.round((l2 + d) * 10) / 10, Mo = F2 * l2, F1 = Mo / l1; if (F1 !== Math.round(F1)) continue;
+      return { id: gid('hd'), st: 'H', q: `Bei einem einseitigen Hebel hängt <b>${zahl(l2 * 100)} cm</b> vom Drehpunkt eine Last von <b>${F2} N</b>. Die Kraft greift <b>${zahl(d)} m weiter</b> vom Drehpunkt entfernt an als die Last. Wie groß muss die Kraft sein?`,
+        fields: [{ t: 'num', l: 'Kraftarm l₁ =', a: l1, u: 'm' }, { t: 'num', l: 'F₂ · l₂ =', a: Mo, u: 'Nm' }, { t: 'num', l: 'F₁ =', a: F1, u: 'N' }],
+        e: `Kraftarm: ${zahl(l2)} m + ${zahl(d)} m = ${zahl(l1)} m (cm in m umrechnen!). Last-Seite: ${F2} N · ${zahl(l2)} m = ${zahl(Mo)} Nm. Dann ${zahl(Mo)} Nm : ${zahl(l1)} m = ${F1} N.`, h: ['„Weiter entfernt“ heißt: Die Strecke kommt zum Lastarm dazu.', 'Erst alles in Meter umrechnen.'] };
+    }
+  },
+  // Hebebaum am Brunnen: Eimer plus Wasser (1 l Wasser ≈ 1 kg ≈ 10 N), gesucht ist die ganze Länge
+  hebebaum() {
+    for (;;) {
+      const V = pick([3, 4, 5]), E = pick([8, 10, 12, 15, 20]), L = E + 10 * V, a = pick([0.5, 0.6, 0.75, 0.8, 1]), l = pick([2, 2.5, 3, 4]);
+      const S = L * l / a; if (S !== Math.round(S)) continue;
+      return { id: gid('hb'), st: 'H', q: `Mit einem Hebebaum holt man Wasser aus dem Brunnen. Der Eimer wiegt <b>${E} N</b> und fasst <b>${V} Liter</b> Wasser (1 l Wasser hat etwa 1 kg). Am anderen Ende sitzt <b>${zahl(a)} m</b> vom Drehpunkt ein Stein mit <b>${zahl(S)} N</b>. Er hält den vollen Eimer genau im Gleichgewicht. Wie lang ist der Hebebaum insgesamt?`,
+        fields: [{ t: 'num', l: 'Eimer mit Wasser F =', a: L, u: 'N' }, { t: 'num', l: 'Stein: F · l =', a: S * a, u: 'Nm' }, { t: 'num', l: 'Abstand des Eimers =', a: l, u: 'm' }, { t: 'num', l: 'ganze Länge =', a: l + a, u: 'm' }],
+        e: `${V} l Wasser ≈ ${V} kg ≈ ${V * 10} N, mit Eimer ${L} N. Stein: ${zahl(S)} N · ${zahl(a)} m = ${zahl(S * a)} Nm. Eimer-Abstand: ${zahl(S * a)} Nm : ${L} N = ${zahl(l)} m. Ganze Länge: ${zahl(l)} m + ${zahl(a)} m = ${zahl(l + a)} m.`, h: ['Wasser in Newton: 1 l ≈ 1 kg ≈ 10 N. Den Eimer dazuzählen.', 'Gefragt ist die ganze Länge: beide Arme zusammen.'] };
+    }
+  },
+  // Leiter: einseitiger Hebel, Abstand von der „falschen“ Seite gemessen
+  leiter() {
+    for (;;) {
+      const Lg = pick([4, 5, 6]), d = pick([1, 1.5, 2, 3]), G = pick([300, 320, 400, 450, 500, 600]);
+      if (d >= Lg) continue;
+      const arm = Lg - d, F = G * arm / Lg; if (F !== Math.round(F)) continue;
+      return { id: gid('le'), st: 'H', q: `Eine <b>${Lg} m</b> lange Leiter liegt waagerecht mit einem Ende auf einer Mauer (Drehpunkt). Das andere Ende trägt eine Person. <b>${zahl(d)} m von der Person entfernt</b> setzt sich ein Kind (<b>${G} N</b>) auf die Leiter. Wie viel muss die Person zusätzlich tragen?`,
+        fields: [{ t: 'num', l: 'Abstand Kind – Mauer =', a: arm, u: 'm' }, { t: 'num', l: 'F =', a: F, u: 'N' }],
+        e: `Der Drehpunkt ist die Mauer. Das Kind sitzt ${Lg} m − ${zahl(d)} m = ${zahl(arm)} m von der Mauer. Die Person trägt am Ende, ${Lg} m von der Mauer: F · ${Lg} m = ${G} N · ${zahl(arm)} m, also F = ${zahl(G * arm)} Nm : ${Lg} m = ${F} N.`, h: ['Wo ist der Drehpunkt? Von dort aus misst man beide Arme.', 'Der Abstand ist von der Person aus angegeben – rechne ihn auf die Mauer um.'] };
+    }
+  },
+  // Kraftpfeil mit Maßstab
+  pfeil() {
+    const m = pick([5, 10, 20, 50]), cm = pick([2, 3, 4, 5, 6]), F = m * cm;
+    const fig = `<svg viewBox="0 0 260 70" width="260" role="img" aria-label="Kraftpfeil, ${cm} cm lang"><rect x="10" y="22" width="40" height="34" rx="3" class="f-holz"/>`
+      + `<line x1="50" x2="${50 + cm * 30 - 10}" y1="39" y2="39" class="s-ton" stroke-width="3"/><path d="M${50 + cm * 30 - 12} 32 l12 7 l-12 7 z" class="f-ton"/>`
+      + Array.from({ length: cm + 1 }, (_, i) => `<line x1="${50 + i * 30}" x2="${50 + i * 30}" y1="56" y2="62" class="s-muted"/>`).join('')
+      + `<text x="${50 + cm * 15}" y="16" text-anchor="middle" font-size="12">${cm} cm</text></svg>`;
+    if (Math.random() < .5) return { id: gid('pf'), st: 'K', q: `Maßstab: <b>1 cm ≙ ${m} N</b>. Der Kraftpfeil ist <b>${cm} cm</b> lang. Wie groß ist die Kraft?`, fig, fields: [{ t: 'num', l: 'F =', a: F, u: 'N' }],
+      e: `${cm} cm · ${m} N pro cm = ${F} N.`, h: 'Jeder Zentimeter Pfeil steht für die Kraft aus dem Maßstab.' };
+    return { id: gid('pf'), st: 'K', q: `Maßstab: <b>1 cm ≙ ${m} N</b>. Wie lang musst du einen Kraftpfeil für <b>${F} N</b> zeichnen?`, fields: [{ t: 'num', l: 'Länge', a: cm, u: 'cm' }],
+      e: `${F} N : ${m} N pro cm = ${cm} cm.`, h: 'Wie oft passt die Kraft aus dem Maßstab in die gesuchte Kraft?' };
+  },
+  // Flaschenzug: Kraft und Seilweg
+  flaschenzug() {
+    const n = pick([2, 4, 6]), F = pick([20, 30, 40, 50, 60]), L = F * n, h = pick([0.5, 1, 1.5, 2, 3]);
+    return { id: gid('fz'), st: 'R', q: `Eine Last von <b>${L} N</b> hängt an einem Flaschenzug mit <b>${n} tragenden Seilstücken</b>. Sie soll <b>${zahl(h)} m</b> hoch gehoben werden.`,
+      fig: rollenSvg(n, 0, { last: L + ' N', zaehl: true }), // hier darf gefärbt sein: gefragt sind Kraft und Weg
+      fields: [{ t: 'num', l: 'Zugkraft F =', a: F, u: 'N' }, { t: 'num', l: 'Seil ziehen s =', a: n * h, u: 'm' }],
+      e: `Die Last verteilt sich auf ${n} Seilstücke: ${L} N : ${n} = ${F} N. Dafür muss jedes Seilstück um ${zahl(h)} m kürzer werden: ${n} · ${zahl(h)} m = ${zahl(n * h)} m Seil.`, h: ['F = Last : Anzahl der tragenden Seilstücke', 's = Höhe · Anzahl der tragenden Seilstücke'] };
+  },
+  // Flaschenzug rückwärts: wie viele Seilstücke?
+  seile() {
+    const n = pick([2, 3, 4, 6]), F = pick([25, 40, 50, 75, 100]), L = n * F;
+    return { id: gid('se'), st: 'R', q: `Mit einem Flaschenzug hebst du <b>${L} N</b> und brauchst dafür nur <b>${F} N</b> Zugkraft. An wie vielen Seilstücken hängt die Last?`, fields: [{ t: 'num', l: 'Anzahl', a: n, u: 'Seilstücke', tol: 0 }],
+      e: `${L} N : ${F} N = ${n}. Die Last hängt an ${n} tragenden Seilstücken.`, h: 'Wievielmal passt die Zugkraft in die Last?' };
+  }
+};
+const genItem = g => Object.assign(GEN[g](), { gen: g });
+
+// ===================================================================
+// NAWI-MISSION: Speicher und Ablauf
+// Grundidee: erst tippen, dann sehen (Experiment), ein Spiel pro Thema, Merksatz selbst bauen.
+// Faktenwissen läuft in der Blitzrunde, Rechnen bei den Endgegnern – jede Aufgabenart nur so oft wie nötig.
+// ===================================================================
+const KEY = 'nawi-6-mission-v1';
+const MKEYS = ['K', 'G', 'F', 'H', 'R'];
+const BOSS = [
+  ['mF', '⚖️', 'Umrechner', 'kg, g und N'], ['einh', '🔢', 'Einheiten-Jongleur', 'N, cN und kN'], ['pfeil', '➡️', 'Pfeilmeister', 'Kraftpfeil mit Maßstab'],
+  ['hooke', '🌀', 'Federfuchs', 'Hookesches Gesetz'], ['ablesen', '🔍', 'Scharfblick', 'Kraftmesser ablesen'],
+  ['wippeL', '🎠', 'Wippen-Wächter', 'Hebelgesetz an der Wippe'], ['schubkarre', '🛒', 'Karren-König', 'einseitiger Hebel'],
+  ['hebelDiff', '📏', 'Abstands-Trickser', 'Kraftarm über einen Abstand'], ['hebebaum', '🪣', 'Brunnen-Boss', 'Hebebaum mit Wasser'],
+  ['leiter', '🪜', 'Leiter-Lord', 'Leiter als Hebel'], ['flaschenzug', '🪝', 'Seil-Champion', 'Flaschenzug']
+];
+const blank = () => ({ st: {}, merk: {}, blitz: 0, boss: {} });
+function load() {
+  try {
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!isObj(o)) return blank();
+    const s = blank();
+    MKEYS.forEach(k => {
+      if (isObj(o.st) && Number.isInteger(o.st[k]) && o.st[k] >= 1 && o.st[k] <= 3) s.st[k] = o.st[k];
+      if (isObj(o.merk) && o.merk[k] === true) s.merk[k] = true;
+    });
+    if (Number.isInteger(o.blitz) && o.blitz > 0 && o.blitz < 1000) s.blitz = o.blitz;
+    if (isObj(o.boss)) BOSS.forEach(b => { if (o.boss[b[0]] === true) s.boss[b[0]] = true; });
+    return s;
+  } catch (e) {}
+  return blank();
+}
+let S = load();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+const app = document.getElementById('app');
+let VIEW = 'home', MR = null, BL = null, BR = null, animId = null, timerId = null;
+function stopAll() { if (animId) { cancelAnimationFrame(animId); animId = null; } if (timerId) { clearInterval(timerId); timerId = null; } }
+function go(v) { stopAll(); VIEW = v; render(); window.scrollTo(0, 0); }
+function anim(ms, step, done) {
+  if (animId) cancelAnimationFrame(animId);
+  const t0 = performance.now();
+  const f = now => { const t = Math.min(1, (now - t0) / ms); step(t); if (t < 1) animId = requestAnimationFrame(f); else { animId = null; done && done(); } };
+  animId = requestAnimationFrame(f);
+}
+// Fokus erst nach dem Tastendruck setzen – sonst löst dieselbe Enter-Taste gleich „Weiter“ aus
+const spaeterFokus = el => setTimeout(() => { if (el && el.isConnected) el.focus({ preventScroll: true }); }, 250);
+const ease = t => 1 - Math.pow(1 - t, 3);
+const sterne = n => `<span class="sterne" role="img" aria-label="${n} von 3 Sternen">${'★'.repeat(n)}<i>${'★'.repeat(3 - n)}</i></span>`;
+const ausFehlern = f => f === 0 ? 3 : f <= 2 ? 2 : 1;
+const sternSumme = () => MKEYS.reduce((n, k) => n + (S.st[k] || 0), 0);
+const bossZahl = () => BOSS.filter(b => S.boss[b[0]]).length;
+
+// ===================================================================
+// ZEICHNUNGEN der Missionen
+// ===================================================================
+function wagenSvg(x1, x2) {
+  const wagen = (x, y, voll) => `<g transform="translate(${x.toFixed(1)} ${y})"><path d="M0 0 h44 l-6 22 h-32 z" class="f-paper"/>${voll ? '<rect x="6" y="-12" width="14" height="12" class="f-holz"/><rect x="22" y="-12" width="14" height="12" class="f-holz"/><rect x="14" y="-24" width="14" height="12" class="f-holz"/>' : ''}<circle cx="10" cy="27" r="5" class="f-ink"/><circle cx="34" cy="27" r="5" class="f-ink"/></g>`;
+  return `<svg viewBox="0 0 340 160" role="img" aria-label="Zwei Einkaufswagen, einer leer, einer voll"><text x="336" y="16" font-size="12" text-anchor="end">leer</text><text x="336" y="92" font-size="12" text-anchor="end">voll beladen</text><line x1="0" x2="340" y1="66" y2="66" class="s-muted"/><line x1="0" x2="340" y1="146" y2="146" class="s-muted"/>${wagen(x1, 34, false)}${wagen(x2, 114, true)}</svg>`;
+}
+function schubSvg(x, m, F, anzeige, gut) {
+  let s = `<svg viewBox="0 0 360 140" role="img" aria-label="Wagen mit ${m} kg, Schubkraft ${F} N"><line x1="0" x2="360" y1="116" y2="116" class="s-muted" stroke-width="2"/>`;
+  s += `<line x1="236" x2="236" y1="116" y2="46" class="s-ink" stroke-width="3"/><rect x="190" y="14" width="92" height="34" rx="5" class="f-paper"/><text x="236" y="36" text-anchor="middle" font-size="13" font-weight="700" style="fill:${gut === true ? 'var(--ok)' : gut === false ? 'var(--bad)' : 'var(--ink)'}">${anzeige}</text>`;
+  s += `<g transform="translate(${x.toFixed(1)} 0)"><rect x="0" y="86" width="50" height="20" rx="3" class="f-paper"/><circle cx="11" cy="110" r="6" class="f-ink"/><circle cx="39" cy="110" r="6" class="f-ink"/>`;
+  for (let i = 0; i < m; i++) s += `<rect x="${3 + i * 15}" y="70" width="14" height="16" rx="2" fill="#9cc0ee" stroke="#333" stroke-width=".8"/>`;
+  s += `<text x="25" y="64" text-anchor="middle" font-size="12" font-weight="700">${m} kg</text>`;
+  const l = F * 15; // Kraftpfeil: 1 N ≙ 15 Einheiten
+  if (F) s += `<circle cx="50" cy="96" r="3.5" class="f-ton"/><line x1="50" x2="${42 + l}" y1="96" y2="96" class="s-ton" stroke-width="4"/><path d="M${52 + l} 96 l-11 -6 v12 z" class="f-ton"/><text x="${51 + l / 2}" y="88" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ton)">${F} N</text>`;
+  s += '</g>';
+  return s + '</svg>';
+}
+function waageSvg(txt) {
+  return `<svg viewBox="0 0 340 170" role="img" aria-label="Balkenwaage auf dem Mond"><text x="8" y="26" font-size="22">🌙</text><path d="M170 60 l-14 90 h28 z" class="f-ton"/><rect x="120" y="150" width="100" height="8" class="f-muted"/><rect x="50" y="56" width="240" height="8" rx="3" class="f-holz"/><circle cx="170" cy="60" r="5" class="f-ink"/>
+    <line x1="70" x2="70" y1="64" y2="96" class="s-ink"/><rect x="44" y="96" width="52" height="34" rx="3" fill="#9cc0ee" stroke="#333"/><text x="70" y="118" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">Kiste</text>
+    <line x1="270" x2="270" y1="64" y2="96" class="s-ink"/><rect x="244" y="96" width="52" height="34" rx="3" fill="#c9cfd2" stroke="#333"/><text x="270" y="118" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">${txt}</text></svg>`;
+}
+// Federkraftmesser als Röhre mit Skala 0 … max, rote Marke bei val (null = keine Marke)
+function messerSvg(max, val, txt, ort) {
+  let s = `<svg viewBox="0 0 220 262" role="img" aria-label="Federkraftmesser bis ${zahl(max)} N">${ort ? `<text x="8" y="28" font-size="22">${ort}</text>` : ''}<line x1="110" x2="110" y1="0" y2="12" class="s-ink" stroke-width="2"/><rect x="88" y="12" width="44" height="196" rx="8" class="f-paper"/>`;
+  for (let i = 0; i <= 10; i++) { const y = 22 + i * 17.6; s += `<line x1="88" x2="${i % 2 ? 98 : 104}" y1="${y}" y2="${y}" class="s-ink"/>`; if (i % 2 === 0) s += `<text x="140" y="${y + 4}" font-size="12">${zahl(max * i / 10)}</text>`; }
+  s += `<text x="140" y="14" font-size="11" class="f-muted">N</text>`;
+  if (val != null) { const y = 22 + Math.min(1, val / max) * 176; s += `<line x1="84" x2="136" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#d33" stroke-width="3"/>`; }
+  s += `<line x1="110" x2="110" y1="208" y2="222" class="s-ink" stroke-width="2"/><rect x="70" y="222" width="80" height="32" rx="4" fill="#9cc0ee" stroke="#333"/><text x="110" y="243" text-anchor="middle" font-size="13" font-weight="700" style="fill:#111">${txt}</text>`;
+  return s + '</svg>';
+}
+function schwingSvg(x1, x2) {
+  const reihe = (y, x, txt, w) => { let d = `M14 ${y}`; const n = 10, x0 = 14, xe = x - w / 2; for (let i = 0; i < n; i++) d += ` L${(x0 + (xe - x0) * (i + .5) / n).toFixed(1)} ${y + (i % 2 ? -8 : 8)}`; d += ` L${xe.toFixed(1)} ${y}`;
+    return `<path d="${d}" class="s-ink" stroke-width="1.8"/><rect x="${(x - w / 2).toFixed(1)}" y="${y - 16}" width="${w}" height="32" rx="3" fill="#9cc0ee" stroke="#333"/><text x="${x.toFixed(1)}" y="${y + 5}" text-anchor="middle" font-size="12" font-weight="700" style="fill:#111">${txt}</text>`; };
+  return `<svg viewBox="0 0 340 150" role="img" aria-label="Zwei Kisten schwingen an gleichen Federn"><rect x="4" y="10" width="10" height="130" class="f-muted"/>${reihe(44, x1, '1 kg', 44)}${reihe(108, x2, '4 kg', 70)}</svg>`;
+}
+// Federn nebeneinander, jede mit eigenem Lineal. items: [{ ext (cm) oder null, cap, band }]
+function federnSvg(items) {
+  const px = 13, top = 16, L0 = 44, z = top + L0, B = 116;
+  let s = `<svg viewBox="0 0 ${Math.max(240, items.length * B + 8)} 300" role="img" aria-label="Federn mit Lineal">`;
+  items.forEach((it, i) => {
+    const cx = 40 + i * B, ext = it.ext == null ? 0 : it.ext, bot = z + ext * px;
+    s += `<rect x="${cx - 26}" y="6" width="52" height="8" class="f-muted"/>`;
+    if (it.band) s += `<path d="M${cx - 5} ${top} L${cx - 2} ${bot} h4 L${cx + 5} ${top} z" fill="#c75b39" stroke="#7a2e19"/>`;
+    else { let d = `M${cx} 14 V${top + 6}`; const n = 10, len = bot - top - 14; for (let k = 0; k < n; k++) d += ` L${cx + (k % 2 ? -11 : 11)} ${(top + 6 + len * (k + .5) / n).toFixed(1)}`; d += ` L${cx} ${bot - 8} V${bot}`; s += `<path d="${d}" class="s-ink" stroke-width="2" stroke-linejoin="round"/>`; }
+    s += `<rect x="${cx - 24}" y="${bot}" width="48" height="24" rx="3" fill="#9cc0ee" stroke="#333"/><text x="${cx}" y="${bot + 16}" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:#111">${it.cap}</text>`;
+    const rx = cx + 34; s += `<rect x="${rx}" y="${z - 8}" width="34" height="${12 * px + 16}" class="f-paper"/>`;
+    for (let c = 0; c <= 12; c++) { const y = z + c * px; s += `<line x1="${rx}" x2="${rx + (c % 2 ? 7 : 12)}" y1="${y}" y2="${y}" class="s-ink"/>`; if (c % 2 === 0) s += `<text x="${rx + 15}" y="${y + 4}" font-size="10">${c}</text>`; }
+    if (it.ext != null) s += `<line x1="${cx + 8}" x2="${rx}" y1="${bot}" y2="${bot}" stroke="#d33" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+    if (i === 0) s += `<text x="${rx + 17}" y="${z - 12}" text-anchor="middle" font-size="10" class="f-muted">cm</text>`;
+  });
+  return s + '</svg>';
+}
+// Wippe mit Löchern bei 10 … 50 cm; L und R: { Loch: Anzahl 1-N-Stücke }
+function wippeSvg(L, R, ang, hits) {
+  let s = `<svg viewBox="0 54 360 300" role="img" aria-label="Zweiseitiger Hebel"><path d="M180 128 l-18 60 h36 z" class="f-ton"/><rect x="120" y="188" width="120" height="8" class="f-muted"/><g transform="rotate(${ang.toFixed(2)} 180 120)"><rect x="20" y="114" width="320" height="12" rx="3" class="f-holz"/>`;
+  for (let k = 1; k <= 5; k++) for (const sd of [-1, 1]) {
+    const x = 180 + sd * k * 30, n = (sd < 0 ? L : R)[k] || 0;
+    s += `<circle cx="${x}" cy="120" r="3.2" class="f-ink"/><text x="${x}" y="107" text-anchor="middle" font-size="13" class="f-muted">${k * 10}</text>`;
+    if (n) { s += `<line x1="${x}" x2="${x}" y1="120" y2="133" class="s-ink" stroke-width="1.5"/>`; for (let i = 0; i < n; i++) s += `<rect x="${x - 13}" y="${133 + i * 17}" width="26" height="16" rx="2" fill="${sd < 0 ? '#9cc0ee' : '#c9cfd2'}" stroke="#333" stroke-width=".8"/><text x="${x}" y="${145.5 + i * 17}" text-anchor="middle" font-size="11" font-weight="700" style="fill:#111">1 N</text>`; }
+    if (sd > 0 && hits) s += `<rect class="hit" data-p="${k}" x="${x - 15}" y="88" width="30" height="${Math.max(80, 50 + n * 17)}" rx="6"/>`;
+  }
+  return s + `</g><circle cx="180" cy="120" r="5" class="f-ink"/></svg>`;
+}
+
+// ===================================================================
+// MISSIONEN
+// Schritt „tipp“: { q, o, a, e, fig(el, läuft, fertig) }   Schritt „spiel“: { titel, run(host, fertig(sterne, text)) }
+// ===================================================================
+const MIS = {
+  K: { icon: '🚀', name: 'Schub!', thema: 'Kraft, Wirkungen, Trägheit', hook: 'Warum ist ein voller Einkaufswagen so störrisch?',
+    merk: 'Eine Kraft erkennt man an ihrer Wirkung: Sie bewirkt eine {Verformung} (elastisch oder plastisch) oder eine {Bewegungsänderung} (schneller, langsamer, andere Richtung). Je größer die Masse, desto {träger} ist ein Körper. Kräfte zeichnet man als {Pfeil} und misst sie in {Newton}.',
+    falsch: ['Kilogramm', 'leichter', 'Kreis'],
+    plus: ['Kraftpfeil: Länge = Betrag, Spitze = Richtung, Anfang = Angriffspunkt.', 'Formelzeichen F (force), Einheit 1 N.', 'elastisch: geht von allein zurück (Feder) · plastisch: bleibt verformt (Knete).', 'Bei gleicher Masse: größere Kraft → stärkere Beschleunigung. Bei gleicher Kraft: größere Masse → schwächere Beschleunigung.'],
+    steps: [
+      { t: 'tipp', q: 'Zwei Einkaufswagen bekommen genau den gleichen Schubs – einer ist leer, einer voll beladen. Was passiert?', o: ['Der leere wird schneller.', 'Der volle wird schneller.', 'Beide werden gleich schnell.'], a: 0,
+        e: 'Gleiche Kraft, aber mehr Masse: Der volle Wagen wird weniger stark beschleunigt. Körper mit großer Masse sind <b>träge</b>.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = wagenSvg(20, 20); return; } anim(1600, t => { el.innerHTML = wagenSvg(20 + 260 * ease(t), 20 + 95 * ease(t)); }, fertig); } },
+      { t: 'spiel', titel: 'Blitzer-Challenge', run: spielSchub },
+      { t: 'merk' }
+    ] },
+  G: { icon: '🌙', name: 'Erde, Mond, Weltall', thema: 'Masse und Gewichtskraft', hook: 'Wie schwer ist deine Schultasche auf dem Mond?',
+    merk: 'Die {Masse} misst man in kg. Sie ist überall {gleich}. Die {Gewichtskraft} misst man in N. Sie hängt vom {Ort} ab: Auf der Erde gilt 1 kg ≙ {10 N}, auf dem Mond ist sie nur etwa ein {Sechstel} so groß.',
+    falsch: ['100 N', 'Zehntel', 'Wetter'],
+    plus: ['Merkhilfe für die Erde (gerundet): 100 g ≙ 1 N und 1 kg ≙ 10 N.', 'Masse: Balkenwaage · Gewichtskraft: Federkraftmesser.', 'Schwerelos (Raumstation) verrät die Trägheit die Masse: Auf der Schwingwaage schwingt mehr Masse langsamer.'],
+    steps: [
+      { t: 'tipp', q: 'Eine Kiste hat auf der Erde 6 kg. Du legst sie auf dem Mond auf eine Balkenwaage. Wie viele Kilogramm-Stücke brauchst du auf der anderen Seite?', o: ['6 kg', '1 kg', '36 kg'], a: 0,
+        e: 'Die <b>Masse</b> bleibt überall gleich. Die Balkenwaage vergleicht zwei Massen – auf dem Mond werden beide Seiten gleich schwächer angezogen.',
+        fig: (el, lauf, fertig) => { el.innerHTML = waageSvg(lauf ? '6 kg' : '? kg'); if (lauf) fertig(); } },
+      { t: 'tipp', q: 'Am Federkraftmesser zeigt dieselbe Kiste auf der Erde 60 N. Was zeigt er auf dem Mond?', o: ['10 N', '60 N', '360 N'], a: 0,
+        e: 'Die <b>Gewichtskraft</b> hängt vom Ort ab. Der Mond zieht etwa sechsmal schwächer: 60 N : 6 = 10 N.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = messerSvg(60, 60, '6 kg', '🌍'); return; } anim(1400, t => { el.innerHTML = messerSvg(60, 60 - 50 * ease(t), '6 kg', '🌙'); }, fertig); } },
+      { t: 'tipp', q: 'In der Raumstation ist alles schwerelos, der Kraftmesser zeigt nichts an. Zwei Kisten sind an gleichen Federn befestigt und werden angestoßen. Welche schwingt langsamer hin und her?', o: ['die mit 4 kg', 'die mit 1 kg', 'beide gleich'], a: 0,
+        e: 'Mehr Masse heißt mehr <b>Trägheit</b>: Die schwere Kiste lässt sich schlechter hin und her bewegen. So eine <b>Schwingwaage</b> bestimmt Massen, auch wenn der Kraftmesser nichts mehr anzeigt.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = schwingSvg(170, 170); return; } anim(4000, t => { const s = t * 4; el.innerHTML = schwingSvg(170 + 60 * Math.sin(2 * Math.PI * s / 0.8) * (1 - t * .3), 170 + 60 * Math.sin(2 * Math.PI * s / 1.6) * (1 - t * .3)); }, fertig); } },
+      { t: 'spiel', titel: 'Ansage!', run: spielAnsage },
+      { t: 'merk' }
+    ] },
+  F: { icon: '🌀', name: 'Rätselsteine', thema: 'Federkraftmesser, Hookesches Gesetz', hook: 'Wie misst man eine Kraft, die man nicht sehen kann?',
+    merk: 'Bei einer Schraubenfeder gilt: doppelte Kraft – {doppelte} Verlängerung. Kraft und Verlängerung sind {proportional}. Das ist das {Hookesche Gesetz}. Ein Gummiband dehnt sich {ungleichmäßig}, deshalb steckt im Kraftmesser eine {Feder}.',
+    falsch: ['halbe', 'Hebelgesetz', 'gleichmäßig'],
+    plus: ['Ablesen: erst prüfen, wie viel ein kleiner Strich wert ist.', 'Rechnen: Wievielmal so groß ist die Kraft? So vielmal so groß ist die Verlängerung.'],
+    steps: [
+      { t: 'tipp', q: 'An einer Feder hängt 1 N: Sie wird 3 cm länger. Jetzt hängst du 2 N daran. Wie viel länger wird sie?', o: ['6 cm', '4 cm', '9 cm'], a: 0,
+        e: 'Doppelte Kraft – doppelte Verlängerung. Bei einer Feder sind Kraft und Verlängerung <b>proportional</b> (Hookesches Gesetz).',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = federnSvg([{ ext: 3, cap: '1 N' }, { ext: null, cap: '2 N' }]); return; } anim(1200, t => { el.innerHTML = federnSvg([{ ext: 3, cap: '1 N' }, { ext: 6 * ease(t), cap: '2 N' }]); }, fertig); } },
+      { t: 'tipp', q: 'Jetzt ein Gummiband: Mit 1 Gewichtsstück wird es 0,8 cm länger, mit 2 Stücken 2,0 cm. Was erwartest du bei 4 Stücken?', o: ['Das lässt sich aus den zwei Messungen nicht berechnen.', '3,2 cm – viermal so viel wie bei 1 Stück', '4,0 cm – doppelt so viel wie bei 2 Stücken'], a: 0,
+        e: 'Dieses Gummiband wird 6,0 cm länger. Ein Gummiband dehnt sich <b>ungleichmäßig</b> – darum baut man Kraftmesser mit Federn. (Beispielwerte: Jedes Gummiband ist etwas anders.)',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = federnSvg([{ ext: .8, cap: '1 Stück', band: 1 }, { ext: 2, cap: '2 Stücke', band: 1 }, { ext: null, cap: '4 Stücke', band: 1 }]); return; } anim(1200, t => { el.innerHTML = federnSvg([{ ext: .8, cap: '1 Stück', band: 1 }, { ext: 2, cap: '2 Stücke', band: 1 }, { ext: 6 * ease(t), cap: '4 Stücke', band: 1 }]); }, fertig); } },
+      { t: 'spiel', titel: 'Rätselsteine messen', run: spielSteine },
+      { t: 'merk' }
+    ] },
+  H: { icon: '⚖️', name: 'Hebel-Trick', thema: 'Hebel und Hebelgesetz', hook: 'Wie hebt man etwas, das viel schwerer ist als man selbst?',
+    merk: 'Hebelgesetz: Kraft mal {Kraftarm} = Last mal {Lastarm}. Je länger der Kraftarm, desto {kleiner} die nötige Kraft. Liegt der Drehpunkt zwischen Kraft und Last, ist der Hebel {zweiseitig} (Wippe, Schere). Greifen beide auf derselben Seite an, ist er {einseitig} (Schubkarre, Nussknacker).',
+    falsch: ['größer', 'Seilstück'],
+    plus: ['Formel: F₁ · l₁ = F₂ · l₂', 'Kraftarm und Lastarm misst man immer vom Drehpunkt aus.', 'Massen zuerst in Kräfte umrechnen (1 kg ≙ 10 N).'],
+    steps: [
+      { t: 'tipp', q: 'Links hängen 2 Gewichtsstücke bei 20 cm. Rechts hängt nur 1 Stück – aber bei 40 cm. Was macht der Balken, wenn du loslässt?', o: ['Er bleibt waagerecht.', 'Die linke Seite geht nach unten.', 'Die rechte Seite geht nach unten.'], a: 0,
+        e: 'Es zählt Kraft <b>mal</b> Abstand: links 2 N · 20 cm = 40 Ncm, rechts 1 N · 40 cm = 40 Ncm. Gleichstand – das ist das <b>Hebelgesetz</b>.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = wippeSvg({ 2: 2 }, { 4: 1 }, 0); return; } anim(1500, t => { el.innerHTML = wippeSvg({ 2: 2 }, { 4: 1 }, 2.5 * Math.sin(t * Math.PI * 3) * (1 - t)); }, fertig); } },
+      { t: 'tipp', q: 'Eine Schubkarre ist ein einseitiger Hebel: Der Drehpunkt ist das Rad, die Last liegt nah am Rad. Du fasst die Griffe ganz hinten statt in der Mitte. Was ändert sich?', o: ['Du brauchst weniger Kraft.', 'Du brauchst mehr Kraft.', 'Es ändert sich nichts.'], a: 0,
+        e: 'Weiter hinten ist dein <b>Kraftarm</b> länger – also reicht eine kleinere Kraft. Beim einseitigen Hebel greifen Last und Kraft auf derselben Seite vom Drehpunkt an.',
+        fig: (el, lauf, fertig) => { el.innerHTML = hebelSvg({ typ: 'ein', last: { F: '300 N', l: '30 cm' }, kraft: lauf ? { F: '75 N', l: '120 cm' } : { F: '150 N', l: '60 cm' }, xl: 98, xk: lauf ? 300 : 165 }); if (lauf) fertig(); } },
+      { t: 'spiel', titel: 'Wippen-Duell', run: spielWippe },
+      { t: 'merk' }
+    ] },
+  R: { icon: '🪝', name: 'Kran-Chef', thema: 'Rollen und Flaschenzug', hook: 'Wie zieht ein Kind 600 N nach oben?',
+    merk: 'Eine feste Rolle lenkt die Kraft nur {um} – sie spart keine Kraft. An einer losen Rolle braucht man die {halbe} Kraft, zieht aber {doppelt} so viel Seil. Beim Flaschenzug zählt man die tragenden {Seilstücke}. Goldene Regel: Was man an Kraft spart, muss man an {Weg} zusetzen.',
+    falsch: ['Rollen', 'dreifache', 'Masse'],
+    plus: ['Flaschenzug mit n tragenden Seilstücken – Kraft: F = F<sub>G</sub> : n', 'Flaschenzug – Seilweg: s = n · h', 'Kraftwandler sparen Kraft: Hebel, lose Rolle, Flaschenzug. Die feste Rolle ist nur eine Umlenkrolle, kein Kraftwandler.'],
+    steps: [
+      { t: 'tipp', q: 'Eine Last von 100 N hängt an einer festen Rolle an der Decke. Mit welcher Kraft musst du am Seil ziehen?', o: ['100 N', '50 N', '200 N'], a: 0,
+        e: 'Die feste Rolle lenkt die Kraft nur um: Du ziehst nach unten, die Last geht nach oben. Die Kraft bleibt <b>gleich groß</b>.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = rollenSvg(1, 0, { last: '100 N', F: '? N' }); return; } anim(1500, t => { el.innerHTML = rollenSvg(1, 1.5 * ease(t), { last: '100 N', F: '100 N' }); }, fertig); } },
+      { t: 'tipp', q: 'Jetzt hängt die Last an einer losen Rolle. Du willst sie 1 m anheben. Wie viel Seil musst du ziehen?', o: ['2 m', '1 m', '0,5 m'], a: 0,
+        e: 'Die Last hängt an zwei Seilstücken. Jedes muss 1 m kürzer werden – du ziehst also 2 m. Dafür brauchst du nur die <b>halbe Kraft</b>.',
+        fig: (el, lauf, fertig) => { if (!lauf) { el.innerHTML = rollenSvg(2, 0, { last: '100 N', F: '50 N' }); return; } anim(1800, t => { el.innerHTML = rollenSvg(2, 1.5 * ease(t), { last: '100 N', F: '50 N' }); }, fertig); } },
+      { t: 'spiel', titel: 'Kran-Chef', run: spielKran },
+      { t: 'merk' }
+    ] }
+};
+
+// ---------- Spiel K: Blitzer-Challenge (Tempo nach 1 s Schub = Kraft : Masse) ----------
+function spielSchub(host, fertig) {
+  const runden = [{ m: 1, v: pick([3, 4, 5]) }, { m: 2, v: pick([2, 3]) }, { m: 3, v: pick([1, 2]) }];
+  let i = 0, F = 1, fehler = 0, laeuft = false;
+  host.innerHTML = `<p class="small muted"><b>Testfahrt:</b> 1 N schiebt den 1-kg-Wagen eine Sekunde lang an – danach fährt er <b>1 m/s</b> (1 Meter pro Sekunde). Stell die Schubkraft so ein, dass der Blitzer genau das Ziel-Tempo misst. <span class="small">Das ist eine Spielregel. Für die Arbeit reicht: mehr Kraft – stärkere Beschleunigung, mehr Masse – träger.</span></p>
+    <div class="anzeige" id="sa"></div><div class="labfig" id="sf"></div>
+    <label class="regler"><span>Schubkraft: <b id="kv"></b> <span class="small muted">(je länger der Pfeil, desto größer die Kraft)</span></span><input type="range" id="kraft" min="1" max="6" step="1" value="1"></label>
+    <div class="row"><button class="btn" id="los">Schub!</button></div><div id="sfb" aria-live="polite"></div>`;
+  const q = s => host.querySelector(s);
+  const zeig = () => { const r = runden[i]; q('#sa').innerHTML = `<span>Runde <b>${i + 1}</b> von 3</span><span>Wagen: <b>${r.m} kg</b></span><span>Ziel: <b>${r.v} m/s</b></span>`; q('#kv').textContent = F + ' N'; q('#sf').innerHTML = schubSvg(40, r.m, F, 'Ziel ' + r.v + ' m/s'); };
+  q('#kraft').oninput = e => { if (laeuft) return; F = +e.target.value; q('#sfb').innerHTML = ''; zeig(); };
+  q('#los').onclick = () => {
+    if (laeuft) return; laeuft = true; q('#los').disabled = true; q('#kraft').disabled = true;
+    const r = runden[i], v = F / r.m, ok = Math.abs(v - r.v) < 1e-9;
+    anim(2600 / Math.max(v, .8), t => { q('#sf').innerHTML = schubSvg(40 + 265 * t, r.m, t < .3 ? F : 0, t < .55 ? '…' : zahl(v) + ' m/s', t < .55 ? null : ok); }, () => {
+      laeuft = false;
+      if (ok) {
+        const letzte = i === 2;
+        q('#sfb').innerHTML = `<div class="fb"><div class="msg ok"><b>✓ Genau ${r.v} m/s!</b> ${F} N auf ${r.m} kg. ${r.m > 1 ? `Der Wagen hat ${r.m}-mal so viel Masse – also brauchst du für dasselbe Tempo auch ${r.m}-mal so viel Kraft wie beim 1-kg-Wagen.` : 'Mehr Kraft – stärkere Beschleunigung.'}</div><div class="row"><button class="btn" id="wr">${letzte ? 'Fertig' : 'Nächste Runde'}</button></div></div>`;
+        q('#wr').onclick = () => { if (letzte) return fertig(ausFehlern(fehler), fehler ? `${fehler} Fehlversuch${fehler === 1 ? '' : 'e'}` : 'Kein einziger Fehlversuch!'); i++; F = 1; q('#kraft').value = 1; q('#kraft').disabled = false; q('#los').disabled = false; q('#sfb').innerHTML = ''; zeig(); };
+      } else {
+        fehler++; q('#kraft').disabled = false; q('#los').disabled = false;
+        q('#sfb').innerHTML = `<div class="fb"><div class="msg no"><b>${zahl(v)} m/s – zu ${v > r.v ? 'schnell' : 'langsam'}.</b> ${v > r.v ? 'Weniger' : 'Mehr'} Kraft! Denk dran: ${r.m > 1 ? `${r.m} kg sind ${r.m}-mal so träge wie 1 kg.` : '1 N bringt 1 kg auf 1 m/s.'}</div></div>`;
+        q('#sf').innerHTML = schubSvg(40, r.m, F, zahl(v) + ' m/s', false);
+      }
+    });
+  };
+  zeig();
+}
+
+// ---------- Spiel G: Ansage! (vor dem Anhängen sagen, was der Kraftmesser zeigt) ----------
+function spielAnsage(host, fertig) {
+  const g = pick([200, 300, 400, 600, 700]), k = pick([1.5, 2.5, 3.5, 4.5]), mo = pick([6, 12, 18, 24]), rN = pick([15, 25, 35, 45]);
+  const A = [
+    { q: `🌍 Erde: Du hängst <b>${g} g</b> an den Kraftmesser. Sag an: Was zeigt er?`, a: g / 100, u: 'N', max: 10, cap: g + ' g', ort: '🌍', e: `100 g ≙ 1 N, also ${g} g ≙ ${zahl(g / 100)} N.` },
+    { q: `🌍 Erde: Jetzt <b>${zahl(k)} kg</b>. Was zeigt der Kraftmesser?`, a: k * 10, u: 'N', max: 50, cap: zahl(k) + ' kg', ort: '🌍', e: `1 kg ≙ 10 N, also ${zahl(k)} kg ≙ ${zahl(k * 10)} N.` },
+    { q: `🌙 Mond: Eine Kiste mit <b>${mo} kg</b> hängt am Kraftmesser. Was zeigt er dort?`, a: mo * 10 / 6, u: 'N', max: 50, cap: mo + ' kg', ort: '🌙', e: `Auf der Erde wären es ${mo * 10} N. Auf dem Mond etwa ein Sechstel: ${mo * 10} N : 6 = ${zahl(mo * 10 / 6)} N.` },
+    { q: `🌍 Erde, andersherum: Der Kraftmesser zeigt <b>${rN} N</b>. Welche Masse hängt daran?`, a: rN / 10, u: 'kg', max: 50, cap: '? kg', ort: '🌍', zeigVor: rN, e: `10 N ≙ 1 kg, also ${rN} N ≙ ${zahl(rN / 10)} kg.` }
+  ];
+  let i = 0, treffer = 0;
+  const zeig = () => {
+    const a = A[i];
+    host.innerHTML = `<div class="anzeige"><span>Ansage <b>${i + 1}</b> von ${A.length}</span><span>Treffer: <b>${treffer}</b></span></div><div class="q">${a.q}</div><div class="labfig schmal" id="sf">${messerSvg(a.max, a.zeigVor != null ? a.zeigVor : null, a.cap, a.ort)}</div>
+      <div class="row"><label class="fnum"><input id="ein" inputmode="decimal" autocomplete="off" aria-label="Deine Ansage"><span class="u">${a.u}</span></label><button class="btn" id="ok">Ansage!</button><span class="small muted" id="leer"></span></div><div id="sfb" aria-live="polite"></div>`;
+    const ein = host.querySelector('#ein'), los = () => {
+      const x = parseZahl(ein.value); if (isNaN(x)) { host.querySelector('#leer').textContent = 'Tippe erst eine Zahl ein.'; return; }
+      ein.disabled = true; host.querySelector('#ok').disabled = true;
+      const ok = Math.abs(x - a.a) <= Math.max(a.a * .005, .011); if (ok) treffer++;
+      const ende = () => {
+        if (a.zeigVor != null) host.querySelector('#sf').innerHTML = messerSvg(a.max, a.zeigVor, zahl(a.a) + ' kg', a.ort);
+        host.querySelector('#sfb').innerHTML = `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig angesagt!' : '✗ Richtig wäre ' + zahl(a.a) + ' ' + a.u + '.'}</b> ${a.e}</div><div class="row"><button class="btn" id="wr">${i === A.length - 1 ? 'Fertig' : 'Weiter'}</button></div></div>`;
+        host.querySelector('#wr').onclick = () => { if (i === A.length - 1) return fertig(treffer === 4 ? 3 : treffer === 3 ? 2 : 1, `${treffer} von 4 Ansagen richtig`); i++; zeig(); };
+        spaeterFokus(host.querySelector('#wr'));
+      };
+      if (a.zeigVor != null) ende(); else anim(900, t => { host.querySelector('#sf').innerHTML = messerSvg(a.max, a.a * ease(t), a.cap, a.ort); }, ende);
+    };
+    host.querySelector('#ok').onclick = los; ein.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); los(); } };
+  };
+  zeig();
+}
+
+// ---------- Spiel F: Rätselsteine (mit einer geeichten Feder wiegen) ----------
+function spielSteine(host, fertig) {
+  const mk = rueck => { for (;;) { const c = pick([2, 3, 4]), F = pick([1.5, 2, 2.5, 3, 4]); if (c * F <= 12) return { c, F, x: c * F, rueck }; } };
+  const A = [mk(false)]; for (;;) { const b = mk(false); if (b.c !== A[0].c || b.F !== A[0].F) { A.push(b); break; } } A.push(mk(true));
+  let i = 0, treffer = 0;
+  const zeig = () => {
+    const a = A[i], ziel = a.rueck ? a.x : a.F, u = a.rueck ? 'cm' : 'N';
+    host.innerHTML = `<div class="anzeige"><span>Stein <b>${i + 1}</b> von 3</span><span>Treffer: <b>${treffer}</b></span></div>
+      <div class="q">${a.rueck ? `Diese Feder wird bei <b>1 N</b> um <b>${a.c} cm</b> länger. Der nächste Stein hat eine Gewichtskraft von <b>${zahl(a.F)} N</b>. Um wie viel wird die Feder länger?` : `Diese Feder wird bei <b>1 N</b> um <b>${a.c} cm</b> länger. Der Rätselstein dehnt sie um <b>${zahl(a.x)} cm</b>. Wie groß ist seine Gewichtskraft?`}</div>
+      <div class="labfig schmal" id="sf">${federnSvg([{ ext: a.c, cap: '1 N' }, { ext: a.rueck ? null : a.x, cap: a.rueck ? zahl(a.F) + ' N' : 'Stein ?' }])}</div>
+      <div class="row"><label class="fnum"><input id="ein" inputmode="decimal" autocomplete="off" aria-label="Deine Antwort"><span class="u">${u}</span></label><button class="btn" id="ok">Messen!</button><span class="small muted" id="leer"></span></div><div id="sfb" aria-live="polite"></div>`;
+    const ein = host.querySelector('#ein'), los = () => {
+      const x = parseZahl(ein.value); if (isNaN(x)) { host.querySelector('#leer').textContent = 'Tippe erst eine Zahl ein.'; return; }
+      ein.disabled = true; host.querySelector('#ok').disabled = true;
+      const ok = Math.abs(x - ziel) <= .011; if (ok) treffer++;
+      const ende = () => {
+        host.querySelector('#sf').innerHTML = federnSvg([{ ext: a.c, cap: '1 N' }, { ext: a.x, cap: zahl(a.F) + ' N' }]);
+        host.querySelector('#sfb').innerHTML = `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Stimmt!' : '✗ Richtig wäre ' + zahl(ziel) + ' ' + u + '.'}</b> ${a.rueck ? `${zahl(a.F)}-mal so viel Kraft wie 1 N – also ${zahl(a.F)}-mal so viel Verlängerung: ${zahl(a.F)} · ${a.c} cm = ${zahl(a.x)} cm.` : `${zahl(a.x)} cm sind ${zahl(a.F)}-mal so viel wie ${a.c} cm – also ist die Kraft ${zahl(a.F)}-mal so groß wie 1 N.`}</div><div class="row"><button class="btn" id="wr">${i === 2 ? 'Fertig' : 'Nächster Stein'}</button></div></div>`;
+        host.querySelector('#wr').onclick = () => { if (i === 2) return fertig(treffer === 3 ? 3 : treffer === 2 ? 2 : 1, `${treffer} von 3 Steinen richtig`); i++; zeig(); };
+        spaeterFokus(host.querySelector('#wr'));
+      };
+      if (a.rueck) anim(900, t => { host.querySelector('#sf').innerHTML = federnSvg([{ ext: a.c, cap: '1 N' }, { ext: a.x * ease(t), cap: zahl(a.F) + ' N' }]); }, ende); else ende();
+    };
+    host.querySelector('#ok').onclick = los; ein.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); los(); } };
+  };
+  zeig();
+}
+
+// ---------- Spiel H: Wippen-Duell (Gleichgewicht mit möglichst wenigen Stücken, 3 Runden) ----------
+function spielWippe(host, fertig) {
+  const RUNDEN = 3, mom = o => Object.keys(o).reduce((s, p) => s + p * o[p], 0), Nsum = o => Object.keys(o).reduce((s, p) => s + o[p], 0);
+  const st = { L: {}, R: {}, ang: 0, tool: 'plus', runde: 1, punkte: 0, erg: null };
+  const neu = () => { for (;;) { st.L = {}; shuffle([1, 2, 3, 4, 5]).slice(0, rnd(2, 3)).forEach(p => st.L[p] = rnd(1, 3)); const M = mom(st.L); if (M >= 8 && M <= 40 && Nsum(st.L) > Math.ceil(M / 5)) break; } st.R = {}; st.erg = null; st.ang = 0; };
+  neu();
+  host.innerHTML = `<p class="small muted" id="anl"></p><div class="labfig" id="sf"></div><div id="lr"></div><div class="row" id="tools"></div><div class="anzeige" id="anz"></div><div id="sfb" aria-live="polite"></div>`;
+  const q = s => host.querySelector(s);
+  const draw = () => {
+    const ml = mom(st.L), mr = mom(st.R), ziel = Math.max(-14, Math.min(14, (mr - ml) * 2.2)), gl = ml === mr && mr > 0, nR = Nsum(st.R), kmin = Math.ceil(ml / 5);
+    q('#anl').innerHTML = `<b>Runde ${st.runde} von ${RUNDEN}</b> · ${st.punkte} ${st.punkte === 1 ? 'Punkt' : 'Punkte'}<br>Links hängen Gewichtsstücke (je 1 N). Bring den Balken ins Gleichgewicht – mit <b>so wenigen Stücken wie möglich</b> rechts (Zahlen: Abstand in cm). Bestlösung: 10 Punkte. Nur spiegeln gibt Abzug.`;
+    const tools = q('#tools');
+    if (st.erg) {
+      tools.innerHTML = `<button class="btn" id="wr">${st.runde < RUNDEN ? 'Nächste Runde' : 'Fertig'}</button>`;
+      q('#wr').onclick = () => { if (st.runde >= RUNDEN) return fertig(st.punkte >= 27 ? 3 : st.punkte >= 20 ? 2 : 1, `${st.punkte} von 30 Punkten`); st.runde++; neu(); draw(); };
+    } else {
+      tools.innerHTML = `<div class="seg" id="tool"><button data-v="plus">➕ anhängen</button><button data-v="minus">➖ abnehmen</button></div><button class="btn" id="ab" ${gl ? '' : 'disabled'}>Abgeben</button><button class="btn ghost" id="leer" ${nR ? '' : 'disabled'}>Rechts leeren</button>`;
+      tools.querySelectorAll('#tool button').forEach(b => { b.classList.toggle('on', b.dataset.v === st.tool); b.onclick = () => { st.tool = b.dataset.v; draw(); }; });
+      q('#leer').onclick = () => { st.R = {}; draw(); };
+      q('#ab').onclick = () => {
+        const kopie = Object.keys(st.L).length === Object.keys(st.R).length && Object.keys(st.L).every(p => st.R[p] === st.L[p]);
+        const diff = nR - kmin, basis = diff <= 0 ? 10 : diff === 1 ? 7 : diff === 2 ? 5 : 3, pkt = kopie ? Math.max(1, basis - 3) : basis;
+        st.punkte += pkt; st.erg = { pkt, diff, kopie, abzug: basis - pkt, kmin }; draw();
+      };
+    }
+    const fig = q('#sf'); fig.innerHTML = wippeSvg(st.L, st.R, st.ang, !st.erg);
+    const tipp = p => { if (st.tool === 'plus') { if (nR < 12 && (st.R[p] || 0) < 9) st.R[p] = (st.R[p] || 0) + 1; } else if (st.R[p]) { st.R[p]--; if (!st.R[p]) delete st.R[p]; } draw(); };
+    fig.querySelectorAll('.hit').forEach(h => h.onclick = () => tipp(+h.dataset.p));
+    // große Knöpfe unter der Zeichnung: auf dem Handy sind die Löcher zum Tippen zu schmal
+    q('#lr').innerHTML = st.erg ? '' : `<div class="lochrow"><span class="small muted">rechts bei</span>${[1, 2, 3, 4, 5].map(p => `<button type="button" class="opt" data-p="${p}" aria-label="${st.tool === 'plus' ? 'Gewichtsstück anhängen' : 'Gewichtsstück abnehmen'} bei ${p * 10} Zentimeter">${p * 10}</button>`).join('')}<span class="small muted">cm</span></div>`;
+    q('#lr').querySelectorAll('button').forEach(b => b.onclick = () => tipp(+b.dataset.p));
+    const balken = fig.querySelector('g');
+    const step = () => { st.ang += (ziel - st.ang) * 0.18; if (Math.abs(ziel - st.ang) > 0.05) animId = requestAnimationFrame(step); else { st.ang = ziel; animId = null; } balken.setAttribute('transform', `rotate(${st.ang.toFixed(2)} 180 120)`); };
+    if (animId) cancelAnimationFrame(animId); step();
+    const teil = o => Object.keys(o).sort().map(p => `${o[p]} N · ${p * 10} cm`).join(' + ') || '0';
+    q('#anz').innerHTML = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span><span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}`;
+    let fb = '';
+    if (st.erg) {
+      const e = st.erg, v = Math.floor(ml / 5), rest = ml % 5, best = [v ? `${v} ${v === 1 ? 'Stück' : 'Stücke'} bei 50 cm` : '', rest ? `1 Stück bei ${rest * 10} cm` : ''].filter(Boolean).join(' + ');
+      const lob = e.diff <= 0 ? pick(['Perfekt – weniger geht nicht! 🎯', 'Volltreffer, das ist eine Bestlösung! ⭐', 'Hebelprofi! Genau so wenige wie nötig. 💪']) : e.diff === 1 ? 'Gleichgewicht! Ganz knapp – mit einem Stück weniger wäre es perfekt gewesen.' : 'Gleichgewicht geschafft! Es geht aber mit weniger Stücken.';
+      fb = `<div class="fb"><div class="msg ok"><b>+${e.pkt} ${e.pkt === 1 ? 'Punkt' : 'Punkte'}.</b> ${lob}${e.kopie ? ` Du hast die linke Seite gespiegelt – das klappt immer, darum <b>−${e.abzug}</b>.` : ''}${e.diff > 0 ? `<br>Eine Bestlösung mit <b>${e.kmin}</b> Stücken: ${best}. Merke: Weiter außen wirkt jedes Stück stärker.` : ''}</div></div>`;
+    }
+    q('#sfb').innerHTML = fb;
+  };
+  draw();
+}
+
+// ---------- Spiel R: Kran-Chef (passende Anordnung: Kraft reicht UND Seil reicht) ----------
+function spielKran(host, fertig) {
+  const OPT = [[1, 'feste Rolle'], [2, 'lose Rolle'], [4, 'Flaschenzug, 4 Seilstücke'], [6, 'Flaschenzug, 6 Seilstücke']];
+  const mk = n => {
+    const i = OPT.findIndex(o => o[0] === n), vor = i ? OPT[i - 1][0] : null, nach = OPT[i + 1] ? OPT[i + 1][0] : null;
+    const L = n * pick([50, 75, 100]), h = pick([2, 3, 4]);
+    let Fmax = Math.ceil(L / n * 1.15 / 10) * 10; if (vor && Fmax >= L / vor) Fmax = L / n;
+    return { n, L, h, Fmax, Smax: n * h + (nach ? 1 : 2) };
+  };
+  // jede Anordnung kann vorkommen (auch die feste Rolle), nur nicht dreimal dieselbe
+  let ns; do { ns = [0, 1, 2].map(() => pick([1, 2, 4, 6])); } while (ns[0] === ns[1] && ns[1] === ns[2]);
+  const A = ns.map(mk);
+  let i = 0, wahl = null, fehler = 0, laeuft = false, geschafft = false, versucht = new Set();
+  const zeig = () => {
+    const a = A[i];
+    host.innerHTML = `<div class="anzeige"><span>Auftrag <b>${i + 1}</b> von 3</span><span>Fehlversuche: <b>${fehler}</b></span></div>
+      <div class="q">Die Kiste hat eine Gewichtskraft von <b>${a.L} N</b> und soll <b>${a.h} m</b> hoch. Du schaffst höchstens <b>${a.Fmax} N</b> Zugkraft, und dein Seil lässt sich höchstens <b>${a.Smax} m</b> weit ziehen. Welche Anordnung baust du?</div>
+      <div class="opts liste" id="wahl">${OPT.map(o => `<button type="button" class="opt ${wahl === o[0] ? 'sel' : ''}" data-n="${o[0]}">${o[1]}</button>`).join('')}</div>
+      <div class="labfig schmal" id="sf">${wahl ? rollenSvg(wahl, 0, { last: a.L + ' N', zaehl: true }) : ''}</div>
+      <div class="row"><button class="btn" id="hoch" ${wahl && !geschafft && !versucht.has(wahl) ? '' : 'disabled'}>Hochziehen!</button></div><div id="sfb" aria-live="polite"></div>`;
+    host.querySelectorAll('#wahl .opt').forEach(b => b.onclick = () => { if (laeuft || geschafft) return; wahl = +b.dataset.n; zeig(); });
+    host.querySelector('#hoch').onclick = () => {
+      if (laeuft || !wahl || versucht.has(wahl)) return;
+      const F = a.L / wahl, s = wahl * a.h, fb = host.querySelector('#sfb');
+      if (F > a.Fmax || s > a.Smax) { versucht.add(wahl); host.querySelector('#hoch').disabled = true; }
+      if (F > a.Fmax) { fehler++; host.querySelector('.anzeige').lastElementChild.innerHTML = `Fehlversuche: <b>${fehler}</b>`; fb.innerHTML = `<div class="fb"><div class="msg no"><b>Zu schwer!</b> Mit ${wahl === 1 ? 'der festen Rolle' : wahl + ' tragenden Seilstücken'} müsstest du mit ${zahl(a.L)} N : ${wahl} = <b>${zahl(F)} N</b> ziehen – du schaffst aber nur ${a.Fmax} N. Du brauchst mehr tragende Seilstücke.</div></div>`; return; }
+      if (s > a.Smax) { fehler++; host.querySelector('.anzeige').lastElementChild.innerHTML = `Fehlversuche: <b>${fehler}</b>`; fb.innerHTML = `<div class="fb"><div class="msg no"><b>Das Seil reicht nicht!</b> Die Kraft passt (${zahl(F)} N), aber du müsstest ${wahl} · ${a.h} m = <b>${s} m</b> Seil ziehen – erlaubt sind ${a.Smax} m. Kraft sparen kostet Weg.</div></div>`; return; }
+      laeuft = true; host.querySelector('#hoch').disabled = true;
+      anim(1800, t => { host.querySelector('#sf').innerHTML = rollenSvg(wahl, 1.2 * ease(t), { last: a.L + ' N', F: zahl(F) + ' N', zaehl: true }); }, () => {
+        laeuft = false; geschafft = true;
+        fb.innerHTML = `<div class="fb"><div class="msg ok"><b>✓ Oben!</b> Kraft: ${a.L} N : ${wahl} = ${zahl(F)} N. Seilweg: ${wahl} · ${a.h} m = ${s} m. ${wahl > 1 ? 'Weniger Seilstücke wären zu schwer' : 'Die Kraft reicht auch ohne Kraftersparnis'}${wahl < 6 ? ', mehr würden zu viel Seil brauchen' : ''}.</div><div class="row"><button class="btn" id="wr">${i === 2 ? 'Fertig' : 'Nächster Auftrag'}</button></div></div>`;
+        host.querySelector('#wr').onclick = () => { if (i === 2) return fertig(ausFehlern(fehler), fehler ? `${fehler} Fehlversuch${fehler === 1 ? '' : 'e'}` : 'Jeder Kran auf Anhieb richtig!'); i++; wahl = null; geschafft = false; versucht = new Set(); zeig(); };
+      });
+    };
+  };
+  zeig();
+}
+
+// ===================================================================
+// ANSICHTEN
+// ===================================================================
+function render() {
+  document.getElementById('crumb').textContent = VIEW === 'mis' && MR ? MIS[MR.k].name : VIEW === 'blitz' ? 'Blitzrunde' : VIEW === 'boss' ? 'Endgegner' : VIEW === 'spick' ? 'Spickzettel' : '';
+  ({ home: renderHome, mis: renderMis, blitz: renderBlitz, boss: renderBoss, spick: renderSpick })[VIEW]();
+}
+function rang() { const n = sternSumme() + bossZahl(); return n >= 25 ? ['🏆', 'Kraft-Meister'] : n >= 16 ? ['🥇', 'Hebel-Profi'] : n >= 8 ? ['🥈', 'Kraft-Lehrling'] : n >= 1 ? ['🥉', 'Einsteiger'] : ['✨', 'Noch ganz frisch']; }
+function renderHome() {
+  const offen = MKEYS.find(k => !S.merk[k]), r = rang(), bz = bossZahl(), alle = MKEYS.every(k => S.merk[k]);
+  const weiter = offen ? `<button class="btn gross" id="weiter">${MKEYS.some(k => S.merk[k]) ? 'Weiter' : 'Los geht’s'}: ${MIS[offen].icon} ${MIS[offen].name}</button>` : bz < BOSS.length ? `<button class="btn gross" id="weiterB">Weiter: 👾 Endgegner (${bz} von ${BOSS.length} besiegt)</button>` : `<p><b>Alles geschafft!</b> Jetzt bist du bereit für die Probearbeit.</p>`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">NAWI · Klasse 6</div><h1>🚀 Mission Kräfte</h1>
+      <p class="muted">Fünf kurze Missionen: erst tippen, dann sehen, dann spielen. Jede dauert vier bis sechs Minuten.</p>
+      <div class="anzeige"><span>${r[0]} <b>${r[1]}</b></span><span>Sterne: <b>${sternSumme()}</b> von 15</span><span>Endgegner: <b>${bz}</b> von ${BOSS.length}</span></div></header>
+    <section><div class="row">${weiter}</div>
+      <div class="grid">${MKEYS.map((k, i) => `<button class="tile mtile ${S.merk[k] ? 'done' : ''}" data-m="${k}"><b>${MIS[k].icon} ${i + 1} · ${MIS[k].name}</b><span>${MIS[k].hook}</span><span class="tag">${S.merk[k] ? sterne(S.st[k] || 1) : MIS[k].thema}</span></button>`).join('')}</div></section>
+    <section><h2>Training</h2><div class="grid">
+      <button class="tile" id="tBlitz"><b>⚡ Blitzrunde</b><span>45 Sekunden: Was gehört wohin? Für alles, was man einfach wissen muss.</span><span class="tag">${S.blitz ? 'Rekord: ' + S.blitz : 'noch kein Rekord'}</span></button>
+      <button class="tile" id="tBoss"><b>👾 Endgegner</b><span>Die Rechenaufgaben der Klassenarbeit. Jeden Gegner musst du nur einmal schlagen.</span><span class="tag">${bz} von ${BOSS.length} besiegt</span></button>
+      <button class="tile" id="tSpick"><b>📄 Spickzettel</b><span>Deine gesammelten Merksätze – zum Wiederholen kurz vor der Arbeit.</span><span class="tag">${MKEYS.filter(k => S.merk[k]).length} von 5 freigeschaltet</span></button>
+      <a class="tile" href="nawi.html"><b>📝 Probearbeit</b><span>Zwei Probearbeiten mit Note und die Labore findest du im klassischen NAWI-Training.</span><span class="tag">${alle && bz === BOSS.length ? 'Du bist bereit!' : 'am besten zum Schluss'}</span></a>
+    </div></section>
+    <section><div class="row"><button class="linkbtn" id="reset">Alles zurücksetzen</button></div></section>`;
+  app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => startMis(b.dataset.m));
+  const w = app.querySelector('#weiter'); if (w) w.onclick = () => startMis(offen);
+  const wb = app.querySelector('#weiterB'); if (wb) wb.onclick = () => go('boss');
+  app.querySelector('#tBlitz').onclick = () => { BL = null; go('blitz'); };
+  app.querySelector('#tBoss').onclick = () => go('boss');
+  app.querySelector('#tSpick').onclick = () => go('spick');
+  app.querySelector('#reset').onclick = () => { if (confirm('Wirklich alle Sterne, Rekorde und Merksätze dieser Seite löschen?')) { S = blank(); save(); render(); } };
+}
+
+// ---------- Mission ----------
+function startMis(k) { MR = { k, i: 0, stars: 0, info: '' }; go('mis'); }
+function renderMis() {
+  stopAll();
+  const m = MIS[MR.k], st = m.steps[MR.i];
+  app.innerHTML = `<header class="top"><div class="eyebrow">Mission ${MKEYS.indexOf(MR.k) + 1} · ${m.thema}</div><h1>${m.icon} ${m.name}</h1>
+    <div class="dots" role="img" aria-label="Schritt ${MR.i + 1} von ${m.steps.length}">${m.steps.map((s, j) => `<i class="${j < MR.i ? 'on' : j === MR.i ? 'jetzt' : ''}"></i>`).join('')}</div></header><section><div class="card" id="box"></div></section>`;
+  const box = app.querySelector('#box'), next = () => { MR.i++; renderMis(); window.scrollTo(0, 0); };
+  if (st.t === 'tipp') {
+    const ord = shuffle(st.o.map((x, j) => j)), t0 = performance.now();
+    box.innerHTML = `<div class="eyebrow">Tipp ab! Erst raten, dann sehen</div><div class="q">${st.q}</div><div class="labfig schmal" id="tf"></div><div class="opts liste" id="to">${ord.map(j => `<button type="button" class="opt" data-j="${j}">${esc(st.o[j])}</button>`).join('')}</div><div id="tfb" aria-live="polite"></div>`;
+    st.fig(box.querySelector('#tf'), false);
+    box.querySelectorAll('#to .opt').forEach(b => b.onclick = () => {
+      if (performance.now() - t0 < 350) return;
+      const j = +b.dataset.j, ok = j === st.a;
+      box.querySelectorAll('#to .opt').forEach(x => { x.disabled = true; const xj = +x.dataset.j; x.classList.add(xj === st.a ? (xj === j ? 'ok' : 'fehlt') : xj === j ? 'no' : 'x'); });
+      st.fig(box.querySelector('#tf'), true, () => {
+        box.querySelector('#tfb').innerHTML = `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? '✓ Richtig getippt!' : '✗ Überraschung!'}</b> ${st.e}</div><div class="row"><button class="btn" id="wt">Weiter</button></div></div>`;
+        box.querySelector('#wt').onclick = next;
+      });
+    });
+  } else if (st.t === 'spiel') {
+    box.innerHTML = `<div class="eyebrow">Spiel · ${st.titel}</div><div id="sp" class="spiel"></div>`;
+    st.run(box.querySelector('#sp'), (stars, info) => { MR.stars = stars; MR.info = info; next(); });
+  } else renderMerk(box);
+}
+function renderMerk(box) {
+  const m = MIS[MR.k], teile = m.merk.split(/\{([^}]+)\}/), lsg = teile.filter((x, i) => i % 2);
+  let pos = 0, fehl = 0; const chips = shuffle(lsg.concat(m.falsch));
+  const satz = () => teile.map((x, i) => i % 2 ? `<span class="gap ${(i - 1) / 2 < pos ? 'voll' : (i - 1) / 2 === pos ? 'dran' : ''}">${(i - 1) / 2 < pos ? esc(x) : '&nbsp;?&nbsp;'}</span>` : x).join('');
+  const zeig = () => {
+    const fertig = pos >= lsg.length;
+    box.innerHTML = `<div class="eyebrow">Merksatz bauen</div><p class="small muted">${fertig ? 'Geschafft – der Satz steht jetzt auf deinem Spickzettel.' : 'Tippe das Wort an, das in die markierte Lücke gehört.'}</p><p class="msatz">${satz()}</p>
+      ${fertig ? '' : `<div class="chips">${chips.map((c, j) => c == null ? '' : `<button type="button" class="chip" data-j="${j}">${esc(c)}</button>`).join('')}</div>`}<div id="mfb" aria-live="polite"></div>`;
+    if (fertig) {
+      const alt = S.st[MR.k] || 0; S.st[MR.k] = Math.max(alt, MR.stars || 1); S.merk[MR.k] = true; save();
+      const nxt = MKEYS.find(k => !S.merk[k]);
+      box.querySelector('#mfb').innerHTML = `<div class="fb"><div class="msg ok"><b>Mission geschafft! ${sterne(MR.stars || 1)}</b> ${MR.info || ''}${S.st[MR.k] < 3 ? ' – für drei Sterne kannst du die Mission jederzeit noch einmal spielen.' : ''}</div>
+        <div class="row">${nxt ? `<button class="btn" id="nm">Nächste Mission: ${MIS[nxt].icon} ${MIS[nxt].name}</button>` : `<button class="btn" id="nb">Zu den Endgegnern 👾</button>`}<button class="btn ghost" id="hm">Zur Übersicht</button></div></div>`;
+      const nm = box.querySelector('#nm'); if (nm) nm.onclick = () => startMis(nxt);
+      const nb = box.querySelector('#nb'); if (nb) nb.onclick = () => go('boss');
+      box.querySelector('#hm').onclick = () => go('home');
+      return;
+    }
+    box.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      const j = +b.dataset.j;
+      if (chips[j] === lsg[pos]) { chips[j] = null; pos++; zeig(); }
+      else { fehl++; b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel'); b.disabled = true; setTimeout(() => { if (b.isConnected) b.disabled = false; }, 1500); if (fehl >= 3) box.querySelector('#mfb').innerHTML = `<p class="small muted">Tipp: Lies den Satz bis zur Lücke laut – was passt in der Sache?</p>`; }
+    });
+  };
+  zeig();
+}
+
+// ---------- Blitzrunde ----------
+const BK = { PF: ['Länge des Pfeils', 'Pfeilspitze', 'Was am Kraftpfeil zeigt das?'], VB: ['Verformung', 'Bewegungsänderung', 'Welche Wirkung hat die Kraft?'], EP: ['elastisch', 'plastisch', 'Wie ist die Verformung?'], MG: ['Masse', 'Gewichtskraft', 'Masse oder Gewichtskraft?'], EZ: ['einseitig', 'zweiseitig', 'Was für ein Hebel?'], FL: ['feste Rolle', 'lose Rolle', 'Welche Rolle?'] };
+const BPOOL = [
+  ['Ein Torwart fängt den Ball.', 'VB', 1], ['Knete wird zu einer Kugel gerollt.', 'VB', 0], ['Ein Radfahrer biegt um die Ecke.', 'VB', 1], ['Ein Bogen wird gespannt.', 'VB', 0], ['Ein Auto bremst an der Ampel.', 'VB', 1], ['Ein Fußball wird abgeschossen.', 'VB', 1], ['Eine leere Dose wird zerdrückt.', 'VB', 0],
+  ['Ein Gummiband wird gedehnt und losgelassen.', 'EP', 0], ['Ein Auto bekommt eine Delle.', 'EP', 1], ['Die Feder im Kraftmesser wird gezogen.', 'EP', 0], ['Ein Blatt Papier wird zerknüllt.', 'EP', 1], ['Das Sprungtuch im Trampolin gibt nach.', 'EP', 0], ['Knete wird platt gedrückt.', 'EP', 1],
+  ['den Betrag: wie groß die Kraft ist', 'PF', 0], ['die Richtung der Kraft', 'PF', 1],
+  ['Einheit: Kilogramm (kg)', 'MG', 0], ['Einheit: Newton (N)', 'MG', 1], ['ist auf dem Mond kleiner als auf der Erde', 'MG', 1], ['ist überall gleich', 'MG', 0], ['misst man mit dem Federkraftmesser', 'MG', 1], ['misst man mit der Balkenwaage', 'MG', 0], ['Formelzeichen m', 'MG', 0], ['hängt vom Ort ab', 'MG', 1],
+  ['Wippe', 'EZ', 1], ['Schere', 'EZ', 1], ['Schubkarre', 'EZ', 0], ['Nussknacker', 'EZ', 0], ['Flaschenöffner', 'EZ', 0], ['Kneifzange', 'EZ', 1], ['Balkenwaage', 'EZ', 1],
+  ['lenkt die Kraft nur um', 'FL', 0], ['halbiert die nötige Kraft', 'FL', 1], ['bewegt sich mit der Last nach oben', 'FL', 1], ['hängt fest an der Decke', 'FL', 0], ['heißt auch Umlenkrolle', 'FL', 0], ['man zieht doppelt so viel Seil', 'FL', 1]
+];
+function renderBlitz() {
+  if (!BL) {
+    app.innerHTML = `<header class="top"><div class="eyebrow">Training</div><h1>⚡ Blitzrunde</h1><p class="muted">45 Sekunden. Zu jedem Satz gibt es zwei Antworten – tippe die richtige an. Jeder Treffer bringt einen Punkt, jeder Fehler kostet einen.</p></header>
+      <section><div class="card"><div class="anzeige"><span>Rekord: <b>${S.blitz || '–'}</b></span></div><div class="row"><button class="btn gross" id="go">Start</button><button class="btn ghost" id="hm">Zur Übersicht</button></div></div></section>`;
+    app.querySelector('#go').onclick = () => { BL = { ende: Date.now() + 45000, n: 0, serie: 0, best: 0, falsch: [], q: shuffle(BPOOL), i: 0, sperre: false }; render(); };
+    app.querySelector('#hm').onclick = () => go('home'); return;
+  }
+  if (BL.fertig) {
+    const neu = BL.n > S.blitz; if (neu) { S.blitz = BL.n; save(); }
+    const fl = BL.falsch.filter((x, i, a) => a.findIndex(y => y[0] === x[0]) === i);
+    app.innerHTML = `<header class="top"><div class="eyebrow">Blitzrunde</div><h1>${BL.n} ${BL.n === 1 ? 'Punkt' : 'Punkte'} ${neu ? '– neuer Rekord! 🎉' : ''}</h1><p class="muted">Längste Serie: ${BL.best} · Rekord: ${S.blitz}</p></header>
+      <section>${fl.length ? `<div class="card"><h3>Das schau dir noch einmal an</h3><ul class="fehler">${fl.map(x => `<li>${esc(x[0])} → <b>${BK[x[1]][x[2]]}</b></li>`).join('')}</ul></div>` : (BL.n > 0 ? '<div class="card"><p><b>Kein einziger Fehler!</b> 💪</p></div>' : '')}
+      <div class="row"><button class="btn" id="go">Noch einmal</button><button class="btn ghost" id="hm">Zur Übersicht</button></div></section>`;
+    app.querySelector('#go').onclick = () => { BL = null; render(); app.querySelector('#go').click(); };
+    app.querySelector('#hm').onclick = () => go('home'); return;
+  }
+  app.innerHTML = `<section><div class="card blitz"><div class="meter"><i id="zeit" style="width:100%"></i></div><div class="anzeige"><span>Punkte: <b id="bn">0</b></span><span>Serie: <b id="bs">0</b></span></div>
+    <div class="small muted" id="bk"></div><div class="bsatz" id="bq"></div><div class="bwahl"><button type="button" class="opt" data-j="0"></button><button type="button" class="opt" data-j="1"></button></div><div class="small" id="bfb">&nbsp;</div></div></section>`;
+  const q = s => app.querySelector(s), btn = [...app.querySelectorAll('.bwahl .opt')];
+  const frage = () => { if (BL.i >= BL.q.length) { BL.q = shuffle(BPOOL); BL.i = 0; } const f = BL.q[BL.i]; q('#bk').textContent = BK[f[1]][2]; q('#bq').textContent = f[0]; btn.forEach((b, j) => { b.textContent = BK[f[1]][j]; b.className = 'opt'; }); BL.sperre = false; };
+  btn.forEach(b => b.onclick = () => {
+    if (BL.sperre || BL.fertig) return; BL.sperre = true;
+    const f = BL.q[BL.i], j = +b.dataset.j, ok = j === f[2];
+    if (ok) { BL.n++; BL.serie++; BL.best = Math.max(BL.best, BL.serie); b.classList.add('ok'); q('#bfb').innerHTML = BL.serie >= 3 ? `🔥 ${BL.serie} in Folge` : '&nbsp;'; }
+    else { BL.serie = 0; BL.n = Math.max(0, BL.n - 1); BL.falsch.push(f); b.classList.add('no'); btn[f[2]].classList.add('fehlt'); q('#bfb').innerHTML = `✗ richtig: <b>${BK[f[1]][f[2]]}</b>`; }
+    q('#bn').textContent = BL.n; q('#bs').textContent = BL.serie;
+    BL.i++; const meine = BL; setTimeout(() => { if (BL === meine && !BL.fertig && VIEW === 'blitz') frage(); }, ok ? 220 : 1100);
+  });
+  frage();
+  timerId = setInterval(() => { const rest = BL.ende - Date.now(); const z = q('#zeit'); if (z) z.style.width = Math.max(0, rest / 450) + '%'; if (rest <= 0) { BL.fertig = true; stopAll(); render(); } }, 100);
+}
+
+// ---------- Endgegner ----------
+function renderBoss() {
+  if (!BR) {
+    const offen = BOSS.filter(b => !S.boss[b[0]]);
+    app.innerHTML = `<header class="top"><div class="eyebrow">Training</div><h1>👾 Endgegner</h1><p class="muted">${BOSS.length} Gegner, ${BOSS.length} Aufgabenarten aus der Klassenarbeit. Rechne richtig, dann ist der Gegner besiegt – und bleibt es. Bei einem Fehler siehst du den Rechenweg, und er kommt mit neuen Zahlen wieder.</p></header>
+      <section><div class="grid">${BOSS.map(b => `<div class="tile ${S.boss[b[0]] ? 'done' : ''}"><b>${b[1]} ${b[2]}</b><span>${b[3]}</span><span class="tag">${S.boss[b[0]] ? '✓ besiegt' : 'wartet auf dich'}</span></div>`).join('')}</div>
+      <div class="row">${offen.length ? `<button class="btn gross" id="go">${offen.length === BOSS.length ? 'Kampf starten' : 'Weiterkämpfen'} (${offen.length} übrig)</button>` : '<p><b>🏆 Alle Endgegner besiegt!</b> Zum Üben kannst du noch einmal gegen alle antreten.</p><button class="btn" id="neu">Noch einmal gegen alle</button>'}<button class="btn ghost" id="hm">Zur Übersicht</button></div></section>`;
+    const g = app.querySelector('#go'); if (g) g.onclick = () => { BR = { q: offen.map(b => b[0]), frei: false }; bossNeu(); render(); window.scrollTo(0, 0); };
+    const n = app.querySelector('#neu'); if (n) n.onclick = () => { BR = { q: BOSS.map(b => b[0]), frei: true }; bossNeu(); render(); window.scrollTo(0, 0); };
+    app.querySelector('#hm').onclick = () => go('home'); return;
+  }
+  const b = BOSS.find(x => x[0] === BR.typ), it = BR.it, A = BR.A;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Endgegner · noch ${BR.q.length}</div><h1>${b[1]} ${b[2]}</h1><p class="muted">${b[3]}</p></header>
+    <section><div class="card" id="box">${itemHtml(it, A, BR.fertig)}${BR.fertig ? '' : tippBox(it.h)}<div id="bfb" aria-live="polite"></div></div></section>`;
+  const box = app.querySelector('#box'), fb = box.querySelector('#bfb');
+  if (BR.fertig) {
+    const ok = BR.ok;
+    fb.innerHTML = `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? `✓ ${b[2]} besiegt!` : '✗ Diesmal gewinnt der Gegner.'}</b> ${it.e || ''}${ok ? '' : ' <b>Er kommt gleich mit neuen Zahlen wieder.</b>'}</div><div class="row"><button class="btn" id="wr">${BR.q.length ? 'Weiter' : 'Zur Siegerehrung'}</button><button class="btn ghost" id="pa">Pause</button></div></div>`;
+    box.querySelector('#wr').onclick = () => { if (!BR.q.length) { BR = null; go('boss'); return; } bossNeu(); render(); window.scrollTo(0, 0); };
+    box.querySelector('#pa').onclick = () => { BR = null; go('home'); };
+    spaeterFokus(box.querySelector('#wr')); return;
+  }
+  fb.innerHTML = `<div class="row"><button class="btn" id="an">Angriff!</button><span class="small muted" id="leer"></span><button class="btn ghost" id="pa">Pause</button></div>`;
+  felderBinden(box, A); tippBinden(box);
+  const los = () => {
+    const w = itemWert(it, A); if (w.some(x => x.leer)) { box.querySelector('#leer').textContent = 'Da fehlt noch eine Antwort.'; return; }
+    if (it.fields.some((f, i) => f.t === 'num' && isNaN(parseZahl(A[fkey(it, i)])))) { box.querySelector('#leer').textContent = 'Da steht etwas, das keine Zahl ist.'; return; }
+    BR.ok = w.every(x => x.ok); BR.fertig = true; BR.q.shift();
+    if (BR.ok) { if (!BR.frei || !S.boss[BR.typ]) { S.boss[BR.typ] = true; save(); } } else BR.q.push(BR.typ);
+    render();
+  };
+  box.querySelector('#an').onclick = los; box.querySelector('#pa').onclick = () => { BR = null; go('home'); };
+  box.querySelectorAll('input[data-k]').forEach(el => el.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); los(); } });
+}
+function bossNeu() { BR.typ = BR.q[0]; BR.it = genItem(BR.typ); BR.A = {}; BR.fertig = false; BR.ok = false; }
+
+// ---------- Spickzettel ----------
+function renderSpick() {
+  app.innerHTML = `<header class="top"><div class="eyebrow">Zum Wiederholen</div><h1>📄 Spickzettel</h1><p class="muted">Jede Mission schaltet ihren Merksatz frei. Kurz vor der Arbeit: einmal durchlesen.</p></header>
+    <section>${MKEYS.map((k, i) => { const m = MIS[k]; return `<div class="card"><h3>${m.icon} ${i + 1} · ${m.thema}</h3>${S.merk[k] ? `<p class="msatz">${m.merk.replace(/\{([^}]+)\}/g, '<b>$1</b>')}</p><ul class="plus">${m.plus.map(p => `<li>${p}</li>`).join('')}</ul>` : `<p class="muted">🔒 Noch gesperrt. Spiel die Mission „${m.name}“, dann steht hier dein Merksatz.</p><div class="row"><button class="btn ghost" data-m="${k}">Mission starten</button></div>`}</div>`; }).join('')}
+    <div class="row"><button class="btn" id="dr">Drucken</button><button class="btn ghost" id="hm">Zur Übersicht</button></div></section>`;
+  app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => startMis(b.dataset.m));
+  app.querySelector('#dr').onclick = () => window.print();
+  app.querySelector('#hm').onclick = () => go('home');
+}
+
+// gehaltene Enter-Taste soll nicht durch die Rückmeldungen rasen
+document.addEventListener('keydown', e => { if (e.repeat && e.key === 'Enter') e.preventDefault(); }, true);
+document.getElementById('homeBtn').onclick = () => { BR = null; BL = null; go('home'); };
+render();
+</script>
+</body>
+</html>
