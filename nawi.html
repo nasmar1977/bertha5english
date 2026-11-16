@@ -1166,7 +1166,9 @@ function labHebel(host) {
     if (animId) cancelAnimationFrame(animId);
     anim();
     const teil = o => Object.keys(o).sort().map(p => `${o[p]} N · ${p * 10} cm`).join(' + ') || '0';
-    let anz = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span><span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg && !ende ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}`;
+    // Rechnung verrät die Lösung – nur auf Wunsch oder nach dem Abgeben
+    const rech = st.rechnung || st.erg;
+    let anz = `${rech ? `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span>` : ''}<span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg && !ende ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}${st.erg || ende ? '' : `<button type="button" class="btn ghost" id="rech">${st.rechnung ? '🙈 Rechnung ausblenden' : '🧮 Rechnung zeigen'}</button>`}`;
     let sfb = '';
     const best = M => { const v = Math.floor(M / 5), rest = M % 5; return [v ? `${v} ${v === 1 ? 'Stück' : 'Stücke'} bei 50 cm` : '', rest ? `1 Stück bei ${rest * 10} cm` : ''].filter(Boolean).join(' + '); };
     if (st.erg && !ende) {
@@ -1182,6 +1184,7 @@ function labHebel(host) {
       sfb = `<div class="fb"><div class="msg ok"><b>Ergebnis: ${P} von ${max} Punkten.</b> ${urteil}${st.rekordNeu ? ' <b>Neuer Rekord!</b>' : ''}</div></div>`;
     }
     host.querySelector('#anz').innerHTML = anz;
+    const rb = host.querySelector('#rech'); if (rb) rb.onclick = () => { st.rechnung = !st.rechnung; draw(); };
     host.querySelector('#sfb').innerHTML = sfb;
   };
   const drawEin = () => {
@@ -1205,7 +1208,10 @@ function labHebel(host) {
     const fig = host.querySelector('#fig'); fig.innerHTML = s + '</svg>';
     fig.querySelectorAll('.hit').forEach(h => h.onclick = () => { const k = +h.dataset.p; if (k === e.p) return; e.k = k; draw(); });
     const gut = F !== null && Math.abs(F - e.ziel) < 1e-9;
-    host.querySelector('#anz').innerHTML = e.k ? `<span>Last: ${e.G} N · ${e.p * 10} cm = <b>${e.G * e.p * 10} Ncm</b></span><span>Kraftmesser: ${zahl(F)} N · ${e.k * 10} cm = <b>${zahl(F * e.k * 10)} Ncm</b></span>${gut ? '<span class="gut">✓ Genau ' + e.ziel + ' N!</span>' : `<span>Ziel: ${e.ziel} N</span>`}` : '<span>Noch kein Kraftmesser eingehakt.</span>';
+    const rech = st.rechnung || gut;
+    host.querySelector('#anz').innerHTML = (e.k ? `${rech ? `<span>Last: ${e.G} N · ${e.p * 10} cm = <b>${e.G * e.p * 10} Ncm</b></span><span>Kraftmesser: ${zahl(F)} N · ${e.k * 10} cm = <b>${zahl(F * e.k * 10)} Ncm</b></span>` : `<span>Kraftmesser: <b>${zahl(F)} N</b></span>`}${gut ? '<span class="gut">✓ Genau ' + e.ziel + ' N!</span>' : `<span>Ziel: ${e.ziel} N</span>`}` : '<span>Noch kein Kraftmesser eingehakt.</span>')
+      + (gut ? '' : `<button type="button" class="btn ghost" id="rech">${st.rechnung ? '🙈 Rechnung ausblenden' : '🧮 Rechnung zeigen'}</button>`);
+    const rb = host.querySelector('#rech'); if (rb) rb.onclick = () => { st.rechnung = !st.rechnung; draw(); };
     if (gut && !st.okEin) { st.okEin = true; st.ew++; if (st.ew >= 2) erledigt(1); }
   };
   host.querySelectorAll('#mode button').forEach(b => b.onclick = () => { st.mode = b.dataset.v; draw(); });

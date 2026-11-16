@@ -922,7 +922,10 @@ function spielWippe(host, fertig) {
     const step = () => { st.ang += (ziel - st.ang) * 0.18; if (Math.abs(ziel - st.ang) > 0.05) animId = requestAnimationFrame(step); else { st.ang = ziel; animId = null; } balken.setAttribute('transform', `rotate(${st.ang.toFixed(2)} 180 120)`); };
     if (animId) cancelAnimationFrame(animId); step();
     const teil = o => Object.keys(o).sort().map(p => `${o[p]} N · ${p * 10} cm`).join(' + ') || '0';
-    q('#anz').innerHTML = `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span><span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}`;
+    // Rechnung verrät die Lösung – nur auf Wunsch oder nach dem Abgeben
+    const rech = st.rechnung || st.erg;
+    q('#anz').innerHTML = `${rech ? `<span>links: ${teil(st.L)} = <b>${ml * 10} Ncm</b></span><span>rechts: ${teil(st.R)} = <b>${mr * 10} Ncm</b></span>` : ''}<span>Stücke rechts: <b>${nR}</b></span>${gl && !st.erg ? '<span class="gut">✓ Gleichgewicht! Geht es mit weniger? Sonst: Abgeben.</span>' : ''}${st.erg ? '' : `<button type="button" class="btn ghost" id="rech">${st.rechnung ? '🙈 Rechnung ausblenden' : '🧮 Rechnung zeigen'}</button>`}`;
+    if (!st.erg) q('#rech').onclick = () => { st.rechnung = !st.rechnung; draw(); };
     let fb = '';
     if (st.erg) {
       const e = st.erg, v = Math.floor(ml / 5), rest = ml % 5, best = [v ? `${v} ${v === 1 ? 'Stück' : 'Stücke'} bei 50 cm` : '', rest ? `1 Stück bei ${rest * 10} cm` : ''].filter(Boolean).join(' + ');

@@ -208,8 +208,8 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.46.1
-**Datum:** 15.11.2026
+**Version:** 2.46.2
+**Datum:** 16.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -263,6 +263,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.46.2 (16.11.2026)
+- NAWI-Hebel (`nawi.html` Labor zwei- und einseitig, `nawi-mission.html` Wippen-Duell): Die Rechenzeile
+  „F · l = … Ncm“ unter der Zeichnung ist standardmäßig ausgeblendet und per Knopf „🧮 Rechnung zeigen“ einblendbar.
+  Nach dem Abgeben bzw. beim Treffer erscheint sie automatisch. Sichtbar bleiben Stückzahl, Kraftmesser-Anzeige und Ziel.
 
 ### Version 2.46.1 (15.11.2026)
 - Neues Zwischenmenü `nawi-menu.html`: Die NAWI-Karte im Hauptmenü führt dorthin. Erste, hervorgehobene Kachel ist
