@@ -855,6 +855,20 @@
         .lang-card.nawi {
             background: linear-gradient(135deg, #c8f0dc 0%, #f3e3c3 100%);
         }
+        .lang-card.mathe {
+            background: linear-gradient(135deg, #d4e4ff 0%, #ffe0ec 100%);
+        }
+        /* Platzhalter-Kachel: sichtbar, aber nicht anklickbar (Inhalte folgen) */
+        .lang-card.inaktiv {
+            cursor: default;
+            opacity: 0.55;
+            filter: grayscale(0.4);
+        }
+        .lang-card.inaktiv:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: transparent;
+        }
         .lang-icon { font-size: 3em; margin-bottom: 10px; }
         .lang-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; }
         .lang-info { font-size: 1em; color: #666; }
@@ -3054,6 +3068,12 @@
                 <div class="lang-icon">⚖️</div>
                 <div class="lang-title">NAWI</div>
                 <div class="lang-info">Kräfte, Hebel &amp; Rollen</div>
+            </div>
+            <!-- Platzhalter: Mathe (Bruchrechnung), noch ohne Inhalt – absichtlich ohne onclick -->
+            <div class="lang-card mathe inaktiv" aria-disabled="true" title="Kommt bald">
+                <div class="lang-icon">➗</div>
+                <div class="lang-title">Mathe</div>
+                <div class="lang-info">Bruchrechnung · kommt bald</div>
             </div>
         </div>
         <div class="taler-display">
