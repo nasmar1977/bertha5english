@@ -51,6 +51,9 @@ def main():
         if fehler:
             print('FEHLER auf der Seite:', fehler)
             sys.exit(1)
+        if seiten != len(blaetter):
+            print('FEHLER: Jedes Blatt soll genau eine Seite füllen –', len(blaetter), 'Blätter ergeben', seiten, 'Seiten')
+            sys.exit(1)
         if not nur_pruefen:
             with open(ZIEL, 'wb') as f:
                 f.write(pdf)

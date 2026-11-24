@@ -6,8 +6,9 @@
 //   node tools/perfekt-check.mjs -v     zusätzlich die Zählung je Gruppe
 //
 // Exit-Code 0 = sauber, 1 = mindestens ein FEHLER.
-// Geprüft wird gegen das Vokabelheft in index.html (vokabelheftData) und gegen die
-// Präsens- und Perfektformen, die dort schon für einzelne Verben hinterlegt sind (latinData).
+// Geprüft wird gegen das Vokabelheft in index.html (vokabelheftData), gegen das Wortschatz-Blatt der
+// nächsten Klassenarbeit (vokabelheftData.ka1226) und gegen die Präsens- und Perfektformen, die dort
+// schon für einzelne Verben hinterlegt sind (latinData).
 // =====================================================================
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,8 +21,8 @@ const laut = process.argv.includes('-v');
 const PERF = fs.readFileSync(path.join(ROOT, 'latein-perfekt.html'), 'utf8');
 const a = PERF.indexOf('//#REIN-ANFANG'), e = PERF.indexOf('//#REIN-ENDE');
 if (a < 0 || e < 0) { console.error('Marken //#REIN-ANFANG und //#REIN-ENDE nicht gefunden'); process.exit(1); }
-const P = new Function(PERF.slice(a, e) + '\nreturn { VERBEN, SPAETER, praes, impf, perf, infPf, pfad, pfadRoh, ohneM, alleFormen, TAB };')();
-const { VERBEN, SPAETER, praes, impf, perf, pfad, pfadRoh, ohneM } = P;
+const P = new Function(PERF.slice(a, e) + '\nreturn { VERBEN, SPAETER, ARBEIT, praes, impf, perf, infPf, pfad, pfadRoh, ohneM, alleFormen, TAB };')();
+const { VERBEN, SPAETER, ARBEIT, praes, impf, perf, pfad, pfadRoh, ohneM } = P;
 
 // ---- Vokabelheft und Trainingsdaten aus index.html ---------------------
 const JS = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
@@ -129,12 +130,46 @@ for (const [inf, h] of Object.entries(heft)) {
 }
 const L2 = VERBEN.filter(v => v.l === 2).map(v => v.inf);
 for (const v of VERBEN) if (!heft[v.inf] && v.l !== 2) err('heft-abgleich', `${v.inf} (Lektion ${v.l}) steht nicht im Vokabelheft von index.html`);
-for (const v of VERBEN) { const p = v.l === 10 ? 3 : v.h === 8 || v.h === 9 ? 1 : 2; if (p !== v.prio) err('lernstufe', `${v.inf}: Lernstufe ${v.prio}, erwartet ${p}`); }
+// Lernstufe 1: Das Perfekt ist Lernstoff – es steht im Heft von Lektion 8 oder 9 oder auf dem Wortschatz-Blatt der Arbeit
+for (const v of VERBEN) { const p = v.h === 8 || v.h === 9 || ARBEIT.blatt.includes(v.inf) ? 1 : v.l === 10 ? 3 : 2; if (p !== v.prio) err('lernstufe', `${v.inf}: Lernstufe ${v.prio}, erwartet ${p}`); }
 for (const s of SPAETER) if (!heft[s[0]]) err('heft-abgleich', `${s[0]} (später) steht nicht im Vokabelheft`); else if (heft[s[0]].pr && heft[s[0]].pr !== s[1]) err('heft-abgleich', `${s[0]}: 1. Person im Heft ${heft[s[0]].pr}, eingetragen ${s[1]}`);
 
 // =====================================================================
-// 4  Abgleich mit den Formen, die index.html für einzelne Verben schon führt
+// 4  Stoff der Klassenarbeit: ARBEIT.blatt / ARBEIT.ohnePerfekt gegen das Wortschatz-Blatt,
+//    das index.html als vokabelheftData.ka1226 führt (Zeilen wie { w:'accidere', f:'accidō, accidī' })
 // =====================================================================
+{
+  const doppelt = a => a.filter((x, i) => a.indexOf(x) !== i);
+  for (const inf of doppelt(ARBEIT.blatt.concat(ARBEIT.ohnePerfekt))) err('blatt', `${inf} steht zweimal in ARBEIT (blatt/ohnePerfekt)`);
+  for (const inf of ARBEIT.blatt.concat(ARBEIT.ohnePerfekt)) if (!VERBEN.some(v => v.inf === inf)) err('blatt', `${inf} steht in ARBEIT, fehlt aber in den Verbdaten`);
+  for (const v of VERBEN) if (v.arbeit !== ARBEIT.blatt.includes(v.inf)) err('blatt', `${v.inf}: Marke „für die Arbeit“ passt nicht zu ARBEIT.blatt`);
+  const ka = vokabelheftData.ka1226;
+  if (!ka) info('blatt-abgleich', 'index.html führt (noch) kein vokabelheftData.ka1226 – ARBEIT.blatt ist nicht gegen das Wortschatz-Blatt geprüft');
+  else {
+    const dort = new Map();   // Infinitiv → [1. Sg. Präsens, 1. Sg. Perfekt oder '']
+    for (const p of ka.packets) for (const r of p.rows) {
+      const m = istVerb(r) && r.f.replace(/\n/g, ' ').match(/^([^\s,_(]+(?:ō|um))(?:, ([^\s,_(]+))?/);
+      if (m) dort.set(r.w, [m[1], m[2] || '']);
+    }
+    for (const [inf, [pr, pf]] of dort) {
+      const v = VERBEN.find(x => x.inf === inf);
+      if (!v) { if (pf) err('blatt-abgleich', `${inf} steht mit Perfekt ${pf} auf dem Wortschatz-Blatt, fehlt aber im Perfekt-Baukasten`); continue; }   // ohne Perfekt und nicht im Heft: kein Lernwort (crocīre)
+      if (pr !== v.pr) err('blatt-abgleich', `${inf}: 1. Person auf dem Blatt ${pr}, im Baukasten ${v.pr}`);
+      if (pf && pf !== v.pf) err('blatt-abgleich', `${inf}: Perfekt auf dem Blatt ${pf}, im Baukasten ${v.pf}`);
+      const bed = (ka.packets.flatMap(p => p.rows).find(r => r.w === inf) || {}).d || '';
+      if (pf && ARBEIT.de && ARBEIT.de[inf] !== bed.replace(/_/g, '')) err('blatt-abgleich', `${inf}: Bedeutung in ARBEIT.de „${ARBEIT.de[inf]}“, auf dem Wortschatz-Blatt „${bed.replace(/_/g, '')}“`);
+      if (pf && !ARBEIT.blatt.includes(inf)) err('blatt-abgleich', `${inf} steht mit Perfekt auf dem Wortschatz-Blatt, fehlt aber in ARBEIT.blatt`);
+      if (!pf && !ARBEIT.ohnePerfekt.includes(inf)) err('blatt-abgleich', `${inf} steht ohne Perfekt auf dem Wortschatz-Blatt, fehlt aber in ARBEIT.ohnePerfekt`);
+    }
+    for (const inf of ARBEIT.blatt) if (!dort.has(inf)) err('blatt-abgleich', `${inf} steht in ARBEIT.blatt, aber nicht auf dem Wortschatz-Blatt (ka1226)`); else if (!dort.get(inf)[1]) err('blatt-abgleich', `${inf} steht in ARBEIT.blatt, auf dem Wortschatz-Blatt aber ohne Perfekt`);
+    for (const inf of ARBEIT.ohnePerfekt) if (!dort.has(inf)) err('blatt-abgleich', `${inf} steht in ARBEIT.ohnePerfekt, aber nicht auf dem Wortschatz-Blatt (ka1226)`); else if (dort.get(inf)[1]) err('blatt-abgleich', `${inf} steht in ARBEIT.ohnePerfekt, auf dem Wortschatz-Blatt aber mit Perfekt ${dort.get(inf)[1]}`);
+  }
+}
+
+// =====================================================================
+// 5  Abgleich mit den Formen, die index.html für einzelne Verben schon führt
+// =====================================================================
+// verglichen wird der Weg (v.weg): posse, velle und nōlle stehen in Tabelle 7, gelten aber als u-Perfekt
 const TYP = { v: 'v', u: 'u', s: 's', dehn: 'd', red: 'r', ohne: 'o', irr: 'x' };
 let verglichen = 0;
 for (const ch of Object.keys(latinData)) for (const f of latinData[ch].verbForms || []) {
@@ -144,14 +179,14 @@ for (const ch of Object.keys(latinData)) for (const f of latinData[ch].verbForms
     dort.forEach((x, i) => { if (x && x !== hier[i]) err('praesens-abgleich', `${v.inf}: ${['1. Sg.', '2. Sg.', '3. Sg.', '1. Pl.', '2. Pl.', '3. Pl.'][i]} in index.html ${x}, hier gebildet ${hier[i]}`); });
   }
   if (f.perfect && f.perfect !== v.pf) err('perfekt-abgleich', `${v.inf}: Perfekt in index.html ${f.perfect}, hier ${v.pf}`);
-  if (f.perfectType && TYP[f.perfectType] !== v.t) info('typ-abgleich', `${v.inf}: in index.html als „${f.perfectType}“ geführt, hier in Tabelle „${v.t}“`);
+  if (f.perfectType && TYP[f.perfectType] !== v.weg) info('typ-abgleich', `${v.inf} (${ch}): in index.html als „${f.perfectType}“ geführt, hier ist der Weg „${v.weg}“`);
 }
 
 // ---- Ausgabe -------------------------------------------------------------
 const zahl = l => found.filter(f => f.lvl === l).length;
 for (const f of found) console.log(`${f.lvl.padEnd(8)} ${f.check.padEnd(18)} ${f.msg}`);
 if (laut) for (const [g, vs] of Object.entries(gruppen)) console.log(`  ${g.padEnd(3)} ${String(vs.length).padStart(3)}  ${vs.slice(0, 6).map(v => v.inf).join(', ')}${vs.length > 6 ? ' …' : ''}`);
-console.log(`\n${VERBEN.length} Verben (Lernstufe 1/2/3: ${[1, 2, 3].map(p => VERBEN.filter(v => v.prio === p).length).join('/')}), ${Object.keys(gruppen).length} Gruppen, ` +
+console.log(`\n${VERBEN.length} Verben (Lernstufe 1/2/3: ${[1, 2, 3].map(p => VERBEN.filter(v => v.prio === p).length).join('/')}; für die Arbeit: ${VERBEN.filter(v => v.arbeit).length}), ${Object.keys(gruppen).length} Gruppen, ` +
   `${Object.keys(heft).length} Verben im Vokabelheft, ${L2.length} aus Lektion 2 (nur Fotos), Präsens von ${verglichen} Verben gegengeprüft.`);
 console.log(`${zahl('FEHLER')} Fehler, ${zahl('WARNUNG')} Warnungen, ${zahl('HINWEIS')} Hinweise`);
 process.exit(zahl('FEHLER') ? 1 : 0);

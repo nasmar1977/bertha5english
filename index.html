@@ -1902,6 +1902,35 @@
         .klassenarbeit-card {
             background: linear-gradient(135deg, #ffe29f 0%, #ffa99f 100%);
         }
+        .set-card.arbeit-karte {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #fde68a 0%, #fca5a5 100%);
+            border-color: #dc2626;
+        }
+        body.april-dark .set-card.arbeit-karte { border-color: #dc2626; }
+        /* Klassenarbeits-Set: Modulauswahl in drei Zeilen (Wortschatz · Perfekt · AcI und Übersetzen) */
+        #latinModuleSelection .ka-nur { display: none; }
+        #latinModuleSelection .set-selection.ka-hub .ka-nur { display: block; }
+        .ka-zeile { grid-column: 1 / -1; text-align: left; font-weight: 800; color: #4c1d95; margin: 8px 4px -6px; }
+        .ka-zeile small { font-weight: 400; color: #666; margin-left: 6px; }
+        body.april-dark .ka-zeile { color: #c4b5fd; }
+        body.april-dark .ka-zeile small { color: #9aa0b4; }
+        .set-selection.ka-hub .ka-z1 { order: 10; }
+        .set-selection.ka-hub .module-card { order: 11; }
+        .set-selection.ka-hub .module-card.intro-card { order: 11; }
+        .set-selection.ka-hub .module-card.vokabelheft-card { order: 12; }
+        .set-selection.ka-hub .module-card.mitte-card { order: 13; }
+        .set-selection.ka-hub .module-card.rocket { order: 14; }
+        .set-selection.ka-hub .module-card.rocket-hard { order: 15; }
+        .set-selection.ka-hub .ka-z2 { order: 20; }
+        .set-selection.ka-hub .module-card.perfekt-card { order: 21; }
+        .set-selection.ka-hub .module-card.ka-bau { order: 22; }
+        .set-selection.ka-hub .ka-z3 { order: 30; }
+        .set-selection.ka-hub .module-card.ka-aci { order: 31; }
+        .set-selection.ka-hub .module-card.ka-text { order: 32; }
+        .module-card.ka-bau { background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%); border-color: #ef6c00; }
+        .module-card.ka-aci { background: linear-gradient(135deg, #c7d2fe 0%, #e9d5ff 100%); border-color: #6366f1; }
+        .module-card.ka-text { background: linear-gradient(135deg, #fecaca 0%, #fde68a 100%); border-color: #dc2626; }
         .set-card.perfekt-bau {
             grid-column: 1 / -1;
             background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
@@ -3180,7 +3209,14 @@
             <p style="color: #666; margin-top: 10px;">Wähle deine Lektion:</p>
         </div>
         <div class="set-selection">
-            <!-- Gabel: eigene Seite, eigener Speicher (latein-perfekt.html) – bewusst die erste Karte, vor den Lektionen -->
+            <!-- Klassenarbeit Dezember 2026: eigenes Set aus dem Wortschatz-Blatt, dazu AcI und Übersetzen (latein-arbeit.html) -->
+            <div class="set-card latin arbeit-karte" onclick="selectLatinChapter('ka1226')">
+                <div class="set-icon">🎯</div>
+                <div class="set-title">Klassenarbeit Dezember</div>
+                <div class="set-info">Alles für die Arbeit an einem Ort</div>
+                <div class="set-topics">Wortschatz-Blatt • Perfekt • AcI • Übersetzen: Pompeji</div>
+            </div>
+            <!-- Gabel: eigene Seite, eigener Speicher (latein-perfekt.html) – vor den Lektionen -->
             <div class="set-card latin perfekt-bau" role="link" tabindex="0"
                  onclick="location.href='latein-perfekt.html'"
                  onkeydown="if (event.key === 'Enter') location.href='latein-perfekt.html'">
@@ -3255,6 +3291,30 @@
             <p style="color: #666; margin-top: 10px;">Wähle dein Modul:</p>
         </div>
         <div class="set-selection">
+            <div class="ka-zeile ka-nur ka-z1">1 · Wortschatz <small>die Wörter vom Wortschatz-Blatt</small></div>
+            <div class="ka-zeile ka-nur ka-z2">2 · Perfekt <small>die 34 Verben, die auf dem Blatt mit Perfekt stehen</small></div>
+            <div class="ka-zeile ka-nur ka-z3">3 · AcI und Übersetzen</div>
+            <div class="module-card ka-nur ka-bau" role="link" tabindex="0"
+                 onclick="location.href='latein-perfekt.html?von=arbeit'"
+                 onkeydown="if (event.key === 'Enter') location.href='latein-perfekt.html?von=arbeit'">
+                <div class="module-icon">🧱</div>
+                <div class="module-title">Perfekt-Baukasten</div>
+                <div class="module-info">Verstehen, wie das Perfekt gebaut wird<br><small>Voreingestellt: 🎯 Für die Arbeit</small></div>
+            </div>
+            <div class="module-card ka-nur ka-aci" role="link" tabindex="0"
+                 onclick="location.href='latein-arbeit.html#aci'"
+                 onkeydown="if (event.key === 'Enter') location.href='latein-arbeit.html#aci'">
+                <div class="module-icon">🧲</div>
+                <div class="module-title">AcI-Werkstatt</div>
+                <div class="module-info">Kopfverb, Klammer, gleichzeitig oder vorzeitig<br><small>In sechs Schritten zum dass-Satz</small></div>
+            </div>
+            <div class="module-card ka-nur ka-text" role="link" tabindex="0"
+                 onclick="location.href='latein-arbeit.html#text'"
+                 onkeydown="if (event.key === 'Enter') location.href='latein-arbeit.html#text'">
+                <div class="module-icon">🌋</div>
+                <div class="module-title">Übersetzen: Pompeji</div>
+                <div class="module-info">Texte wie in der Arbeit, Satz für Satz<br><small>Mit Wortschatz-Hilfe und Lösung</small></div>
+            </div>
             <div class="module-card intro-card" onclick="startLatinIntro()">
                 <div class="intro-badge">NEU HIER? START!</div>
                 <div class="module-icon">🎯</div>
@@ -4557,6 +4617,173 @@
                     { w:'coniūnx', f:'coniugis _m f_', d:'der Gatte, die Gattin, der Ehemann, die Ehefrau' },
                 ]},
             ]},
+            // Pendant zum Vokabelheft für die Klassenarbeit im Dezember 2026: das Blatt „Textlexikon Lektion 9“
+            // (ROMA A, S. 67), 121 Einträge, nach Lerngruppen statt nach dem Alphabet. Päckchen 10 = hochgestellte 0
+            // auf dem Blatt (kein Lernwortschatz).
+            ka1226: { name: 'Klassenarbeit Dezember', packets: [
+                { label: '1', title: 'Neue Verben', rows: [
+                    { w:'accidere', f:'accidō, accidī', d:'geschehen, sich ereignen' },
+                    { w:'cadere', f:'cadō, cecidī', d:'fallen' },
+                    { w:'contendere', f:'contendō, contendī', d:'eilen, sich anstrengen, kämpfen',
+                      ex:[['Claudia ad Aulum contendit.', 'Claudia eilt zu Aulus.'],
+                          ['Gladiātōrēs armīs contendunt.', 'Die Gladiatoren kämpfen mit Waffen.'],
+                          ['Gnaeus ex urbe discēdere contendit.', 'Gnaeus strengt sich an, aus der Stadt wegzugehen.']] },
+                    { w:'currere', f:'currō, cucurrī', d:'laufen, eilen' },
+                    { w:'discēdere', f:'discēdō, discessī', d:'weggehen, auseinandergehen' },
+                    { w:'flēre', f:'fleō, flēvī', d:'weinen, beweinen' },
+                    { w:'manēre', f:'maneō, mānsī\n_m. Akk._', d:'bleiben, warten (auf)',
+                      ex:[['Populus diū in amphitheātrō manet.', 'Das Volk bleibt lange im Amphitheater.'],
+                          ['Āfra Dāvum manet.', 'Afra wartet auf Davus.']] },
+                    { w:'monēre', f:'moneō, monuī', d:'mahnen, ermahnen' },
+                    { w:'occurrere', f:'occurrō, occurrī', d:'begegnen, entgegentreten' },
+                    { w:'perdere', f:'perdō, perdidī', d:'verlieren, verschwenden, vernichten',
+                      ex:[['Pecūniam perdidī.', 'Ich habe Geld verschwendet.'],
+                          ['Vesuvius urbem perdidit.', 'Der Vesuv hat die Stadt vernichtet.']] },
+                    { w:'relinquere', f:'relinquō, relīquī', d:'verlassen, zurücklassen' },
+                    { w:'vincere', f:'vincō, vīcī', d:'siegen, besiegen, übertreffen' },
+                ]},
+                { label: '2', title: 'Neues Perfekt', rows: [
+                    { w:'accipere', f:'accipiō, accēpī', d:'erhalten, erfahren, annehmen' },
+                    { w:'animadvertere', f:'animadvertō, animadvertī', d:'bemerken' },
+                    { w:'capere', f:'capiō, cēpī', d:'nehmen, fassen, ergreifen, erobern' },
+                    { w:'dīcere', f:'dīcō, dīxī', d:'sagen, sprechen' },
+                    { w:'dūcere', f:'dūcō, dūxī', d:'führen, ziehen' },
+                    { w:'facere', f:'faciō, fēcī', d:'machen, tun, handeln' },
+                    { w:'fugere', f:'fugiō, fūgī\n_m. Akk._', d:'fliehen (vor), entfliehen, meiden' },
+                    { w:'parcere', f:'parcō, pepercī\n_m. Dat._', d:'schonen, verschonen' },
+                    { w:'reperīre', f:'reperiō, repperī', d:'finden, wiederfinden' },
+                    { w:'sentīre', f:'sentiō, sēnsī', d:'fühlen, meinen, wahrnehmen' },
+                    { w:'vidēre', f:'videō, vīdī', d:'sehen' },
+                ]},
+                { label: '3', title: 'Neue Substantive', rows: [
+                    { w:'Campānia', f:'Campāniae _f_', d:'Kampanien (Landschaft in Mittelitalien)' },
+                    { w:'familia', f:'familiae _f_', d:'die Familie, die Hausgemeinschaft' },
+                    { w:'homō', f:'hominis _m_', d:'der Mensch' },
+                    { w:'māter', f:'mātris _f_', d:'die Mutter' },
+                    { w:'mōns', f:'montis _m_\n(_Gen. Pl._ -ium)', d:'der Berg' },
+                    { w:'mors', f:'mortis _f_', d:'der Tod' },
+                    { w:'multitūdō', f:'multitūdinis _f_', d:'die Menge, die große Zahl' },
+                    { w:'ops', f:'opis _f_', d:'die Hilfe, die Kraft' },
+                    { w:'parēns', f:'parentis _m f_', d:'der Vater, die Mutter; _Pl._ die Eltern' },
+                    { w:'pars', f:'partis _f_\n(_Gen. Pl._ -ium)', d:'der Teil, die Seite' },
+                    { w:'pater', f:'patris _m_', d:'der Vater' },
+                    { w:'tēctum', f:'tēctī _n_', d:'das Dach, das Haus' },
+                    { w:'tenebrae', f:'tenebrārum _f Pl._', d:'die Dunkelheit, die Finsternis' },
+                    { w:'timor', f:'timōris _m_', d:'die Angst, die Furcht' },
+                    { w:'urbs', f:'urbis _f_\n(_Gen. Pl._ -ium)', d:'die Stadt' },
+                    { w:'Vesuvius', f:'Vesuviī _m_', d:'der Vesuv (Vulkan in Kampanien)' },
+                ]},
+                { label: '4', title: 'Neue kleine Wörter', rows: [
+                    { w:'alius ... alius', f:'', d:'der eine ... der andere' },
+                    { w:'cōnsilium capere', f:'', d:'einen Plan (Entschluss) fassen' },
+                    { w:'ergō', f:'', d:'also, deshalb' },
+                    { w:'inde', f:'_Adv._', d:'von dort, darauf, deshalb' },
+                    { w:'nōbīscum', f:'', d:'mit uns' },
+                    { w:'nōs', f:'_Akk._', d:'uns' },
+                    { w:'nōs', f:'_Nom._', d:'wir' },
+                    { w:'rūrsus', f:'_Adv._', d:'wieder' },
+                    { w:'vix', f:'_Adv._', d:'kaum, (nur) mit Mühe' },
+                ]},
+                { label: '5', title: 'Bekannte Verben', rows: [
+                    { w:'adesse', f:'adsum, adfuī', d:'da sein, helfen' },
+                    { w:'audīre', f:'audiō, audīvī', d:'hören' },
+                    { w:'clāmāre', f:'clāmō, clāmāvī', d:'laut rufen, schreien' },
+                    { w:'cōgnōscere', f:'cōgnōscō', d:'erkennen, kennenlernen' },
+                    { w:'esse', f:'sum, fuī', d:'sein, sich befinden' },
+                    { w:'īnstāre', f:'īnstō\n_m. Dat._', d:'bevorstehen, bedrängen, drohen',
+                      ex:[['Symmachō poena īnstat.', 'Symmachus droht eine Strafe.']] },
+                    { w:'petere', f:'petō, petīvī', d:'bitten, verlangen, streben (nach), aufsuchen, angreifen' },
+                    { w:'posse', f:'possum, potuī', d:'können' },
+                    { w:'properāre', f:'properō, properāvī', d:'eilen, sich beeilen' },
+                    { w:'putāre', f:'putō, putāvī', d:'glauben, meinen, _m. dopp. Akk._ halten für',
+                      ex:[['Āfra Lydiam amīcam bonam esse putat.', 'Afra glaubt, dass Lydia eine gute Freundin ist.'],
+                          ['Āfra Lydiam amīcam bonam putat.', 'Afra hält Lydia für eine gute Freundin.']] },
+                    { w:'spectāre', f:'spectō, spectāvī', d:'betrachten, anschauen, zuschauen' },
+                    { w:'terrēre', f:'terreō, terruī', d:'erschrecken' },
+                    { w:'velle', f:'volō, voluī', d:'wollen' },
+                    { w:'venīre', f:'veniō', d:'kommen' },
+                ]},
+                { label: '6', title: 'Substantive, Adjektive', rows: [
+                    { w:'alius', f:'alia, aliud', d:'ein anderer' },
+                    { w:'caelum', f:'caelī _n_', d:'der Himmel' },
+                    { w:'cōnsilium', f:'cōnsiliī _n_', d:'die Beratung, der Beschluss, der Plan, der Rat' },
+                    { w:'deus', f:'deī _m_', d:'der Gott, die Gottheit' },
+                    { w:'Gnaeus', f:'Gnaeī _m_', d:'Gnaeus (männlicher Eigenname)' },
+                    { w:'magnus', f:'magna, magnum', d:'groß, bedeutend' },
+                    { w:'multus', f:'multa, multum', d:'viel' },
+                    { w:'oculus', f:'oculī _m_', d:'das Auge' },
+                    { w:'parvus', f:'parva, parvum', d:'klein, gering' },
+                    { w:'saxum', f:'saxī _n_', d:'der Fels, der Stein' },
+                    { w:'terra', f:'terrae _f_', d:'die Erde, das Land' },
+                    { w:'via', f:'viae _f_', d:'der Weg, die Straße' },
+                ]},
+                { label: '7', title: 'Präpositionen, Pronomen', rows: [
+                    { w:'ā / ab', f:'_Präp. m. Abl._', d:'von, von … her',
+                      ex:[['Symmachus ab amīcō pecūniam pōstulat.', 'Symmachus fordert von seinem Freund Geld.']] },
+                    { w:'ad', f:'_Präp. m. Akk._', d:'zu, bei, nach, an' },
+                    { w:'dē', f:'_Präp. m. Abl._', d:'über; von, von … her, von … weg, von … herab' },
+                    { w:'ē / ex', f:'_Präp. m. Abl._', d:'aus, von … her',
+                      ex:[['Symmachus ē tabernā venit.', 'Symmachus kommt aus dem Gasthaus.']] },
+                    { w:'in', f:'_Präp. m. Abl._', d:'in, an, auf, bei (_wo?_)',
+                      ex:[['Symmachus in tabernā sedet.', 'Symmachus sitzt im Gasthaus.'],
+                          ['Dāvus in viā stat.', 'Davus steht auf der Straße.']] },
+                    { w:'in', f:'_Präp. m. Akk._', d:'in (… hinein), nach (_wohin?_); gegen',
+                      ex:[['Symmachus in tabernam properat.', 'Symmachus eilt in das Gasthaus.']] },
+                    { w:'egō', f:'', d:'ich' },
+                    { w:'tū', f:'_Nom._', d:'du' },
+                    { w:'mē', f:'_Akk._', d:'mich' },
+                    { w:'tē', f:'_Akk._', d:'dich' },
+                    { w:'mihi', f:'_Dat._', d:'mir, für mich' },
+                    { w:'nōbīs', f:'_Dat._', d:'uns, für uns' },
+                    { w:'quid?', f:'', d:'was?' },
+                ]},
+                { label: '8', title: 'Adverbien', rows: [
+                    { w:'dēnique', f:'_Adv._', d:'schließlich, zuletzt' },
+                    { w:'iam', f:'_Adv._', d:'schon, bereits, nun' },
+                    { w:'nōn', f:'', d:'nicht' },
+                    { w:'nōn iam', f:'', d:'nicht mehr' },
+                    { w:'quidem', f:'_Adv._', d:'freilich, gewiss, wenigstens, zwar',
+                      ex:[['Tibi adsum; tū quidem mihi quoque adesse dēbēs.', 'Ich helfe dir; du musst freilich auch mir helfen.']] },
+                    { w:'saepe', f:'_Adv._', d:'oft' },
+                    { w:'simul', f:'_Adv._', d:'gleichzeitig, zugleich' },
+                    { w:'statim', f:'_Adv._', d:'sofort' },
+                    { w:'subitō', f:'_Adv._', d:'plötzlich' },
+                    { w:'tum', f:'_Adv._', d:'da, dann, damals' },
+                    { w:'undique', f:'_Adv._', d:'von allen Seiten, von überallher' },
+                ]},
+                { label: '9', title: 'Bindewörter', rows: [
+                    { w:'autem', f:'_nachgestellt_', d:'aber, andererseits' },
+                    { w:'cum', f:'_Subj._', d:'als (plötzlich), (zu der Zeit) als, (immer) wenn' },
+                    { w:'et', f:'', d:'und, auch',
+                      ex:[['Dāvus et Syrus', 'Davus und Syrus'],
+                          ['Et Syrus ibi est.', 'Auch Syrus ist dort.']] },
+                    { w:'etiam', f:'', d:'auch, sogar',
+                      ex:[['Etiam Syrus servus est.', 'Auch Syrus ist ein Sklave.'],
+                          ['Etiam domina ibi est.', 'Auch (sogar) die Herrin ist dort.']] },
+                    { w:'nam', f:'', d:'denn, nämlich' },
+                    { w:'neque', f:'', d:'und nicht, auch nicht' },
+                    { w:'postquam', f:'_Subj. m. Perf._', d:'nachdem, als' },
+                    { w:'-que', f:'_angehängt_', d:'und',
+                      ex:[['Dāvus Syrusque adsunt.', 'Davus und Syrus sind da.']] },
+                    { w:'quia', f:'_Subj._', d:'weil' },
+                    { w:'sed', f:'', d:'aber, sondern' },
+                    { w:'tamen', f:'', d:'dennoch, jedoch' },
+                ]},
+                { label: '10', title: 'Nur im Text', rows: [
+                    { w:'Aulus', f:'Aulī _m_', d:'Aulus (männlicher Eigenname)' },
+                    { w:'Claudia', f:'Claudiae _f_', d:'Claudia (weiblicher Eigenname)' },
+                    { w:'corvus', f:'corvī _m_', d:'der Rabe' },
+                    { w:'crocīre', f:'crociō', d:'krächzen' },
+                    { w:'Cupīdō', f:'_Nom._', d:'Cupido (eigtl. der Name des röm. Liebesgottes; hier als Haustiername verwendet)' },
+                    { w:'Epidius', f:'Epidiī _m_', d:'Epidius (männlicher Eigenname)' },
+                    { w:'Mārcus', f:'Mārcī _m_', d:'Marcus (männlicher Eigenname „dem Mars geweiht“)' },
+                    { w:'nūbēs ātra', f:'_f_', d:'eine dunkle Wolke' },
+                    { w:'peristylium', f:'peristyliī _n_', d:'der Innenhof' },
+                    { w:'porta Nūcerīna', f:'_f_', d:'die Porta Nucerina (ein Stadttor von Pompeji)' },
+                    { w:'strepitus', f:'_m_', d:'der Lärm' },
+                    { w:'tremor', f:'tremōris _m_', d:'das Beben' },
+                ]},
+            ]},
 
         };
 
@@ -4574,7 +4801,7 @@
                     { latin: 'servus', german: 'der Sklave, der Diener', image: '🧑‍🌾', hint: 'Untergebener im alten Rom',
                       distractors: ['der Herr, der Besitzer', 'der Bürger, der Freie', 'der König', 'der Soldat'] },
                     { latin: 'etiam', german: 'auch, sogar', image: '➕', hint: 'Hinzufügung, Verstärkung',
-                      distractors: ['nicht, keineswegs', 'nur, ausschließlich', 'jedoch', 'außerdem'] },
+                      distractors: ['nicht, keineswegs', 'nur, ausschließlich', 'jedoch', 'niemals'] },
                     { latin: 'et', german: 'und, auch', image: '🔗', hint: 'Verbindendes Wort',
                       distractors: ['oder, beziehungsweise', 'aber, jedoch', 'denn', 'sondern'] },
                     { latin: 'domina', german: 'die Herrin, die Dame', image: '👸', hint: 'Frau im Haus, weibliche Hausherrin',
@@ -5932,7 +6159,7 @@
                       present: { sg2: 'ades', sg3: 'adest', pl1: 'adsumus', pl2: 'adestis', pl3: 'adsunt' } },
                     { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>dē‑fuī</b>.', german: 'fehlen',
                       present: { sg2: 'dees', sg3: 'deest', pl1: 'dēsumus', pl2: 'deestis', pl3: 'dēsunt' } },
-                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'irr', perfectNote: 'posse kommt von pot‑ + esse; das Perfekt heißt <b>pot‑uī</b>. Auswendig lernen!', german: 'können',
+                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'u', perfectNote: 'an den Stamm pot‑ (wie in pot‑es) kommt <b>‑uī</b> – ein ganz normales u‑Perfekt. Besonders sind bei posse Präsens und Imperfekt (possum, poteram).', german: 'können',
                       present: { sg2: 'potes', sg3: 'potest', pl1: 'possumus', pl2: 'potestis', pl3: 'possunt' } },
                     { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', perfectNote: 'an den Stamm vol‑ (wie in volō) kommt <b>‑uī</b>.', german: 'wollen',
                       present: { sg2: 'vīs', sg3: 'vult', pl1: 'volumus', pl2: 'vultis', pl3: 'volunt' } },
@@ -6421,7 +6648,7 @@
                     { infinitive: 'interficere', firstPerson: 'interficiō', perfect: 'interfēcī', perfectType: 'dehn', perfectNote: 'aus ‑fic‑ wird ‑<b>fēc</b>‑, das i vor ‑ō fällt weg (wie faciō → fēcī).', german: 'töten',
                       present: { sg2: 'interficis', sg3: 'interficit', pl1: 'interficimus', pl2: 'interficitis', pl3: 'interficiunt' },
                       imperative: { sg: 'interfice', pl: 'interficite' } },
-                    { infinitive: 'cōnstituere', firstPerson: 'cōnstituō', perfect: 'cōnstituī', perfectType: 'ohne', german: 'beschließen',
+                    { infinitive: 'cōnstituere', firstPerson: 'cōnstituō', perfect: 'cōnstituī', perfectType: 'ohne', perfectNote: 'das u gehört schon zum Stamm (cōnstitu‑ō), es ist kein Perfekt‑Zeichen. Der Stamm bleibt <b>gleich</b>, nur <b>‑ī</b> kommt dazu.', german: 'beschließen',
                       present: { sg2: 'cōnstituis', sg3: 'cōnstituit', pl1: 'cōnstituimus', pl2: 'cōnstituitis', pl3: 'cōnstituunt' },
                       imperative: { sg: 'cōnstitue', pl: 'cōnstituite' } },
                     { infinitive: 'crēdere', firstPerson: 'crēdō', perfect: 'crēdidī', perfectType: 'red', perfectNote: 'aus ‑dō wird <b>‑didī</b>: das d wird verdoppelt.', german: 'glauben',
@@ -6513,6 +6740,282 @@
                       nom_pl: 'īnsidiae', gen_pl: 'īnsidiārum', dat_pl: 'īnsidiīs', akk_pl: 'īnsidiās', abl_pl: 'īnsidiīs',
                       label: 'īnsidiae', german: 'die Falle', germanPl: 'Fallen', image: '🪤', declension: 'a-Deklination (nur Plural)' },
                 ]
+            },
+            // Klassenarbeit Dezember 2026: der Wortschatz vom Blatt „Textlexikon Lektion 9“ (ROMA A, S. 67),
+            // nach Lerngruppen geordnet. Bilder, Tipps und falsche Antworten kommen aus den Lektionen, in denen das
+            // Wort zuerst vorkam; die Bedeutung steht so da wie auf dem Blatt. Die Wörter mit hochgestellter 0
+            // (kein Lernwortschatz) stehen nur im Vokabelheft, letztes Päckchen; auch der Name Gnaeus steht nur im Heft.
+            ka1226: {
+                name: 'Klassenarbeit Dezember',
+                vocabulary: [
+                    // Abschnitt 1: Neue Verben
+                    { latin: 'accidere', german: 'geschehen, sich ereignen', image: '❗', hint: 'Etwas passiert',
+                      distractors: ['verhindern, abwenden', 'aufhören, enden', 'beginnen, anfangen', 'warten (auf)'] },
+                    { latin: 'cadere', german: 'fallen', image: '🍂', hint: 'Nach unten, ohne es zu wollen',
+                      distractors: ['steigen', 'springen', 'stehen', 'fliegen'] },
+                    { latin: 'contendere', german: 'eilen, sich anstrengen, kämpfen', image: '🏋️', hint: 'Mit aller Kraft – zum Ziel oder gegen einen Gegner',
+                      distractors: ['ruhen, sich ausruhen, faulenzen', 'zögern, abwarten', 'aufgeben', 'schlafen'] },
+                    { latin: 'currere', german: 'laufen, eilen', image: '👟', hint: 'Schnell auf den Beinen',
+                      distractors: ['gehen, schreiten', 'stehen bleiben', 'sitzen', 'springen'] },
+                    { latin: 'discēdere', german: 'weggehen, auseinandergehen', image: '🚪', hint: 'Nicht bleiben, sondern gehen',
+                      distractors: ['herbeikommen, sich nähern', 'zusammenkommen', 'bleiben', 'zurückkehren'] },
+                    { latin: 'flēre', german: 'weinen, beweinen', image: '😢', hint: 'Tränen fließen',
+                      distractors: ['lachen, kichern', 'singen', 'schreien, rufen', 'schlafen'] },
+                    { latin: 'manēre', german: 'bleiben, warten (auf)', image: '⏳', hint: 'Nicht weggehen',
+                      distractors: ['weggehen, sich trennen (von)', 'fliehen (vor), entkommen', 'eilen', 'zurückkehren, umkehren'] },
+                    { latin: 'monēre', german: 'mahnen, ermahnen', image: '📢', hint: 'Jemanden an seine Pflicht erinnern',
+                      distractors: ['loben, preisen', 'trösten', 'bestrafen, strafen', 'vergessen'] },
+                    { latin: 'occurrere', german: 'begegnen, entgegentreten', image: '🤝', hint: 'Jemanden unterwegs treffen',
+                      distractors: ['ausweichen, aus dem Weg gehen', 'folgen, nachgehen', 'sich verstecken', 'vorbeigehen'] },
+                    { latin: 'perdere', german: 'verlieren, verschwenden, vernichten', image: '💸', hint: 'Geld ist weg – oder eine ganze Stadt',
+                      distractors: ['gewinnen, sparen, aufbewahren', 'finden, bewahren', 'retten, schützen, wiederherstellen', 'kaufen, erwerben'] },
+                    { latin: 'relinquere', german: 'verlassen, zurücklassen', image: '🧳', hint: 'Weggehen und etwas dalassen',
+                      distractors: ['behalten, bewahren', 'mitnehmen', 'suchen', 'besuchen, aufsuchen'] },
+                    { latin: 'vincere', german: 'siegen, besiegen, übertreffen', image: '🏆', hint: 'Am Ende des Kampfes vorne',
+                      distractors: ['verlieren, unterliegen, weichen', 'fliehen', 'aufgeben', 'gehorchen, folgen'] },
+                    // Abschnitt 2: Neues Perfekt
+                    { latin: 'accipere', german: 'erhalten, erfahren, annehmen', image: '📥', hint: 'Etwas bekommen, was einem gegeben wird',
+                      distractors: ['geben, schenken, überreichen', 'verlieren, einbüßen', 'suchen, fragen', 'verkaufen'] },
+                    { latin: 'animadvertere', german: 'bemerken', image: '💡', hint: 'Auf etwas aufmerksam werden',
+                      distractors: ['übersehen, nicht beachten', 'vergessen', 'verbergen, verstecken', 'wissen, kennen'] },
+                    { latin: 'capere', german: 'nehmen, fassen, ergreifen, erobern', image: '✊', hint: 'Mit der Hand oder mit Gewalt an sich bringen',
+                      distractors: ['geben, schenken, überlassen', 'lassen, loslassen, freigeben', 'werfen, schleudern', 'verlieren'] },
+                    { latin: 'dīcere', german: 'sagen, sprechen', image: '🗣️', hint: 'Worte aus dem Mund',
+                      distractors: ['schweigen, still sein', 'hören, vernehmen', 'schreiben', 'lesen'] },
+                    { latin: 'dūcere', german: 'führen, ziehen', image: '🧭', hint: 'Den Weg zeigen',
+                      distractors: ['folgen, hinterherlaufen', 'fliehen, weglaufen', 'stehen bleiben', 'warten'] },
+                    { latin: 'facere', german: 'machen, tun, handeln', image: '🔨', hint: 'Etwas zustande bringen',
+                      distractors: ['lassen, aufhören, ruhen', 'nehmen, ergreifen', 'geben, schenken', 'denken, nachdenken, überlegen'] },
+                    { latin: 'fugere', german: 'fliehen (vor), entfliehen, meiden', image: '🏃', hint: 'Vor etwas davonlaufen',
+                      distractors: ['verfolgen, nachjagen, suchen', 'kämpfen (gegen), angreifen', 'warten (auf), stehen bleiben', 'herbeikommen, sich nähern'] },
+                    { latin: 'parcere', german: 'schonen, verschonen', image: '🕊️', hint: 'Mit Dativ: jemanden am Leben lassen',
+                      distractors: ['angreifen, bedrängen', 'töten', 'entreißen', 'kämpfen'] },
+                    { latin: 'reperīre', german: 'finden, wiederfinden', image: '🗝️', hint: 'Etwas Verlorenes zurückbekommen',
+                      distractors: ['suchen, fragen', 'verlieren, verlegen', 'verstecken', 'vergessen'] },
+                    { latin: 'sentīre', german: 'fühlen, meinen, wahrnehmen', image: '🖐️', hint: 'Etwas spüren',
+                      distractors: ['schweigen, still sein', 'sprechen, reden, erzählen', 'schlafen', 'vergessen'] },
+                    { latin: 'vidēre', german: 'sehen', image: '🔭', hint: 'Mit den Augen wahrnehmen',
+                      distractors: ['hören', 'riechen', 'fühlen', 'schmecken'] },
+                    // Abschnitt 3: Neue Substantive I
+                    { latin: 'Campānia', german: 'Kampanien (Landschaft in Mittelitalien)', image: '🍇', hint: 'Fruchtbare Gegend am Golf von Neapel',
+                      distractors: ['Latium (Landschaft um Rom)', 'Sizilien (Insel im Süden Italiens)', 'Etrurien (Landschaft nördlich von Rom)', 'Gallien (Land nördlich der Alpen)'] },
+                    { latin: 'familia', german: 'die Familie, die Hausgemeinschaft', image: '🏡', hint: 'Bei den Römern gehörten auch die Sklaven dazu',
+                      distractors: ['das Volk, die Bürgerschaft', 'die Freundschaft', 'die Nachbarschaft, die Umgebung', 'die Herde'] },
+                    { latin: 'homō', german: 'der Mensch', image: '🧑', hint: 'Kein Gott und kein Tier',
+                      distractors: ['das Tier', 'der Gott', 'der Sklave, der Diener', 'der Feind'] },
+                    { latin: 'māter', german: 'die Mutter', image: '👩', hint: 'Sie hat die Kinder zur Welt gebracht',
+                      distractors: ['der Vater', 'die Tochter', 'die Schwester', 'die Großmutter'] },
+                    { latin: 'mōns', german: 'der Berg', image: '🏔️', hint: 'Viel höher als ein Hügel',
+                      distractors: ['das Tal', 'der Fluss', 'das Meer', 'der Wald'] },
+                    { latin: 'mors', german: 'der Tod', image: '⚰️', hint: 'Das Ende des Lebens',
+                      distractors: ['das Leben', 'die Geburt', 'der Schlaf', 'die Krankheit'] },
+                    { latin: 'multitūdō', german: 'die Menge, die große Zahl', image: '👥', hint: 'Sehr viele auf einmal',
+                      distractors: ['die kleine Zahl', 'die Einsamkeit, das Alleinsein', 'die Hälfte', 'der Einzelne, der Einzige'] },
+                    { latin: 'ops', german: 'die Hilfe, die Kraft', image: '💪', hint: 'Was man in der Not braucht',
+                      distractors: ['die Schwäche, die Ohnmacht', 'der Schaden', 'die Gefahr, das Risiko', 'die Last'] },
+                    // Abschnitt 4: Neue Substantive II
+                    { latin: 'parēns', german: 'der Vater, die Mutter; Pl. die Eltern', image: '👪', hint: 'Kann Vater oder Mutter sein – im Plural beide zusammen',
+                      distractors: ['der Bruder, die Schwester; Pl. die Geschwister', 'der Sohn, die Tochter; Pl. die Kinder', 'der Großvater, die Großmutter; Pl. die Großeltern', 'der Onkel, die Tante; Pl. die Verwandten'] },
+                    { latin: 'pars', german: 'der Teil, die Seite', image: '🍰', hint: 'Ein Stück vom Ganzen',
+                      distractors: ['das Ganze, die Gesamtheit', 'die Mitte', 'das Ende, der Schluss', 'der Anfang'] },
+                    { latin: 'pater', german: 'der Vater', image: '👨', hint: 'Bei den Römern das Oberhaupt der Familie',
+                      distractors: ['die Mutter', 'der Bruder', 'der Sohn', 'der Großvater'] },
+                    { latin: 'tēctum', german: 'das Dach, das Haus', image: '🏠', hint: 'Schützt vor dem Regen',
+                      distractors: ['die Mauer, die Wand', 'das Tor, die Tür', 'der Garten', 'die Straße'] },
+                    { latin: 'tenebrae', german: 'die Dunkelheit, die Finsternis', image: '🌑', hint: 'Steht im Plural: wenn kein Licht da ist',
+                      distractors: ['das Licht, die Helligkeit', 'der Morgen', 'das Feuer, die Flamme', 'der Nebel'] },
+                    { latin: 'timor', german: 'die Angst, die Furcht', image: '😨', hint: 'Das Gefühl bei Gefahr',
+                      distractors: ['der Mut, die Kühnheit', 'die Freude, das Glück', 'der Zorn', 'die Hoffnung'] },
+                    { latin: 'urbs', german: 'die Stadt', image: '🌆', hint: 'Rom war die größte',
+                      distractors: ['das Dorf', 'das Land', 'das Haus', 'die Straße'] },
+                    { latin: 'Vesuvius', german: 'der Vesuv (Vulkan in Kampanien)', image: '🌋', hint: 'Begrub im Jahr 79 n. Chr. die Stadt Pompeji',
+                      distractors: ['der Ätna (Vulkan auf Sizilien)', 'der Olymp (Berg der Götter)', 'der Tiber (Fluss durch Rom)', 'das Kapitol (Hügel in Rom)'] },
+                    // Abschnitt 5: Neue kleine Wörter
+                    { latin: 'ergō', german: 'also, deshalb', image: '🧮', hint: 'Zieht eine Folgerung',
+                      distractors: ['aber, jedoch', 'trotzdem', 'denn, nämlich', 'obwohl'] },
+                    { latin: 'inde', german: 'von dort, darauf, deshalb', image: '↪️', hint: 'Adverb: von diesem Ort aus – oder danach',
+                      distractors: ['dorthin, vorher, trotzdem', 'hier, an diesem Ort', 'bis jetzt, (immer) noch', 'überall'] },
+                    { latin: 'nōbīscum', german: 'mit uns', image: '👫', hint: 'Das cum hängt hinten dran',
+                      distractors: ['mit euch', 'mit dir', 'ohne uns', 'bei ihnen'] },
+                    { latin: 'nōs', german: 'wir; uns', image: '🙋', hint: 'Nominativ und Akkusativ sehen gleich aus',
+                      distractors: ['ihr; euch', 'ich; mich', 'du; dich', 'sie; sie'] },
+                    { latin: 'rūrsus', german: 'wieder', image: '🔁', hint: 'Noch einmal',
+                      distractors: ['niemals', 'schon', 'kaum', 'immer'] },
+                    { latin: 'vix', german: 'kaum, (nur) mit Mühe', image: '😓', hint: 'Gerade noch so',
+                      distractors: ['leicht, (ganz) ohne Mühe', '(sehr) oft, häufig', 'sofort', 'gern'] },
+                    // Abschnitt 6: Bekannte Verben
+                    { latin: 'adesse', german: 'da sein, helfen', image: '🙋', hint: 'Anwesend sein und beistehen',
+                      distractors: ['abwesend sein, fehlen', 'weggehen', 'ankommen', 'warten'] },
+                    { latin: 'audīre', german: 'hören', image: '👂', hint: 'Mit den Ohren wahrnehmen',
+                      distractors: ['sehen', 'sagen, sprechen', 'schweigen', 'laut rufen, schreien'] },
+                    { latin: 'clāmāre', german: 'laut rufen, schreien', image: '📣', hint: 'Mit lauter Stimme sprechen',
+                      distractors: ['flüstern, leise sprechen', 'schweigen, still sein', 'singen', 'lachen'] },
+                    { latin: 'cōgnōscere', german: 'erkennen, kennenlernen', image: '🔎', hint: 'Etwas herausfinden',
+                      distractors: ['vergessen, übersehen', 'verlieren, einbüßen', 'verstecken', 'verwechseln'] },
+                    { latin: 'esse', german: 'sein, sich befinden', image: '🧍', hint: 'Das wichtigste unregelmäßige Verb',
+                      distractors: ['haben, halten', 'werden', 'können', 'wollen, wünschen'] },
+                    { latin: 'īnstāre', german: 'bevorstehen, bedrängen, drohen', image: '⏰', hint: 'Etwas kommt bald',
+                      distractors: ['verschwinden, vorbeigehen, enden', 'weglaufen, fliehen', 'vergessen', 'aufhören'] },
+                    { latin: 'petere', german: 'bitten, verlangen, streben (nach), aufsuchen, angreifen', image: '🙏', hint: 'Fünf Bedeutungen — der Zusammenhang entscheidet',
+                      distractors: ['geben, übergeben, überlassen, verzichten (auf), vermeiden', 'schonen, verschonen, sich fernhalten (von), fliehen', 'antworten', 'aufhören'] },
+                    { latin: 'posse', german: 'können', image: '🦾', hint: 'Die Kraft oder Möglichkeit haben',
+                      distractors: ['wollen', 'nicht wollen', 'müssen, sollen', 'wagen'] },
+                    { latin: 'properāre', german: 'eilen, sich beeilen', image: '🏃‍♀️', hint: 'Wer spät dran ist, tut das',
+                      distractors: ['zögern', 'bleiben, warten (auf)', 'schlafen', 'weggehen, auseinandergehen'] },
+                    { latin: 'putāre', german: 'glauben, meinen, halten für', image: '🤔', hint: 'Eine Meinung über etwas haben',
+                      distractors: ['wissen, kennen, erfahren', 'sagen, sprechen, nennen', 'fragen, suchen, erbitten', 'zweifeln, zögern, schwanken'] },
+                    { latin: 'spectāre', german: 'betrachten, anschauen, zuschauen', image: '👁️', hint: 'Mit den Augen verfolgen',
+                      distractors: ['hören, vernehmen, zuhören', 'sprechen, reden, sich unterhalten', 'riechen', 'schmecken'] },
+                    { latin: 'terrēre', german: 'erschrecken', image: '👻', hint: 'Jemandem Angst machen',
+                      distractors: ['beruhigen', 'trösten', 'helfen', 'loben'] },
+                    { latin: 'velle', german: 'wollen', image: '💪', hint: 'Etwas beabsichtigen',
+                      distractors: ['nicht wollen', 'können', 'müssen, sollen', 'dürfen'] },
+                    { latin: 'venīre', german: 'kommen', image: '🚶', hint: 'Sich auf jemanden zu bewegen',
+                      distractors: ['gehen', 'bleiben', 'laufen', 'warten'] },
+                    // Abschnitt 7: Substantive & Adjektive
+                    { latin: 'alius', german: 'ein anderer', image: '↔️', hint: 'Nicht derselbe',
+                      distractors: ['einer, ein einziger', 'derselbe', 'jeder', 'keiner'] },
+                    { latin: 'caelum', german: 'der Himmel', image: '☁️', hint: 'Wo die Sterne sind',
+                      distractors: ['die Erde', 'das Meer', 'der Wald', 'der Berg'] },
+                    { latin: 'cōnsilium', german: 'die Beratung, der Beschluss, der Plan, der Rat', image: '📋', hint: 'Gemeinsam einen Plan fassen',
+                      distractors: ['die Tat, die Handlung, das Werk, die Arbeit', 'der Zufall, das Schicksal, das Glück', 'die Frage', 'der Streit, der Kampf'] },
+                    { latin: 'deus', german: 'der Gott, die Gottheit', image: '🛐', hint: 'Ein höheres Wesen',
+                      distractors: ['der Mensch, das Wesen', 'der König, der Herrscher', 'der Held', 'der Priester'] },
+                    { latin: 'magnus', german: 'groß, bedeutend', image: '🐘', hint: 'Von großem Umfang oder hohem Rang',
+                      distractors: ['klein, gering', 'schmal', 'arm, erbärmlich', 'niedrig, flach'] },
+                    { latin: 'multus', german: 'viel', image: '📚', hint: 'In großer Menge',
+                      distractors: ['wenig, gering', 'kein', 'genug', 'ganz, vollständig'] },
+                    { latin: 'oculus', german: 'das Auge', image: '👁️', hint: 'Damit sieht man',
+                      distractors: ['das Ohr', 'die Nase', 'der Mund', 'die Hand'] },
+                    { latin: 'parvus', german: 'klein, gering', image: '🐜', hint: 'Nicht groß, von geringem Umfang',
+                      distractors: ['groß, bedeutend', 'hoch', 'breit, weit', 'schwer, mühsam'] },
+                    { latin: 'saxum', german: 'der Fels, der Stein', image: '🪨', hint: 'Hart und schwer',
+                      distractors: ['der Baum', 'der Sand, die Arena', 'die Erde, das Land', 'der Berg'] },
+                    { latin: 'terra', german: 'die Erde, das Land', image: '🌍', hint: 'Der Boden unter den Füßen',
+                      distractors: ['der Himmel, der Götterbereich', 'das Meer, das Wasser', 'die Luft', 'das Feuer'] },
+                    { latin: 'via', german: 'der Weg, die Straße', image: '🛣️', hint: 'Darauf geht oder fährt man',
+                      distractors: ['das Dach, das Haus', 'die Stadt', 'der Berg', 'das Tor, die Tür'] },
+                    // Abschnitt 8: Präpositionen & Pronomen
+                    { latin: 'ā / ab', german: 'von, von … her', image: '⬅️', hint: 'Präposition m. Abl. – Herkunft',
+                      distractors: ['nach, zu … hin', 'in, auf (wo?)', 'durch, über', 'gegen'] },
+                    { latin: 'ad', german: 'zu, bei, nach, an', image: '➡️', hint: 'Präposition mit Akkusativ: hin zu einem Ziel',
+                      distractors: ['von, aus, weg von, seit', 'mit, samt, zusammen mit', 'ohne, außer, abgesehen von', 'vor, für, anstelle von'] },
+                    { latin: 'dē', german: 'über; von, von … her, von … weg, von … herab', image: '⬇️', hint: 'Präposition mit Ablativ – Richtung weg',
+                      distractors: ['unter; zwischen, während', 'mit; zusammen mit, in Begleitung von', 'nach; zu, hin zu, bis zu', 'ohne; außerhalb von'] },
+                    { latin: 'ē / ex', german: 'aus, von … her', image: '🚪', hint: 'Heraus aus etwas',
+                      distractors: ['in, auf (wo?)', 'zu … hin, bis zu', 'neben, an … vorbei', 'unter'] },
+                    { latin: 'in', vid: 'in_abl', german: 'in, an, auf, bei (wo?)', image: '📍', hint: 'Präp. m. Abl. – Wo? Ortsangabe',
+                      distractors: ['aus, von … her (woher?)', 'hinter, neben, um … herum (wohin?)', 'vor, seit (wann?)', 'wegen, aufgrund (warum?)'] },
+                    { latin: 'in', vid: 'in_akk', german: 'in (… hinein), nach (wohin?); gegen', image: '➡️', hint: 'Präp. m. Akk. – Wohin? Richtungsangabe',
+                      distractors: ['aus (… heraus), von (woher?)', 'durch, über (wo entlang?)', 'neben, hinter (wo?)', 'wegen, aufgrund (warum?)'] },
+                    { latin: 'egō', german: 'ich', image: '🙋', hint: 'Wer spricht, meint sich selbst',
+                      distractors: ['du', 'wir', 'mich', 'er'] },
+                    { latin: 'tū', german: 'du', image: '👉', hint: 'Die Person, mit der man spricht',
+                      distractors: ['ich', 'ihr', 'dich', 'wir'] },
+                    { latin: 'mē', german: 'mich', image: '🙋', hint: 'Erste Person, Akkusativ',
+                      distractors: ['dich', 'mir, für mich', 'ihn, sie', 'uns'] },
+                    { latin: 'tē', german: 'dich', image: '👉', hint: 'Zweite Person, Akkusativ',
+                      distractors: ['mich', 'dir, für dich', 'euch', 'sich'] },
+                    { latin: 'mihi', german: 'mir, für mich', image: '🎁', hint: 'Erste Person, Dativ',
+                      distractors: ['mich', 'dir, für dich', 'uns, für uns', 'ihm'] },
+                    { latin: 'nōbīs', german: 'uns, für uns', image: '🫂', hint: 'Erste Person Plural, Dativ',
+                      distractors: ['euch, für euch', 'mir, für mich', 'ihnen', 'wir'] },
+                    { latin: 'quid?', german: 'was?', image: '❓', hint: 'Fragt nach einer Sache',
+                      distractors: ['wer?', 'wo?', 'wie?', 'wann?'] },
+                    // Abschnitt 9: Adverbien
+                    { latin: 'dēnique', german: 'schließlich, zuletzt', image: '🏁', hint: 'Ganz am Ende',
+                      distractors: ['zuerst, am Anfang', 'dann, darauf', 'einst, einmal', 'plötzlich'] },
+                    { latin: 'iam', german: 'schon, bereits, nun', image: '⏰', hint: 'Zeitlich: zu diesem Zeitpunkt',
+                      distractors: ['noch nicht, später, nachher', 'niemals, nie', 'gestern, früher', 'morgen'] },
+                    { latin: 'nōn', german: 'nicht', image: '🚫', hint: 'Verneinung',
+                      distractors: ['ja, gewiss', 'auch, ebenso', 'sehr', 'fast'] },
+                    { latin: 'nōn iam', german: 'nicht mehr', image: '🚫', hint: 'Früher ja, jetzt aber nicht',
+                      distractors: ['noch nicht', 'nicht nur', 'schon, bereits, nun', 'niemals'] },
+                    { latin: 'quidem', german: 'freilich, gewiss, wenigstens, zwar', image: '🤝', hint: 'Betont oder schränkt eine Aussage ein',
+                      distractors: ['vielleicht, womöglich, etwa, kaum', 'deshalb, daher, also', 'niemals, keinesfalls', 'plötzlich'] },
+                    { latin: 'saepe', german: 'oft', image: '🔁', hint: 'Viele Male',
+                      distractors: ['selten, kaum', 'niemals, nie', 'immer', 'sofort, gleich'] },
+                    { latin: 'simul', german: 'gleichzeitig, zugleich', image: '⏱️', hint: 'Zur selben Zeit',
+                      distractors: ['nacheinander, danach', 'vorher, früher', 'niemals, nie', 'oft'] },
+                    { latin: 'statim', german: 'sofort', image: '⚡', hint: 'Ohne zu warten',
+                      distractors: ['später', 'langsam', 'manchmal', 'gestern'] },
+                    { latin: 'subitō', german: 'plötzlich', image: '⚡', hint: 'Ohne Vorwarnung',
+                      distractors: ['langsam', 'oft', 'sofort', 'lange'] },
+                    { latin: 'tum', german: 'da, dann, damals', image: '🕰️', hint: 'In jenem Moment',
+                      distractors: ['jetzt, gerade eben, sofort', 'niemals, nie', 'bald, gleich', 'immer'] },
+                    { latin: 'undique', german: 'von allen Seiten, von überallher', image: '🧭', hint: 'Aus jeder Richtung zugleich',
+                      distractors: ['nirgends, an keinem Ort', 'von dort, darauf, deshalb', 'dorthin, in diese Richtung', 'nur von einer einzigen Seite'] },
+                    // Abschnitt 10: Bindewörter
+                    { latin: 'autem', german: 'aber, andererseits', image: '↩️', hint: 'Gegensatz (nachgestellt)',
+                      distractors: ['weil, da, zumal', 'auch, ebenso', 'denn, nämlich', 'also, folglich'] },
+                    { latin: 'cum', german: 'als (plötzlich), (zu der Zeit) als, (immer) wenn', image: '⏰', hint: 'Leitet einen Zeit-Nebensatz ein',
+                      distractors: ['(noch) bevor, ehe, (solange) bis', 'damit (nicht), um zu, sodass', 'falls, sofern, unter der Bedingung dass', 'ohne dass, ohne zu, anstatt dass'] },
+                    { latin: 'et', german: 'und, auch', image: '🔗', hint: 'Verbindendes Wort',
+                      distractors: ['oder, beziehungsweise', 'aber, jedoch', 'denn', 'sondern'] },
+                    { latin: 'etiam', german: 'auch, sogar', image: '➕', hint: 'Hinzufügung, Verstärkung',
+                      distractors: ['nicht, keineswegs', 'nur, ausschließlich', 'jedoch', 'niemals'] },
+                    { latin: 'nam', german: 'denn, nämlich', image: '💬', hint: 'Leitet eine Begründung ein',
+                      distractors: ['aber, sondern', 'also, deshalb', 'dennoch, jedoch', 'und nicht, auch nicht'] },
+                    { latin: 'neque', german: 'und nicht, auch nicht', image: '🚫', hint: 'Verneinung + Verbindung',
+                      distractors: ['und auch, ebenfalls', 'oder, beziehungsweise', 'aber', 'sondern'] },
+                    { latin: 'postquam', german: 'nachdem, als', image: '⏭️', hint: 'Steht mit Perfekt und meint Vorzeitigkeit',
+                      distractors: ['bevor, ehe', 'während, solange', 'weil', 'obwohl'] },
+                    { latin: '-que', german: 'und (angehängt)', image: '🪡', hint: 'Wird ans Wort angehängt',
+                      distractors: ['oder (angehängt)', 'nicht (vorangestellt)', 'aber', 'auch'] },
+                    { latin: 'quia', german: 'weil', image: '❓', hint: 'Leitet einen Grund-Nebensatz ein',
+                      distractors: ['obwohl', 'als, (immer) wenn', 'nachdem', 'damit'] },
+                    { latin: 'sed', german: 'aber, sondern', image: '↔️', hint: 'Gegensatz oder Korrektur',
+                      distractors: ['und, sowie', 'oder, beziehungsweise', 'denn', 'auch'] },
+                    { latin: 'tamen', german: 'dennoch, jedoch', image: '↩️', hint: 'Trotzdem',
+                      distractors: ['deshalb, daher', 'also, folglich', 'denn', 'weil'] },
+                ],
+                multiWord: [
+                    { latin: 'cōnsilium capere', german: 'einen Plan (Entschluss) fassen',
+                      germanDistractors: ['einen Plan (Entschluss) aufgeben', 'einen Befehl (Auftrag) erhalten', 'einen Plan ändern', 'eine Stadt erobern'],
+                      latinDistractors: ['cōnsilium mūtāre', 'cōnsilium relinquere', 'imperium accipere', 'cōnsilium dare'] },
+                    { latin: 'alius ... alius', german: 'der eine ... der andere',
+                      germanDistractors: ['alle ... keiner', 'der erste ... der letzte', 'jeder ... niemand', 'der eine ... derselbe'],
+                      latinDistractors: ['cūnctī ... nūllus', 'ūnus ... sōlus', 'paucī ... multī', 'alius ... nihil'] },
+                ],
+                // Nur was die Perfekt-Übung braucht: die 34 Verben, die auf dem Blatt mit Perfekt stehen.
+                verbForms: [
+                    { infinitive: 'accidere', firstPerson: 'accidō', perfect: 'accidī', perfectType: 'red', ohneTypFrage: true, perfectNote: 'gehört zu cadere → cecidī. Mit der Vorsilbe ac‑ fällt die Verdopplung weg: <b>ac‑cid‑ī</b>.', german: 'geschehen' },
+                    { infinitive: 'accipere', firstPerson: 'accipiō', perfect: 'accēpī', perfectType: 'dehn', perfectNote: 'aus ‑cip‑ wird ‑<b>cēp</b>‑, das i vor ‑ō fällt weg (wie capiō → cēpī).', german: 'erhalten' },
+                    { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>ad‑fuī</b>.', german: 'da sein' },
+                    { infinitive: 'animadvertere', firstPerson: 'animadvertō', perfect: 'animadvertī', perfectType: 'ohne', german: 'bemerken' },
+                    { infinitive: 'audīre', firstPerson: 'audiō', perfect: 'audīvī', perfectType: 'v', german: 'hören' },
+                    { infinitive: 'cadere', firstPerson: 'cadō', perfect: 'cecidī', perfectType: 'red', perfectNote: 'vorn kommt <b>ce‑</b> dazu, aus a wird i: ce‑cid‑ī.', german: 'fallen' },
+                    { infinitive: 'capere', firstPerson: 'capiō', perfect: 'cēpī', perfectType: 'dehn', perfectNote: 'das a wird zu langem <b>ē</b>, das i aus capiō fällt weg.', german: 'nehmen' },
+                    { infinitive: 'clāmāre', firstPerson: 'clāmō', perfect: 'clāmāvī', perfectType: 'v', german: 'rufen' },
+                    { infinitive: 'contendere', firstPerson: 'contendō', perfect: 'contendī', perfectType: 'ohne', german: 'eilen' },
+                    { infinitive: 'currere', firstPerson: 'currō', perfect: 'cucurrī', perfectType: 'red', perfectNote: 'vorn kommt <b>cu‑</b> dazu: cu‑curr‑ī.', german: 'laufen' },
+                    { infinitive: 'dīcere', firstPerson: 'dīcō', perfect: 'dīxī', perfectType: 's', german: 'sagen' },
+                    { infinitive: 'discēdere', firstPerson: 'discēdō', perfect: 'discessī', perfectType: 's', perfectNote: 'an discēd‑ kommt ‑sī; aus d + s wird <b>ss</b>.', german: 'weggehen' },
+                    { infinitive: 'dūcere', firstPerson: 'dūcō', perfect: 'dūxī', perfectType: 's', german: 'führen' },
+                    { infinitive: 'esse', firstPerson: 'sum', perfect: 'fuī', perfectType: 'irr', perfectNote: '<b>fuī</b> sieht ganz anders aus als sum, also auswendig lernen.', german: 'sein' },
+                    { infinitive: 'facere', firstPerson: 'faciō', perfect: 'fēcī', perfectType: 'dehn', perfectNote: 'das a wird zu langem <b>ē</b>, das i aus faciō fällt weg.', german: 'machen' },
+                    { infinitive: 'flēre', firstPerson: 'fleō', perfect: 'flēvī', perfectType: 'v', german: 'weinen' },
+                    { infinitive: 'fugere', firstPerson: 'fugiō', perfect: 'fūgī', perfectType: 'dehn', perfectNote: 'das u wird <b>lang</b>, das i aus fugiō fällt weg.', german: 'fliehen' },
+                    { infinitive: 'manēre', firstPerson: 'maneō', perfect: 'mānsī', perfectType: 's', perfectNote: 'an man‑ kommt <b>‑sī</b>, das a wird lang: <b>mānsī</b>.', german: 'bleiben' },
+                    { infinitive: 'monēre', firstPerson: 'moneō', perfect: 'monuī', perfectType: 'u', german: 'ermahnen' },
+                    { infinitive: 'occurrere', firstPerson: 'occurrō', perfect: 'occurrī', perfectType: 'red', ohneTypFrage: true, perfectNote: 'gehört zu currere → cucurrī. Mit der Vorsilbe oc‑ fällt die Verdopplung weg: <b>oc‑curr‑ī</b>.', german: 'begegnen' },
+                    { infinitive: 'parcere', firstPerson: 'parcō', perfect: 'pepercī', perfectType: 'red', perfectNote: 'vorn kommt <b>pe‑</b> dazu, aus a wird e: pe‑perc‑ī.', german: 'schonen' },
+                    { infinitive: 'perdere', firstPerson: 'perdō', perfect: 'perdidī', perfectType: 'red', perfectNote: 'aus ‑dō wird <b>‑didī</b>: das d wird verdoppelt.', german: 'verlieren' },
+                    { infinitive: 'petere', firstPerson: 'petō', perfect: 'petīvī', perfectType: 'v', perfectNote: 'an pet‑ kommt <b>‑īvī</b>.', german: 'bitten' },
+                    { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'u', perfectNote: 'an den Stamm pot‑ (wie in pot‑es) kommt <b>‑uī</b> – ein ganz normales u‑Perfekt. Besonders sind bei posse Präsens und Imperfekt (possum, poteram).', german: 'können' },
+                    { infinitive: 'properāre', firstPerson: 'properō', perfect: 'properāvī', perfectType: 'v', german: 'eilen' },
+                    { infinitive: 'putāre', firstPerson: 'putō', perfect: 'putāvī', perfectType: 'v', german: 'glauben' },
+                    { infinitive: 'relinquere', firstPerson: 'relinquō', perfect: 'relīquī', perfectType: 'dehn', perfectNote: 'das n fällt weg, das i wird <b>lang</b>.', german: 'verlassen' },
+                    { infinitive: 'reperīre', firstPerson: 'reperiō', perfect: 'repperī', perfectType: 'red', perfectNote: 'das <b>p</b> wird verdoppelt: re‑periō → rep‑perī.', german: 'finden' },
+                    { infinitive: 'sentīre', firstPerson: 'sentiō', perfect: 'sēnsī', perfectType: 's', perfectNote: 'an sent‑ kommt ‑sī; das t fällt weg und das e wird lang: <b>sēnsī</b>.', german: 'fühlen' },
+                    { infinitive: 'spectāre', firstPerson: 'spectō', perfect: 'spectāvī', perfectType: 'v', german: 'betrachten' },
+                    { infinitive: 'terrēre', firstPerson: 'terreō', perfect: 'terruī', perfectType: 'u', german: 'erschrecken' },
+                    { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', perfectNote: 'an den Stamm vol‑ (wie in volō) kommt <b>‑uī</b>.', german: 'wollen' },
+                    { infinitive: 'vidēre', firstPerson: 'videō', perfect: 'vīdī', perfectType: 'dehn', perfectNote: 'das i wird <b>lang</b>, das e vor ‑ō fällt weg: vīd‑ī.', german: 'sehen' },
+                    { infinitive: 'vincere', firstPerson: 'vincō', perfect: 'vīcī', perfectType: 'dehn', perfectNote: 'das n fällt weg, das i wird <b>lang</b>.', german: 'besiegen' },
+                ],
+                sentences: [],
+                nouns: []
             },
         };
 
@@ -7473,9 +7976,22 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.47.0';
+        const APP_VERSION = '2.48.0';
 
         const changelogEntries = [
+            {
+                version: '2.48.0',
+                date: '24.11.2026',
+                items: [
+                    '<b>Neu in Latein: 🎯 Klassenarbeit Dezember</b> – die erste Karte in der Latein-Auswahl. Dort findest du alles für die Arbeit an einem Ort: Wortschatz, Perfekt, AcI und Übersetzen.',
+                    '<b>Wortschatz:</b> die 121 Einträge von deinem Wortschatz-Blatt als eigenes <b>Vokabelheft</b>, geordnet nach „neu“ und „bekannt“. Dazu Vokabeln, 0 → 100, Mittlere Spalte, die Perfekt-Übung und beide Raketen – alle nur mit diesen Wörtern.',
+                    '<b>🧲 AcI-Werkstatt</b> (eigene Seite): Kopfverb, Klammer, gleichzeitig oder vorzeitig und die Faustregel für die Zeit im dass-Satz. Sechs Stationen, sechs Übungsarten und die sechs Schritte von deinem Arbeitsblatt – dazu ein Spickzettel zum Ausdrucken.',
+                    '<b>🌋 Übersetzen: Pompeji</b>: zwei Texte, Satz für Satz. Du kannst Wörter nachschlagen, deine Übersetzung prüfen lassen und mit der Musterlösung vergleichen. Arbeitsblätter und Lösungen gibt es auch als PDF.',
+                    '<b>Perfekt-Baukasten:</b> „🎯 Für die Arbeit“ meint jetzt die 34 Verben, die auf dem Wortschatz-Blatt mit Perfekt stehen (vorher: Lektion 9 und 4). Sie haben ein eigenes Blatt „Klassenarbeit“ und in allen Tabellen ein 🎯.',
+                    'Berichtigt im Vokabelheft: Steht ein Wort in einem Päckchen zweimal (<i>nōs</i>, <i>in</i>), hat jetzt jede Zeile ihr eigenes Feld. Und die Rakete zählt <i>in</i> jetzt richtig mit.',
+                    'Geändert: <i>potuī</i>, <i>voluī</i> und <i>nōluī</i> zählen überall als <b>u-Perfekt</b>. Besonders sind bei posse, velle und nōlle andere Formen (<i>possum, vīs, vult</i>) – ihr Perfekt ist ganz regelmäßig gebaut.'
+                ]
+            },
             {
                 version: '2.47.0',
                 date: '24.11.2026',
@@ -8326,11 +8842,15 @@
         // index.html#latein (Rücksprung aus latein-perfekt.html) öffnet gleich die Latein-Lektionsauswahl – aber nur,
         // wenn gerade das Hauptmenü zu sehen ist. Der Hash wird danach entfernt, damit ein Neuladen wieder im Hauptmenü beginnt.
         function oeffneLateinAusRuecksprung() {
-            if (location.hash !== '#latein') return;
+            const ziel = location.hash;
+            if (ziel !== '#latein' && ziel !== '#latein-arbeit') return;
             if (getComputedStyle(document.getElementById('languageSelection')).display === 'none') return;
             try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* file:// in manchen Browsern */ }
             selectLanguage('latin');
+            if (ziel === '#latein-arbeit') selectLatinChapter('ka1226');   // zurück in die Modulauswahl der Klassenarbeit
         }
+        // Ist die Seite schon offen (Hauptmenü), wird bei einem Sprung auf #latein… nicht neu geladen – dann greift das hier.
+        window.addEventListener('hashchange', oeffneLateinAusRuecksprung);
 
         // Changelog beim Laden, danach ggf. die Vornamen-Frage
         document.addEventListener('DOMContentLoaded', () => {
@@ -8804,14 +9324,22 @@
         function saveVhMarks() {
             try { localStorage.setItem(VH_MARKS_KEY, JSON.stringify(vhMarks)); } catch (e) {}
         }
+        // latein-arbeit.html kann Marken setzen, während diese Seite in einem anderen Fenster offen ist oder im
+        // Seiten-Cache liegt – dann den Stand neu lesen, sonst überschreibt der nächste Tipp die fremde Marke.
+        window.addEventListener('storage', e => { if (e.key === VH_MARKS_KEY) { loadVhMarks(); dvUpdateToggle(); } });
+        window.addEventListener('pageshow', e => { if (e.persisted) { loadVhMarks(); dvUpdateToggle(); } });
 
         // Zeile an-/abwählen. Kein Neu-Rendern, damit die Scroll-Position bleibt.
         function toggleVhMark(rowEl) {
             const key = rowEl.dataset.vhkey;
             if (!key) return;
             if (vhMarks[key]) { delete vhMarks[key]; } else { vhMarks[key] = { h: 0, d: 0, r: null }; }
-            rowEl.classList.toggle('marked', !!vhMarks[key]);
-            rowEl.classList.toggle('dv-rest', dvIsResting(key));
+            // alle Zeilen mit diesem Wort umschalten (in und nōs stehen zweimal im Päckchen)
+            document.querySelectorAll('#vhSheet .vh-row').forEach(el => {
+                if (el.dataset.vhkey !== key) return;
+                el.classList.toggle('marked', !!vhMarks[key]);
+                el.classList.toggle('dv-rest', dvIsResting(key));
+            });
             saveVhMarks();
             dvUpdateToggle();
         }
@@ -10062,7 +10590,7 @@
             const p = msZustand.packet;
             bar.innerHTML = data.packets.map((pk, i) =>
                 '<button type="button" class="vh-packet-btn' + (i === p ? ' active' : '') +
-                '" onclick="msStart(' + i + ')">Päckchen ' + vhText(pk.label) + '</button>'
+                '" onclick="msStart(' + i + ')">' + vhPacketName(pk) + '</button>'
             ).join('') +
             '<button type="button" class="vh-packet-btn' + (p === -1 ? ' active' : '') +
             '" onclick="msStart(-1)">Alle</button>';
@@ -10234,7 +10762,7 @@
 
             bar.innerHTML = data.packets.map((p, i) =>
                 '<button class="vh-packet-btn' + (i === vhPacketIndex ? ' active' : '') +
-                '" onclick="selectVhPacket(' + i + ')">Päckchen ' + p.label + '</button>'
+                '" onclick="selectVhPacket(' + i + ')">' + vhPacketName(p) + '</button>'
             ).join('') +
             '<button class="vh-packet-btn' + (vhPacketIndex === -1 ? ' active' : '') +
             '" onclick="selectVhPacket(-1)">Alle</button>';
@@ -10267,10 +10795,17 @@
             });
         }
 
+        // Ein Päckchen kann einen Namen haben (Klassenarbeit: „1 · Neue Verben“), sonst heißt es „Päckchen 1“.
+        function vhPacketName(p) {
+            return p.title ? vhText(p.label) + ' · ' + vhText(p.title) : 'Päckchen ' + vhText(p.label);
+        }
+
         function vhRenderPacket(p) {
             const practice = vhMode !== 'read';
-            const rows = p.rows.map(r => {
+            const rows = p.rows.map((r, zeile) => {
                 const key = dvContextKey() + '|' + p.label + '|' + r.w;
+                // Eingaben und Punkte je Zeile: dasselbe Wort kann im Päckchen zweimal stehen (in, nōs)
+                const ikey = key + '|#' + zeile;
                 const head = '<div class="vh-mark">●</div>' +
                              '<div class="vh-star">' + (r.s ? '*' : '') + '</div>' +
                              '<div class="vh-word">' + vhText(r.w) + '</div>';
@@ -10302,7 +10837,7 @@
                            head + '<div class="vh-forms">' + vhText(r.f) + '</div>' + mean + '</div>';
                 }
 
-                const answers = vhInput[key] || {};
+                const answers = vhInput[ikey] || {};
                 const expForms = vhParts(r.f);
                 const expMeans = vhParts(r.d);
                 let formGrade = null, meanGrade = null;
@@ -10315,8 +10850,8 @@
                     formGrade.exp.forEach(s => { if (s === 'got') vhStats.formGot++; else if (s === 'typo') vhStats.formTypo++; });
                     meanGrade.exp.forEach(s => { if (s === 'got') vhStats.meanGot++; else if (s === 'typo') vhStats.meanTypo++; });
                     // Punkte: je ganz richtiger Zelle 5, pro Sitzung nur einmal (Nochmal-Vergleichen zählt nicht)
-                    if (expForms.length && formGrade.exp.every(s => s === 'got') && !vhBelohnt.has(key + '|f')) { vhBelohnt.add(key + '|f'); vhPunkteOffen += 5; }
-                    if (expMeans.length && meanGrade.exp.every(s => s === 'got') && !vhBelohnt.has(key + '|d')) { vhBelohnt.add(key + '|d'); vhPunkteOffen += 5; }
+                    if (expForms.length && formGrade.exp.every(s => s === 'got') && !vhBelohnt.has(ikey + '|f')) { vhBelohnt.add(ikey + '|f'); vhPunkteOffen += 5; }
+                    if (expMeans.length && meanGrade.exp.every(s => s === 'got') && !vhBelohnt.has(ikey + '|d')) { vhBelohnt.add(ikey + '|d'); vhPunkteOffen += 5; }
                     if ((answers.f || '').trim()) vhStats.filled++;
                     if ((answers.d || '').trim()) vhStats.filled++;
                 }
@@ -10337,7 +10872,7 @@
                     const blank = (field, cls, value) =>
                         '<input type="text" class="vh-blank ' + cls + '" placeholder="___"' +
                         ' aria-label="' + vhAttr(r.w) + ' — ' + (field === 'f' ? 'Formen' : 'Bedeutung') + '"' +
-                        ' data-vhkey="' + vhAttr(key) + '" data-field="' + field + '"' +
+                        ' data-vhkey="' + vhAttr(ikey) + '" data-field="' + field + '"' +
                         ' value="' + vhAttr(value || '') + '"' +
                         ' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" writingsuggestions="false"' +
                         ' oninput="vhStoreBlank(this)" onkeydown="vhBlankKey(event, this)">';
@@ -10356,7 +10891,7 @@
                        clickable + '>' + head +
                        '<div class="vh-slide">' + book + paper + '</div></div>';
             }).join('');
-            return '<div class="vh-group"><div class="vh-group-label">' + vhText(p.label) + '</div>' +
+            return '<div class="vh-group"><div class="vh-group-label">' + vhText(p.label) + (p.title ? ' · ' + vhText(p.title) : '') + '</div>' +
                    '<div class="vh-table">' + rows + '</div></div>';
         }
 
@@ -10455,7 +10990,7 @@
             applyChapterModuleVisibility(chapter);
             if (chapter === 'chapter5' || chapter === 'chapter6' ||
                 chapter === 'chapter7' || chapter === 'chapter8' ||
-                chapter === 'chapter9' || chapter === 'chapter10') {
+                chapter === 'chapter9' || chapter === 'chapter10' || chapter === 'ka1226') {
                 resetAprilStreak();
                 showAprilDarkToggle();
             } else {
@@ -10472,11 +11007,14 @@
             const showProfi = (chapter === 'chapter1' || chapter === 'chapter5' ||
                                chapter === 'chapter6' || chapter === 'chapter7' ||
                                chapter === 'chapter8' || chapter === 'chapter9' ||
-                               chapter === 'chapter10');
+                               chapter === 'chapter10' || chapter === 'ka1226');
+            // Klassenarbeits-Set: nur Wortschatz-Übungen und die Perfekt-Übung, dazu drei eigene Karten
+            const arbeit = (chapter === 'ka1226');
             // Nur innerhalb der Latein-Modulauswahl suchen: '.module-card.mixed' gibt es auch
             // im englischen Set-Menü, und das steht im DOM davor.
             const root = document.getElementById('latinModuleSelection');
             const q = sel => root.querySelector(sel);
+            root.querySelector('.set-selection').classList.toggle('ka-hub', arbeit);
             const cards = {
                 intro:      q('.module-card.intro-card'),
                 vocab:      q('.module-card[onclick="startLatinModule(\'vocab\')"]'),
@@ -10501,6 +11039,10 @@
             } else {
                 ['intro','vocab','vokabelheft','verbs','nouns','tables','snake','sentences','mixed','rocket'].forEach(k => {
                     if (cards[k]) cards[k].style.display = '';
+                });
+                // Verb-Formen, Substantive, Tabellen, Schlange, Sätze: dafür hat das Set keine Daten
+                if (arbeit) ['verbs','nouns','tables','snake','sentences','mixed'].forEach(k => {
+                    if (cards[k]) cards[k].style.display = 'none';
                 });
                 // Perfekt gibt es nur, wo das Vokabelheft die zweite Stammform führt
                 const hatPerfekt = ((latinData[chapter] || {}).verbForms || []).some(v => v.perfect);
@@ -10765,7 +11307,7 @@
             const ch = currentLatinChapter;
             const total = ch.vocabulary.length;
             const covered = loadRocketCoverage(chapterId);
-            const coveredCount = ch.vocabulary.filter(v => covered.includes('v_' + v.latin)).length;
+            const coveredCount = ch.vocabulary.filter(v => covered.includes('v_' + (v.vid || v.latin))).length;
             const uncoveredCount = total - coveredCount;
 
             document.getElementById('rocketChapterName').textContent = ch.name;
@@ -11146,6 +11688,18 @@
                 { title: 'Verdacht & Jahre',         range: [31, 41] },
                 { title: 'Söhne & Mauern',           range: [41, 50] },
             ],
+            ka1226: [
+                { title: 'Neue Verben',                 range: [0, 12] },
+                { title: 'Neues Perfekt',               range: [12, 23] },
+                { title: 'Neue Substantive I',          range: [23, 31] },
+                { title: 'Neue Substantive II',         range: [31, 39] },
+                { title: 'Neue kleine Wörter',          range: [39, 45] },
+                { title: 'Bekannte Verben',             range: [45, 59] },
+                { title: 'Substantive & Adjektive',     range: [59, 70] },
+                { title: 'Präpositionen & Pronomen',    range: [70, 83] },
+                { title: 'Adverbien',                   range: [83, 94] },
+                { title: 'Bindewörter',                 range: [94, 105] },
+            ],
         };
 
         let introState = {
@@ -11414,7 +11968,7 @@
                 .split(/[,;/]/).map(x => x.trim()).filter(x => x.length > 2);
             const eigen = new Set(teile(item.correct));
             const otherItems = introState.pool.filter(p =>
-                p.id !== item.id && !teile(p.correct).some(x => eigen.has(x)));
+                p.id !== item.id && p.latin !== item.latin && !teile(p.correct).some(x => eigen.has(x)));
             const distractor = otherItems.length > 0
                 ? shuffleArray(otherItems)[0].correct
                 : (item.distractors && item.distractors[0]) || 'andere Bedeutung';
@@ -11931,6 +12485,9 @@
                     ohne: 'der Stamm bleibt <b>gleich</b>, nur die Endung <b>‑ī</b> kommt dazu.',
                     irr:  'diese Form muss man auswendig lernen.'
                 };
+                // Was bei einem Verb nicht als falsche Antwort taugt: „unregelmäßig“ bei potuī/voluī/nōluī (das Buch führt sie
+                // als besondere Verben) und „u-Perfekt“ bei fuī/adfuī/dēfuī (sie enden ja auf ‑uī).
+                const typNichtFalsch = vf => vf.perfectType === 'irr' ? 'u' : ['posse', 'velle', 'nōlle'].includes(vf.infinitive) ? 'irr' : null;
                 const perfVerbs = (ch.verbForms || []).filter(v => v.perfect);
                 perfVerbs.forEach(vf => {
                     const explain = vf.perfectType && TYP[vf.perfectType]
@@ -11969,7 +12526,7 @@
                             image: '🕰️', hint: vf.infinitive + ' = ' + vf.german,
                             question: 'Welcher Bildungstyp?',
                             // vier der übrigen Typen, damit es bei fünf Antworten bleibt
-                            distractors: shuffleArray(Object.keys(TYP).filter(k => k !== vf.perfectType)).slice(0, 4).map(k => TYP[k]),
+                            distractors: shuffleArray(Object.keys(TYP).filter(k => k !== vf.perfectType && k !== typNichtFalsch(vf))).slice(0, 4).map(k => TYP[k]),
                             mcCorrect: TYP[vf.perfectType],
                             mcPrompt: vf.perfect,
                             mcQuestion: 'Wie wird dieses Perfekt gebildet?',
@@ -14301,7 +14858,8 @@
                                                    currentLatinChapter === latinData.chapter7 ||
                                                    currentLatinChapter === latinData.chapter8 ||
                                                    currentLatinChapter === latinData.chapter9 ||
-                                                   currentLatinChapter === latinData.chapter10);
+                                                   currentLatinChapter === latinData.chapter10 ||
+                                                   currentLatinChapter === latinData.ka1226);
         }
 
         // Entscheidet anhand der aktuell sichtbaren Seite, ob der Dark-Body aktiv sein soll.

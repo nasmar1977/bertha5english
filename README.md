@@ -173,8 +173,46 @@ Das lateinische Wort und die Bedeutung stehen da, gefragt ist die mittlere Spalt
 aus Bausteinen (Genitiv, Geschlecht, 1. Person, Perfekt, Femininum/Neutrum, Angaben). Nach dem Prüfen erscheint die
 Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also automatisch dabei.
 
+### 🎯 Latein: Klassenarbeit Dezember
+Erste Karte in der Latein-Lektionsauswahl: alles für die Arbeit im Dezember 2026 an einem Ort. Grundlage ist das
+Wortschatz-Blatt der Klasse („ROMA. Ausgabe A. Textlexika. Lektion 9. Text erschließen, S. 67“, 121 Einträge) und die
+Arbeitsblätter „Grammatik I, L 9“ (AcI: Wiederholung, Erweiterungen, Zeitverhältnisse, Anleitung in sechs Schritten).
+- **Set `ka1226` in `index.html`** – eine Lektion ohne Lektionsnummer. Die Modulauswahl zeigt dafür drei Zeilen:
+  Wortschatz (0 → 100, Vokabeln, Vokabelheft, Mittlere Spalte, Rakete, Profi-Rakete), Perfekt (Perfekt-Übung,
+  Perfekt-Baukasten) und „AcI und Übersetzen“ (zwei Karten zur eigenen Seite). Verb-Formen, Substantive, Tabellen,
+  Schlange, Sätze und „Alles gemischt“ sind ausgeblendet – dafür hat das Set keine Daten.
+  - **Vokabeln**: 105 Wörter in zehn Abschnitten (neue Verben, neues Perfekt, neue Substantive I/II, neue kleine
+    Wörter, bekannte Verben, Substantive & Adjektive, Präpositionen & Pronomen, Adverbien, Bindewörter). Bild, Tipp und
+    falsche Antworten kommen aus der Lektion, in der das Wort zuerst vorkam; elf Wörter aus Lektion 2 sind neu angelegt.
+    Der Lernstand je Wort ist derselbe wie in der Lektion (gleiche ID).
+  - **Vokabelheft**: alle 121 Einträge in zehn Päckchen mit Namen statt nach dem Alphabet; Päckchen 10 „Nur im Text“
+    sind die Wörter mit hochgestellter 0 (kein Lernwortschatz, nicht in den Übungen). Markieren, Abdeckblatt und
+    Knackpunkte wie in den Lektionen.
+  - **Perfekt-Übung**: die 34 Verben, die auf dem Blatt mit Perfekt stehen. Bei accidere und occurrere entfällt die
+    Typ-Frage (`ohneTypFrage`).
+- **Eigene Seite `latein-arbeit.html`** (Speicher `latein-arbeit-v1`, Rücksprung `index.html#latein-arbeit`):
+  - **AcI-Werkstatt** – sechs Stationen (Was ist ein AcI? · Kopfverben · Die Klammer · Gleichzeitig oder vorzeitig? ·
+    Die Faustregel · Die sechs Schritte), sechs Übungsarten (AcI oder nicht? · GZ oder VZ? · Klammer setzen · Welche
+    Zeit? · Welche Übersetzung stimmt? · Sechs Schritte) und ein Kurz-Check mit acht Fragen, der sich einmal am Tag
+    meldet. Zeichen wie auf dem Arbeitsblatt: Infinitiv unterstrichen, GZ/VZ darüber, A über dem Akkusativ, Klammer um
+    den AcI, Kopfverb gelb. Zwölf Satzfamilien ergeben Sätze in vier Fällen (Haupthandlung Präsens/Vergangenheit ×
+    Infinitiv Präsens/Perfekt) und in gemischter Wortstellung (Kopfverb am Ende oder vor dem AcI, manchmal tum/subitō
+    vorn), dazu acht Sätze mit Infinitiv, aber ohne AcI (posse, dēbēre, contendere, properāre).
+  - **Übersetzen: Pompeji** – zwei eigene Texte (8 Sätze im Präsens zum Aufwärmen, 13 Sätze in der Vergangenheit „wie
+    in der Arbeit“). Satz für Satz: Wort antippen = nachschlagen (wird gezählt), „Steckt hier ein AcI?“ als Hilfe in zwei Stufen,
+    Eingabe prüfen (sucht Bausteine wie „dass“, „weggegangen waren“; ae/oe/ue gelten als Umlaute) oder auf Papier
+    übersetzen, dann Musterlösung und
+    Selbstbewertung (2/1/0 Punkte). Nachgeschlagene Wörter lassen sich im Vokabelheft des Sets markieren (derselbe
+    Speicher `vokabelheftSchwierig`). Die Texte stehen wie die Arbeitsblätter ohne Längenstriche da; ein Knopf blendet
+    sie ein.
+  - **Blätter**: Spickzettel AcI, je Text ein Arbeitsblatt und eine Lösung – am Bildschirm, im Druck und als
+    `latein-arbeit-blaetter.pdf` (fünf Seiten, `python3 tools/arbeit-pdf.py`).
+- Das Lehrwerk ist damit bestätigt: **ROMA, Ausgabe A** (C.C. Buchner).
+- Datenprüfung: `node tools/arbeit-check.mjs` (Wortliste gegen das Vokabelheft des Sets, Verben gegen die Perfekt-Übung
+  und den Baukasten, Satzfamilien, Texte, Bausteine gegen die Musterlösungen).
+
 ### 🧱 Latein: Perfekt-Baukasten
-Eigene Seite (`latein-perfekt.html`), erste Karte in der Latein-Lektionsauswahl. Lehrt das Perfekt Aktiv als System und
+Eigene Seite (`latein-perfekt.html`), zweite Karte in der Latein-Lektionsauswahl. Lehrt das Perfekt Aktiv als System und
 führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Buch (Grammatik Lektion 8 B und 9 B).
 - **Leitbild Stammbaum**: Verb → Präsensstamm / Perfektstamm → Präsens, Imperfekt / Perfekt → sechs Personen. Die
   Konjugation zählt nur auf dem linken Ast; rechts gelten für alle Verben dieselben sechs Endungen.
@@ -186,21 +224,26 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
   14, 30 Tagen) fragt die Übersicht mit zwei Fragen je Station nach; in jeder Übungsrunde steckt eine Zwischenfrage.
   Eine falsche Antwort wird sofort gespeichert (morgen wieder, eine Stufe zurück).
 - **Üben** – sechs Übungsarten: Stammformen, Umformen (Präsens → Perfekt), Bestimmen (Zeit und Person), Endungen-Blitz,
-  Welcher Weg?, Zurück zum Verb. Auswahl nach Tabelle und Umfang; voreingestellt ist **🎯 Für die Arbeit** (derzeit
-  46 Verben: Lernstufe 1 plus die wiederholte Lektion 4, Konstante `ARBEIT`). Falsches kommt am Rundenende einmal wieder.
+  Welcher Weg?, Zurück zum Verb. Auswahl nach Tabelle und Umfang; voreingestellt ist **🎯 Für die Arbeit** (die
+  34 Verben, die auf dem Wortschatz-Blatt der Klassenarbeit mit Perfekt stehen, Konstante `ARBEIT.blatt`). Falsches
+  kommt am Rundenende einmal wieder.
   Längenstriche dürfen beim Tippen fehlen – außer wenn nur der Strich Präsens und Perfekt unterscheidet (fugit/fūgit).
   Die Strich-Knöpfe über dem Feld machen den letzten passenden Vokal lang. Trennstriche (rogā-v-ī) und fremde Akzente
   werden verziehen.
 - **Tipp-Sperre**: Nach jedem Neuzeichnen nimmt die Seite 400 ms lang keine Klicks an. Ein Doppeltipp auf „Weiter“ traf
   sonst am Handy „Runde beenden“ oder eine Antwort der nächsten Aufgabe. `?ohnesperre` schaltet das für Testläufe ab.
-- **Tabellen** – elf Blätter zum Nachschlagen und Drucken (auch als `latein-perfekt-tabellen.pdf`): Bauplan,
-  Endungen-Blatt für den Kühlschrank, sieben Lerntabellen, Einzelfälle mit allen Formen, alle Verben A–Z. Jede Tabelle
+- **Tabellen** – zwölf Blätter zum Nachschlagen und Drucken (auch als `latein-perfekt-tabellen.pdf`): Bauplan,
+  Endungen-Blatt für den Kühlschrank, **Klassenarbeit** (die 34 Verben nach ihrem Weg), sieben Lerntabellen,
+  Einzelfälle mit allen Formen, alle Verben A–Z. Arbeits-Verben tragen in allen Tabellen ein 🎯. Jede Tabelle
   besteht aus Untergruppen, in denen für **alle** Verben genau eine Regel gilt; was in keine Regel passt, steht als
   Einzelfall darunter. Reihenfolge vom Einfachen zum Schwierigen: 1 ohne Stammveränderung, 2 v, 3 u, 4 s, 5 Dehnung,
   6 Reduplikation, 7 besondere Verben. Ein Verb antippen zeigt seinen Weg zum Perfektstamm Schritt für Schritt.
-- **Drei Lernstufen**: 1 (fett) = Perfekt steht im Vokabelheft von Lektion 8/9 (35 Verben), 2 (normal) = Verb aus
-  Lektion 1–9, Perfekt hier ergänzt (82), 3 (grau) = neu in Lektion 10 (7). Tooltip und Spalte „Lektion“ zeigen, woher
-  ein Verb stammt (`L5→9` = kam in Lektion 5 vor, Perfekt im Heft von Lektion 9).
+- **Drei Lernstufen**: 1 (fett) = Perfekt steht im Vokabelheft von Lektion 8/9 oder auf dem Wortschatz-Blatt
+  (40 Verben), 2 (normal) = Verb aus Lektion 1–9, Perfekt hier ergänzt (77), 3 (grau) = neu in Lektion 10 (7). Tooltip
+  und Spalte „Lektion“ zeigen, woher ein Verb stammt (`L5→9` = kam in Lektion 5 vor, Perfekt im Heft von Lektion 9).
+- **posse, velle, nōlle** bilden ein u-Perfekt (pot-u-ī, vol-u-ī, nōl-u-ī): Bei „Welcher Weg?“, in den Rückmeldungen
+  und auf dem Klassenarbeits-Blatt zählen sie als u-Perfekt (`v.weg`). Mit allen Formen stehen sie weiter in Tabelle 7,
+  weil ihr Präsens unregelmäßig ist (`v.t`).
 - Lektion 2 fehlt in `index.html`; ihre 17 Verben sind von den Heft-Fotos (S. 6–8) abgeschrieben. Nicht geübt werden
   gaudēre, audēre, incipere und dēsinere (Perfekt anders gebaut bzw. im Heft nicht genannt) – sie stehen als
   „Wird später gelernt“ auf dem Blatt zu Tabelle 7.
@@ -242,7 +285,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.47.0
+**Version:** 2.48.0
 **Datum:** 24.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -260,6 +303,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | 8 | Amphitheater & Gladiatoren | 47 (+8) | 15 | 11 | 12 | alle + Perfekt |
 | 9 | Vesuv & Pompeji | 45 (+9) | 22 | 11 | 14 | alle + Perfekt |
 | 10 | Romulus & Remus | 50 (+5) | 14 | 12 | 14 | alle + Perfekt |
+| Klassenarbeit Dezember | Wortschatz-Blatt (Text von Lektion 9) | 105 (+2) | 34 (nur Perfekt) | – | – | 0 → 100, Vokabeln, Vokabelheft, Mittlere Spalte, Perfekt, Rakete, Profi-Rakete; AcI und Übersetzen auf eigener Seite |
 
 (Zahl in Klammern = Mehrwort-Ausdrücke)
 
@@ -269,8 +313,10 @@ Vokabeln April: 24) + 27 Redewendungen
 |---|---|
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
-| `latein-perfekt.html` | Latein: Perfekt-Baukasten (Verstehen, Üben, Tabellen), erste Karte in der Latein-Lektionsauswahl |
-| `latein-perfekt-tabellen.pdf` | die elf Tabellenblätter des Perfekt-Baukastens als PDF, erzeugt von `tools/perfekt-pdf.py` |
+| `latein-arbeit.html` | Latein: Klassenarbeit Dezember – AcI-Werkstatt und Übersetzen (Pompeji), erreichbar über das Set „Klassenarbeit Dezember“ in der Latein-Lektionsauswahl |
+| `latein-arbeit-blaetter.pdf` | Spickzettel AcI, Arbeitsblätter und Lösungen der beiden Texte als PDF, erzeugt von `tools/arbeit-pdf.py` |
+| `latein-perfekt.html` | Latein: Perfekt-Baukasten (Verstehen, Üben, Tabellen), zweite Karte in der Latein-Lektionsauswahl |
+| `latein-perfekt-tabellen.pdf` | die zwölf Tabellenblätter des Perfekt-Baukastens als PDF, erzeugt von `tools/perfekt-pdf.py` |
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
 | `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
 | `nawi-menu.html` | NAWI-Zwischenmenü (Ziel der NAWI-Karte im Hauptmenü): vorn die neueste Fassung, daneben Version 1; zeigt den Stand beider Speicher |
@@ -278,7 +324,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über `nawi-menu.html` |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
-| `tools/` | Hilfsskripte rund um die Vokabeldaten und den Perfekt-Baukasten |
+| `tools/` | Hilfsskripte rund um die Vokabeldaten, den Perfekt-Baukasten und die Klassenarbeits-Seite |
 
 ## 🚀 Wie benutzen?
 
@@ -299,6 +345,57 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.48.0 (24.11.2026)
+- **Neu: Latein „Klassenarbeit Dezember“** – erste Karte in der Latein-Lektionsauswahl, vor dem Perfekt-Baukasten.
+  Quelle ist das Wortschatz-Blatt der Klasse (Textlexikon Lektion 9, ROMA Ausgabe A, 121 Einträge) und die
+  Arbeitsblätter zum AcI.
+- **Set `ka1226`** in `index.html`: 105 Vokabeln in zehn Abschnitten, Vokabelheft mit 121 Zeilen in zehn benannten
+  Päckchen, Perfekt-Übung mit den 34 Verben des Blatts. Die Modulauswahl zeigt für dieses Set drei Zeilen (Wortschatz ·
+  Perfekt · AcI und Übersetzen) und blendet Module ohne Daten aus. Päckchen dürfen jetzt einen Namen tragen
+  (`title`, Funktion `vhPacketName`). Neues Sprungziel `index.html#latein-arbeit`; `#latein…` wirkt jetzt auch, wenn
+  die Seite schon offen ist (`hashchange`).
+- **Neue Seite `latein-arbeit.html`**: AcI-Werkstatt (sechs Stationen, sechs Übungsarten, Kurz-Check, Spickzettel) und
+  Übersetzen (zwei eigene Texte über Pompeji, Satz für Satz, mit Nachschlagen, Baustein-Prüfung, Musterlösung und
+  Selbstbewertung). Fünf Druckblätter, auch als `latein-arbeit-blaetter.pdf`. Neue Werkzeuge
+  `tools/arbeit-check.mjs` und `tools/arbeit-pdf.py`.
+- **Perfekt-Baukasten**: „🎯 Für die Arbeit“ richtet sich nach dem Wortschatz-Blatt (34 Verben) statt nach „Lektion 9
+  und die wiederholte Lektion 4“. Neues Blatt „Klassenarbeit“ (zwölf Blätter, zwölf PDF-Seiten), 🎯-Marke in allen
+  Tabellen, Lernstufe 1 jetzt 40 Verben (das Blatt nennt auch audīvī, clāmāvī, properāvī, spectāvī, terruī).
+  `?von=arbeit` führt zurück in das Klassenarbeits-Set.
+- **posse, velle, nōlle sind u-Perfekt** (Entscheidung vom 24.11.): Die Typ-Frage in Lektion 8 erwartet bei potuī
+  jetzt „u-Perfekt“ statt „unregelmäßig“; im Baukasten zählen die drei bei „Welcher Weg?“ als u-Perfekt (`v.weg`),
+  bleiben aber mit allen Formen in Tabelle 7.
+- Lektion 10: cōnstituī hat in der Perfekt-Übung einen eigenen Hinweis (das u gehört zum Stamm).
+- Annahme, noch nicht bestätigt: Die Übersetzungstexte stehen ohne Längenstriche da, weil die Arbeitsblätter der Klasse
+  so gesetzt sind. Ein Beispiel für das Niveau des Arbeits-Textes steht noch aus; die Texte sind Daten (`TEXTE`) und
+  lassen sich austauschen.
+- Vor der Freigabe von zwei unabhängigen Prüfern gegengelesen.
+  - **Latein und Inhalt:** Abschrift des Blatts (alle 121 Einträge gegen die Fotos) und das Latein aller Sätze und
+    Texte ohne Fehler. Eingearbeitet: velle gilt nicht mehr als „kein Kopfverb“ (bei verschiedenem Subjekt steht auch
+    nach velle ein AcI) – die Sätze ohne AcI benutzen posse, dēbēre, contendere, properāre; zwei doppeldeutige Sätze
+    ersetzt (Parentēs und Hominēs sind auch Akkusativ); Schritt 5 der sechs Schritte berichtigt; Begriffe an das
+    Arbeitsblatt angeglichen (Adverbiale, „Wenn ja: …“, Präteritum/Imperfekt); Text 2 näher am Niveau des
+    Lehrer-Arbeitsblatts (ein Genitiv, ein Kopfverb im Imperfekt vor dem AcI, ein Satz mit Scīmus im Präsens) und
+    ohne die Präposition cum (ohne Längenstriche mit cum „als“ verwechselbar); Hinweis zu posse genauer (besonders
+    sind Präsens und Imperfekt); die Typ-Frage bietet „unregelmäßig“ bei potuī/voluī/nōluī und „u-Perfekt“ bei
+    fuī/adfuī/dēfuī nicht mehr als falsche Antwort an; Blatt „Klassenarbeit“ im Baukasten mit den vollen Bedeutungen
+    vom Wortschatz-Blatt.
+  - **Bedienung und Logik:** 169 Folgen mit echten Klicks ohne Absturz oder Sackgasse. Eingearbeitet: Die Klammer
+    reichte in 78–91 % der Übungssätze vom zweiten bis zum vorletzten Wort – mit gemischter Wortstellung sind es 31 %;
+    „Welche Zeit?“ ist nicht mehr abzählbar, „AcI oder nicht?“ hat 2–4 Sätze ohne AcI, „Welche Übersetzung“ immer
+    drei Antworten; Baustein-Prüfung mit Wortgrenzen, Verbots-Mustern und Gegenproben im Prüfskript (falsche Zeit,
+    vertauschte Rollen und fehlendes „dass“ gehen nicht mehr durch); Doppeltipps zählen keinen Fehler doppelt; Hilfe
+    beim Übersetzen in zwei Stufen; „← Klassenarbeit“ fragt mitten in einer Runde nach; die Faustregel-Tafel passt
+    aufs Handy; Sterne in den Kacheln sind wieder gold.
+  - **Dabei im Haupttrainer berichtigt** (galt schon vorher): Stand ein Wort im selben Vokabelheft-Päckchen zweimal
+    (nōs in Lektion 9; im neuen Set auch in), teilten sich beide Zeilen Eingabefeld und Marke. Die Rakete zählte
+    Wörter mit zwei Einträgen (in) nie als abgedeckt (Lektion 4: 37 von 39). 0 → 100 bot bei „in“ die zweite
+    Bedeutung als einzige falsche Antwort an. Lektion 1: falsche Antwort „außerdem“ bei etiam ersetzt (zu nah an
+    „auch“). Marken im Vokabelheft werden neu gelesen, wenn eine andere Seite sie ändert.
+  - **Nicht behoben:** Der Stand einer laufenden Runde übersteht kein Neuladen. Verneinungen erkennt die
+    Baustein-Prüfung nicht. Eine Prüfung auf dem echten iPad (Bildschirmtastatur, Druck) steht aus. Im Haupttrainer
+    unverändert: Kartentitel im Nachtmodus der Lektionsauswahl, Doppeltipp auf „Prüfen“ beim Buchstabenlegen.
 
 ### Version 2.47.0 (24.11.2026)
 - **Neu: Latein „Perfekt-Baukasten“** (`latein-perfekt.html`), erste Karte in der Latein-Lektionsauswahl; Rücksprung

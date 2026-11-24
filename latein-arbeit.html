@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Latein: Klassenarbeit Dezember – AcI und Übersetzen</title>
+<!-- Latein Kl. 6, Klassenarbeit Dezember 2026: AcI-Werkstatt und Übersetzen.
+     Stoff und Begriffe nach den Arbeitsblättern der Klasse („Grammatik I, L 9“: Wiederholung AcI, Erweiterungen,
+     Zeitverhältnisse GZ/VZ mit Faustregel; „Anleitung für das Übersetzen eines Satzes mit AcI“ in sechs Schritten).
+     Die Sätze und Texte hier sind eigene, keine vom Arbeitsblatt. Wortschatz: das Blatt „Textlexikon Lektion 9“
+     (ROMA A, S. 67) – dasselbe wie im Set „Klassenarbeit Dezember“ in index.html (dort Vokabeln, Vokabelheft, Spiele).
+     Zwei Teile: AcI-Werkstatt (sechs Stationen, sechs Übungsarten, Spickzettel) und Übersetzen (Texte Latein → Deutsch,
+     Satz für Satz, mit Nachschlagen, Bausteine-Prüfung und Musterlösung).
+     tools/arbeit-check.mjs prüft Wortliste, Sätze und Texte gegen index.html. Speicher: localStorage „latein-arbeit-v1“. -->
+<style>
+:root{
+  --bg:#f3f4f1; --paper:#ffffff; --ink:#1c2321; --muted:#5d6763; --line:#d6dad4;
+  --acc:#2c6b5a; --acc-soft:#dcefe8; --ton:#a8491f; --ton-soft:#f8e3d6; --blau:#2f5d9c; --blau-soft:#dfe8f6;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#453a0a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#453a0a; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:860px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.6rem,5.2vw,2.3rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:860px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;min-height:40px;display:inline-flex;align-items:center}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+@media (max-width:560px){.bar .crumb{display:none}}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer;color:inherit}
+button,.opt,.chip{touch-action:manipulation}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none;display:inline-flex;align-items:center}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.gross{font-size:1.05rem;padding:14px 22px}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mitte{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;text-align:center}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px;align-content:start}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+a.tile{text-decoration:none}
+.tile.done{border-color:var(--ok)}
+.tile.next{border:2px solid var(--acc)}
+.tile.gross{padding:18px;gap:6px}
+.tile.gross b{font-family:var(--display);font-size:1.25rem}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--blau-soft);color:var(--blau);vertical-align:middle;justify-self:start}
+.sterne{color:#e2a400;letter-spacing:2px;font-size:1.05rem}
+.sterne i{font-style:normal;color:var(--line)}
+.anzeige{display:flex;gap:8px;flex-wrap:wrap}
+.anzeige span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{border:0;background:var(--bg);padding:7px 12px;min-height:40px;font-size:.9rem;white-space:nowrap}
+.seg button.on{background:var(--acc);color:#fff;font-weight:700}
+:root[data-theme="dark"] .seg button.on{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#0f1518}}
+
+/* Aufgaben */
+.q{font-size:1.05rem}
+.q b{color:var(--acc)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opts.mitte .opt{text-align:center}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:44px;min-width:48px;text-align:left}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.fehlt{border:2px dashed var(--ok)}
+.opt:disabled{cursor:default;opacity:1}
+.fb{display:grid;gap:10px}
+.fb:empty{display:none}
+.msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.msg.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.msg.no{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.msg.tipp{background:var(--mark);border-left:4px solid var(--ton)}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.dots i.jetzt{background:var(--acc)}
+.dots i.falsch{background:var(--bad)}
+.gross{font-family:var(--display);font-size:1.7rem;font-weight:700;text-align:center;padding:6px 0;overflow-wrap:anywhere}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.achtung{background:var(--mark);border-radius:10px;padding:10px 14px;font-size:.95rem}
+.msatz{font-size:1.05rem;line-height:2.1}
+.gap{display:inline-block;min-width:3.2em;text-align:center;border-bottom:2px solid var(--line);padding:0 6px;border-radius:4px}
+.gap.dran{background:var(--mark);border-color:var(--acc)}
+.gap.voll{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;min-height:44px;font-weight:700}
+.chip.on{border-color:var(--acc);background:var(--acc-soft)}
+.chip:disabled{opacity:.35;cursor:default}
+.wackel{animation:wackel .35s;border-color:var(--bad)!important}
+@keyframes wackel{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+@media (prefers-reduced-motion:reduce){.wackel{animation:none}}
+.lat{font-family:var(--display);font-weight:700}
+.lat .st{color:var(--blau)}
+.lat .en{color:var(--ton)}
+
+/* Lateinischer Satz mit den Zeichen vom Arbeitsblatt: Infinitiv unterstrichen, GZ/VZ darüber, A über dem Akkusativ,
+   Klammer um den AcI, Kopfverb gelb */
+.satz{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:2.9;text-align:center;overflow-wrap:anywhere;padding-top:4px}
+.satz.klein{font-size:1.08rem;line-height:2.6}
+.satz .w{display:inline-block;position:relative;line-height:1.3;padding:5px 6px;margin:0 1px;border-radius:8px;border:1.5px solid transparent;background:none;color:inherit;font:inherit}
+.satz.tap .w{border-color:var(--line);background:var(--bg);min-height:44px;min-width:40px}
+.satz.tap .w.sel{border-color:var(--acc);background:var(--acc-soft)}
+.satz .w.inf{text-decoration:underline;text-decoration-color:var(--ton);text-decoration-thickness:3px;text-underline-offset:6px}
+.satz .w.kv{background:var(--mark)}
+.satz .w[data-l]::before{content:attr(data-l);position:absolute;top:-1.25em;left:50%;transform:translateX(-50%);font-family:var(--body);font-size:.72rem;font-weight:700;color:var(--blau);white-space:nowrap}
+.satz .w.inf[data-l]::before{color:var(--ton)}
+.satz .kl{color:var(--blau);font-size:1.7rem;font-weight:400;line-height:1}
+.satz .punkt{margin-left:-3px}
+.satz .fn{font-family:var(--body);font-weight:400;font-size:.7rem;vertical-align:super;color:var(--muted)}
+.dt{text-align:center;font-size:1.02rem}
+.dt .dass{color:var(--blau);font-weight:700}
+.dt .sub{text-decoration:underline;text-decoration-color:var(--blau);text-underline-offset:4px}
+.dt .praed{text-decoration:underline;text-decoration-color:var(--ton);text-decoration-thickness:3px;text-underline-offset:4px}
+
+/* Faustregel-Tafel: 2 × 2 Felder. Am Handy rückt die Zeilenüberschrift über ihre beiden Felder. */
+.faust2{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);border-bottom:0;border-right:0;border-radius:8px;overflow:hidden;font-size:.93rem}
+.faust2>div{padding:8px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.faust2 .fk,.faust2 .fz{background:var(--bg);font-family:var(--display);font-weight:700}
+.faust2 small{display:block;font-family:var(--body);font-weight:400;font-size:.75rem;color:var(--muted)}
+.faust2 .fc b{display:block;font-family:var(--display);font-size:1.02rem}
+.faust2 .fc.an{background:var(--mark)}
+@media (max-width:520px){.faust2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.faust2 .leer{display:none}.faust2 .fz{grid-column:1/-1}}
+.bsp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.6fr);gap:2px 12px;padding:5px 0;border-top:1px solid var(--line);font-size:.92rem;align-items:baseline}
+@media (max-width:520px){.bsp{grid-template-columns:minmax(0,1fr)}}
+ol.schritte{margin:0;padding-left:1.4em;display:grid;gap:6px}
+ol.schritte li.an{font-weight:700;color:var(--acc)}
+ol.schritte li.fertig{color:var(--muted)}
+
+/* Übersetzen */
+.textblock{font-family:var(--display);font-size:1.08rem;line-height:1.9}
+.textblock .s{border-radius:6px;padding:1px 3px}
+.textblock .s.an{background:var(--mark)}
+.textblock .s.gut{color:var(--ok)}
+.textblock .nr{font-family:var(--body);font-size:.7rem;color:var(--muted);vertical-align:super;margin-right:2px}
+.fussn{font-size:.85rem;color:var(--muted);display:grid;gap:2px}
+textarea.ueb{font:inherit;width:100%;min-height:5.2em;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);resize:vertical}
+.lex{background:var(--blau-soft);border-radius:10px;padding:10px 14px;font-size:.95rem}
+.lex:empty{display:none}
+ul.bausteine{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:.93rem}
+ul.bausteine li::before{content:"✓ ";color:var(--ok);font-weight:700}
+ul.bausteine li.fehlt::before{content:"? ";color:var(--ton)}
+ul.bausteine li.fehlt{color:var(--ton)}
+.muster{border-left:4px solid var(--acc);padding:6px 12px;background:var(--acc-soft);border-radius:0 8px 8px 0}
+
+/* Sterne und Marken in Kacheln: .tile span würde sie grau färben */
+.tile .sterne{color:#e2a400;font-size:1.05rem}
+.tile .sterne i{color:var(--line)}
+.tile .tag{color:var(--blau);font-size:.7rem}
+/* nichts ragt aus der Karte: Rasterkinder dürfen schmaler werden, die Tafel bricht um oder lässt sich schieben */
+#schritt>*,.kasten>*,.blatt>*{min-width:0}
+.satz .nb{white-space:nowrap}
+.satz.tap .w[data-l]::before{top:-1.5em}
+.eigen{overflow-wrap:anywhere}
+
+/* Blätter zum Drucken */
+.blatt{display:grid;gap:12px}
+.blatt .kopf{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;border-bottom:3px solid var(--acc);padding-bottom:6px}
+.blatt .kopf .wo{font-size:.8rem;color:var(--muted)}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.zwei{grid-template-columns:1fr}}
+.kasten{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px;align-content:start}
+ol.saetze{margin:0;padding-left:1.6em;display:grid;gap:10px;font-family:var(--display);font-size:1.08rem}
+ol.saetze.loesung{font-family:var(--body);font-size:.95rem;gap:6px}
+#druck{display:none}
+@media print{
+  @page{size:A4;margin:13mm 14mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff; --paper:#fff; --ink:#000; --muted:#444; --line:#aaa; --acc:#1f5a4a; --acc-soft:#eef5f2; --ton:#a8431c; --ton-soft:#fbeee6;
+    --blau:#24508c; --blau-soft:#eef2f9; --ok:#2e7d4f; --ok-soft:#eef7f1; --bad:#b3372e; --bad-soft:#fbefed; --mark:#fff6c9; color-scheme:light}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;color:#000;padding:0;font-size:10.5pt;line-height:1.4}
+  body,#druck,#druck *{font-family:Arial,"Helvetica Neue",Helvetica,"Liberation Sans",sans-serif}
+  .bar{display:none!important}
+  body.druckt #app{display:none!important}
+  body:not(.druckt) #druck{display:none!important}
+  #druck{display:block;max-width:none}
+  #druck .blatt{break-after:page;gap:8pt}
+  #druck .blatt:last-child{break-after:auto}
+  #druck h2{font-size:15pt}
+  #druck h3{font-size:11pt}
+  #druck .satz{font-size:12pt;line-height:2.6}
+  #druck ol.saetze{font-size:12.5pt;gap:15pt;line-height:1.9}
+  #druck ol.saetze.loesung{font-size:10.5pt;gap:5pt;line-height:1.4}
+  #druck .kasten,#druck .merk,#druck .achtung{break-inside:avoid}
+  #druck .faust2,#druck .bsp{font-size:9.5pt}
+  #druck .faust2>div{padding:4pt 6pt}
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html#latein-arbeit" id="zurueck">← Klassenarbeit</a>
+  <button class="linkbtn" id="homeBtn" type="button">🎯 Übersicht</button>
+  <span class="crumb">Latein · Klassenarbeit Dezember</span>
+</div></div>
+<main class="wrap" id="app"></main>
+<div id="druck"></div>
+<script>
+'use strict';
+const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => [...(r || document).querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const isObj = x => x && typeof x === 'object' && !Array.isArray(x);
+const L = s => `<span class="lat">${s}</span>`;
+
+//#REIN-ANFANG  (bis REIN-ENDE: nur Daten und Satzbau, ohne Seite – das liest tools/arbeit-check.mjs)
+// ---------- Wortliste: das Blatt „Textlexikon Lektion 9“ (ROMA A, S. 67) ----------
+// [Wort, Formen, Bedeutung, Päckchen im Vokabelheft „Klassenarbeit Dezember“ (index.html, Set ka1226)]
+const LEX = [
+  ['ā / ab', 'Präp. m. Abl.', 'von, von … her', '7'],
+  ['accidere', 'accidō, accidī', 'geschehen, sich ereignen', '1'],
+  ['accipere', 'accipiō, accēpī', 'erhalten, erfahren, annehmen', '2'],
+  ['ad', 'Präp. m. Akk.', 'zu, bei, nach, an', '7'],
+  ['adesse', 'adsum, adfuī', 'da sein, helfen', '5'],
+  ['alius ... alius', '', 'der eine ... der andere', '4'],
+  ['alius', 'alia, aliud', 'ein anderer', '6'],
+  ['animadvertere', 'animadvertō, animadvertī', 'bemerken', '2'],
+  ['audīre', 'audiō, audīvī', 'hören', '5'],
+  ['Aulus', 'Aulī m', 'Aulus (männlicher Eigenname)', '10'],
+  ['autem', 'nachgestellt', 'aber, andererseits', '9'],
+  ['cadere', 'cadō, cecidī', 'fallen', '1'],
+  ['caelum', 'caelī n', 'der Himmel', '6'],
+  ['Campānia', 'Campāniae f', 'Kampanien (Landschaft in Mittelitalien)', '3'],
+  ['capere', 'capiō, cēpī', 'nehmen, fassen, ergreifen, erobern', '2'],
+  ['clāmāre', 'clāmō, clāmāvī', 'laut rufen, schreien', '5'],
+  ['Claudia', 'Claudiae f', 'Claudia (weiblicher Eigenname)', '10'],
+  ['cōgnōscere', 'cōgnōscō', 'erkennen, kennenlernen', '5'],
+  ['cōnsilium capere', '', 'einen Plan (Entschluss) fassen', '4'],
+  ['cōnsilium', 'cōnsiliī n', 'die Beratung, der Beschluss, der Plan, der Rat', '6'],
+  ['contendere', 'contendō, contendī', 'eilen, sich anstrengen, kämpfen', '1'],
+  ['corvus', 'corvī m', 'der Rabe', '10'],
+  ['crocīre', 'crociō', 'krächzen', '10'],
+  ['cum', 'Subj.', 'als (plötzlich), (zu der Zeit) als, (immer) wenn', '9'],
+  ['Cupīdō', 'Nom.', 'Cupido (eigtl. der Name des röm. Liebesgottes; hier als Haustiername verwendet)', '10'],
+  ['currere', 'currō, cucurrī', 'laufen, eilen', '1'],
+  ['dē', 'Präp. m. Abl.', 'über; von, von … her, von … weg, von … herab', '7'],
+  ['dēnique', 'Adv.', 'schließlich, zuletzt', '8'],
+  ['deus', 'deī m', 'der Gott, die Gottheit', '6'],
+  ['dīcere', 'dīcō, dīxī', 'sagen, sprechen', '2'],
+  ['discēdere', 'discēdō, discessī', 'weggehen, auseinandergehen', '1'],
+  ['dūcere', 'dūcō, dūxī', 'führen, ziehen', '2'],
+  ['ē / ex', 'Präp. m. Abl.', 'aus, von … her', '7'],
+  ['egō', '', 'ich', '7'],
+  ['Epidius', 'Epidiī m', 'Epidius (männlicher Eigenname)', '10'],
+  ['ergō', '', 'also, deshalb', '4'],
+  ['esse', 'sum, fuī', 'sein, sich befinden', '5'],
+  ['et', '', 'und, auch', '9'],
+  ['etiam', '', 'auch, sogar', '9'],
+  ['facere', 'faciō, fēcī', 'machen, tun, handeln', '2'],
+  ['familia', 'familiae f', 'die Familie, die Hausgemeinschaft', '3'],
+  ['flēre', 'fleō, flēvī', 'weinen, beweinen', '1'],
+  ['fugere', 'fugiō, fūgī m. Akk.', 'fliehen (vor), entfliehen, meiden', '2'],
+  ['Gnaeus', 'Gnaeī m', 'Gnaeus (männlicher Eigenname)', '6'],
+  ['homō', 'hominis m', 'der Mensch', '3'],
+  ['iam', 'Adv.', 'schon, bereits, nun', '8'],
+  ['in', 'Präp. m. Abl.', 'in, an, auf, bei (wo?)', '7'],
+  ['in', 'Präp. m. Akk.', 'in (… hinein), nach (wohin?); gegen', '7'],
+  ['inde', 'Adv.', 'von dort, darauf, deshalb', '4'],
+  ['īnstāre', 'īnstō m. Dat.', 'bevorstehen, bedrängen, drohen', '5'],
+  ['magnus', 'magna, magnum', 'groß, bedeutend', '6'],
+  ['manēre', 'maneō, mānsī m. Akk.', 'bleiben, warten (auf)', '1'],
+  ['Mārcus', 'Mārcī m', 'Marcus (männlicher Eigenname „dem Mars geweiht“)', '10'],
+  ['māter', 'mātris f', 'die Mutter', '3'],
+  ['mē', 'Akk.', 'mich', '7'],
+  ['mihi', 'Dat.', 'mir, für mich', '7'],
+  ['monēre', 'moneō, monuī', 'mahnen, ermahnen', '1'],
+  ['mōns', 'montis m (Gen. Pl. -ium)', 'der Berg', '3'],
+  ['mors', 'mortis f', 'der Tod', '3'],
+  ['multitūdō', 'multitūdinis f', 'die Menge, die große Zahl', '3'],
+  ['multus', 'multa, multum', 'viel', '6'],
+  ['nam', '', 'denn, nämlich', '9'],
+  ['neque', '', 'und nicht, auch nicht', '9'],
+  ['nōbīs', 'Dat.', 'uns, für uns', '7'],
+  ['nōbīscum', '', 'mit uns', '4'],
+  ['nōn', '', 'nicht', '8'],
+  ['nōn iam', '', 'nicht mehr', '8'],
+  ['nōs', 'Akk.', 'uns', '4'],
+  ['nōs', 'Nom.', 'wir', '4'],
+  ['nūbēs ātra', 'f', 'eine dunkle Wolke', '10'],
+  ['occurrere', 'occurrō, occurrī', 'begegnen, entgegentreten', '1'],
+  ['oculus', 'oculī m', 'das Auge', '6'],
+  ['ops', 'opis f', 'die Hilfe, die Kraft', '3'],
+  ['parcere', 'parcō, pepercī m. Dat.', 'schonen, verschonen', '2'],
+  ['parēns', 'parentis m f', 'der Vater, die Mutter; Pl. die Eltern', '3'],
+  ['pars', 'partis f (Gen. Pl. -ium)', 'der Teil, die Seite', '3'],
+  ['parvus', 'parva, parvum', 'klein, gering', '6'],
+  ['pater', 'patris m', 'der Vater', '3'],
+  ['perdere', 'perdō, perdidī', 'verlieren, verschwenden, vernichten', '1'],
+  ['peristylium', 'peristyliī n', 'der Innenhof', '10'],
+  ['petere', 'petō, petīvī', 'bitten, verlangen, streben (nach), aufsuchen, angreifen', '5'],
+  ['porta Nūcerīna', 'f', 'die Porta Nucerina (ein Stadttor von Pompeji)', '10'],
+  ['posse', 'possum, potuī', 'können', '5'],
+  ['postquam', 'Subj. m. Perf.', 'nachdem, als', '9'],
+  ['properāre', 'properō, properāvī', 'eilen, sich beeilen', '5'],
+  ['putāre', 'putō, putāvī', 'glauben, meinen, m. dopp. Akk. halten für', '5'],
+  ['-que', 'angehängt', 'und', '9'],
+  ['quia', 'Subj.', 'weil', '9'],
+  ['quid?', '', 'was?', '7'],
+  ['quidem', 'Adv.', 'freilich, gewiss, wenigstens, zwar', '8'],
+  ['relinquere', 'relinquō, relīquī', 'verlassen, zurücklassen', '1'],
+  ['reperīre', 'reperiō, repperī', 'finden, wiederfinden', '2'],
+  ['rūrsus', 'Adv.', 'wieder', '4'],
+  ['saepe', 'Adv.', 'oft', '8'],
+  ['saxum', 'saxī n', 'der Fels, der Stein', '6'],
+  ['sed', '', 'aber, sondern', '9'],
+  ['sentīre', 'sentiō, sēnsī', 'fühlen, meinen, wahrnehmen', '2'],
+  ['simul', 'Adv.', 'gleichzeitig, zugleich', '8'],
+  ['spectāre', 'spectō, spectāvī', 'betrachten, anschauen, zuschauen', '5'],
+  ['statim', 'Adv.', 'sofort', '8'],
+  ['strepitus', 'm', 'der Lärm', '10'],
+  ['subitō', 'Adv.', 'plötzlich', '8'],
+  ['tamen', '', 'dennoch, jedoch', '9'],
+  ['tē', 'Akk.', 'dich', '7'],
+  ['tēctum', 'tēctī n', 'das Dach, das Haus', '3'],
+  ['tenebrae', 'tenebrārum f Pl.', 'die Dunkelheit, die Finsternis', '3'],
+  ['terra', 'terrae f', 'die Erde, das Land', '6'],
+  ['terrēre', 'terreō, terruī', 'erschrecken', '5'],
+  ['timor', 'timōris m', 'die Angst, die Furcht', '3'],
+  ['tremor', 'tremōris m', 'das Beben', '10'],
+  ['tū', 'Nom.', 'du', '7'],
+  ['tum', 'Adv.', 'da, dann, damals', '8'],
+  ['undique', 'Adv.', 'von allen Seiten, von überallher', '8'],
+  ['urbs', 'urbis f (Gen. Pl. -ium)', 'die Stadt', '3'],
+  ['velle', 'volō, voluī', 'wollen', '5'],
+  ['venīre', 'veniō', 'kommen', '5'],
+  ['Vesuvius', 'Vesuviī m', 'der Vesuv (Vulkan in Kampanien)', '3'],
+  ['via', 'viae f', 'der Weg, die Straße', '6'],
+  ['vidēre', 'videō, vīdī', 'sehen', '2'],
+  ['vincere', 'vincō, vīcī', 'siegen, besiegen, übertreffen', '1'],
+  ['vix', 'Adv.', 'kaum, (nur) mit Mühe', '4'],
+  // nicht auf dem Blatt, aber in den Texten hier gebraucht (aus früheren Lektionen bekannt oder als Fußnote angegeben)
+  ['dēbēre', 'dēbeō', 'müssen, sollen, schulden', ''],
+  ['posteā', 'Adv.', 'nachher, später', ''],
+  ['scīre', 'sciō, scīvī', 'wissen, kennen', ''],
+  ['gaudēre', 'gaudeō', 'sich freuen', '']
+];
+// Die 34 Verben, die auf dem Blatt mit Perfekt stehen: [Infinitiv, 1. Person Perfekt]
+const VERBEN = LEX.filter(e => e[3] && e[3] !== '10' && /^\S+(ō|um), \S+ī( |$)/.test(e[1])).map(e => [e[0], e[1].split(', ')[1].split(' ')[0]]);
+const infPf = pf => pf.slice(0, -1) + 'isse';          // Perfektstamm + -isse: vīd-ī → vīd-isse
+const ohneStrich = s => s.normalize('NFD').replace(/̄/g, '').normalize('NFC');
+
+// ---------- Kopfverben (Begriff vom Arbeitsblatt): Verben, von denen ein AcI abhängen kann ----------
+const KOPF = [
+  ['dīcere', 'sagen', 'sagen'], ['clāmāre', 'rufen, schreien', 'sagen'],
+  ['vidēre', 'sehen', 'wahrnehmen'], ['audīre', 'hören', 'wahrnehmen'], ['sentīre', 'fühlen, wahrnehmen', 'wahrnehmen'], ['animadvertere', 'bemerken', 'wahrnehmen'],
+  ['scīre', 'wissen', 'wissen und meinen'], ['putāre', 'glauben, meinen', 'wissen und meinen'], ['cōgnōscere', 'erkennen', 'wissen und meinen'],
+  ['gaudēre', 'sich freuen', 'sich freuen']
+];
+const KEINKOPF = [['currere', 'laufen'], ['fugere', 'fliehen'], ['capere', 'nehmen'], ['manēre', 'bleiben'], ['cadere', 'fallen'], ['venīre', 'kommen'],
+  ['properāre', 'eilen'], ['relinquere', 'verlassen'], ['vincere', 'siegen'], ['perdere', 'vernichten'], ['discēdere', 'weggehen'], ['dūcere', 'führen'],
+  ['posse', 'können'], ['dēbēre', 'müssen']];
+// velle fehlt hier mit Absicht: Bei verschiedenem Subjekt steht auch nach velle ein AcI (Pater Aulum manēre vult).
+
+// ---------- Satzfamilien ----------
+// Jede Familie ergibt Sätze in vier Fällen – Haupthandlung im Präsens (pr) oder in der Vergangenheit (vg),
+// Infinitiv Präsens (gleichzeitig, GZ) oder Infinitiv Perfekt (vorzeitig, VZ) – und in mehreren Wortstellungen.
+//  s: Wörter des Satzes; ( ) = Grenzen des AcI, @ = Infinitiv, # = Prädikat (Kopfverb). Klein, was kein Name ist.
+//  sub, hv: Subjekt und Verb des deutschen Hauptsatzes [Präsens, Vergangenheit]
+//  d: dass-Satz in [Präsens, Präteritum, Perfekt, Plusquamperfekt]
+//  x: falsche Übersetzung mit vertauschten Rollen (als Ablenker) · erw: was den AcI erweitert
+const ZEITEN = ['Präsens', 'Präteritum', 'Perfekt', 'Plusquamperfekt'];
+const FAM = [
+  { k: 'hoeren', kv: 'audīre', s: 'Claudia ( Aulum @ ) #', inf: ['clāmāre', 'clāmāvisse'], pr: 'audit', vg: ['audīvit', 'audiēbat'],
+    sub: 'Claudia', hv: ['hört', 'hörte'], d: ['Aulus schreit', 'Aulus schrie', 'Aulus geschrien hat', 'Aulus geschrien hatte'],
+    x: ['Aulus hört, dass Claudia schreit', 'Aulus hörte, dass Claudia schrie'] },
+  { k: 'saxa', kv: 'vidēre', s: 'Aulus ( saxa dē monte @ ) #', inf: ['cadere', 'cecidisse'], pr: 'videt', vg: ['vīdit', 'vidēbat'],
+    sub: 'Aulus', hv: ['sieht', 'sah'], d: ['Felsen vom Berg fallen', 'Felsen vom Berg fielen', 'Felsen vom Berg gefallen sind', 'Felsen vom Berg gefallen waren'],
+    erw: 'dē monte (Adverbiale: woher?)' },
+  { k: 'fliehen', kv: 'dīcere', s: 'Gnaeus ( hominēs ex urbe @ ) #', inf: ['fugere', 'fūgisse'], pr: 'dīcit', vg: ['dīxit', 'dīcēbat'],
+    sub: 'Gnaeus', hv: ['sagt', 'sagte'], d: ['die Menschen aus der Stadt fliehen', 'die Menschen aus der Stadt flohen', 'die Menschen aus der Stadt geflohen sind', 'die Menschen aus der Stadt geflohen waren'],
+    erw: 'ex urbe (Adverbiale: woher?)' },
+  { k: 'bleiben', kv: 'putāre', s: 'māter ( patrem in tēctō @ ) #', inf: ['manēre', 'mānsisse'], pr: 'putat', vg: ['putāvit', 'putābat'],
+    sub: 'die Mutter', hv: ['glaubt', 'glaubte'], d: ['der Vater im Haus bleibt', 'der Vater im Haus blieb', 'der Vater im Haus geblieben ist', 'der Vater im Haus geblieben war'],
+    x: ['Der Vater glaubt, dass die Mutter im Haus bleibt', 'Der Vater glaubte, dass die Mutter im Haus blieb'], erw: 'in tēctō (Adverbiale: wo?)' },
+  { k: 'vernichten', kv: 'dīcere', s: 'Epidius ( Vesuvium urbem @ ) #', inf: ['perdere', 'perdidisse'], pr: 'dīcit', vg: ['dīxit'],
+    sub: 'Epidius', hv: ['sagt', 'sagte'], d: ['der Vesuv die Stadt vernichtet', 'der Vesuv die Stadt vernichtete', 'der Vesuv die Stadt vernichtet hat', 'der Vesuv die Stadt vernichtet hatte'],
+    x: ['Epidius sagt, dass die Stadt den Vesuv vernichtet', 'Epidius sagte, dass die Stadt den Vesuv vernichtete'], erw: 'urbem (Objekt: wen oder was?)' },
+  { k: 'gross', kv: 'vidēre', s: 'Claudia ( tēctum magnum @ ) #', inf: ['esse', 'fuisse'], pr: 'videt', vg: ['vīdit'],
+    sub: 'Claudia', hv: ['sieht', 'sah'], d: ['das Haus groß ist', 'das Haus groß war', 'das Haus groß gewesen ist', 'das Haus groß gewesen war'],
+    erw: 'magnum (Prädikatsnomen, passt zu tēctum)' },
+  { k: 'schonen', kv: 'putāre', s: 'Mārcus ( deōs urbī nōn @ ) #', inf: ['parcere', 'pepercisse'], pr: 'putat', vg: ['putāvit'],
+    sub: 'Marcus', hv: ['glaubt', 'glaubte'], d: ['die Götter die Stadt nicht verschonen', 'die Götter die Stadt nicht verschonten', 'die Götter die Stadt nicht verschont haben', 'die Götter die Stadt nicht verschont hatten'],
+    erw: 'urbī (Objekt im Dativ: wem?) und nōn' },
+  { k: 'weggehen', kv: 'vidēre', s: 'pater ( Claudiam iam @ ) #', inf: ['discēdere', 'discessisse'], pr: 'videt', vg: ['vīdit', 'vidēbat'],
+    sub: 'der Vater', hv: ['sieht', 'sah'], d: ['Claudia schon weggeht', 'Claudia schon wegging', 'Claudia schon weggegangen ist', 'Claudia schon weggegangen war'],
+    x: ['Claudia sieht, dass der Vater schon weggeht', 'Claudia sah, dass der Vater schon wegging'], erw: 'iam (Adverbiale: wann?)' },
+  { k: 'plan', kv: 'scīre', s: '# ( Aulum cōnsilium @ )', inf: ['capere', 'cēpisse'], pr: 'scīmus', vg: ['scīvimus'],
+    sub: 'wir', hv: ['wissen', 'wussten'], d: ['Aulus einen Plan fasst', 'Aulus einen Plan fasste', 'Aulus einen Plan gefasst hat', 'Aulus einen Plan gefasst hatte'],
+    erw: 'cōnsilium (Objekt: wen oder was?)' },
+  { k: 'weinen', kv: 'animadvertere', s: 'Aulus et Mārcus ( Claudiam saepe @ ) #', inf: ['flēre', 'flēvisse'], pr: 'animadvertunt', vg: ['animadvertērunt'],
+    sub: 'Aulus und Marcus', hv: ['bemerken', 'bemerkten'], d: ['Claudia oft weint', 'Claudia oft weinte', 'Claudia oft geweint hat', 'Claudia oft geweint hatte'],
+    x: ['Claudia bemerkt, dass Aulus und Marcus oft weinen', 'Claudia bemerkte, dass Aulus und Marcus oft weinten'], erw: 'saepe (Adverbiale: wie oft?)' },
+  { k: 'drohen', kv: 'sentīre', s: 'Aulus et Claudia ( mortem @ ) #', inf: ['īnstāre', null], pr: 'sentiunt', vg: ['sēnsērunt'],
+    sub: 'Aulus und Claudia', hv: ['fühlen', 'fühlten'], d: ['der Tod droht', 'der Tod drohte', null, null] },
+  { k: 'laufen', kv: 'clāmāre', s: 'māter ( Aulum ad urbem @ ) #', inf: ['currere', 'cucurrisse'], pr: 'clāmat', vg: ['clāmāvit'],
+    sub: 'die Mutter', hv: ['ruft', 'rief'], d: ['Aulus zur Stadt läuft', 'Aulus zur Stadt lief', 'Aulus zur Stadt gelaufen ist', 'Aulus zur Stadt gelaufen war'],
+    x: ['Aulus ruft, dass die Mutter zur Stadt läuft', 'Aulus rief, dass die Mutter zur Stadt lief'], erw: 'ad urbem (Adverbiale: wohin?)' }
+];
+const gross = t => t[0].toUpperCase() + t.slice(1);
+const ADV = { tum: ['tum', 'Dann'], subito: ['subitō', 'Plötzlich'] };
+// Ein Satz aus einer Familie. zeit: 'pr' | 'vg' · zv: 'GZ' | 'VZ'
+// opt.vg: Form der Vergangenheit · opt.mitte: Kopfverb vor dem AcI (Gnaeus dīcit hominēs ex urbe fugere) ·
+// opt.adv: 'tum' | 'subito' am Satzanfang. So steht die Klammer nicht immer an derselben Stelle.
+function satz(f, zeit, zv, opt) {
+  opt = opt || {};
+  if (zv === 'VZ' && !f.inf[1]) zv = 'GZ';
+  let tok = f.s.split(' ');
+  if (opt.mitte && tok[tok.length - 1] === '#') { const i = tok.indexOf('('); tok = tok.slice(0, i).concat('#', tok.slice(i, -1)); }
+  const adv = opt.adv ? ADV[opt.adv] : null;
+  if (adv) tok.unshift(adv[0]);
+  const w = []; let a = -1, b = -1, inf = -1, kopf = -1;
+  for (const t of tok) {
+    if (t === '(') a = w.length;
+    else if (t === ')') b = w.length - 1;
+    else if (t === '@') { inf = w.length; w.push(zv === 'VZ' ? f.inf[1] : f.inf[0]); }
+    else if (t === '#') { kopf = w.length; w.push(zeit === 'pr' ? f.pr : (opt.vg || f.vg[0])); }
+    else w.push(t);
+  }
+  w[0] = gross(w[0]);
+  const zi = (zeit === 'pr' ? 0 : 1) + (zv === 'VZ' ? 2 : 0);
+  const h2 = f.hv.map(v => adv ? `${adv[1]} ${v} ${f.sub}` : `${gross(f.sub)} ${v}`), h = h2[zeit === 'pr' ? 0 : 1];
+  return { f, w, a, b, inf, kopf, akk: a, zeit, zv, zi, h, h2, adv: !!adv, de: `${h}, dass ${f.d[zi]}.`, aci: true };
+}
+const FALL = [['pr', 'GZ'], ['vg', 'GZ'], ['pr', 'VZ'], ['vg', 'VZ']];
+const ORDNUNGEN = [{}, { mitte: 1 }, { adv: 'tum' }, { adv: 'subito', mitte: 1 }];
+// alle Sätze, die sich bilden lassen (für das Prüfskript)
+const alleSaetze = () => FAM.flatMap(f => FALL.filter(c => c[1] === 'GZ' || f.inf[1]).flatMap(c => (c[0] === 'pr' ? [undefined] : f.vg).flatMap(v => ORDNUNGEN.map(o => satz(f, c[0], c[1], { ...o, vg: v })))));
+
+// Sätze mit Infinitiv, aber OHNE AcI: Das Prädikat ist kein Kopfverb (posse, dēbēre, contendere, properāre).
+const OHNE = [
+  { w: 'Aulus urbem relinquere nōn potuit', inf: 2, kopf: 4, de: 'Aulus konnte die Stadt nicht verlassen.', kv: 'posse (können)' },
+  { w: 'Claudia patrem reperīre dēbet', inf: 2, kopf: 3, de: 'Claudia muss den Vater finden.', kv: 'dēbēre (müssen)' },
+  { w: 'Hominēs ex urbe fugere contendunt', inf: 3, kopf: 4, de: 'Die Menschen strengen sich an, aus der Stadt zu fliehen.', kv: 'contendere (sich anstrengen)' },
+  { w: 'Mārcus mātrem vidēre nōn iam potuit', inf: 2, kopf: 5, de: 'Marcus konnte die Mutter nicht mehr sehen.', kv: 'posse (können)' },
+  { w: 'Gnaeus in tēctō manēre potest', inf: 3, kopf: 4, de: 'Gnaeus kann im Haus bleiben.', kv: 'posse (können)' },
+  { w: 'Aulus Claudiam reperīre properat', inf: 2, kopf: 3, de: 'Aulus beeilt sich, Claudia zu finden.', kv: 'properāre (sich beeilen)' },
+  { w: 'Māter Aulum monēre dēbet', inf: 2, kopf: 3, de: 'Die Mutter muss Aulus ermahnen.', kv: 'dēbēre (müssen)' },
+  { w: 'Aulus parentēs vidēre potuit', inf: 2, kopf: 3, de: 'Aulus konnte die Eltern sehen.', kv: 'posse (können)' }
+].map(o => ({ ...o, w: o.w.split(' '), a: -1, b: -1, akk: -1, aci: false }));
+
+// ---------- Texte zum Übersetzen ----------
+// la: Wörter mit Leerzeichen getrennt. Form=Stichwort schlägt in LEX nach (_ statt Leerzeichen); ohne Stichwort gilt die Form selbst.
+//     ( … ) AcI von Akkusativ bis Infinitiv · @ hinter dem Infinitiv · # hinter dem Kopfverb · ^1 Fußnote
+//     zeit: 'pr' am Satz, wenn seine Haupthandlung anders als im übrigen Text im Präsens steht · merk: Hinweis zur Lösung
+// de: Musterlösung · auch: was sonst noch richtig ist (ganze Sätze) · falsch: was NICHT durchgehen darf (prüft tools/arbeit-check.mjs)
+// bau: Bausteine [Anzeige, Muster, was nicht vorkommen darf] – Muster ohne Umlaute und ß; die Prüfung sucht sie in der Eingabe
+const TEXTE = [
+  { k: 't1', titel: 'Der Berg raucht', stufe: 'zum Aufwärmen', zeit: 'pr',
+    worum: 'Aulus und Claudia sind in Pompeji unterwegs. Erzählt wird im Präsens.',
+    fuss: ['strepitus m – der Lärm', 'nūbēs ātra f – eine dunkle Wolke'],
+    s: [
+      { la: 'Aulus et Claudia in viā=via sunt.=esse', de: 'Aulus und Claudia sind auf der Straße.', auch: ['Aulus und Claudia sind auf dem Weg.'],
+        bau: [['Aulus und Claudia', 'aulus und claudia'], ['sind', '\\bsind\\b|\\bbefinden sich\\b', '\\bwaren\\b'], ['auf der Straße / auf dem Weg', 'auf (der strasse|dem weg)']],
+        falsch: ['Aulus und Claudia waren auf der Straße.'] },
+      { la: 'Subitō strepitum^1=strepitus audiunt=audīre et ad montem=mōns spectant.=spectāre', de: 'Plötzlich hören sie Lärm und schauen zum Berg.', auch: ['Plötzlich hören sie Lärm und blicken zum Berg.'],
+        bau: [['plötzlich', '\\bplotzlich\\b'], ['hören sie', '\\bhoren sie\\b|\\bsie horen\\b'], ['Lärm', '\\blarm\\b'], ['schauen zum Berg', '\\b(schauen|blicken|sehen|gucken)\\b.*\\bberg\\b|\\bbetrachten\\b.*\\bberg\\b']],
+        falsch: ['Plötzlich hören wir Lärm und schauen zum Berg.', 'Plötzlich hörten sie Lärm und schauten zum Berg.'] },
+      { la: 'Claudia (nūbem^2=nūbēs_ātra ātram=nūbēs_ātra in caelō=caelum esse@) videt#.=vidēre', de: 'Claudia sieht, dass eine dunkle Wolke am Himmel ist.', auch: ['Claudia sieht, dass am Himmel eine dunkle Wolke ist.', 'Claudia sieht, dass die Wolke am Himmel dunkel ist.'],
+        bau: [['Claudia sieht', '\\bclaudia sieht\\b'], ['dass', '\\bdass\\b'], ['eine dunkle Wolke', '(dunkle|schwarze|finstere) wolke|\\bwolke\\b.*\\b(dunkel|schwarz|finster)\\b'], ['am Himmel', '\\b(am|im) himmel\\b'], ['ist (gleichzeitig, Haupthandlung im Präsens → Präsens)', '\\bist\\b|\\bsteht\\b|\\bbefindet\\b', '\\bgewesen\\b|\\bwar\\b']],
+        falsch: ['Claudia sieht, dass eine dunkle Wolke am Himmel war.', 'Claudia sieht, dass eine dunkle Wolke am Himmel gewesen ist.', 'Claudia sieht eine dunkle Wolke am Himmel.', 'Claudia sah, dass eine dunkle Wolke am Himmel ist.'] },
+      { la: 'Aulus dīcit:=dīcere „Vesuvius nōs terret!“=terrēre', de: 'Aulus sagt: „Der Vesuv erschreckt uns!“',
+        bau: [['Aulus sagt', '\\baulus (sagt|spricht)\\b'], ['der Vesuv', '\\bvesuv\\b'], ['erschreckt uns', '\\berschreckt uns\\b|\\buns erschreckt\\b|\\bmacht uns angst\\b']],
+        falsch: ['Aulus sagte: „Der Vesuv erschreckt uns!“', 'Aulus sagt: „Der Vesuv erschreckte uns!“'] },
+      { la: 'Tum (multōs=multus hominēs=homō ex=ē_/_ex urbe=urbs fugere@) animadvertunt#.=animadvertere', de: 'Dann bemerken sie, dass viele Menschen aus der Stadt fliehen.', auch: ['Da bemerken sie, dass viele Menschen aus der Stadt fliehen.'],
+        bau: [['dann / da', '\\b(dann|da|damals)\\b'], ['bemerken sie', '\\bbemerken sie\\b|\\bsie bemerken\\b'], ['dass', '\\bdass\\b'], ['viele Menschen', 'viele (menschen|leute)'], ['aus der Stadt', 'aus der stadt'], ['fliehen (gleichzeitig → Präsens)', '\\b(fliehen|fluchten)\\b']],
+        falsch: ['Dann bemerken viele Menschen, dass sie aus der Stadt fliehen.', 'Dann bemerken sie, dass viele Menschen aus der Stadt flohen.', 'Dann bemerken sie, dass viele Menschen aus der Stadt geflohen sind.', 'Dann bemerken sie viele Menschen aus der Stadt fliehen.'] },
+      { la: 'Aulus (parentēs=parēns iam discessisse@=discēdere) putat#.=putāre', de: 'Aulus glaubt, dass die Eltern schon weggegangen sind.', auch: ['Aulus meint, dass die Eltern schon weggegangen sind.'],
+        bau: [['Aulus glaubt / meint', '\\baulus (glaubt|meint|denkt)\\b'], ['dass', '\\bdass\\b'], ['die Eltern', '(die|seine|ihre) eltern'], ['schon', '\\b(schon|bereits)\\b'], ['weggegangen sind (vorzeitig, Haupthandlung im Präsens → Perfekt)', '(weggegangen|fortgegangen|gegangen) (sind|seien)\\b']],
+        falsch: ['Aulus glaubte, dass die Eltern schon weggegangen sind.', 'Aulus glaubt, dass die Eltern schon weggehen.', 'Aulus glaubt, dass die Eltern schon weggegangen waren.'] },
+      { la: 'Claudia flet,=flēre sed Aulus cōnsilium=cōnsilium_capere capit:=cōnsilium_capere', de: 'Claudia weint, aber Aulus fasst einen Plan:', auch: ['Claudia weint, aber Aulus fasst einen Entschluss:'],
+        bau: [['Claudia weint', '\\bclaudia weint\\b'], ['aber', '\\b(aber|doch|jedoch)\\b'], ['fasst einen Plan / Entschluss', '\\bfasst\\b.*(plan|entschluss|beschluss)']],
+        falsch: ['Claudia weinte, aber Aulus fasste einen Plan:'] },
+      { la: '„Statim ad parentēs=parēns properāre@ dēbēmus!“=dēbēre', de: '„Wir müssen sofort zu den Eltern eilen!“',
+        tipp: 'Hier steht ein Infinitiv (properāre), aber kein AcI: dēbēmus kommt von dēbēre (müssen) – das ist kein Kopfverb.',
+        bau: [['wir müssen', '\\bwir (mussen|sollen)\\b|\\b(mussen|sollen) wir\\b'], ['sofort', '\\bsofort\\b'], ['zu den Eltern', 'zu (den|unseren) eltern'], ['eilen', '\\b(eilen|beeilen|laufen)\\b']],
+        falsch: ['„Wir mussten sofort zu den Eltern eilen!“'] }
+    ] },
+  { k: 't2', titel: 'Flucht aus Pompeji', stufe: 'wie in der Arbeit', zeit: 'vg',
+    worum: 'Der Vesuv bricht aus. Erzählt wird in der Vergangenheit – achte bei jedem AcI auf das Zeitverhältnis.',
+    fuss: ['tremor, tremōris m – das Beben', 'porta Nūcerīna f – die Porta Nucerina (ein Stadttor von Pompeji)'],
+    s: [
+      { la: 'Subitō Aulus tremōrem^1=tremor terrae=terra sēnsit=sentīre et ē=ē_/_ex tēctō=tēctum cucurrit.=currere', de: 'Plötzlich spürte Aulus ein Beben der Erde und lief aus dem Haus.', auch: ['Plötzlich fühlte Aulus ein Erdbeben und lief aus dem Haus.'],
+        bau: [['plötzlich', '\\bplotzlich\\b'], ['spürte / fühlte', '\\b(spurte|fuhlte|merkte|bemerkte)\\b|\\bnahm\\b.*\\bwahr\\b|\\bhat\\b.*\\b(gespurt|gefuhlt|gemerkt|bemerkt|wahrgenommen)\\b'], ['ein Beben der Erde', 'beben der erde|erdbeben'], ['lief', '\\b(lief|rannte|eilte)\\b|\\bist\\b.*\\b(gelaufen|gerannt|geeilt)\\b'], ['aus dem Haus', 'aus dem haus']],
+        falsch: ['Plötzlich spürt Aulus ein Beben der Erde und läuft aus dem Haus.'] },
+      { la: 'In viā=via (multōs=multus hominēs=homō clāmāre@) audīvit#.=audīre', de: 'Auf der Straße hörte er, dass viele Menschen schrien.', auch: ['Auf dem Weg hörte er, dass viele Menschen laut riefen.'],
+        bau: [['auf der Straße / auf dem Weg', 'auf (der strasse|dem weg)'], ['hörte er', '\\bhorte er\\b|\\ber horte\\b|\\bhat er\\b.*\\bgehort\\b'], ['dass', '\\bdass\\b'], ['viele Menschen', 'viele (menschen|leute)'], ['schrien / riefen (gleichzeitig, Haupthandlung in der Vergangenheit → Präteritum)', '\\b(schrien|schrieen|riefen)\\b']],
+        falsch: ['Auf der Straße hörte er, dass viele Menschen geschrien hatten.', 'Auf der Straße hörte er, dass viele Menschen geschrien haben.', 'Auf der Straße hörte er, dass viele Menschen schreien.', 'Auf der Straße hörten sie, dass viele Menschen schrien.', 'Auf der Straße hörte er viele Menschen.'] },
+      { la: 'Tum (saxa=saxum dē caelō=caelum cadere@) vīdit#.=vidēre', de: 'Dann sah er, dass Steine vom Himmel fielen.', auch: ['Da sah er, dass Felsen vom Himmel fielen.'],
+        bau: [['dann / da', '\\b(dann|da|damals)\\b'], ['sah er', '\\bsah er\\b|\\ber sah\\b|\\bhat er\\b.*\\bgesehen\\b'], ['dass', '\\bdass\\b'], ['Steine / Felsen', '\\b(steine|felsen)\\b'], ['vom Himmel', 'vom himmel|von dem himmel'], ['fielen (gleichzeitig → Präteritum)', '\\b(fielen|herabfielen|herunterfielen)\\b']],
+        falsch: ['Dann sah er, dass Steine vom Himmel fallen.', 'Dann sah er, dass Steine vom Himmel gefallen waren.', 'Dann sieht er, dass Steine vom Himmel fielen.'] },
+      { la: 'Statim ad Claudiam=Claudia properāvit.=properāre', de: 'Sofort eilte er zu Claudia.', auch: ['Sofort beeilte er sich, zu Claudia zu kommen.'],
+        bau: [['sofort', '\\bsofort\\b'], ['eilte er', '\\b(eilte|beeilte|lief)\\b|\\b(ist|hat)\\b.*\\b(geeilt|beeilt|gelaufen)\\b'], ['zu Claudia', 'zu claudia']],
+        falsch: ['Sofort eilt er zu Claudia.', 'Sofort beeilt er sich zu Claudia.'] },
+      { la: 'Nam (mortem=mors īnstāre@) sēnsit#.=sentīre', de: 'Denn er fühlte, dass der Tod drohte.', auch: ['Denn er spürte, dass der Tod bevorstand.'],
+        bau: [['denn', '\\bdenn\\b|namlich'], ['fühlte / spürte', '\\b(fuhlte|spurte|merkte|bemerkte)\\b|\\bnahm\\b.*\\bwahr\\b|\\bhat\\b.*\\b(gefuhlt|gespurt|gemerkt|bemerkt)\\b'], ['dass', '\\bdass\\b'], ['der Tod', 'der tod'], ['drohte / bevorstand (gleichzeitig → Präteritum)', '\\b(drohte|bevorstand|bedrangte)\\b']],
+        falsch: ['Denn er fühlte, dass der Tod droht.', 'Denn er fühlte, dass der Tod gedroht hatte.', 'Denn er fühlt, dass der Tod drohte.'] },
+      { la: 'Claudia flēvit,=flēre quia parentēs=parēns nōn repperit.=reperīre', de: 'Claudia weinte, weil sie die Eltern nicht fand.',
+        bau: [['Claudia weinte', '\\bclaudia weinte\\b|\\bclaudia hat\\b.*\\bgeweint\\b'], ['weil', '\\b(weil|da|denn)\\b'], ['sie die Eltern nicht fand', '\\bsie (die|ihre) eltern nicht (fand|wiederfand|gefunden hat)\\b|\\bsie fand (die|ihre) eltern nicht\\b|\\bsie hat (die|ihre) eltern nicht gefunden\\b']],
+        falsch: ['Claudia weinte, weil die Eltern sie nicht fanden.', 'Claudia weint, weil sie die Eltern nicht findet.'] },
+      { la: 'Tum Gnaeus Aulō=Aulus et Claudiae=Claudia occurrit.=occurrere', de: 'Dann begegnete Gnaeus Aulus und Claudia.', auch: ['Da trat Gnaeus Aulus und Claudia entgegen.'],
+        merk: 'occurrit sieht im Präsens und im Perfekt gleich aus. Der Text erzählt in der Vergangenheit – also „begegnete“.',
+        bau: [['dann / da', '\\b(dann|da|damals)\\b'], ['begegnete Gnaeus', '\\bbegegnete\\b|\\btrat\\b.*\\bentgegen\\b|\\bist\\b.*\\bbegegnet\\b'], ['Aulus und Claudia (Dativ: wem?)', 'aulus und (der )?claudia']],
+        falsch: ['Dann begegnet Gnaeus Aulus und Claudia.'] },
+      { la: 'Gnaeus (parentēs=parēns iam ex=ē_/_ex urbe=urbs discessisse@=discēdere) dīxit#.=dīcere', de: 'Gnaeus sagte, dass die Eltern schon aus der Stadt weggegangen waren.',
+        bau: [['Gnaeus sagte', '\\bgnaeus sagte\\b|\\bgnaeus hat\\b.*\\bgesagt\\b'], ['dass', '\\bdass\\b'], ['die Eltern', '(die|ihre|seine) eltern'], ['schon', '\\b(schon|bereits)\\b'], ['aus der Stadt', 'aus der stadt'], ['weggegangen waren (vorzeitig, Haupthandlung in der Vergangenheit → Plusquamperfekt)', '(weggegangen|fortgegangen|gegangen) (waren|seien)\\b']],
+        falsch: ['Gnaeus sagte, dass die Eltern schon aus der Stadt weggingen.', 'Gnaeus sagte, dass die Eltern schon aus der Stadt weggegangen sind.', 'Gnaeus sagt, dass die Eltern schon aus der Stadt weggegangen waren.'] },
+      { la: 'Ergō Aulus cōnsilium=cōnsilium_capere cēpit=cōnsilium_capere et Claudiam=Claudia ad portam^2=porta_Nūcerīna Nūcerīnam=porta_Nūcerīna dūxit.=dūcere', de: 'Also fasste Aulus einen Plan und führte Claudia zur Porta Nucerina.', auch: ['Deshalb fasste Aulus einen Entschluss und führte Claudia zur Porta Nucerina.'],
+        bau: [['also / deshalb', '\\balso\\b|deshalb'], ['fasste einen Plan / Entschluss', '\\bfasste\\b.*(plan|entschluss|beschluss)|\\bhat\\b.*(plan|entschluss|beschluss) gefasst'], ['führte Claudia', '\\b(fuhrte|brachte|zog)\\b.*claudia|claudia\\b.*\\b(gefuhrt|gebracht|gezogen)\\b'], ['zur Porta Nucerina', 'porta nucerina|(zum|zu dem) (stadt)?tor']],
+        falsch: ['Also fasst Aulus einen Plan und führt Claudia zur Porta Nucerina.'] },
+      { la: 'Tenebrae magnae=magnus erant;=esse viam=via vix vidēre@ potuērunt.=posse', de: 'Die Dunkelheit war groß; sie konnten den Weg kaum sehen.', auch: ['Es herrschte große Dunkelheit; sie konnten die Straße nur mit Mühe sehen.'],
+        tipp: 'Hier steht ein Infinitiv (vidēre), aber kein AcI: potuērunt kommt von posse – das ist kein Kopfverb.',
+        bau: [['große Dunkelheit / Finsternis', '\\b(dunkelheit|finsternis|dunkel|finster)\\b'], ['war / herrschte (Vergangenheit)', '\\b(war|waren|herrschte)\\b'], ['den Weg / die Straße', 'den weg|die strasse'], ['kaum / nur mit Mühe', '\\b(kaum|mit muhe)\\b'], ['konnten … sehen (kein AcI!)', '\\bkonnten\\b.*\\bsehen\\b|\\bsehen konnten\\b|\\bhaben\\b.*\\bsehen konnen\\b']],
+        falsch: ['Die Dunkelheit ist groß; sie können den Weg kaum sehen.'] },
+      { la: 'Postquam urbem=urbs relīquērunt,=relinquere dēnique parentēs=parēns repperērunt.=reperīre', de: 'Nachdem sie die Stadt verlassen hatten, fanden sie schließlich die Eltern.', auch: ['Als sie die Stadt verlassen hatten, fanden sie zuletzt die Eltern.'],
+        bau: [['nachdem / als', '\\b(nachdem|als)\\b'], ['die Stadt verlassen hatten', 'stadt .*(verlassen|zuruckgelassen) hatten\\b|stadt verliessen\\b'], ['schließlich', '\\b(schliesslich|zuletzt|endlich)\\b'], ['fanden sie die Eltern', '\\bfanden sie\\b.*\\beltern\\b|\\bhaben sie\\b.*\\beltern\\b.*\\bgefunden\\b']],
+        falsch: ['Nachdem sie die Stadt verlassen hatten, fanden die Eltern sie schließlich.', 'Nachdem sie die Stadt verlassen, finden sie schließlich die Eltern.'] },
+      { la: 'Posteā=posteā Aulus saepe dīcēbat#=dīcere (deōs=deus familiae=familia pepercisse@.=parcere)', de: 'Später sagte Aulus oft, dass die Götter die Familie verschont hatten.',
+        merk: 'dīcēbat ist Imperfekt – auch das ist Vergangenheit. Hier steht das Kopfverb vor dem AcI.',
+        bau: [['später', '\\b(spater|danach|nachher)\\b'], ['sagte Aulus', '\\bsagte\\b|\\bhat\\b.*\\bgesagt\\b'], ['oft', '\\boft\\b|haufig'], ['dass', '\\bdass\\b'], ['die Götter', 'die gotter'], ['die Familie (Dativ bei parcere)', '(die|seine|ihre) familie'], ['verschont hatten (vorzeitig, Haupthandlung in der Vergangenheit → Plusquamperfekt)', '(verschont|geschont) hatten\\b']],
+        falsch: ['Später sagte Aulus oft, dass die Götter die Familie verschonten.', 'Später sagte Aulus oft, dass die Götter die Familie verschont haben.', 'Später sagt Aulus oft, dass die Götter die Familie verschont hatten.', 'Später sagte Aulus oft, dass die Götter der Familie verschont hatten.'] },
+      { la: 'Scīmus#=scīre autem (Vesuvium=Vesuvius urbem=urbs perdidisse@.=perdere)', zeit: 'pr', de: 'Wir wissen aber, dass der Vesuv die Stadt vernichtet hat.',
+        merk: 'Scīmus steht im Präsens. Deshalb heißt es hier „vernichtet hat“ (Perfekt), nicht „vernichtet hatte“.',
+        bau: [['wir wissen', '\\bwir (aber )?wissen\\b|\\bwissen wir\\b'], ['aber', '\\b(aber|jedoch|doch|andererseits)\\b'], ['dass', '\\bdass\\b'], ['der Vesuv die Stadt (der erste Akkusativ wird Subjekt)', 'der vesuv .*die stadt'], ['vernichtet hat (vorzeitig, Haupthandlung im Präsens → Perfekt)', '(vernichtet|zerstort) hat\\b']],
+        falsch: ['Wir wissen aber, dass der Vesuv die Stadt vernichtet hatte.', 'Wir wussten aber, dass der Vesuv die Stadt vernichtet hat.', 'Wir wissen aber, dass die Stadt den Vesuv vernichtet hat.', 'Wir wissen aber, dass der Vesuv die Stadt vernichtet.'] }
+    ] }
+];
+// Zerlegt einen Satz aus TEXTE in Wörter, Stichwörter, Fußnoten und die Stellen des AcI.
+function teileSatz(la) {
+  const w = [], key = [], fn = []; let a = -1, b = -1, inf = -1, kopf = -1;
+  for (let tok of la.split(' ')) {
+    if (tok[0] === '(') { a = w.length; tok = tok.slice(1); }
+    const ende = tok.includes(')'); tok = tok.replace(')', '');
+    let [form, k] = tok.split('=');
+    if (form.includes('@')) { inf = w.length; form = form.replace('@', ''); }
+    if (form.includes('#')) { kopf = w.length; form = form.replace('#', ''); }
+    const m = /\^(\d)/.exec(form);
+    if (m) { fn[w.length] = m[1]; form = form.replace(m[0], ''); }
+    const nackt = form.replace(/[.,;:!?„“]/g, '');
+    key.push(k ? k.replace(/_/g, ' ') : nackt);
+    w.push(form);
+    if (ende) b = w.length - 1;
+  }
+  return { w, key, fn, a, b, inf, kopf, akk: a, aci: a >= 0, zv: inf >= 0 && /isse[.,;:!?“]*$/.test(w[inf]) ? 'VZ' : 'GZ' };
+}
+// Einträge zu einem Stichwort (in steht zweimal auf dem Blatt, nōs auch)
+function lexZu(k) {
+  let e = LEX.filter(x => x[0] === k);
+  if (!e.length && k) e = LEX.filter(x => x[0] === k[0].toLowerCase() + k.slice(1));
+  return e;
+}
+// Eingabe vergleichbar machen: klein, ohne Satzzeichen; Umlaute und ihre Umschrift fallen zusammen (ä, ae → a), ß → ss
+const flach = s => String(s || '').normalize('NFC').toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+  .replace(/ae/g, 'a').replace(/oe/g, 'o').replace(/ue/g, 'u').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+// Muster genauso vereinfachen (gnaeus → gnaus, schauen → schaun), sonst träfen sie die vereinfachte Eingabe nicht
+const muster = re => new RegExp(re.replace(/ae/g, 'a').replace(/oe/g, 'o').replace(/ue/g, 'u'));
+// Gefunden heißt: Das Muster trifft – und was nicht vorkommen darf, kommt nicht vor.
+const bausteine = (s, eingabe) => { const t = flach(eingabe); return s.bau.map(([name, re, nicht]) => ({ name, da: muster(re).test(t) && !(nicht && muster(nicht).test(t)) })); };
+// Nachgeschlagene Wörter lassen sich im Vokabelheft markieren – aber nur solche, die dort auch geübt werden
+// (sonst verschwände die Marke nie). cōnsilium capere zählt als cōnsilium.
+const MARK_ALS = { 'cōnsilium capere': 'cōnsilium' }, MARK_NICHT = ['alius ... alius', 'Gnaeus'];
+//#REIN-ENDE
+
+// ---------- Speicher ----------
+//  st: Sterne je Station · best: Runden je Übungsart { n: gespielt, b: bestes Ergebnis in Prozent } ·
+//  tx: je Text { n: Durchgänge, b: beste Punktzahl } · cfg.strich: Längenstriche in den Übersetzungstexten zeigen ·
+//  chk: Kurz-Check { d: Tag des letzten Checks, n: wie viele bisher }
+const KEY = 'latein-arbeit-v1';
+function laden() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { s = {}; }
+  const o = k => isObj(s[k]) ? s[k] : {}, ganz = (x, lo, hi) => Number.isInteger(x) && x >= lo && x <= hi, TAG = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+  const neu = { st: {}, best: {}, tx: {}, cfg: { strich: o('cfg').strich === true }, chk: null };
+  if (TAG.test(o('chk').d || '')) neu.chk = { d: o('chk').d, n: ganz(o('chk').n, 0, 1e6) ? o('chk').n : 1 };
+  for (const [k, v] of Object.entries(o('st'))) if (ganz(v, 1, 3)) neu.st[k] = v;
+  for (const [k, v] of Object.entries(o('best'))) if (isObj(v) && ganz(v.n, 0, 1e6) && ganz(v.b, 0, 100)) neu.best[k] = { n: v.n, b: v.b };
+  for (const t of TEXTE) { const v = o('tx')[t.k]; if (isObj(v) && ganz(v.n, 0, 1e6) && ganz(v.b, 0, 2 * t.s.length)) neu.tx[t.k] = { n: v.n, b: v.b }; }
+  return neu;
+}
+let S = laden();
+const heute = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* voller oder gesperrter Speicher: Fortschritt gilt nur für diese Sitzung */ } }
+const app = $('#app');
+let VIEW = 'home', R = null, T = null;
+function go(v) { VIEW = v; render(); window.scrollTo(0, 0); }
+// erst nach dem Tastendruck fokussieren, sonst löst dasselbe Enter gleich den nächsten Knopf aus
+const spaeterFokus = el => setTimeout(() => { if (el && el.isConnected) el.focus({ preventScroll: true }); }, 250);
+const spaeter = (host, fn, ms) => setTimeout(() => { if (host.isConnected) fn(); }, ms);
+// Nach jedem Neuzeichnen kurz keine Klicks annehmen: Ein Doppeltipp träfe sonst, was jetzt an derselben Stelle liegt.
+// ?ohnesperre schaltet das für Testläufe ab.
+const SPERRZEIT = /[?&]ohnesperre\b/.test(location.search) ? 0 : 400;
+let klickAb = 0;
+const sperre = () => { klickAb = performance.now() + SPERRZEIT; };
+document.addEventListener('click', e => { if (performance.now() < klickAb) { e.stopPropagation(); e.preventDefault(); } }, true);
+const dots = (n, i, rot) => `<div class="progress"><span class="dots">${Array.from({ length: n }, (_, k) => `<i class="${rot && rot.has(k) ? 'falsch' : k < i ? 'on' : k === i ? 'jetzt' : ''}"></i>`).join('')}</span></div>`;
+const sterne = n => `<span class="sterne">${'★'.repeat(n)}<i>${'★'.repeat(3 - n)}</i></span>`;
+const LOB = ['Richtig!', 'Genau!', 'Stimmt!', 'Sauber!', 'Sehr gut!'];
+
+// ---------- Satz zeichnen ----------
+// m: inf (Infinitiv unterstreichen) · zv (GZ/VZ darüber, sonst I) · akk (A über dem Akkusativ) · kl (Klammer) ·
+//    kopf (Kopfverb gelb) · tap (Wörter antippbar) · klein · strich (false: ohne Längenstriche)
+function satzHtml(s, m) {
+  m = m || {};
+  const teile = s.w.map((x, i) => {
+    const cl = ['w']; let lab = '';
+    if (m.inf && i === s.inf) { cl.push('inf'); lab = m.zv ? s.zv : 'I'; }
+    if (m.akk && i === s.akk) lab = 'A';
+    if (m.kopf && i === s.kopf) cl.push('kv');      // nicht „kopf“: so heißt schon die Kopfzeile der Druckblätter
+    const attr = `class="${cl.join(' ')}"${lab ? ` data-l="${lab}"` : ''}`, wort = (m.strich === false ? ohneStrich(x) : x) + (s.fn && s.fn[i] ? `<span class="fn">${s.fn[i]}</span>` : '');
+    const el = m.tap ? `<button type="button" ${attr} data-i="${i}">${wort}</button>` : `<span ${attr}>${wort}</span>`;
+    // die Klammer bleibt an ihrem Wort, sonst steht sie am Handy allein am Zeilenende
+    if (m.kl && i === s.a) return `<span class="nb"><span class="kl">(</span>${el}</span>`;
+    if (m.kl && i === s.b) return `<span class="nb">${el}<span class="kl">)</span></span>`;
+    return el;
+  });
+  return `<div class="satz${m.tap ? ' tap' : ''}${m.klein ? ' klein' : ''}">${teile.join(' ')}${s.fn ? '' : '<span class="punkt">.</span>'}</div>`;
+}
+const ALLES = { inf: 1, zv: 1, akk: 1, kl: 1, kopf: 1 };
+const regelText = s => `Haupthandlung ${s.zeit === 'pr' ? 'im Präsens' : 'in der Vergangenheit'} (${L(s.w[s.kopf])}) + ${s.zv === 'GZ' ? 'gleichzeitig' : 'vorzeitig'} (${L(s.w[s.inf])}) → dass-Satz im <b>${ZEITEN[s.zi]}</b>.`;
+const dtHtml = s => `<p class="dt">${s.aci ? `${s.h}, <span class="dass">dass</span> ${s.f.d[s.zi]}.` : s.de}</p>`;
+const faustTafel = an => `<div class="faust2"><div class="fk leer"></div><div class="fk">Infinitiv Präsens<small>gleichzeitig (GZ)</small></div><div class="fk">Infinitiv Perfekt<small>vorzeitig (VZ)</small></div>
+  <div class="fz">Haupthandlung im Präsens</div><div class="fc${an === 0 ? ' an' : ''}">dass-Satz im <b>Präsens</b></div><div class="fc${an === 2 ? ' an' : ''}">dass-Satz im <b>Perfekt</b></div>
+  <div class="fz">Haupthandlung in der Vergangenheit<small>(Präteritum/Imperfekt oder Perfekt)</small></div><div class="fc${an === 1 ? ' an' : ''}">dass-Satz im <b>Präteritum</b></div><div class="fc${an === 3 ? ' an' : ''}">dass-Satz im <b>Plusquamperfekt</b></div></div>`;
+
+// ===================================================================
+// SCHRITTE – Stationen und Übungsrunden sind Folgen von Schritten:
+//  info (lesen, ausprobieren) · wahl (eine Antwort) · sort (einordnen) · tippe (ein Wort im Satz antippen) ·
+//  klammer (erstes und letztes Wort des AcI) · multi (mehrere antippen) · merk (Merksatz bauen) ·
+//  reihe (in die richtige Reihenfolge bringen) · sechs (ein Satz in sechs Schritten)
+// Fehler zählt R.fehler.
+// ===================================================================
+function fbZeigen(el, ok, text, weiter, label) {
+  el.innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}">${ok ? `<b>${pick(LOB)}</b> ` : ''}${text || ''}</div><div class="mitte"><button class="btn" id="w" type="button">${label || 'Weiter'}</button></div>`;
+  const b = $('#w', el); b.onclick = weiter; spaeterFokus(b); sperre();
+}
+const wackeln = b => { b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel'); };
+// Zweiter Tipp auf dasselbe Element kurz nach dem ersten (Doppeltipp am Handy) zählt nicht – sonst würde ein Fehler
+// doppelt gezählt oder eine Auswahl gleich wieder aufgehoben.
+let tippMerker = [null, 0];
+const doppeltipp = el => { const t = performance.now(), d = SPERRZEIT > 0 && tippMerker[0] === el && t - tippMerker[1] < 450; tippMerker = [el, t]; return d; };
+function sInfo(host, st, weiter) {
+  host.innerHTML = `${st.h}<div class="mitte"><button class="btn" id="w" type="button">${st.knopf || 'Weiter'}</button></div>`;
+  $('#w', host).onclick = weiter;
+  if (st.bind) st.bind(host);
+}
+function sWahl(host, st, weiter) {
+  const opts = st.opts.map((o, i) => [o, i]), reihe = st.fest ? opts : shuffle(opts);
+  host.innerHTML = `${st.vor || ''}<p class="q">${st.q}</p><div class="opts ${st.liste ? 'liste' : 'mitte'}">${reihe.map(([o, i]) => `<button class="opt" type="button" data-i="${i}">${o}</button>`).join('')}</div><div class="fb"></div>`;
+  $$('.opt', host).forEach(b => b.onclick = () => {
+    const ok = +b.dataset.i === st.ok;
+    $$('.opt', host).forEach(x => { x.disabled = true; if (+x.dataset.i === st.ok) x.classList.add(ok ? 'ok' : 'fehlt'); });
+    if (!ok) { b.classList.add('no'); R.fehler++; }
+    if (st.nach) $('.fb', host).insertAdjacentHTML('beforebegin', st.nach);
+    fbZeigen($('.fb', host), ok, st.why || '', weiter);
+  });
+}
+function sSort(host, st, weiter) {
+  const items = shuffle(st.items); let i = 0;
+  const zeig = () => {
+    if (i >= items.length) return weiter();
+    const [txt, kat, why] = items[i];
+    host.innerHTML = `<p class="q">${st.q}</p>${dots(items.length, i)}<div class="gross">${txt}</div><div class="opts mitte">${st.kat.map((k, j) => `<button class="opt" type="button" data-j="${j}">${k}</button>`).join('')}</div><div class="fb"></div>`;
+    $$('.opt', host).forEach(b => b.onclick = () => {
+      const ok = +b.dataset.j === kat;
+      $$('.opt', host).forEach(x => { x.disabled = true; if (+x.dataset.j === kat) x.classList.add(ok ? 'ok' : 'fehlt'); });
+      if (!ok) { b.classList.add('no'); R.fehler++; }
+      i++;
+      if (ok) spaeter(host, zeig, 500); else fbZeigen($('.fb', host), false, why || '', zeig);
+    });
+    sperre();
+  };
+  zeig();
+}
+function sTippe(host, st, weiter) {
+  const s = st.s, ziel = s[st.ziel]; let fehl = 0;
+  host.innerHTML = `<p class="q">${st.q}</p>${satzHtml(s, { ...(st.zeig || {}), tap: 1 })}<div class="fb"></div>`;
+  $$('.satz .w', host).forEach(b => b.onclick = () => {
+    if (doppeltipp(b)) return;
+    if (+b.dataset.i === ziel) {
+      $('.satz', host).outerHTML = satzHtml(s, { ...(st.zeig || {}), ...(st.danach || {}) });
+      fbZeigen($('.fb', host), true, st.why || '', weiter);
+    } else {
+      R.fehler++; fehl++; wackeln(b);
+      if (fehl >= 2 && st.tipp) $('.fb', host).innerHTML = `<div class="msg tipp">${st.tipp}</div>`;
+    }
+  });
+}
+function sKlammer(host, st, weiter) {
+  const s = st.s; let erst = -1, fehl = 0;
+  const zeichne = meldung => {
+    host.innerHTML = `<p class="q">${st.q || 'Setze die Klammer: Tippe das <b>erste</b> und das <b>letzte</b> Wort des AcI an.'}</p>${satzHtml(s, { tap: 1 })}<div class="fb">${meldung || ''}</div>`;
+    $$('.satz .w', host).forEach(b => b.onclick = () => { if (!doppeltipp(b)) tippe(+b.dataset.i, b); });
+    if (meldung) sperre();
+  };
+  const tippe = (i, b) => {
+    if (erst < 0) { erst = i; b.classList.add('sel'); return; }
+    if (i === erst) { erst = -1; b.classList.remove('sel'); return; }
+    const a = Math.min(erst, i), z = Math.max(erst, i);
+    if (a === s.a && z === s.b) {
+      $('.satz', host).outerHTML = satzHtml(s, { inf: 1, akk: 1, kl: 1, kopf: 1 });
+      fbZeigen($('.fb', host), true, st.why || `Die Klammer reicht vom Akkusativ ${L(s.w[s.a])} bis zum Infinitiv ${L(s.w[s.b])}. Das Kopfverb ${L(s.w[s.kopf])} bleibt draußen.${s.f && s.f.erw ? ` Mit in der Klammer: ${s.f.erw}.` : ''}`, weiter);
+    } else {
+      R.fehler++; fehl++; erst = -1;
+      zeichne(fehl >= 2 ? `<div class="msg tipp">Tipp: Die Klammer beginnt beim ersten Akkusativ und endet beim Infinitiv.${fehl >= 3 ? ` Der Infinitiv ist ${L(s.w[s.inf])}.` : ''}</div>` : '<div class="msg no">Noch nicht. Tippe noch einmal das erste und das letzte Wort an.</div>');
+    }
+  };
+  zeichne();
+}
+function sMulti(host, st, weiter) {
+  const items = shuffle(st.items.map((x, i) => [x, i]));
+  host.innerHTML = `<p class="q">${st.q}</p><div class="opts liste">${items.map(([x, i]) => `<button class="opt" type="button" data-i="${i}">${x[0]}</button>`).join('')}</div><div class="mitte"><button class="btn" id="pr" type="button">Prüfen</button></div><div class="fb"></div>`;
+  $$('.opt', host).forEach(b => b.onclick = () => { if (!doppeltipp(b)) b.classList.toggle('sel'); });
+  $('#pr', host).onclick = () => {
+    let gut = true;
+    $$('.opt', host).forEach(b => { const soll = st.items[+b.dataset.i][1], ist = b.classList.contains('sel'); b.disabled = true; b.classList.remove('sel');
+      if (soll) b.classList.add(ist ? 'ok' : 'fehlt'); else if (ist) b.classList.add('no'); if (soll !== ist) gut = false; });
+    if (!gut) R.fehler++;
+    $('#pr', host).remove();
+    fbZeigen($('.fb', host), gut, st.why || '', weiter);
+  };
+}
+function sMerk(host, st, weiter) {
+  const loes = [...st.text.matchAll(/\{([^}]+)\}/g)].map(m => m[1]), chips = shuffle(loes.concat(st.extra || [])), weg = new Set(); let i = 0;
+  const zeichne = () => {
+    let n = 0;
+    const satzT = st.text.replace(/\{([^}]+)\}/g, (_, x) => { const k = n++; return `<span class="gap ${k < i ? 'voll' : k === i ? 'dran' : ''}">${k < i ? x : '…'}</span>`; });
+    host.innerHTML = `<p class="q">${st.q || 'Baue den Merksatz: Tippe die fehlenden Wörter der Reihe nach an.'}</p><p class="msatz merk">${satzT}</p><div class="chips mitte">${chips.map((c, k) => `<button class="chip" type="button" data-k="${k}"${weg.has(k) ? ' disabled' : ''}>${c}</button>`).join('')}</div><div class="fb"></div>`;
+    if (i >= loes.length) { $('.chips', host).remove(); return fbZeigen($('.fb', host), true, st.why || 'Das ist der Merksatz dieser Station.', weiter); }
+    $$('.chip', host).forEach(b => b.onclick = () => {
+      if (doppeltipp(b)) return;
+      if (b.textContent === loes[i]) { weg.add(+b.dataset.k); i++; zeichne(); sperre(); } else { R.fehler++; wackeln(b); }
+    });
+  };
+  zeichne();
+}
+function sReihe(host, st, weiter) {
+  const karten = shuffle(st.items.map((x, i) => [x, i])); let i = 0;
+  const zeichne = () => {
+    host.innerHTML = `<p class="q">${st.q}</p><ol class="schritte">${st.items.slice(0, i).map(x => `<li class="fertig">${x}</li>`).join('')}</ol><div class="opts liste">${karten.filter(([, k]) => k >= i).map(([x, k]) => `<button class="opt" type="button" data-k="${k}">${x}</button>`).join('')}</div><div class="fb"></div>`;
+    if (i >= st.items.length) return fbZeigen($('.fb', host), true, st.why || '', weiter);
+    $$('.opt', host).forEach(b => b.onclick = () => { if (doppeltipp(b)) return; if (+b.dataset.k === i) { i++; zeichne(); sperre(); } else { R.fehler++; wackeln(b); } });
+  };
+  zeichne();
+}
+// Ein Satz in den sechs Schritten vom Arbeitsblatt. Bei Sätzen ohne AcI endet es nach Schritt 2.
+const SCHRITTE = ['Markiere den Infinitiv.', 'Prüfe, ob das Prädikat ein Kopfverb ist. Wenn nicht: kein AcI.', 'Wenn ja: Schreibe GZ oder VZ über den Infinitiv.', 'Suche den ersten Akkusativ und setze die Klammer.', 'Übersetze die Wörter außerhalb der Klammer.', 'Übersetze die Klammer als dass-Satz. Achte auf das Zeitverhältnis!'];
+function sSechs(host, st, weiter) {
+  const s = st.s, m = {}; let n = 0;
+  const rahmen = (frage, innen, tap) => {
+    host.innerHTML = `<p class="small muted">Schritt ${n + 1} von 6</p><p class="q"><b>${SCHRITTE[n]}</b>${frage ? '<br>' + frage : ''}</p>${satzHtml(s, { ...m, tap })}${m.h ? `<p class="dt">${m.h},${m.d ? ` <span class="dass">dass</span> ${m.d}.` : ' …'}</p>` : ''}${innen || ''}<div class="fb"></div>`;
+    sperre();
+  };
+  const knoepfe = (opts, richtig, dann, warum) => $$('.opt', host).forEach(b => b.onclick = () => {
+    const ok = +b.dataset.i === richtig;
+    if (ok) { $$('.opt', host).forEach(x => x.disabled = true); b.classList.add('ok'); dann(); }
+    else { R.fehler++; b.classList.add('no'); b.disabled = true; if (warum) $('.fb', host).innerHTML = `<div class="msg tipp">${warum}</div>`; }
+  });
+  const optHtml = (opts, liste) => `<div class="opts ${liste ? 'liste' : 'mitte'}">${opts.map(([t, i]) => `<button class="opt" type="button" data-i="${i}">${t}</button>`).join('')}</div>`;
+  const wortTippen = (ziel, dann, tipp) => { let fehl = 0; $$('.satz .w', host).forEach(b => b.onclick = () => {
+    if (doppeltipp(b)) return;
+    if (+b.dataset.i === ziel) dann(); else { R.fehler++; fehl++; wackeln(b); if (fehl >= 2) $('.fb', host).innerHTML = `<div class="msg tipp">${tipp}</div>`; } }); };
+  const schritt = () => {
+    if (n === 0) { rahmen('Tippe ihn an.', '', 1); wortTippen(s.inf, () => { m.inf = 1; n = 1; schritt(); }, 'Ein Infinitiv endet auf <b>-re</b> (Präsens) oder auf <b>-isse</b> (Perfekt). <i>esse</i> und <i>posse</i> sind auch Infinitive.'); }
+    else if (n === 1 && !m.kopf) { rahmen('Tippe zuerst das Prädikat an.', '', 1); wortTippen(s.kopf, () => { m.kopf = 1; schritt(); }, 'Das Prädikat ist die gebeugte Verbform – nicht der Infinitiv.'); }
+    else if (n === 1) {
+      rahmen(`Ist ${L(s.w[s.kopf])} ein Kopfverb?`, optHtml([['Ja, ein Kopfverb', 1], ['Nein, kein Kopfverb', 0]]));
+      $$('.opt', host).forEach(b => b.onclick = () => {
+        const ok = (+b.dataset.i === 1) === s.aci;
+        $$('.opt', host).forEach(x => { x.disabled = true; if ((+x.dataset.i === 1) === s.aci) x.classList.add(ok ? 'ok' : 'fehlt'); });
+        if (!ok) { b.classList.add('no'); R.fehler++; }
+        if (s.aci) fbZeigen($('.fb', host), ok, `${L(s.w[s.kopf])} kommt von <b>${s.f.kv}</b> – ein Kopfverb. Also steckt in diesem Satz ein AcI.`, () => { n = 2; schritt(); });
+        else { $('.fb', host).insertAdjacentHTML('beforebegin', dtHtml(s)); fbZeigen($('.fb', host), ok, `${L(s.w[s.kopf])} kommt von <b>${s.kv}</b> – das ist kein Kopfverb. Also gibt es hier <b>keinen AcI</b>: Der Infinitiv gehört einfach zum Prädikat. Du übersetzt ohne dass-Satz.`, weiter); }
+      });
+    }
+    else if (n === 2) { rahmen(`Schau auf die Endung von ${L(s.w[s.inf])}.`, optHtml([['GZ – gleichzeitig', 0], ['VZ – vorzeitig', 1]]));
+      knoepfe(null, s.zv === 'VZ' ? 1 : 0, () => { m.zv = 1; n = 3; spaeter(host, schritt, 500); }, 'Endet der Infinitiv auf <b>-isse</b>? Dann ist es der Infinitiv Perfekt: vorzeitig. Sonst ist es der Infinitiv Präsens: gleichzeitig.'); }
+    else if (n === 3) { rahmen('Tippe den ersten Akkusativ an.', '', 1); wortTippen(s.akk, () => { m.akk = 1; m.kl = 1; n = 4; schritt(); }, 'Der Akkusativ antwortet auf „wen oder was?“. Typische Endungen: -am, -um, -em, -ōs, -ēs, -a. Das Subjekt des ganzen Satzes zählt nicht.'); }
+    else if (n === 4) { rahmen(`Draußen bleibt der Hauptsatz mit dem Kopfverb ${L(s.w[s.kopf])}.`, optHtml(shuffle(s.h2.map((t, i) => [t + ', …', i]))));
+      knoepfe(null, s.zeit === 'pr' ? 0 : 1, () => { m.h = s.h; n = 5; spaeter(host, schritt, 500); }, `Schau genau hin: Steht ${L(s.w[s.kopf])} im Präsens oder in der Vergangenheit?`); }
+    else { const wahl = falscheZeiten(s).concat(s.zi);      // die richtige Zeit und höchstens zwei falsche – immer gleich viele
+      rahmen('Der Akkusativ wird zum Subjekt, der Infinitiv zum Prädikat.', optHtml(shuffle(wahl.map(i => [`…, dass ${s.f.d[i]}.`, i])), true));
+      $$('.opt', host).forEach(b => b.onclick = () => {
+        const ok = +b.dataset.i === s.zi;
+        if (!ok) { R.fehler++; b.classList.add('no'); b.disabled = true; $('.fb', host).innerHTML = `<div class="msg tipp">Denk an die Faustregel: ${regelText(s).replace(/<b>.*<\/b>/, '?')}</div>`; return; }
+        m.d = s.f.d[s.zi]; rahmen('', ''); fbZeigen($('.fb', host), true, regelText(s), weiter);
+      }); }
+  };
+  schritt();
+}
+// Zwei falsche Zeiten für die Auswahl. Bei Haupthandlung im Präsens + vorzeitig gilt nach der Faustregel das Perfekt;
+// das Präteritum meint dort dasselbe und wird deshalb nie als falsche Antwort angeboten.
+const falscheZeiten = s => shuffle([0, 1, 2, 3].filter(i => s.f.d[i] && i !== s.zi && !(s.zi === 2 && i === 1))).slice(0, 2);
+const STEP = { info: sInfo, wahl: sWahl, sort: sSort, tippe: sTippe, klammer: sKlammer, multi: sMulti, merk: sMerk, reihe: sReihe, sechs: sSechs };
+
+// ===================================================================
+// AcI-WERKSTATT – sechs Stationen (verstehen) und sechs Übungsarten
+// ===================================================================
+const fam = k => FAM.find(f => f.k === k);
+const sz = (k, zeit, zv) => satz(fam(k), zeit, zv);
+const lsatz = s => L(s.w.join(' ') + '.');
+// n Sätze aus verschiedenen Familien. Die ersten vier decken die vier Fälle ab, der Rest ist zufällig – so lässt sich
+// die letzte Antwort einer Runde nicht abzählen. Wortstellung gemischt: Kopfverb am Ende oder vor dem AcI, manchmal
+// tum/subitō vorn. Damit beginnt die Klammer nicht immer beim zweiten Wort.
+function ziehe(n, nurVier) {
+  const fams = shuffle(FAM.filter(f => !nurVier || f.inf[1])), start = shuffle(FALL), out = [];
+  for (let i = 0; out.length < n && i < 800; i++) {
+    const c = out.length < 4 ? start[out.length] : pick(FALL), f = fams[i % fams.length];
+    if (c[1] === 'VZ' && !f.inf[1]) continue;
+    if (out.some(s => s.f === f && s.zeit === c[0] && s.zv === c[1])) continue;
+    const adv = Math.random() < 0.3 ? pick(['tum', 'subito']) : null;
+    out.push(satz(f, c[0], c[1], { vg: adv === 'subito' ? f.vg[0] : pick(f.vg), mitte: Math.random() < 0.4, adv }));
+  }
+  return shuffle(out);
+}
+const GZVZ = ['GZ – gleichzeitig', 'VZ – vorzeitig'];
+const zvWarum = s => s.zv === 'VZ' ? `${L(s.w[s.inf])} endet auf <b>-isse</b>: Infinitiv Perfekt, also <b>vorzeitig</b>.` : `${L(s.w[s.inf])} ist ein Infinitiv Präsens, also <b>gleichzeitig</b>.`;
+const fZv = s => ({ t: 'wahl', vor: satzHtml(s), q: 'Gleichzeitig oder vorzeitig?', opts: GZVZ, fest: 1, ok: s.zv === 'VZ' ? 1 : 0, nach: satzHtml(s, { inf: 1, zv: 1, klein: 1 }) + dtHtml(s), why: zvWarum(s) });
+const fZeit = s => ({ t: 'wahl', vor: satzHtml(s), q: 'Welche Zeit steht im deutschen dass-Satz?', opts: ZEITEN, fest: 1, ok: s.zi, nach: dtHtml(s), why: regelText(s) });
+function fUeb(s) {
+  const andere = falscheZeiten(s).map(i => [`${s.h}, dass ${s.f.d[i]}.`, i]);
+  if (s.f.x && !s.adv && Math.random() < 0.5) andere[0] = [s.f.x[s.zeit === 'pr' ? 0 : 1] + '.', -1];   // manchmal stattdessen: Rollen vertauscht
+  const opts = shuffle([[s.de, s.zi], ...andere]);
+  return { t: 'wahl', vor: satzHtml(s), q: 'Welche Übersetzung passt zur Faustregel?', liste: 1, fest: 1, opts: opts.map(x => x[0]), ok: opts.findIndex(x => x[1] === s.zi), why: regelText(s) };
+}
+const fFalle = s => ({ t: 'wahl', vor: satzHtml(s), q: 'Steckt in diesem Satz ein AcI?', opts: ['AcI', 'kein AcI'], fest: 1, ok: s.aci ? 0 : 1,
+  nach: (s.aci ? satzHtml(s, { inf: 1, akk: 1, kl: 1, kopf: 1, klein: 1 }) : '') + dtHtml(s),
+  why: s.aci ? `${L(s.w[s.kopf])} ist ein Kopfverb (von ${s.f.kv}). Davon hängt der AcI ab.` : `${L(s.w[s.kopf])} kommt von ${s.kv} – kein Kopfverb. Der Infinitiv gehört einfach zum Prädikat.` });
+const kopfKasten = () => { const gr = {}; KOPF.forEach(([v, de, g]) => (gr[g] = gr[g] || []).push(`${L(v)} <span class="small muted">${de}</span>`));
+  const bild = { 'sagen': '👄', 'wahrnehmen': '👀', 'wissen und meinen': '🧠', 'sich freuen': '💛' };
+  return `<div class="zwei">${Object.entries(gr).map(([g, vs]) => `<div class="kasten"><b>${bild[g]} ${g}</b>${vs.map(v => `<span>${v}</span>`).join('')}</div>`).join('')}</div>`; };
+
+const STATION = {
+  s1: { titel: 'Was ist ein AcI?', sub: 'Akkusativ + Infinitiv = dass-Satz', steps: () => {
+    const a = sz('hoeren', 'pr', 'GZ'), b = sz('bleiben', 'pr', 'GZ'), c = sz('weggehen', 'pr', 'GZ');
+    return [
+      { t: 'info', h: `<p><b>AcI</b> ist die Abkürzung für <b>Accūsātīvus cum Īnfīnītīvō</b> – Akkusativ mit Infinitiv.</p>${satzHtml(a, { inf: 1, akk: 1 })}
+        <p class="dt">Claudia hört, <span class="dass">dass</span> <span class="sub">Aulus</span> <span class="praed">schreit</span>.</p>
+        <div class="merk">Im Deutschen wird daraus ein <b>dass-Satz</b>. Der Akkusativ (<b>A</b>) wird zum <span class="dt"><span class="sub">Subjekt</span></span>, der Infinitiv (<b>I</b>) zum <span class="dt"><span class="praed">Prädikat</span></span> des dass-Satzes.</div>` },
+      { t: 'tippe', q: 'Tippe den <b>Infinitiv</b> an.', s: b, ziel: 'inf', danach: { inf: 1 }, why: `${L('manēre')} ist der Infinitiv: „bleiben“.`, tipp: 'Der Infinitiv ist die Grundform des Verbs. Er endet auf -re.' },
+      { t: 'tippe', q: 'Tippe jetzt den <b>Akkusativ</b> an.', s: b, ziel: 'akk', zeig: { inf: 1 }, danach: { inf: 1, akk: 1 }, why: `${L('patrem')} ist Akkusativ (wen?). Im dass-Satz wird er zum Subjekt: „der Vater“.`, tipp: 'Der Akkusativ antwortet auf „wen oder was?“.' },
+      { t: 'wahl', vor: satzHtml(b, { inf: 1, akk: 1 }), q: 'Wie heißt der Satz auf Deutsch?', liste: 1, opts: ['Die Mutter glaubt, dass der Vater im Haus bleibt.', 'Der Vater glaubt, dass die Mutter im Haus bleibt.', 'Die Mutter glaubt den Vater im Haus bleiben.', 'Die Mutter und der Vater bleiben im Haus.'], ok: 0,
+        why: `Akkusativ ${L('patrem')} → Subjekt „der Vater“. Infinitiv ${L('manēre')} → Prädikat „bleibt“.` },
+      { t: 'wahl', vor: satzHtml(c), q: 'Und dieser Satz?', liste: 1, opts: ['Der Vater sieht, dass Claudia schon weggeht.', 'Claudia sieht, dass der Vater schon weggeht.', 'Der Vater sieht Claudia und geht schon weg.'], ok: 0, nach: satzHtml(c, { inf: 1, akk: 1, klein: 1 }),
+        why: `Akkusativ ${L('Claudiam')} → Subjekt „Claudia“. Infinitiv ${L('discēdere')} → Prädikat „weggeht“.` },
+      { t: 'merk', text: 'Einen AcI übersetzt du mit einem {dass}-Satz. Der {Akkusativ} wird zum {Subjekt}, der {Infinitiv} zum {Prädikat}.', extra: ['weil', 'Dativ', 'Objekt'] }
+    ]; } },
+  s2: { titel: 'Kopfverben', sub: 'Wovon hängt der AcI ab?', steps: () => {
+    const s = sz('fliehen', 'pr', 'GZ'), o = OHNE[0], kv = shuffle(KOPF).slice(0, 5), nk = shuffle(KEINKOPF).slice(0, 5);
+    return [
+      { t: 'info', h: `<p>Ein AcI steht nicht bei jedem Verb. Er hängt von einem <b>Kopfverb</b> ab – einem Verb für das, was man mit dem Kopf tut: sagen, wahrnehmen, wissen, meinen, sich freuen.</p>${kopfKasten()}<p class="small muted">Im Satz ist das Kopfverb das Prädikat.</p>` },
+      { t: 'sort', q: 'Kopfverb oder nicht?', kat: ['Kopfverb', 'kein Kopfverb'], items: kv.map(([v, de]) => [`${v}<br><span class="small muted">${de}</span>`, 0, `${L(v)} (${de}) ist ein Kopfverb.`]).concat(nk.map(([v, de]) => [`${v}<br><span class="small muted">${de}</span>`, 1, `${L(v)} (${de}) ist kein Verb des Sagens, Wahrnehmens, Wissens oder Meinens – kein Kopfverb.`])) },
+      { t: 'tippe', q: 'Tippe das <b>Kopfverb</b> an.', s, ziel: 'kopf', danach: { kopf: 1 }, why: `${L('dīcit')} (er sagt) kommt von dīcere. Davon hängt der AcI ab.`, tipp: 'Das Kopfverb ist das Prädikat des Satzes: eine gebeugte Verbform, kein Infinitiv.' },
+      { t: 'wahl', vor: satzHtml(o, { inf: 1 }), q: 'Auch hier steht ein Infinitiv. Ist das ein AcI?', fest: 1, opts: ['Ja – es gibt einen Akkusativ und einen Infinitiv.', 'Nein – das Prädikat ist kein Kopfverb.'], ok: 1, liste: 1, nach: dtHtml(o),
+        why: `Akkusativ und Infinitiv allein reichen nicht. Erst das Kopfverb macht den AcI. ${L('potuit')} kommt von posse (können): Der Infinitiv gehört einfach zu „konnte“.` },
+      { t: 'multi', q: 'In welchen Sätzen steckt ein AcI? Tippe <b>alle</b> an.', items: [[lsatz(sz('saxa', 'pr', 'GZ')), true], [lsatz(OHNE[1]), false], [lsatz(sz('schonen', 'vg', 'GZ')), true], [lsatz(OHNE[2]), false]],
+        why: `Schau auf das Prädikat: ${L('videt')} und ${L('putāvit')} sind Kopfverben, ${L('dēbet')} und ${L('contendunt')} nicht.` },
+      { t: 'merk', text: 'Ein AcI hängt von einem {Kopfverb} ab. Das Kopfverb ist das {Prädikat} des Satzes. Steht dort kein Kopfverb, gibt es keinen {AcI}.', extra: ['Infinitiv', 'Akkusativ'] }
+    ]; } },
+  s3: { titel: 'Die Klammer', sub: 'Vom Akkusativ bis zum Infinitiv', steps: () => {
+    const a = sz('weggehen', 'pr', 'GZ'), b = sz('saxa', 'pr', 'GZ'), c = sz('vernichten', 'pr', 'GZ'), d = sz('plan', 'pr', 'GZ'), e = sz('gross', 'pr', 'GZ');
+    return [
+      { t: 'info', h: `<p>Der AcI ist ein <b>Block</b>. Er beginnt beim (ersten) Akkusativ und endet beim Infinitiv. Auf dem Arbeitsblatt setzt du eine <b>Klammer</b> darum:</p>${satzHtml(a, { inf: 1, akk: 1, kl: 1, kopf: 1 })}${dtHtml(a)}
+        <div class="merk">Zwischen Akkusativ und Infinitiv können weitere Wörter stehen: ein Adverbiale (wann? wo? woher?), ein Objekt oder ein Prädikatsnomen. Sie gehören alle in die Klammer. Das Kopfverb bleibt draußen.</div>` },
+      { t: 'klammer', s: b },
+      { t: 'klammer', s: c, why: 'Hier stehen zwei Akkusative. Die Klammer beginnt beim <b>ersten</b>.' },
+      { t: 'wahl', vor: satzHtml(c, { inf: 1, akk: 1, kl: 1, kopf: 1 }), q: 'Wer vernichtet hier wen?', liste: 1, opts: ['Der Vesuv vernichtet die Stadt.', 'Die Stadt vernichtet den Vesuv.'], ok: 0, nach: dtHtml(c),
+        why: `Der <b>erste</b> Akkusativ (${L('Vesuvium')}) wird zum Subjekt. Der zweite (${L('urbem')}) ist das Objekt.` },
+      { t: 'klammer', s: d, q: 'Hier steht das Kopfverb vorn. Tippe das <b>erste</b> und das <b>letzte</b> Wort des AcI an.' },
+      { t: 'klammer', s: satz(fam('fliehen'), 'pr', 'GZ', { mitte: 1 }), q: 'Und hier steht das Kopfverb mitten im Satz. Wo beginnt der AcI, wo endet er?' },
+      { t: 'wahl', vor: satzHtml(e, { inf: 1, akk: 1, kl: 1, kopf: 1 }), q: `${L('magnum')} passt zu ${L('tēctum')}. Wie heißt der Satz?`, liste: 1, opts: ['Claudia sieht, dass das Haus groß ist.', 'Claudia sieht das große Haus.', 'Das Haus sieht, dass Claudia groß ist.'], ok: 0,
+        why: `Der Infinitiv ${L('esse')} wird zum Prädikat „ist“. ${L('magnum')} ist das Prädikatsnomen: „dass das Haus groß ist“.` },
+      { t: 'merk', text: 'Die Klammer beginnt beim ersten {Akkusativ} und endet beim {Infinitiv}. Das {Kopfverb} bleibt draußen.', extra: ['Dativ', 'Subjekt'] }
+    ]; } },
+  s4: { titel: 'Gleichzeitig oder vorzeitig?', sub: 'Der Infinitiv verrät es', steps: () => {
+    const vz = sz('fliehen', 'vg', 'VZ'), gz = sz('gross', 'pr', 'GZ'), drei = shuffle(VERBEN.filter(v => !['esse', 'adesse', 'posse', 'velle'].includes(v[0]))), zehn = shuffle(VERBEN);
+    return [
+      { t: 'info', h: `<p>Der Infinitiv verrät das <b>Zeitverhältnis</b>: Passiert das im AcI zur selben Zeit wie die Haupthandlung – oder war es schon vorher?</p>
+        <div class="zwei"><div class="kasten"><b>gleichzeitig (GZ)</b><span>Infinitiv <b>Präsens</b>, meist Endung -re</span><span class="lat gross">clāmā<span class="en">re</span></span><span class="small muted">Es passiert zur selben Zeit.</span></div>
+        <div class="kasten"><b>vorzeitig (VZ)</b><span>Infinitiv <b>Perfekt</b>, Endung -isse</span><span class="lat gross"><span class="st">clāmāv</span><span class="en">isse</span></span><span class="small muted">Es ist vorher passiert.</span></div></div>
+        <div class="merk">Den Infinitiv Perfekt baust du aus dem <b>Perfektstamm</b> und <b>-isse</b>. Den Perfektstamm kennst du aus dem Perfekt-Baukasten: vīd-ī → vīd-isse. Auch esse und posse sind Infinitive Präsens; ihr Infinitiv Perfekt heißt fuisse und potuisse.</div>
+        <p class="small">Probier es aus – tippe ein Verb an:</p><div class="chips mitte" id="pv">${['vidēre', 'esse', 'currere', 'manēre', 'fugere', 'posse', 'dīcere', 'cadere'].map(v => `<button class="chip" type="button" data-v="${v}">${v}</button>`).join('')}</div><div id="pvz"></div>`,
+        bind: host => $$('#pv .chip', host).forEach(b => b.onclick = () => { const v = VERBEN.find(x => x[0] === b.dataset.v); $$('#pv .chip', host).forEach(x => x.classList.toggle('on', x === b));
+          $('#pvz', host).innerHTML = `<div class="zwei"><div class="kasten"><span class="small muted">gleichzeitig</span><span class="lat gross">${v[0]}</span></div><div class="kasten"><span class="small muted">vorzeitig: ${v[1].slice(0, -1)}-ī → </span><span class="lat gross"><span class="st">${v[1].slice(0, -1)}</span><span class="en">isse</span></span></div></div>`; }) },
+      { t: 'sort', q: 'Gleichzeitig oder vorzeitig?', kat: GZVZ, items: zehn.slice(0, 5).map(v => [v[0], 0, `${L(v[0])} ist ein Infinitiv Präsens: gleichzeitig.`]).concat(zehn.slice(5, 10).map(v => [infPf(v[1]), 1, `${L(infPf(v[1]))} endet auf -isse: Infinitiv Perfekt, also vorzeitig.`])) },
+      ...drei.slice(0, 3).map(v => ({ t: 'wahl', q: `Welches ist der <b>Infinitiv Perfekt</b> von ${L(v[0])}?`, opts: [infPf(v[1]), v[0], v[1].slice(0, -1) + 'it', v[1].slice(0, -1) + 'ērunt'].map(L), ok: 0, why: `Perfektstamm ${L(v[1].slice(0, -1) + '-')} und -isse: ${L(infPf(v[1]))}.` })),
+      { t: 'wahl', vor: satzHtml(vz, { inf: 1, akk: 1, kl: 1, kopf: 1 }), q: 'Gleichzeitig oder vorzeitig?', opts: GZVZ, fest: 1, ok: 1, nach: dtHtml(vz), why: `${L('fūgisse')} endet auf -isse: vorzeitig. Die Menschen waren schon geflohen, bevor Gnaeus es sagte.` },
+      { t: 'wahl', vor: satzHtml(gz, { inf: 1, akk: 1, kl: 1, kopf: 1 }), q: 'Und hier?', opts: GZVZ, fest: 1, ok: 0, nach: dtHtml(gz), why: `${L('esse')} ist ein Infinitiv Präsens: gleichzeitig. Der Infinitiv Perfekt hieße ${L('fuisse')}.` },
+      { t: 'merk', text: 'Infinitiv Präsens: {gleichzeitig}. Infinitiv Perfekt: {vorzeitig}. Den Infinitiv Perfekt erkennst du an der Endung {-isse}; davor steht der {Perfektstamm}.', extra: ['nachzeitig', '-re', 'Präsensstamm'] }
+    ]; } },
+  s5: { titel: 'Die Faustregel', sub: 'Welche Zeit steht im dass-Satz?', steps: () => {
+    const vier = ziehe(4, true), zwei = ziehe(2, true);
+    return [
+      { t: 'info', h: `<p>Welche <b>Zeit</b> steht im deutschen dass-Satz? Das hängt von zwei Dingen ab: von der Haupthandlung und vom Infinitiv. Stell beides um und schau, was passiert:</p>
+        <div class="row mitte"><span class="small">Haupthandlung:</span><div class="seg" id="fz"><button type="button" data-v="pr">Präsens</button><button type="button" data-v="vg">Vergangenheit</button></div></div>
+        <div class="row mitte"><span class="small">Infinitiv:</span><div class="seg" id="fv"><button type="button" data-v="GZ">Präsens (-re)</button><button type="button" data-v="VZ">Perfekt (-isse)</button></div></div><div id="fdemo" style="display:grid;gap:10px"></div>`,
+        bind: host => { let zeit = 'pr', zv = 'GZ'; const zeig = () => { const s = sz('hoeren', zeit, zv);
+          $$('#fz button', host).forEach(b => b.classList.toggle('on', b.dataset.v === zeit)); $$('#fv button', host).forEach(b => b.classList.toggle('on', b.dataset.v === zv));
+          $('#fdemo', host).innerHTML = satzHtml(s, ALLES) + dtHtml(s) + faustTafel(s.zi); };
+          $$('#fz button', host).forEach(b => b.onclick = () => { zeit = b.dataset.v; zeig(); }); $$('#fv button', host).forEach(b => b.onclick = () => { zv = b.dataset.v; zeig(); }); zeig(); } },
+      ...vier.map(fZeit), ...zwei.map(fUeb),
+      { t: 'merk', q: 'Baue die Faustregel: Tippe die Zeiten der Reihe nach an.', text: 'Haupthandlung im Präsens: gleichzeitig → {Präsens}, vorzeitig → {Perfekt}. Haupthandlung in der Vergangenheit: gleichzeitig → {Präteritum}, vorzeitig → {Plusquamperfekt}.', extra: ['Futur'] }
+    ]; } },
+  s6: { titel: 'Die sechs Schritte', sub: 'So übersetzt du jeden Satz mit AcI', steps: () => [
+      { t: 'info', h: `<p>So gehst du in der Arbeit bei jedem Satz mit einem Infinitiv vor – Schritt für Schritt, wie auf deinem Arbeitsblatt:</p><ol class="schritte">${SCHRITTE.map(x => `<li>${x}</li>`).join('')}</ol><p class="small muted">Probier es jetzt an drei Sätzen aus. Einer davon ist eine Falle.</p>`, knopf: 'Los' },
+      { t: 'sechs', s: sz('saxa', 'vg', 'GZ') }, { t: 'sechs', s: OHNE[3] }, { t: 'sechs', s: sz('schonen', 'vg', 'VZ') },
+      { t: 'reihe', q: 'Bring die sechs Schritte in die richtige Reihenfolge: Tippe immer den nächsten an.', items: SCHRITTE, why: 'In dieser Reihenfolge stehen die Schritte auch auf deinem Arbeitsblatt.' }
+    ] }
+};
+const SKEYS = Object.keys(STATION);
+const MODI = {
+  falle:   { titel: 'AcI oder nicht?', sub: 'aufs Prädikat schauen: Kopfverb?', steps: () => { const k = 2 + Math.floor(Math.random() * 3); return shuffle(ziehe(8 - k).concat(shuffle(OHNE).slice(0, k))).map(fFalle); } },
+  zv:      { titel: 'GZ oder VZ?', sub: 'auf den Infinitiv schauen', steps: () => ziehe(10).map(fZv) },
+  klammer: { titel: 'Klammer setzen', sub: 'vom Akkusativ bis zum Infinitiv', steps: () => ziehe(6).map(s => ({ t: 'klammer', s })) },
+  zeit:    { titel: 'Welche Zeit?', sub: 'die Faustregel anwenden', steps: () => ziehe(8).map(fZeit) },
+  ueb:     { titel: 'Welche Übersetzung stimmt?', sub: 'die Zeit nach der Faustregel', steps: () => ziehe(8, true).map(fUeb) },
+  sechs:   { titel: 'Sechs Schritte', sub: 'ganze Sätze wie in der Arbeit', steps: () => shuffle(ziehe(3).concat(pick(OHNE))).map(s => ({ t: 'sechs', s })) }
+};
+const MKEYS = Object.keys(MODI);
+// Kurz-Check: von jeder Übungsart etwas, vom Leichten zum Schweren. Einmal am Tag reicht – damit es bis zur Arbeit sitzt.
+const CHECK = { titel: 'Kurz-Check', steps: () => { const vier = ziehe(4, true), drei = ziehe(3);
+  return [fFalle(drei[0]), fFalle(pick(OHNE)), fZv(vier[0]), fZv(vier[1]), { t: 'klammer', s: drei[1] }, fZeit(vier[2]), fZeit(vier[3]), fUeb(ziehe(1, true)[0])]; } };
+
+function startFolge(art, k) {
+  const def = art === 'station' ? STATION[k] : k === 'check' ? CHECK : MODI[k];
+  R = { art, k, titel: def.titel, steps: def.steps(), i: 0, fehler: 0, rot: new Set() };
+  go('folge');
+}
+function renderFolge() {
+  const st = R.steps[R.i], nr = R.art === 'station' ? `Station ${SKEYS.indexOf(R.k) + 1} von ${SKEYS.length}` : 'Üben';
+  app.innerHTML = `<header class="top"><div class="eyebrow">AcI-Werkstatt · ${nr}</div><h1>${R.titel}</h1></header>
+    <section><div class="card"><div class="row" style="justify-content:space-between">${dots(R.steps.length, R.i, R.rot)}<button class="btn ghost small" id="ende" type="button">Beenden</button></div><div id="schritt" style="display:grid;gap:12px"></div></div></section>`;
+  $('#ende').onclick = () => { if (confirm('Wirklich beenden? Der Stand dieser Runde geht verloren.')) go('aci'); };
+  const vorher = R.fehler;
+  STEP[st.t]($('#schritt'), st, () => { if (R.fehler > vorher) R.rot.add(R.i); R.i++; if (R.i >= R.steps.length) folgeFertig(); else { render(); window.scrollTo(0, 0); } });
+}
+function folgeFertig() {
+  const n = R.steps.length, gut = n - R.rot.size; let kopf, text, knoepfe;
+  VIEW = 'ergebnis';      // die Runde ist gebucht; ein erneutes Zeichnen führt zur Übersicht, nicht zurück in die Runde
+  if (R.art === 'station') {
+    const st = R.fehler <= 1 ? 3 : R.fehler <= 3 ? 2 : R.fehler <= 6 ? 1 : 0, i = SKEYS.indexOf(R.k), next = SKEYS[i + 1];
+    if (st) { S.st[R.k] = Math.max(S.st[R.k] || 0, st); save(); }
+    kopf = st ? `Station geschafft ${sterne(st)}` : 'Das war noch zu wackelig';
+    text = st ? (R.fehler ? `Du hattest ${R.fehler} Fehler.${st < 3 ? ' Mit höchstens einem Fehler gibt es drei Sterne.' : ''}` : 'Ohne einen einzigen Fehler!') : `Das waren ${R.fehler} Fehler. Geh die Station gleich noch einmal durch – beim zweiten Mal geht es leichter.`;
+    knoepfe = (st && next ? `<button class="btn" id="b1" type="button">Weiter zu Station ${i + 2}</button>` : '') + `<button class="btn ${st && next ? 'ghost' : ''}" id="b2" type="button">Noch einmal</button><button class="btn ghost" id="b3" type="button">Zur Werkstatt</button>`;
+    app.innerHTML = ergebnis(kopf, text, knoepfe);
+    if ($('#b1')) $('#b1').onclick = () => startFolge('station', next);
+  } else {
+    const pz = Math.round(100 * gut / n), alt = S.best[R.k] || { n: 0, b: 0 };
+    S.best[R.k] = { n: alt.n + 1, b: Math.max(alt.b, pz) };
+    if (R.k === 'check' && pz >= 50) S.chk = { d: heute(), n: (S.chk ? S.chk.n : 0) + 1 };   // erst ab der Hälfte gilt er als erledigt
+    save();
+    kopf = `${gut} von ${n} beim ersten Versuch`;
+    text = pz === 100 ? 'Alles richtig – stark!' : pz >= 75 ? 'Das sitzt schon gut.' : 'Übung macht es: gleich noch eine Runde?';
+    if (alt.n && pz > alt.b) text += ' Neuer Bestwert!';
+    app.innerHTML = ergebnis(kopf, text, '<button class="btn" id="b2" type="button">Noch eine Runde</button><button class="btn ghost" id="b3" type="button">Zur Werkstatt</button>');
+  }
+  $('#b2').onclick = () => startFolge(R.art, R.k); $('#b3').onclick = () => go('aci');
+  window.scrollTo(0, 0); sperre();
+}
+const ergebnis = (kopf, text, knoepfe) => `<header class="top"><div class="eyebrow">AcI-Werkstatt</div><h1>${R.titel}</h1></header><section><div class="card" style="text-align:center"><div class="gross">${kopf}</div><p>${text}</p><div class="mitte">${knoepfe}</div></div></section>`;
+
+function renderAci() {
+  const next = SKEYS.find(k => !S.st[k]), fertig = SKEYS.filter(k => S.st[k]).length;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Latein · Klassenarbeit Dezember</div><h1>🧲 AcI-Werkstatt</h1>
+    <p class="muted">Erst verstehen, dann üben. Alles mit den Zeichen von deinem Arbeitsblatt: Infinitiv unterstreichen, GZ oder VZ darüber, Klammer um den AcI.</p></header>
+    <section><h2>Verstehen <span class="small muted">${fertig} von ${SKEYS.length} Stationen</span></h2><div class="grid">${SKEYS.map((k, i) => `<button class="tile ${S.st[k] ? 'done' : ''} ${k === next ? 'next' : ''}" type="button" data-s="${k}"><b>${i + 1} · ${STATION[k].titel}</b><span>${STATION[k].sub}</span>${S.st[k] ? sterne(S.st[k]) : k === next ? '<span class="tag">als Nächstes</span>' : ''}</button>`).join('')}</div></section>
+    ${fertig ? `<section><div class="card"><h2>Kurz-Check ${S.chk && S.chk.d === heute() ? '<span class="tag">heute erledigt</span>' : '<span class="tag">heute dran</span>'}</h2>
+      <p>Acht schnelle Fragen quer durch alle Stationen. Einmal am Tag reicht – so sitzt der AcI bis zur Arbeit.${S.best.check ? ` <span class="muted">Bestwert ${S.best.check.b} %.</span>` : ''}</p>
+      <div class="row"><button class="btn ${S.chk && S.chk.d === heute() ? 'ghost' : ''}" id="chk" type="button">${S.chk && S.chk.d === heute() ? 'Noch einmal' : 'Kurz-Check starten'}</button></div></div></section>` : ''}
+    <section><h2>Üben</h2><div class="grid">${MKEYS.map(k => { const b = S.best[k]; return `<button class="tile" type="button" data-m="${k}"><b>${MODI[k].titel}</b><span>${MODI[k].sub}</span><span>${b ? `Bestwert ${b.b} % · ${b.n} ${b.n === 1 ? 'Runde' : 'Runden'}` : 'noch nicht gespielt'}</span></button>`; }).join('')}</div></section>
+    <section><h2>Spickzettel</h2><div class="card"><p>Alles Wichtige zum AcI auf einer Seite – zum Ausdrucken und Aufhängen.</p><div class="row"><button class="btn" id="spick" type="button">Spickzettel ansehen</button><button class="btn ghost" id="spickdruck" type="button">Drucken</button></div></div></section>`;
+  $$('[data-s]').forEach(b => b.onclick = () => startFolge('station', b.dataset.s));
+  $$('[data-m]').forEach(b => b.onclick = () => startFolge('runde', b.dataset.m));
+  if ($('#chk')) $('#chk').onclick = () => startFolge('runde', 'check');
+  $('#spick').onclick = () => { BL = ['spick']; go('blatt'); }; $('#spickdruck').onclick = () => drucken(['spick']);
+}
+
+// ===================================================================
+// ÜBERSETZEN – Texte Latein → Deutsch, Satz für Satz
+// Wörter antippen schlägt in der Wortliste nach (wird gezählt). Die Prüfung sucht in der Eingabe nach Bausteinen;
+// ob der Satz stimmt, entscheidet das Kind selbst mit der Musterlösung (2 = stimmt, 1 = kleiner Fehler, 0 = nochmal).
+// ===================================================================
+const nackt = w => w.replace(/[.,;:!?„“]/g, '');
+function textSaetze(t) {
+  return t.s.map(x => { const s = { ...x, ...teileSatz(x.la), zeit: x.zeit || t.zeit };
+    if (s.aci) { s.zi = (s.zeit === 'pr' ? 0 : 1) + (s.zv === 'VZ' ? 2 : 0); } return s; });
+}
+// für die Regel-Zeile: Wörter ohne Satzzeichen
+const regelSatz = s => regelText({ ...s, w: s.w.map(nackt) });
+const textZeile = (s, strich) => s.w.map((w, j) => (strich ? w : ohneStrich(w)) + (s.fn[j] ? `<sup>${s.fn[j]}</sup>` : '')).join(' ');
+function startText(k, nur) {
+  const t = TEXTE.find(x => x.k === k), alle = textSaetze(t);
+  T = { t, alle, s: nur ? alle.filter((_, i) => nur.includes(i)) : alle, teil: !!nur, i: 0, noten: [], lex: new Set(), hilfen: 0, phase: 'ein', eingabe: '', hilfe: 0 };
+  go('text');
+}
+function renderText() {
+  const t = T.t, str = S.cfg.strich, n = T.s.length;
+  if (T.phase === 'ende') return renderTextEnde();
+  const s = T.s[T.i], rot = new Set(T.noten.map((x, i) => x === 0 ? i : -1));
+  app.innerHTML = `<header class="top"><div class="eyebrow">Übersetzen · ${t.stufe}</div><h1>${t.titel}</h1><p class="muted small">${t.worum}</p></header>
+    <section><div class="card" id="arbeit"></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><b>Der ganze Text</b><button class="btn ghost small" id="strich" type="button">${str ? 'Längenstriche ausblenden' : 'Längenstriche einblenden'}</button></div>
+      <p class="textblock">${T.alle.map((x, i) => `<span class="s ${x === s ? 'an' : ''}"><span class="nr">${i + 1}</span>${textZeile(x, str)}</span>`).join(' ')}</p>
+      <div class="fussn">${t.fuss.map((f, i) => `<span><sup>${i + 1}</sup> ${str ? f : ohneStrich(f)}</span>`).join('')}</div>
+      ${str ? '' : '<p class="small muted">Wie auf den Arbeitsblättern steht der Text ohne Längenstriche da.</p>'}</div></section>`;
+  $('#strich').onclick = () => { const ein = $('#ein'); if (ein) T.eingabe = ein.value; S.cfg.strich = !str; save(); render(); };
+  const kopf = `<div class="row" style="justify-content:space-between">${dots(n, T.i, rot)}<button class="btn ghost small" id="ende" type="button">Beenden</button></div>`;
+  const marken = s.aci ? { inf: 1, zv: 1, akk: 1, kl: 1, kopf: 1 } : s.inf >= 0 ? { inf: 1 } : {};
+  const nr = T.alle.indexOf(s) + 1, host = $('#arbeit');
+  if (T.phase === 'ein') {
+    // Hilfe in zwei Stufen: erst nur „ja, AcI“ mit Kopfverb und Infinitiv, dann Klammer, Zeitverhältnis und Regel
+    const z = w => str ? w : ohneStrich(w), stufe1 = s.aci ? { inf: 1, kopf: 1 } : marken;
+    const hilfeBox = !T.hilfe ? `<div class="mitte"><button class="btn ghost small" id="hilfe" type="button">🧲 Hilfe: Steckt hier ein AcI?</button></div>`
+      : !s.aci ? `<div class="msg tipp">${s.tipp || 'In diesem Satz steht kein Infinitiv – also auch kein AcI.'}</div>`
+      : T.hilfe === 1 ? `<div class="msg tipp">Ja. ${L(z(nackt(s.w[s.kopf])))} ist ein Kopfverb, ${L(z(nackt(s.w[s.inf])))} der Infinitiv. Jetzt du: Wo beginnt die Klammer – und ist es gleichzeitig oder vorzeitig?</div><div class="mitte"><button class="btn ghost small" id="hilfe" type="button">Noch mehr Hilfe</button></div>`
+      : `<div class="msg tipp">${regelSatz(s)}</div>`;
+    host.innerHTML = `${kopf}<p class="q"><b>Satz ${nr}.</b> Übersetze ihn. Kennst du ein Wort nicht? Tippe es an.</p>${satzHtml(s, { tap: 1, strich: str, ...(T.hilfe >= 2 ? marken : T.hilfe === 1 ? stufe1 : {}) })}<div class="lex" id="lex"></div>
+      ${hilfeBox}
+      <textarea class="ueb" id="ein" placeholder="Deine Übersetzung …" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">${esc(T.eingabe)}</textarea>
+      <div class="mitte"><button class="btn" id="pruef" type="button">Prüfen</button><button class="btn ghost" id="papier" type="button">Ich habe auf Papier übersetzt</button></div><div class="fb"></div>`;
+    $$('.satz .w', host).forEach(b => b.onclick = () => {
+      const k = s.key[+b.dataset.i], e = lexZu(k);
+      $$('.satz .w', host).forEach(x => x.classList.toggle('sel', x === b));
+      $('#lex').innerHTML = e.length ? e.map(x => `<div>${L(x[0])}${x[1] ? ', ' + x[1] : ''} – <b>${x[2]}</b></div>`).join('') : '<span class="muted">Das ist ein Name oder eine Form, die du schon erkennst.</span>';
+      const kw = e.length ? (MARK_ALS[e[0][0]] || e[0][0]) : '';
+      if (e.some(x => x[3] && x[3] !== '10') && !MARK_NICHT.includes(kw)) T.lex.add(kw);
+    });
+    if ($('#hilfe')) $('#hilfe').onclick = () => { T.eingabe = $('#ein').value; T.hilfe = (T.hilfe || 0) + 1; T.hilfen++; render(); };
+    $('#pruef').onclick = () => { const v = $('#ein').value.trim();
+      if (v.length < 4) { $('.fb', host).innerHTML = '<div class="msg tipp">Schreib erst deine Übersetzung in das Feld. Oder übersetze auf Papier und tippe auf den Knopf daneben.</div>'; return; }
+      T.eingabe = v; T.phase = 'lsg'; render(); };
+    $('#papier').onclick = () => { T.eingabe = ''; T.phase = 'lsg'; render(); };
+  } else {
+    const bs = T.eingabe ? bausteine(s, T.eingabe) : null, fehlt = bs ? bs.filter(b => !b.da).length : 0;
+    host.innerHTML = `${kopf}<p class="q"><b>Satz ${nr}</b></p>${satzHtml(s, { strich: str, ...marken })}
+      ${bs ? `<p class="small muted">Deine Übersetzung:</p><p class="eigen">${esc(T.eingabe)}</p><ul class="bausteine">${bs.map(b => `<li class="${b.da ? '' : 'fehlt'}">${b.name}${b.da ? '' : ' – nicht gefunden'}</li>`).join('')}</ul>
+        <p class="small muted">${fehlt ? 'Die Prüfung sucht nur nach einzelnen Bausteinen. Vielleicht hast du es anders ausgedrückt – vergleiche mit der Musterlösung.' : 'Alle Bausteine gefunden. Vergleiche trotzdem mit der Musterlösung: Stimmen Subjekt und Reihenfolge?'}</p>` : ''}
+      <div class="muster"><b>Musterlösung:</b> ${s.de}${s.auch ? `<br><span class="small muted">Auch richtig: ${s.auch.join(' · ')}</span>` : ''}</div>
+      ${s.aci ? `<p class="small">AcI: ${regelSatz(s)}</p>` : s.tipp ? `<p class="small">${s.tipp}</p>` : ''}${s.merk ? `<p class="small">${s.merk}</p>` : ''}
+      <p class="q">Wie war dein Satz?</p><div class="opts mitte"><button class="opt" type="button" data-n="2">✅ Stimmt</button><button class="opt" type="button" data-n="1">🟡 Kleiner Fehler</button><button class="opt" type="button" data-n="0">❌ Nochmal üben</button></div>`;
+    $$('.opt', host).forEach(b => b.onclick = () => { T.noten[T.i] = +b.dataset.n; T.i++; T.eingabe = ''; T.hilfe = 0; T.phase = T.i >= n ? 'ende' : 'ein'; render(); window.scrollTo(0, 0); });
+  }
+  $('#ende').onclick = () => { if (confirm('Wirklich beenden? Der Stand dieses Durchgangs geht verloren.')) go('texte'); };
+}
+// Nachgeschlagene Wörter im Vokabelheft „Klassenarbeit Dezember“ (index.html) als schwierig markieren – derselbe Speicher,
+// den dort ein Tipp auf die Zeile füllt. Klappt nur, wenn beide Seiten vom selben Ort geladen sind.
+function markiere(woerter) {
+  try {
+    let m = JSON.parse(localStorage.getItem('vokabelheftSchwierig') || '{}'), neu = 0;
+    if (!isObj(m)) m = {};
+    for (const k of woerter) for (const e of LEX.filter(x => x[0] === k && x[3])) { const key = `ka1226|${e[3]}|${e[0]}`; if (!m[key]) { m[key] = { h: 0, d: 0, r: null }; neu++; } }
+    localStorage.setItem('vokabelheftSchwierig', JSON.stringify(m)); return neu;
+  } catch (e) { return -1; }
+}
+function renderTextEnde() {
+  const t = T.t, n = T.s.length, pkt = T.noten.reduce((a, b) => a + b, 0), max = 2 * n, pz = Math.round(100 * pkt / max), st = pz >= 90 ? 3 : pz >= 70 ? 2 : pz >= 50 ? 1 : 0;
+  if (!T.teil && !T.gebucht) { const alt = S.tx[t.k] || { n: 0, b: 0 }; S.tx[t.k] = { n: alt.n + 1, b: Math.max(alt.b, pkt) }; save(); T.gebucht = true; }
+  const schwach = T.s.map((s, i) => T.noten[i] < 2 ? T.alle.indexOf(s) : -1).filter(i => i >= 0), woerter = [...T.lex];
+  const bild = ['❌', '🟡', '✅'];
+  app.innerHTML = `<header class="top"><div class="eyebrow">Übersetzen · ${t.stufe}</div><h1>${t.titel}</h1></header>
+    <section><div class="card" style="text-align:center"><div class="gross">${pkt} von ${max} Punkten ${st ? sterne(st) : ''}</div>
+      <p>${pz >= 90 ? 'Stark – so kann die Arbeit kommen.' : pz >= 70 ? 'Schon gut. Die gelben und roten Sätze lohnen einen zweiten Versuch.' : 'Das wird noch. Nimm dir die gelben und roten Sätze gleich noch einmal vor.'}</p>
+      <div class="mitte">${schwach.length ? `<button class="btn" id="nochmal" type="button">${schwach.length === 1 ? 'Nur den einen Satz mit Fehlern noch einmal' : `Nur die ${schwach.length} Sätze mit Fehlern noch einmal`}</button>` : ''}<button class="btn ${schwach.length ? 'ghost' : ''}" id="neu" type="button">Ganzen Text noch einmal</button><button class="btn ghost" id="zur" type="button">Zu den Texten</button></div></div>
+    <div class="card"><h3>Deine Sätze</h3><ol class="saetze loesung">${T.s.map((s, i) => `<li value="${T.alle.indexOf(s) + 1}">${bild[T.noten[i]]} ${L(textZeile(s, true))}<br>${s.de}</li>`).join('')}</ol></div>
+    ${woerter.length ? `<div class="card"><h3>Nachgeschlagen</h3><p>${woerter.map(L).join(' · ')}</p><p class="small muted">In der Arbeit kannst du nicht nachschlagen. Lass dir diese Wörter im Vokabelheft der Klassenarbeit markieren – dann übt „🎯 Knackpunkte“ genau sie.</p><div class="row"><button class="btn ghost" id="mark" type="button">Im Vokabelheft markieren</button><span class="small" id="markinfo"></span></div></div>` : ''}
+    ${T.hilfen ? `<p class="small muted">AcI-Hilfe angetippt: ${T.hilfen}-mal.</p>` : ''}</section>`;
+  if ($('#nochmal')) $('#nochmal').onclick = () => startText(t.k, schwach);
+  $('#neu').onclick = () => startText(t.k); $('#zur').onclick = () => go('texte');
+  if ($('#mark')) $('#mark').onclick = () => { const z = markiere(woerter); $('#mark').disabled = true;
+    $('#markinfo').textContent = z < 0 ? 'Das hat hier nicht geklappt. Markiere die Wörter direkt im Vokabelheft.' : z ? `${z} ${z === 1 ? 'Wort' : 'Wörter'} markiert.` : 'Diese Wörter waren schon markiert.'; };
+  sperre();
+}
+function renderTexte() {
+  app.innerHTML = `<header class="top"><div class="eyebrow">Latein · Klassenarbeit Dezember</div><h1>🌋 Übersetzen: Pompeji</h1>
+    <p class="muted">Übersetze Satz für Satz – am Bildschirm oder auf Papier. Danach vergleichst du mit der Musterlösung und bewertest dich selbst.</p></header>
+    <section><div class="grid">${TEXTE.map((t, i) => { const b = S.tx[t.k]; return `<div class="tile gross ${b ? 'done' : ''}"><span class="tag">Text ${i + 1} · ${t.stufe}</span><b>${t.titel}</b><span>${t.s.length} Sätze · ${t.worum}</span>
+      <span>${b ? `Bestwert ${b.b} von ${2 * t.s.length} Punkten · ${b.n} ${b.n === 1 ? 'Durchgang' : 'Durchgänge'}` : 'noch nicht übersetzt'}</span>
+      <div class="row"><button class="btn" type="button" data-t="${t.k}">Übersetzen</button><button class="btn ghost small" type="button" data-b="a:${t.k}">Arbeitsblatt</button><button class="btn ghost small" type="button" data-b="l:${t.k}">Lösung</button></div></div>`; }).join('')}</div></section>
+    <section><div class="card"><h3>So gehst du vor</h3><ol class="schritte small">${SCHRITTE.map(x => `<li>${x}</li>`).join('')}</ol><p class="small muted">Das sind die sechs Schritte von deinem Arbeitsblatt. In der <button class="linkbtn" id="zuAci" type="button">AcI-Werkstatt</button> übst du sie einzeln.</p></div></section>`;
+  $$('[data-t]').forEach(b => b.onclick = () => startText(b.dataset.t));
+  $$('[data-b]').forEach(b => b.onclick = () => { BL = [b.dataset.b]; go('blatt'); });
+  $('#zuAci').onclick = () => go('aci');
+}
+
+// ===================================================================
+// BLÄTTER zum Drucken: Spickzettel AcI, je Text ein Arbeitsblatt und ein Lösungsblatt
+// ===================================================================
+let BL = ['spick'];
+const blattKopf = (titel, wo) => `<div class="kopf"><h2>${titel}</h2><span class="wo">${wo}</span></div>`;
+function blattSpick() {
+  const b = sz('hoeren', 'pr', 'GZ'), vier = FALL.map(c => sz('hoeren', c[0], c[1]));
+  return `<div class="blatt">${blattKopf('AcI – Spickzettel', 'Latein · Klassenarbeit Dezember')}
+    <div class="zwei"><div class="kasten"><h3>Was ist ein AcI?</h3><span><b>A</b>ccūsātīvus <b>c</b>um <b>Ī</b>nfīnītīvō: Akkusativ + Infinitiv, abhängig von einem Kopfverb.</span>${satzHtml(b, { inf: 1, akk: 1, kl: 1, kopf: 1, klein: 1 })}<span class="dt">Claudia hört, <span class="dass">dass</span> <span class="sub">Aulus</span> <span class="praed">schreit</span>.</span>
+      <span>Übersetzung mit <b>dass</b>. Akkusativ → Subjekt, Infinitiv → Prädikat.</span></div>
+    <div class="kasten"><h3>Kopfverben</h3>${Object.entries(KOPF.reduce((g, [v, de, k]) => ((g[k] = g[k] || []).push(`${L(v)} ${de}`), g), {})).map(([k, vs]) => `<span><b>${k}:</b> ${vs.join(' · ')}</span>`).join('')}
+      <span class="small muted">Kein Kopfverb, kein AcI: Bei ${L('posse')} oder ${L('dēbēre')} gehört der Infinitiv einfach zum Prädikat.</span></div></div>
+    <div class="zwei"><div class="kasten"><h3>Die Klammer</h3><span>Sie beginnt beim <b>ersten Akkusativ</b> und endet beim <b>Infinitiv</b>. Adverbialien, Objekte und Prädikatsnomen stehen mit in der Klammer. Das Kopfverb bleibt draußen.</span></div>
+    <div class="kasten"><h3>Gleichzeitig oder vorzeitig?</h3><span>Infinitiv Präsens (${L('clāmā<span class="en">re</span>')}) = <b>GZ</b>, gleichzeitig</span><span>Infinitiv Perfekt (${L('<span class="st">clāmāv</span><span class="en">isse</span>')}) = <b>VZ</b>, vorzeitig</span><span class="small muted">Infinitiv Perfekt = Perfektstamm + -isse</span></div></div>
+    <div class="kasten"><h3>Faustregel: Welche Zeit steht im dass-Satz?</h3>${faustTafel(-1)}
+      <div>${vier.map(s => `<div class="bsp">${L(s.w.join(' ') + '.')}<span>${s.h}, dass ${s.f.d[s.zi]}.</span><b>${ZEITEN[s.zi]}</b></div>`).join('')}</div></div>
+    <div class="kasten"><h3>Sechs Schritte für jeden Satz mit Infinitiv</h3><ol class="schritte">${SCHRITTE.map(x => `<li>${x}</li>`).join('')}</ol></div></div>`;
+}
+function blattText(t, loesung) {
+  const ss = textSaetze(t), str = S.cfg.strich;
+  if (loesung) return `<div class="blatt">${blattKopf(t.titel + ' – Lösung', 'Übersetzen · ' + t.stufe)}
+    <ol class="saetze loesung">${ss.map(s => `<li>${L(textZeile(s, true))}<br><b>${s.de}</b>${s.auch ? ` <span class="muted">(auch: ${s.auch.join(' · ')})</span>` : ''}${s.aci ? `<br><span class="small">AcI (${s.w.slice(s.a, s.b + 1).map(nackt).join(' ')}), ${s.zv === 'GZ' ? 'gleichzeitig' : 'vorzeitig'} → ${ZEITEN[s.zi]}</span>` : s.tipp ? `<br><span class="small">${s.tipp}</span>` : ''}${s.merk ? `<br><span class="small">${s.merk}</span>` : ''}</li>`).join('')}</ol></div>`;
+  return `<div class="blatt">${blattKopf(t.titel, 'Übersetzen · ' + t.stufe)}
+    <div class="kasten small"><b>Aufgaben</b><span>1. Kennzeichne alle AcIs so, wie du es gelernt hast: Infinitiv unterstreichen, Kopfverb prüfen, Klammer setzen.</span><span>2. Schreibe über jeden Infinitiv eines AcI, ob er gleichzeitig (GZ) oder vorzeitig (VZ) ist.</span><span>3. Übersetze den Text ins Deutsche. Achte auf die Zeitverhältnisse.</span></div>
+    <p class="small muted">${t.worum}</p><ol class="saetze">${ss.map(s => `<li>${textZeile(s, str)}</li>`).join('')}</ol>
+    <div class="fussn">${t.fuss.map((f, i) => `<span><sup>${i + 1}</sup> ${str ? f : ohneStrich(f)}</span>`).join('')}</div></div>`;
+}
+const ALLEBLAETTER = () => ['spick', ...TEXTE.flatMap(t => ['a:' + t.k, 'l:' + t.k])];
+const blatt = k => k === 'spick' ? blattSpick() : blattText(TEXTE.find(t => t.k === k.slice(2)), k[0] === 'l');
+const druckFuellen = keys => { $('#druck').innerHTML = keys.map(blatt).join(''); };
+function drucken(keys) { druckFuellen(keys); window.print(); }
+window.addEventListener('afterprint', () => druckFuellen(ALLEBLAETTER()));
+function renderBlatt() {
+  app.innerHTML = `<section><div class="row"><button class="btn" id="dr" type="button">Dieses Blatt drucken</button><button class="btn ghost" id="zur" type="button">Zurück</button></div><div class="card">${BL.map(blatt).join('')}</div></section>`;
+  $('#dr').onclick = () => drucken(BL); $('#zur').onclick = () => go(BL[0] === 'spick' ? 'aci' : 'texte');
+}
+
+// ===================================================================
+// ÜBERSICHT
+// ===================================================================
+function renderHome() {
+  const stFertig = SKEYS.filter(k => S.st[k]).length, txFertig = TEXTE.filter(t => S.tx[t.k]).length;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Latein · Klassenarbeit Dezember</div><h1>AcI und Übersetzen</h1>
+    <p class="muted">Zwei Werkzeuge für die Arbeit: der AcI in sechs Schritten und Texte über Pompeji zum Übersetzen.</p></header>
+    <section><div class="grid"><button class="tile gross ${stFertig === SKEYS.length ? 'done' : 'next'}" type="button" id="hAci"><b>🧲 AcI-Werkstatt</b><span>Kopfverb, Klammer, gleichzeitig oder vorzeitig – und welche Zeit im dass-Satz steht</span><span>${stFertig} von ${SKEYS.length} Stationen geschafft</span></button>
+      <button class="tile gross ${txFertig === TEXTE.length ? 'done' : ''}" type="button" id="hText"><b>🌋 Übersetzen: Pompeji</b><span>Texte Latein → Deutsch, Satz für Satz, mit Wortschatz-Hilfe und Musterlösung</span><span>${txFertig} von ${TEXTE.length} Texten übersetzt</span></button></div></section>
+    <section><h2>Auch für die Arbeit</h2><div class="grid"><a class="tile" href="index.html#latein-arbeit"><b>📖 Wortschatz</b><span>Vokabeln, Vokabelheft und Rakete mit den Wörtern vom Blatt</span></a>
+      <a class="tile" href="latein-perfekt.html?von=arbeit"><b>🧱 Perfekt-Baukasten</b><span>Die 34 Verben der Arbeit: Perfektstamm verstehen und üben</span></a>
+      <button class="tile" type="button" id="hDruck"><b>🖨️ Alle Blätter drucken</b><span>Spickzettel AcI, Arbeitsblätter und Lösungen der Texte</span></button>
+      <a class="tile" href="latein-arbeit-blaetter.pdf" download><b>⬇️ Blätter als PDF</b><span>dieselben fünf Blätter zum Speichern und Ausdrucken</span></a></div></section>`;
+  $('#hAci').onclick = () => go('aci'); $('#hText').onclick = () => go('texte'); $('#hDruck').onclick = () => drucken(ALLEBLAETTER());
+}
+function render() {
+  ({ home: renderHome, aci: renderAci, folge: renderFolge, texte: renderTexte, text: renderText, blatt: renderBlatt }[VIEW] || renderHome)();
+  sperre();
+}
+// mitten in einer Runde oder einem Text? (Die fertige Auswertung zählt nicht mehr dazu – sie ist gebucht.)
+const mittendrin = () => VIEW === 'folge' || (VIEW === 'text' && T && T.phase !== 'ende');
+$('#homeBtn').onclick = () => {
+  if (mittendrin() && !confirm('Zur Übersicht? Der Stand dieser Runde geht verloren.')) return;
+  go('home');
+};
+$('#zurueck').onclick = e => { if (mittendrin() && !confirm('Zurück zur Klassenarbeit? Der Stand dieser Runde geht verloren.')) e.preventDefault(); };
+// Sprungziel ändert sich, während die Seite offen ist
+window.addEventListener('hashchange', () => { const v = location.hash === '#aci' ? 'aci' : location.hash === '#text' ? 'texte' : null; if (v && !mittendrin()) go(v); });
+document.body.classList.add('druckt');
+druckFuellen(ALLEBLAETTER());
+VIEW = location.hash === '#aci' ? 'aci' : location.hash === '#text' ? 'texte' : 'home';
+render();
+</script>
+</body>
+</html>

@@ -8,7 +8,8 @@
      sechs Wege zum Perfektstamm. Stoff und Begriffe nach dem Buch (Grammatik Lektion 8 B und 9 B), Wortschatz:
      alle Verben der Lektionen 1–10 aus dem Vokabelheft (Lektion 2 von den Heft-Fotos, sie fehlt in index.html).
      Drei Teile: Verstehen (sechs Stationen mit Kurz-Check an späteren Tagen), Üben (sechs Übungsarten),
-     Tabellen (elf Blätter zum Drucken).
+     Tabellen (zwölf Blätter zum Drucken). „Für die Arbeit“ sind die Verben, die auf dem Wortschatz-Blatt der nächsten
+     Klassenarbeit mit Perfekt stehen (ARBEIT); geöffnet mit ?von=arbeit führt der Zurück-Link ins Klassenarbeits-Menü.
      Die Verbdaten prüft tools/perfekt-check.mjs gegen das Vokabelheft in index.html; das PDF der Tabellen
      erzeugt tools/perfekt-pdf.py aus dieser Seite (?druck=1). Speicher: localStorage „latein-perfekt-v1“. -->
 <style>
@@ -201,6 +202,7 @@ ul.kompakt .de{color:var(--muted);font-size:.85rem}
 ul.az{list-style:none;margin:0;padding:0;columns:3;column-gap:22px;font-size:.84rem}
 ul.az li{break-inside:avoid;padding:1px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:2px 6px}
 ul.az li>span:first-child{flex:1 1 0;min-width:0}
+ul.az li .tags{white-space:nowrap}
 ul.az li .detail{flex-basis:100%}
 ul.az .lat{white-space:normal}
 @media (max-width:700px){ul.az{columns:1}ul.kompakt{columns:1}}
@@ -317,6 +319,8 @@ body.pdf #druck{display:block;max-width:186mm;margin:0 auto;background:#fff;colo
   #druck table.pt tr.grp td{padding-top:7pt}
   #druck ul.kompakt{font-size:9.5pt;columns:2}
   #druck ul.az{font-size:8pt;columns:3}
+  #druck .kag ul.kompakt{font-size:9.5pt}
+  #druck .kag ul.kompakt li{padding:1.5pt 0}
   #druck .ausn{grid-template-columns:1fr 1fr;gap:5pt 8pt}
   #druck .ausn .box{padding:3pt 6pt;gap:0}
   #druck .ausn table.k6{font-size:9.5pt}
@@ -380,7 +384,7 @@ body.pdf #druck{display:block;max-width:186mm;margin:0 auto;background:#fff;colo
 </head>
 <body>
 <div class="bar"><div class="in">
-  <a href="index.html#latein">← Latein</a>
+  <a href="index.html#latein" id="zurueck">← Latein</a>
   <button class="linkbtn" id="homeBtn" type="button">🧱 Übersicht</button>
   <span class="crumb" id="crumb"></span>
 </div></div>
@@ -540,9 +544,9 @@ const ROH = [
   ['adesse', 'adsum', 'ad-fu', 'x', 'x1', 1, 'da sein, helfen', 8, 'Wie esse: Vorsilbe ad- und fuī.'],
   ['deesse', 'dēsum', 'dē-fu', 'x', 'x1', 3, 'fehlen, nicht da sein', 8, 'Wie esse: Vorsilbe dē- und fuī.'],
   ['abesse', 'absum', 'ā-fu', 'x', 'x1', 7, 'abwesend sein, fehlen', 0, 'Wie esse – aber aus ab- wird vor dem f ein langes ā-.'],
-  ['posse', 'possum', 'pot+u', 'x', 'x2', 7, 'können', 8, 'Stamm pot-, dann das Zeichen u.'],
-  ['velle', 'volō', 'vol+u', 'x', 'x2', 4, 'wollen', 8, 'Stamm vol- (wie in volō), dann das Zeichen u.'],
-  ['nōlle', 'nōlō', 'nōl+u', 'x', 'x2', 4, 'nicht wollen', 8, 'Stamm nōl- (wie in nōlō), dann das Zeichen u.']
+  ['posse', 'possum', 'pot+u', 'x', 'x2', 7, 'können', 8, 'Stamm pot- (wie in pot-es), dann das Zeichen u: ein u-Perfekt.'],
+  ['velle', 'volō', 'vol+u', 'x', 'x2', 4, 'wollen', 8, 'Stamm vol- (wie in volō), dann das Zeichen u: ein u-Perfekt.'],
+  ['nōlle', 'nōlō', 'nōl+u', 'x', 'x2', 4, 'nicht wollen', 8, 'Stamm nōl- (wie in nōlō), dann das Zeichen u: ein u-Perfekt.']
 ];
 // Verben aus Lektion 1–9, deren Perfekt anders gebildet wird und erst später im Buch kommt
 const SPAETER = [
@@ -564,27 +568,72 @@ const PERS = ['ich', 'du', 'er, sie, es', 'wir', 'ihr', 'sie (Plural)'];
 const PNAME = ['1. Person Singular', '2. Person Singular', '3. Person Singular', '1. Person Plural', '2. Person Plural', '3. Person Plural'];
 const PEND = ['ī', 'istī', 'it', 'imus', 'istis', 'ērunt'], ENDEN = PEND.concat('isse');
 
-// Stoff der nächsten Klassenarbeit: alle Verben der Lernstufe 1, dazu die Verben der Lektionen, die wiederholt werden.
-// Steht eine neue Arbeit an, hier die wiederholten Lektionen eintragen (und die Lernstufen prüfen, siehe v.prio).
-const ARBEIT = { wdh: [4] };
+// Stoff der nächsten Klassenarbeit: die Verben, die auf dem Wortschatz-Blatt der Lehrkraft MIT Perfekt stehen
+// (ROMA Ausgabe A, Textlexikon zu Lektion 9, „Text erschließen“). ohnePerfekt: Verben, die dort ohne Perfekt stehen.
+// tools/perfekt-check.mjs gleicht beide Listen mit vokabelheftData.ka1226 in index.html ab (Prüfung „blatt-abgleich“).
+// Steht eine neue Arbeit an: name und beide Listen ersetzen – alle Zahlen und Texte der Seite rechnen sich daraus.
+const ARBEIT = {
+  name: 'Klassenarbeit Dezember',
+  blatt: ['accidere', 'accipere', 'adesse', 'animadvertere', 'audīre', 'cadere', 'capere', 'clāmāre', 'contendere', 'currere', 'dīcere', 'discēdere', 'dūcere', 'esse', 'facere', 'flēre', 'fugere',
+    'manēre', 'monēre', 'occurrere', 'parcere', 'perdere', 'petere', 'posse', 'properāre', 'putāre', 'relinquere', 'reperīre', 'sentīre', 'spectāre', 'terrēre', 'velle', 'vidēre', 'vincere'],
+  ohnePerfekt: ['cōgnōscere', 'īnstāre', 'venīre'],
+  // Bedeutungen so, wie sie auf dem Wortschatz-Blatt stehen – nur für das Blatt „Klassenarbeit“ (sonst gilt die kurze aus ROH)
+  de: {
+    'accidere': 'geschehen, sich ereignen',
+    'accipere': 'erhalten, erfahren, annehmen',
+    'adesse': 'da sein, helfen',
+    'animadvertere': 'bemerken',
+    'audīre': 'hören',
+    'cadere': 'fallen',
+    'capere': 'nehmen, fassen, ergreifen, erobern',
+    'clāmāre': 'laut rufen, schreien',
+    'contendere': 'eilen, sich anstrengen, kämpfen',
+    'currere': 'laufen, eilen',
+    'dīcere': 'sagen, sprechen',
+    'discēdere': 'weggehen, auseinandergehen',
+    'dūcere': 'führen, ziehen',
+    'esse': 'sein, sich befinden',
+    'facere': 'machen, tun, handeln',
+    'flēre': 'weinen, beweinen',
+    'fugere': 'fliehen (vor), entfliehen, meiden',
+    'manēre': 'bleiben, warten (auf)',
+    'monēre': 'mahnen, ermahnen',
+    'occurrere': 'begegnen, entgegentreten',
+    'parcere': 'schonen, verschonen',
+    'perdere': 'verlieren, verschwenden, vernichten',
+    'petere': 'bitten, verlangen, streben (nach), aufsuchen, angreifen',
+    'posse': 'können',
+    'properāre': 'eilen, sich beeilen',
+    'putāre': 'glauben, meinen, m. dopp. Akk. halten für',
+    'relinquere': 'verlassen, zurücklassen',
+    'reperīre': 'finden, wiederfinden',
+    'sentīre': 'fühlen, meinen, wahrnehmen',
+    'spectāre': 'betrachten, anschauen, zuschauen',
+    'terrēre': 'erschrecken',
+    'velle': 'wollen',
+    'vidēre': 'sehen',
+    'vincere': 'siegen, besiegen, übertreffen'
+  }
+};
 const VERBEN = ROH.map(r => {
   const v = { inf: r[0], pr: r[1], z: r[2], k: r[3], g: r[4], t: r[4][0], l: r[5], de: r[6], h: r[7], n: r[8] || '' };
   v.ps = v.z.replace(/[\[\]+\-]/g, '');                      // Perfektstamm: rogāv
   v.pf = v.ps + 'ī';                                         // 1. Person Perfekt: rogāvī
   v.regel = (v.k === 'a' && v.t === 'v') || (v.k === 'e' && v.t === 'u') || (v.k === 'i' && v.t === 'v'); // geht nach der Faustregel
-  // Lernstufe: 1 = Perfekt steht im Vokabelheft von Lektion 8 oder 9 (Stoff der Arbeit) · 2 = Verb aus Lektion 1–9,
-  // Perfekt hier ergänzt · 3 = neu in Lektion 10
-  v.prio = v.l === 10 ? 3 : v.h === 8 || v.h === 9 ? 1 : 2;
+  v.weg = v.g === 'x2' ? 'u' : v.t;                          // Weg zum Perfektstamm: posse, velle, nōlle stehen in Tabelle 7, ihr Perfekt ist aber ein u-Perfekt
+  v.arbeit = ARBEIT.blatt.includes(v.inf);                   // Stoff der nächsten Arbeit: steht mit Perfekt auf dem Wortschatz-Blatt
+  // Lernstufe: 1 = das Perfekt ist schon Lernstoff (es steht im Vokabelheft von Lektion 8 oder 9 oder auf dem Wortschatz-Blatt
+  // der Arbeit) · 2 = Verb aus Lektion 1–9, Perfekt hier ergänzt · 3 = neu in Lektion 10
+  v.prio = v.h === 8 || v.h === 9 || v.arbeit ? 1 : v.l === 10 ? 3 : 2;
   v.einzel = /E$/.test(v.g) || v.g === 'r0';                 // keine gemeinsame Regel: für sich lernen
-  v.kern = v.prio === 1 || (v.regel && v.prio === 2);        // kann das Kind jetzt schon: steht im Heft oder folgt der Faustregel
-  v.arbeit = v.prio === 1 || ARBEIT.wdh.includes(v.l);       // Stoff der nächsten Arbeit
+  v.kern = v.prio === 1 || (v.regel && v.prio === 2);        // kann das Kind jetzt schon: ist Lernstoff oder folgt der Faustregel
   return v;
 });
 const vb = inf => VERBEN.find(v => v.inf === inf);
 const sortAZ = a => a.slice().sort((x, y) => ohneM(x.inf).localeCompare(ohneM(y.inf), 'de'));
 // Woher stammt das Verb? Text für Tooltip und Detailzeile
-const woher = v => `Lektion ${v.l}` + (v.h === v.l ? ' (gleich mit Perfekt)' : v.h ? ` · mit Perfekt noch einmal in Lektion ${v.h}` : ' · das Perfekt steht noch nicht im Vokabelheft')
-  + ` · Lernstufe ${v.prio}` + (v.arbeit && v.prio > 1 ? ` · Lektion ${v.l} wird für die Arbeit wiederholt` : '');
+const woher = v => `Lektion ${v.l}` + (v.h === v.l ? ' (gleich mit Perfekt)' : v.h ? ` · mit Perfekt noch einmal in Lektion ${v.h}` : v.arbeit ? ' · das Perfekt steht auf dem Wortschatz-Blatt' : ' · das Perfekt steht noch nicht im Vokabelheft')
+  + ` · Lernstufe ${v.prio}` + (v.arbeit ? ' · 🎯 Stoff der Arbeit' : '');
 
 // ---------- Formen bilden ----------
 const PRAES_X = {
@@ -671,9 +720,9 @@ const PFAD_X = {
   'adesse': [['ad-{esse}', 'ad- und esse'], ['ad-[fu]-', 'Wie esse: Vorsilbe und fu-.']],
   'deesse': [['de-{esse}', 'dē- und esse'], ['dē-[fu]-', 'Wie esse: Vorsilbe und fu-.']],
   'abesse': [['ab-{esse}', 'ab- und esse'], ['[ā]-[fu]-', 'Wie esse – aber aus ab- wird vor dem f ein langes ā-.']],
-  'posse': [['pos{se}', 'posse ist aus pot- und esse entstanden.'], ['pot[u]-', 'Der Perfektstamm heißt pot- mit dem Zeichen u.']],
-  'velle': [['vel{le}', 'Im Perfekt heißt der Stamm vol- (wie in volō).'], ['vol[u]-', 'Dazu kommt das Zeichen u.']],
-  'nōlle': [['nōl{le}', 'Der Stamm heißt nōl- (wie in nōlō).'], ['nōl[u]-', 'Dazu kommt das Zeichen u.']]
+  'posse': [['pos{se}', 'posse ist aus pot- und esse entstanden. Der Stamm heißt pot- (wie in pot-es).'], ['pot[u]-', 'Dazu kommt das Zeichen u: ein u-Perfekt.']],
+  'velle': [['vel{le}', 'Im Perfekt heißt der Stamm vol- (wie in volō).'], ['vol[u]-', 'Dazu kommt das Zeichen u: ein u-Perfekt.']],
+  'nōlle': [['nōl{le}', 'Der Stamm heißt nōl- (wie in nōlō).'], ['nōl[u]-', 'Dazu kommt das Zeichen u: ein u-Perfekt.']]
 };
 function pfad(v) {
   if (PFAD_X[v.inf]) return PFAD_X[v.inf];
@@ -1185,7 +1234,7 @@ const STATION = {
       (() => { const set = pick(S5_PAARE); return { t: 'paare', q: 'Welcher Perfektstamm gehört zu welchem Verb? Tippe erst links, dann rechts.', pairs: () => set.map(inf => [vb(inf).inf, vb(inf).ps + '-']), e: 'Alle Paare gefunden. Solche ähnlichen Stämme verwechselt man leicht – genau hinschauen lohnt sich.' }; })(),
       { t: 'sort', q: 'Welchen Weg ist dieses Verb gegangen?', cats: WEGE6.map(t => WEG[t].k), items: () => wegItems(WEGE6, 1, 2) }
     ] },
-  s6: { name: 'Faustregel und Kopfkissen-Verben', icon: '⚖️', hook: 'Was die Konjugation verrät – und welche sieben Verben ganz eigen sind.',
+  s6: { name: 'Faustregel und Kopfkissen-Verben', icon: '⚖️', hook: 'Was die Konjugation verrät – und welche sieben Verben du auswendig lernst.',
     merk: 'Die Konjugation gehört zum {Präsensstamm}. Für das Perfekt gibt sie nur eine {Faustregel}: a-Konjugation {v}-Perfekt, e-Konjugation meistens {u}-Perfekt. Das Perfekt von esse heißt {fuī}.', falsch: ['Perfektstamm', 'esī', 'Vorschrift', 's'],
     steps: () => [
       { t: 'info', h: () => `<h2>Wo bleibt die Konjugation?</h2><p>Schau noch einmal auf den Stammbaum und vergleiche die vier Verben. <b>Links</b> sieht jedes anders aus – dort bestimmt die Konjugation (a, e, i, konsonantisch), wie Präsens und Imperfekt gebaut sind. <b>Rechts</b> haben alle dieselben sechs Endungen.</p>
@@ -1201,7 +1250,7 @@ const STATION = {
       { t: 'multi', q: 'Diese vier Verben gehören zur <b>i-Konjugation</b>. Faustregel: v-Perfekt. Tippe die zwei <b>Regelbrecher</b> an.', o: ['audīre', 'sentīre', 'scīre', 'reperīre'].map(sfPaar), a: [1, 3],
         e: `${L('sēnsī')} ist ein s-Perfekt, ${L('repperī')} gehört zur Reduplikation.` },
       { t: 'sort', q: 'Wovon hängt das ab?', cats: ['von der Konjugation', 'immer gleich', 'beim Verb mitlernen'], items: () => shuffle(S6_WOVON).slice(0, 6).map(x => ({ h: x[0], klein: true, c: x[1], e: x[2] })) },
-      { t: 'info', h: () => `<h2>Die 7 fürs Kopfkissen</h2><p>Nur <b>sieben</b> Verben sind ganz eigen. Und eigentlich musst du dir nur <b>vier Formen</b> merken: ${L('fuī')}, ${L('potuī')}, ${L('voluī')}, ${L('nōluī')}. Die anderen drei sind ${L('esse')} mit einer Vorsilbe.</p>
+      { t: 'info', h: () => `<h2>Die 7 fürs Kopfkissen</h2><p><b>Sieben</b> Verben lernst du auswendig. Bei ${L('esse')} und seinen drei Zusammensetzungen ist der Perfektstamm ein ganz anderes Wort: ${L('fu-')}. Bei ${L('posse')}, ${L('velle')} und ${L('nōlle')} ist das <b>Präsens</b> besonders (${L('possum, potes')} … ${L('volō, vīs, vult')} …) – ihr Perfekt ist ein u-Perfekt. Eigentlich musst du dir nur <b>vier Formen</b> merken: ${L('fuī')}, ${L('potuī')}, ${L('voluī')}, ${L('nōluī')}.</p>
           <div class="tabwrap"><table class="pt">${VERBEN.filter(v => v.t === 'x').map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td class="n">${v.n}</td></tr>`).join('')}</table></div>
           <p class="small muted">Die Endungen sind auch hier dieselben: ${ENDEN.map(e => pfHtml(vb('esse'), e)).join(' · ')}</p>` },
       { t: 'paare', q: 'Welcher Perfektstamm gehört zu welchem Verb? Tippe erst links, dann rechts.', pairs: () => ['esse', 'posse', 'velle', 'nōlle', 'adesse'].map(inf => [vb(inf).inf, vb(inf).ps + '-']), e: 'Diese kommen unters Kopfkissen.' }
@@ -1250,7 +1299,7 @@ const CHECK = {
     () => ({ q: 'Faustregel: Welchen Weg gehen fast alle Verben der a-Konjugation?', o: ['v-Perfekt', 'u-Perfekt', 's-Perfekt', 'Dehnung'], e: `Zum Beispiel ${pfHtml(vb('rogāre'), 'ī')}` }),
     () => ({ q: 'Faustregel: Welchen Weg gehen die meisten Verben der e-Konjugation?', o: ['u-Perfekt', 'v-Perfekt', 'Reduplikation', 'ohne Veränderung'], e: `Zum Beispiel ${pfHtml(vb('tacēre'), 'ī')}` }),
     () => ({ q: `Wie heißt die 1. Person Perfekt von ${L('esse')}?`, o: ['fuī', 'esī', 'essī', 'esuī'].map(L), e: 'esse hat einen ganz eigenen Perfektstamm: fu-.' }),
-    () => ({ q: `Wie heißt die 1. Person Perfekt von ${L('posse')}?`, o: ['potuī', 'possī', 'possuī', 'posfuī'].map(L), e: 'Stamm pot-, dann das Zeichen u.' }),
+    () => ({ q: `Wie heißt die 1. Person Perfekt von ${L('posse')}?`, o: ['potuī', 'possī', 'possuī', 'posfuī'].map(L), e: 'Stamm pot-, dann das Zeichen u: ein u-Perfekt.' }),
     () => ({ q: 'Welche Faustregel gilt für die konsonantische Konjugation?', o: ['Es gibt keine. Man lernt das Perfekt mit.', 'Es gibt eine: meistens s-Perfekt.', 'Es gibt eine: meistens Dehnung.', 'Es gibt keine. Man kann es aber ausrechnen.'], e: 'Dort kommen alle sechs Wege vor. Da hilft nur die Perfektform im Vokabelheft.' })
   ]
 };
@@ -1364,16 +1413,17 @@ const MODI = {
 };
 const MKEYS = Object.keys(MODI);
 let UM = 'stamm';
-// Bei „Welcher Weg?“ nicht gefragt: Zusammensetzungen ohne Verdopplung (stehen wie im Buch bei der Reduplikation, sehen aber aus wie „ohne Veränderung“) und Verben, denen man
-// ihren Weg an der Form nicht ansieht (Dehnung oder Verdopplung nicht sichtbar, quaesīvī mit s und v)
+// Bei „Welcher Weg?“ nicht gefragt: esse und seine Zusammensetzungen (eigener Stamm fu-, kein Weg), Zusammensetzungen ohne Verdopplung (stehen wie im Buch bei der
+// Reduplikation, sehen aber aus wie „ohne Veränderung“) und Verben, denen man ihren Weg an der Form nicht ansieht (Dehnung oder Verdopplung nicht sichtbar, quaesīvī mit s und v).
+// posse, velle und nōlle sind dabei: Ihr Weg ist das u-Perfekt (v.weg), auch wenn sie in Tabelle 7 stehen.
 const WEG_AUS = ['accidere', 'occurrere', 'attingere', 'cōnsīdere', 'cōgere', 'īnstāre', 'resistere', 'cōnsistere', 'quaerere'];
-// Umfang: a = Stoff der Arbeit (Voreinstellung) · 1, 2, 3 = bis zu dieser Lernstufe
+// Umfang: a = Stoff der Arbeit, also die Verben vom Wortschatz-Blatt (Voreinstellung) · 1, 2, 3 = bis zu dieser Lernstufe
 const cfg = () => ({ weg: TAB.includes(S.cfg.weg) ? S.cfg.weg : 'alle', umf: ['a', '1', '2', '3'].includes(S.cfg.umf) ? S.cfg.umf : 'a' });
 const imUmfang = (v, umf) => umf === 'a' ? v.arbeit : v.prio <= +umf;
 function poolFuer(mode) {
   const c = cfg(), weg = mode === 'weg' ? 'alle' : c.weg;
   const p = VERBEN.filter(v => (weg === 'alle' || v.t === weg) && imUmfang(v, c.umf));
-  return mode === 'weg' ? p.filter(v => v.t !== 'x' && !WEG_AUS.includes(v.inf)) : p;
+  return mode === 'weg' ? p.filter(v => v.weg !== 'x' && !WEG_AUS.includes(v.inf)) : p;
 }
 function lev(a, b) {
   const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
@@ -1422,7 +1472,7 @@ function startRunde(mode) {
   U = { mode, q, i: 0, n: q.filter(x => !x.blitz).length, richtig: 0, falsch: [], fertig: false };
   go('runde');
 }
-const erkl = v => `${L(v.inf + ', ' + v.pr)}, ${pfHtml(v, 'ī')} ${v.t === 'x' ? '' : wtag(v.t)}${v.n ? ` <span class="small">${v.n}</span>` : ''}`;
+const erkl = v => `${L(v.inf + ', ' + v.pr)}, ${pfHtml(v, 'ī')} ${v.weg === 'x' ? '' : wtag(v.weg)}${v.n ? ` <span class="small">${v.n}</span>` : ''}`;
 const bestName = x => x.p === 6 ? 'Infinitiv ' + ZEIT[x.z] : `${PNAME[x.p]} ${ZEIT[x.z]}`;
 function tippen(auf, fbx, soll, zwilling, cb) {
   const ein = auf.querySelector('.ein'), pr = auf.querySelector('#pr'), wn = auf.querySelector('#wn'), hinw = auf.querySelector('.einhinw'); let zu = false, strich = 0;
@@ -1451,7 +1501,7 @@ const AUFGABE = {
   umform(auf, it, fertig, fbx) {
     const v = it.v, cue = praes(v)[it.p], soll = perf(v)[it.p];
     auf.innerHTML = `<div class="gross">${cue}</div><p class="cue muted">${PNAME[it.p]} Präsens von ${v.inf} (${esc(v.de)})</p>${einHtml()}`;
-    tippen(auf, fbx, soll, cue, (ok, r) => fertig(ok, (ok ? (r === 'strich' ? `Genau geschrieben: ${L(soll)}. ` : '') : `Richtig ist ${L(soll)}. `) + `${bauPf(v, PEND[it.p], false, 'klein')} ${v.t === 'x' ? '' : wtag(v.t)} <span class="small">${v.n}</span>`));
+    tippen(auf, fbx, soll, cue, (ok, r) => fertig(ok, (ok ? (r === 'strich' ? `Genau geschrieben: ${L(soll)}. ` : '') : `Richtig ist ${L(soll)}. `) + `${bauPf(v, PEND[it.p], false, 'klein')} ${v.weg === 'x' ? '' : wtag(v.weg)} <span class="small">${v.n}</span>`));
   },
   bestimm(auf, it, fertig) {
     const v = it.v, an = alleFormen(v).filter(x => x.f === it.f); let z = null, p = null;
@@ -1485,10 +1535,10 @@ const AUFGABE = {
     const v = it.v;
     auf.innerHTML = `<div class="gross">${v.pr} → ${v.pf}</div><p class="cue muted">${v.inf} (${esc(v.de)})</p><div class="opts mitte">${WEGE6.map(t => `<button type="button" class="opt" data-t="${t}">${WEG[t].k}</button>`).join('')}</div>`;
     // mānsī, sēnsī, mīsī: s-Perfekt, bei dem zusätzlich der Vokal lang wird – wer „Dehnung“ tippt, bekommt das erklärt
-    const auchLang = v.t === 's' && /\[[āēīōū]\]/.test(v.z);
+    const auchLang = v.weg === 's' && /\[[āēīōū]\]/.test(v.z);
     auf.querySelectorAll('.opt').forEach(b => b.onclick = () => {
-      const t = b.dataset.t; markiere(auf, 't', v.t, t);
-      fertig(t === v.t, (auchLang && t === 'd' ? 'Der Vokal wird hier zwar auch lang. Entscheidend ist aber das Zeichen s – so ordnet es auch das Buch ein. ' : '') + `${WEG[v.t].n}: ${pfadZeile(v)}`);
+      const t = b.dataset.t; markiere(auf, 't', v.weg, t);
+      fertig(t === v.weg, (auchLang && t === 'd' ? 'Der Vokal wird hier zwar auch lang. Entscheidend ist aber das Zeichen s – so ordnet es auch das Buch ein. ' : '') + `${WEG[v.weg].n}: ${pfadZeile(v)}`);
     });
   },
   grund(auf, it, fertig) {
@@ -1505,7 +1555,7 @@ function renderRunde() {
     let fehl = '';
     if (U.falsch.length && mode === 'endung') fehl = `<p><b>Bei diesen Endungen lagst du daneben:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td>${bauPf(x.v, ENDEN[x.p], false, 'klein')}</td><td>${x.p === 6 ? 'Infinitiv Perfekt' : PERS[x.p]}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
     else if (U.falsch.length && mode === 'bestimm') fehl = `<p><b>Diese Formen schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td class="l">${x.f}</td><td>${alleFormen(x.v).filter(y => y.f === x.f).map(bestName).join(' oder ')}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
-    else if (U.falsch.length) fehl = `<p><b>Diese Verben schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => x.v).filter((v, i, a) => a.indexOf(v) === i).map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td>${v.t === 'x' ? '' : wtag(v.t)}</td></tr>`).join('')}</table></div>`;
+    else if (U.falsch.length) fehl = `<p><b>Diese Verben schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => x.v).filter((v, i, a) => a.indexOf(v) === i).map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td>${v.weg === 'x' ? '' : wtag(v.weg)}</td></tr>`).join('')}</table></div>`;
     app.innerHTML = `<header class="top"><div class="eyebrow">Üben · ${m.name}</div><h1>${U.richtig} von ${U.n} auf Anhieb</h1></header>
       <section><div class="card"><div class="mitte" style="font-size:1.6rem">${sterne(st)}</div>
         ${fehl || '<p class="cue">Alles auf Anhieb richtig – stark!</p>'}
@@ -1555,7 +1605,7 @@ function renderUeben() {
       ${UM === 'weg' ? '<p class="small muted">Bei „Welcher Weg?“ sind immer alle Tabellen gemischt – sonst wäre die Antwort ja klar.</p>' : `<div class="seg" id="uw">${['alle'].concat(TAB).map(k => `<button type="button" data-k="${k}" class="${k === c.weg ? 'on' : ''}">${k === 'alle' ? 'alle' : tabNr(k) + ' · ' + WEG[k].k}</button>`).join('')}</div>`}
       <div><b>Welche Verben?</b></div>
       <div class="seg" id="uu">${[['a', '🎯 Für die Arbeit'], ['1', 'Stufe 1'], ['2', 'Stufe 1 + 2'], ['3', 'alle']].map(x => `<button type="button" data-k="${x[0]}" class="${c.umf === x[0] ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
-      <p class="small muted"><b>Für die Arbeit</b> (${n('a')} Verben): alle Perfektformen, die schon im Vokabelheft stehen (Lektion 8 und 9), und die Verben aus Lektion ${ARBEIT.wdh.join(', ')}, die wiederholt wird. <b>Stufe 1</b> (${n('1')}): nur die Perfektformen aus dem Vokabelheft (Lektion 8 und 9). <b>Stufe 1 + 2</b> (${n('2')}): alle Verben aus Lektion 1–9. <b>Alle</b> (${n('3')}): auch die neuen aus Lektion 10.</p>
+      <p class="small muted"><b>🎯 Für die Arbeit</b>: die ${n('a')} Verben vom Wortschatz-Blatt (${ARBEIT.name}). <b>Stufe 1</b> (${n('1')}): dazu die übrigen Perfektformen, die schon im Vokabelheft stehen (Lektion 8 und 9). <b>Stufe 1 + 2</b> (${n('2')}): alle Verben aus Lektion 1–9. <b>Alle</b> (${n('3')}): auch die neuen aus Lektion 10.</p>
       <div class="anzeige"><span>In dieser Auswahl: <b>${pool.length}</b> Verben</span><span>davon sicher: <b>${sicher}</b></span>${b ? `<span>Runden: <b>${b.n}</b> · beste: <b>${b.b} %</b></span>` : ''}</div>
       <div class="row"><button class="btn gross" id="go" type="button" ${pool.length ? '' : 'disabled'}>Runde starten</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div>
       <p class="small muted">„Sicher“ ist ein Verb, wenn du es bei Stammformen oder Umformen zweimal hintereinander auf Anhieb richtig hattest. Längenstriche darfst du beim Tippen weglassen – außer wenn nur der Strich Präsens und Perfekt unterscheidet.</p></div></section>`;
@@ -1566,7 +1616,7 @@ function renderUeben() {
 }
 
 // ===================================================================
-// TABELLEN – elf Blätter, am Bildschirm und im Druck dieselben
+// TABELLEN – zwölf Blätter, am Bildschirm und im Druck dieselben
 //  Jede der sieben Tabellen besteht aus Untergruppen. In einer Untergruppe gilt für alle Verben genau
 //  eine Regel; was in keine Regel passt, steht darunter als Einzelfall.
 // ===================================================================
@@ -1589,26 +1639,26 @@ const GR = {
   r2: { t: '-sistere wird -stitī', bsp: ['resistere', 'cōnsistere'], r: 'Bei Verben auf <b>-sistere</b> heißt der Perfektstamm <b>-stit-</b>. Darin steckt dieselbe Verdopplung wie in stetī (von stāre).' },
   r3: { t: 'cadere, currere, tangere mit Vorsilbe: ohne Verdopplung', bsp: ['accidere', 'occurrere'], r: 'Diese drei Verben kommen von cadere, currere und tangere. (Mit Vorsilbe steht schon im Präsens ein i: ac-cidere, at-tingere.) Nimm das Perfekt des Verbs ohne Vorsilbe, lass die Verdopplung weg und setze die Vorsilbe davor: ce-cidī → ac-cidī, cu-currī → oc-currī, te-tigī → at-tigī. Das ist nicht bei jedem Verb mit Vorsilbe so: per-didī und re-stitī behalten ihre Verdopplung.' },
   x1: { t: 'esse und seine Zusammensetzungen', bsp: ['esse'], r: 'Der Perfektstamm von esse heißt <b>fu-</b>. Die Zusammensetzungen setzen ihre Vorsilbe davor: ad-fuī, dē-fuī. Nur bei abesse wird aus ab- ein langes ā-: ā-fuī.' },
-  x2: { t: 'posse, velle, nōlle', bsp: ['posse'], r: 'Diese drei bilden ein u-Perfekt von einem eigenen Stamm: <b>pot-u-</b>, <b>vol-u-</b>, <b>nōl-u-</b>.' }
+  x2: { t: 'posse, velle, nōlle: u-Perfekt', bsp: ['posse'], r: 'Ihr Perfekt ist ein <b>u-Perfekt</b>: pot-u-ī, vol-u-ī, nōl-u-ī. Besonders ist das <b>Präsens</b> (possum, potes … · volō, vīs, vult …), bei posse auch das Imperfekt (poteram).' }
 };
 const WEGDEF = {
   o: { idee: 'Der einfachste Weg: Der Perfektstamm sieht genauso aus wie der Präsensstamm. Nur die Endung zeigt das Perfekt.',
     achtung: `<b>Zwillinge:</b> ${L('animadvertit')} und ${L('animadvertimus')} können Präsens oder Perfekt sein – das entscheidet nur der Satz. Genauso ist es bei ${L('accidit')} und ${L('occurrit')}. Trotzdem stehen accidere und occurrere beim Reduplikationsperfekt (Tabelle 6) – so ordnet das Buch accidere ein –, weil sie von cadere und currere kommen (${L('cecidī, cucurrī')}).` },
   v: { idee: 'An den Stamm kommt das Zeichen <b>v</b>, dann die Perfekt-Endung. Das ist der häufigste Weg.' },
   u: { idee: 'Vom Infinitiv fällt die ganze Endung weg, auch der Vokal davor (tac-ēre). An den Rest kommt das Zeichen <b>u</b>, dann die Perfekt-Endung.',
-    achtung: `Auch ${L('posse')}, ${L('velle')} und ${L('nōlle')} haben das Zeichen u: ${L('potuī, voluī, nōluī')}. Sie stehen in Tabelle 7.` },
+    achtung: `Auch ${L('posse')}, ${L('velle')} und ${L('nōlle')} bilden ein u-Perfekt: ${L('potuī, voluī, nōluī')}. Weil ihr Präsens besonders ist, stehen sie mit allen Perfektformen in Tabelle 7.` },
   s: { idee: 'An den Stamm kommt das Zeichen <b>s</b>. Dabei stoßen zwei Konsonanten zusammen und verändern sich. Was genau passiert, hängt vom Buchstaben vor der Infinitiv-Endung ab – deshalb gibt es hier Gruppen mit je einer festen Regel.' },
   d: { idee: 'Es gibt kein Zeichen. Stattdessen verändert sich der <b>Vokal im Stamm</b>: Er wird lang (Längenstrich!). In manchen Gruppen wechselt er zusätzlich.',
     achtung: `<b>Der Strich ist hier das Perfekt:</b> ${L('fugit')} (er flieht) – ${L('f<b class="hl">ū</b>git')} (er ist geflohen).` },
   r: { idee: 'Es gibt kein Zeichen. Stattdessen wird der <b>Anfang des Stamms verdoppelt</b>. („Reduplikation“ heißt Verdopplung.)',
     achtung: `<b>Achtung, Zwillinge:</b> Bei ${L('accidere')} und ${L('occurrere')} sehen Präsensstamm und Perfektstamm gleich aus. ${L('accidit')} kann deshalb Präsens oder Perfekt sein – das entscheidet nur der Satz.` },
-  x: { idee: 'Nur <b>sieben</b> Verben sind ganz eigen – und eigentlich musst du dir nur vier Formen merken: <b>fuī, potuī, voluī, nōluī</b>. Die kommen unters Kopfkissen. Die Endungen sind dieselben wie bei allen Verben.' }
+  x: { idee: '<b>Sieben</b> Verben lernst du auswendig – sie kommen unters Kopfkissen. Bei esse und seinen Zusammensetzungen ist der Perfektstamm ein ganz anderes Wort: <b>fu-</b>. Bei posse, velle und nōlle ist das <b>Präsens</b> besonders; ihr Perfekt ist ein u-Perfekt. Eigentlich musst du dir nur vier Formen merken: <b>fuī, potuī, voluī, nōluī</b>. Die Endungen sind dieselben wie bei allen Verben.' }
 };
-const BLAETTER = ['plan', 'end', 'o', 'v', 'u', 's', 'd', 'r', 'x', 'einzel', 'az'];
-const BLATTKURZ = { plan: 'Bauplan', end: 'Endungen', o: '1 · ohne', v: '2 · v', u: '3 · u', s: '4 · s', d: '5 · Dehnung', r: '6 · Reduplikation', x: '7 · Kopfkissen', einzel: 'Einzelfälle', az: 'A–Z' };
+const BLAETTER = ['plan', 'end', 'ka', 'o', 'v', 'u', 's', 'd', 'r', 'x', 'einzel', 'az'];
+const BLATTKURZ = { plan: 'Bauplan', end: 'Endungen', ka: '🎯 Klassenarbeit', o: '1 · ohne', v: '2 · v', u: '3 · u', s: '4 · s', d: '5 · Dehnung', r: '6 · Reduplikation', x: '7 · Kopfkissen', einzel: 'Einzelfälle', az: 'A–Z' };
 const kopf = (titel, k) => `<div class="kopf"><h2>${titel}</h2><span class="wo">Latein · Perfekt-Baukasten · Lektion 1–10 · Blatt ${BLAETTER.indexOf(k) + 1} von ${BLAETTER.length}</span></div>`;
 const vAttr = v => `class="p${v.prio}" data-v="${v.inf}" title="${esc(woher(v))}"`;
-const lek = v => `L${v.l}${v.h && v.h !== v.l ? '→' + v.h : ''}${v.arbeit && v.prio > 1 ? ' 🎯' : ''}`;
+const lek = v => `L${v.l}${v.h && v.h !== v.l ? '→' + v.h : ''}${v.arbeit ? ' 🎯' : ''}`;
 const sicherMark = (v, opt) => opt.bild && (S.ok[v.inf] || 0) >= 2 ? ' <span class="sicher" title="sicher">✓</span>' : '';
 const zeile = (v, opt) => `<tr ${vAttr(v)}><td class="l">${v.inf}</td><td class="l">${v.pr}</td><td>${esc(v.de)}</td><td class="l">${pfHtml(v, 'ī')}</td><td class="z">${lek(v)}${sicherMark(v, opt)}</td></tr>`;
 const liste = (vs, opt) => `<div class="tabwrap"><table class="pt"><tr><th>Infinitiv</th><th>1. Sg. Präsens</th><th>Bedeutung</th><th>1. Sg. Perfekt</th><th>Lektion</th></tr>${vs.map(v => zeile(v, opt)).join('')}</table></div>`;
@@ -1617,7 +1667,7 @@ const k6 = v => `<table class="k6"><tr><td>${pfHtml(v, 'ī')}</td><td>${pfHtml(v
 const formenZeile = v => ENDEN.map(e => pfHtml(v, e)).join(' · ');
 const wegBild = (v, opt) => opt.druck ? pfadZeile(v) : pfadHtml(v);
 // Legende eines Blatts: nur erklären, was auf dem Blatt auch vorkommt (vs = seine Verben, mitLek = die Lektion steht dabei)
-const legende = (vs, mitLek) => `<div class="fuss"><b>Fett</b> = Lernstufe 1: Das Perfekt steht im Vokabelheft von Lektion 8 oder 9 – Stoff für die Arbeit. · Normal = Lernstufe 2: Verb aus Lektion 1–9, dessen Perfekt bis Lektion 9 noch nicht im Heft steht.${vs.some(v => v.prio === 3) ? ' · <span class="p3">Grau</span> = Lernstufe 3: neu in Lektion 10.' : ''}${mitLek ? ' · L5→9 heißt: Das Verb kam in Lektion 5 vor, sein Perfekt steht im Heft von Lektion 9.' : ''}${mitLek && vs.some(v => v.arbeit && v.prio > 1) ? ` · 🎯 = aus Lektion ${ARBEIT.wdh.join(', ')}, die für die Arbeit wiederholt wird.` : ''}</div>`;
+const legende = (vs, mitLek) => `<div class="fuss"><b>Fett</b> = Lernstufe 1: Das Perfekt ist schon Lernstoff – es steht im Vokabelheft von Lektion 8 oder 9 oder auf dem Wortschatz-Blatt.${vs.some(v => v.arbeit) ? ' · 🎯 = Stoff der Arbeit: steht mit Perfekt auf dem Wortschatz-Blatt.' : ''} · Normal = Lernstufe 2: Verb aus Lektion 1–9, dessen Perfekt bis Lektion 9 noch nicht im Heft steht.${vs.some(v => v.prio === 3) ? ' · <span class="p3">Grau</span> = Lernstufe 3: neu in Lektion 10.' : ''}${mitLek ? ' · L5→9 heißt: Das Verb kam in Lektion 5 vor, sein Perfekt steht im Heft von Lektion 9.' : ''}</div>`;
 // Verben eines Wegs nach Konjugation unterteilen (für die große Gruppe des v-Perfekts)
 const nachKonj = vs => ['a', 'i', 'e', 'k', 'ki'].map(k => [k, vs.filter(v => v.k === k)]).filter(x => x[1].length);
 
@@ -1670,9 +1720,28 @@ function blattEinzel(opt) {
 function blattAZ(opt) {
   return `<div class="blatt b-n">${kopf('Alle Verben von A bis Z', 'az')}
     <p class="small">Zum Nachschlagen: Infinitiv, 1. Person Präsens, <b>1. Person Perfekt</b>. Die Zahl nennt die Tabelle, in der das Verb steht.</p>
-    <ul class="az">${sortAZ(VERBEN).map(v => `<li ${vAttr(v)}><span>${L(v.inf)}, ${L(v.pr)}, ${L(v.pf)}</span><span class="wtag w-${v.t}">${tabNr(v.t)}</span></li>`).join('')}</ul>
-    <div class="fuss">${TAB.map(t => `<span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].k}`).join(' · ')}</div>
+    <ul class="az">${sortAZ(VERBEN).map(v => `<li ${vAttr(v)}><span>${L(v.inf)}, ${L(v.pr)}, ${L(v.pf)}${v.arbeit ? ' 🎯' : ''}</span><span class="tags">${v.weg !== v.t ? `<span class="wtag w-${v.weg}">${tabNr(v.weg)}</span> ` : ''}<span class="wtag w-${v.t}">${tabNr(v.t)}</span></span></li>`).join('')}</ul>
+    <div class="fuss">${TAB.map(t => `<span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].k}`).join(' · ')} · Zwei Zahlen haben ${VERBEN.filter(v => v.weg !== v.t).map(v => v.inf).join(', ')}: Ihr Perfekt ist ein ${WEG.u.k}, mit allen Perfektformen stehen sie in Tabelle ${tabNr('x')}.</div>
     <div class="fuss">Nicht in der Liste: ${SPAETER.map(s => s[0]).join(', ')} – ihr Perfekt lernst du später.</div>${legende(VERBEN, false)}</div>`;
+}
+// Blatt „Klassenarbeit“: die Verben vom Wortschatz-Blatt, geordnet nach ihrem Weg zum Perfektstamm (v.weg: posse und velle beim u-Perfekt)
+const KAWEG = { o: 'Der Stamm bleibt gleich.', v: 'Das Zeichen v kommt dazu.', u: 'Das Zeichen u kommt dazu.', s: 'Das Zeichen s kommt dazu, Konsonanten verändern sich.', d: 'Der Vokal im Stamm wird lang.', r: 'Ein Stück vom Stamm wird verdoppelt.', x: 'Der Perfektstamm ist ein ganz anderes Wort: fu-.' };
+const undListe = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1];
+function blattKA(opt) {
+  const vs = VERBEN.filter(v => v.arbeit), ohne = ARBEIT.ohnePerfekt.map(vb).filter(Boolean);
+  const block = t => {
+    const teil = vs.filter(v => v.weg === t); if (!teil.length) return '';
+    const fremd = teil.filter(v => v.t !== t), r3 = teil.filter(v => v.g === 'r3');
+    return `<div class="gruppe kag"><h3><span class="gnr w-${t}">${tabNr(t)}</span> ${WEG[t].n} <small>· ${teil.length} ${teil.length === 1 ? 'Verb' : 'Verben'} · ${KAWEG[t]}</small></h3>
+      <ul class="kompakt">${teil.map(v => `<li ${vAttr(v)}><span>${L(v.inf)}, ${L(v.pr)}, ${pfHtml(v, 'ī')}</span> <span class="de">${esc(ARBEIT.de[v.inf] || v.de)}${sicherMark(v, opt)}</span></li>`).join('')}</ul>
+      ${fremd.length ? `<p class="small muted">${undListe(fremd.map(v => v.inf))}: Das Perfekt ist regelmäßig gebaut. Besonders ist das Präsens (possum, potes … · volō, vīs, vult …). Mit allen Formen ${fremd.length === 1 ? 'steht es' : 'stehen sie'} in Tabelle ${tabNr(fremd[0].t)}.</p>` : ''}
+      ${r3.length ? `<p class="small muted">${undListe(r3.map(v => v.inf))}: Mit Vorsilbe ist die Verdopplung weggefallen. Präsensstamm und Perfektstamm sehen deshalb gleich aus.</p>` : ''}</div>`;
+  };
+  return `<div class="blatt b-n">${kopf(`🎯 ${ARBEIT.name}: die Verben vom Wortschatz-Blatt`, 'ka')}
+    <p>Diese <b>${vs.length} Verben</b> stehen auf dem Wortschatz-Blatt für die Arbeit <b>mit Perfekt</b>. Hier sind sie nach ihrem Weg zum Perfektstamm geordnet: Infinitiv, 1. Person Präsens, <b>1. Person Perfekt</b>, Bedeutung. Die Zahl nennt die Tabelle, in der die Regel steht.</p>
+    ${TAB.map(block).join('')}
+    ${ohne.length ? `<div class="achtung">Auf dem Wortschatz-Blatt ${ohne.length === 1 ? 'steht' : 'stehen'} außerdem ${undListe(ohne.map(v => `${L(v.inf)} (Tabelle ${tabNr(v.t)})`))} – dort <b>ohne</b> Perfekt.</div>` : ''}
+    <div class="fuss">So liest du die Perfektform: ${L('<span class="zn">orange</span>')} ist das Zeichen und alles, was sich im Stamm ändert, ${L('<span class="en">grün</span>')} die Endung.</div></div>`;
 }
 function blattEnd() {
   const zeile = i => `<div class="e"><span>${PKURZ[i] === 'er' ? 'er, sie, es' : PKURZ[i]}</span><b>-${PEND[i]}</b></div>`;
@@ -1694,7 +1763,7 @@ function blattPlan() {
     <p class="small">Im Vokabelheft stehen deshalb seit Lektion 8 drei Formen, zum Beispiel ${L('putāre, putō, putāvī')}. Die Perfektform ohne -ī ist der Perfektstamm. Nach der Gabel geht es verschieden weiter – aber auf beiden Ästen stehen dieselben sechs Personen.</p>
     <h3>2 · Sieben Tabellen – vom Einfachen zum Schwierigen</h3>
     <div class="tabwrap"><table class="pt"><tr><th>Tabelle</th><th>Was passiert mit dem Stamm?</th><th>Beispiel</th><th>Verben</th></tr>
-      ${TAB.map(t => { const v = vb({ o: 'contendere', v: 'rogāre', u: 'tacēre', s: 'dīcere', d: 'vidēre', r: 'currere', x: 'esse' }[t]); return `<tr><td><span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].n}</td><td>${{ o: 'nichts – er bleibt gleich', v: 'das Zeichen v kommt dazu', u: 'der letzte Vokal fällt weg, das Zeichen u kommt dazu', s: 'das Zeichen s kommt dazu, Konsonanten verändern sich', d: 'der Vokal im Stamm wird lang', r: 'der Anfang wird verdoppelt', x: 'ganz eigener Stamm – auswendig lernen' }[t]}</td><td class="l">${v.pr} → ${pfHtml(v, 'ī')}</td><td class="z">${n(t)}</td></tr>`; }).join('')}</table></div>
+      ${TAB.map(t => { const v = vb({ o: 'contendere', v: 'rogāre', u: 'tacēre', s: 'dīcere', d: 'vidēre', r: 'currere', x: 'esse' }[t]); return `<tr><td><span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].n}</td><td>${{ o: 'nichts – er bleibt gleich', v: 'das Zeichen v kommt dazu', u: 'der letzte Vokal fällt weg, das Zeichen u kommt dazu', s: 'das Zeichen s kommt dazu, Konsonanten verändern sich', d: 'der Vokal im Stamm wird lang', r: 'der Anfang wird verdoppelt', x: 'esse: ganz eigener Stamm fu- · posse, velle, nōlle: u-Perfekt, aber besonderes Präsens' }[t]}</td><td class="l">${v.pr} → ${pfHtml(v, 'ī')}</td><td class="z">${n(t)}</td></tr>`; }).join('')}</table></div>
     <h3>3 · Was die Konjugation verrät: die Faustregel</h3>
     <p class="small">Die Konjugation gehört zum Präsensstamm. Für das Perfekt gibt sie nur einen Tipp. Jede Farbe ist ein Weg, die Zahl sagt, wie viele Verben ihn gehen.</p>
     <div class="wege">${faustChart()}</div>
@@ -1702,7 +1771,7 @@ function blattPlan() {
 }
 function blatt(k, opt) {
   opt = opt || {};
-  return k === 'plan' ? blattPlan() : k === 'end' ? blattEnd() : k === 'x' ? blattX(opt) : k === 'einzel' ? blattEinzel(opt) : k === 'az' ? blattAZ(opt) : blattWeg(k, opt);
+  return k === 'plan' ? blattPlan() : k === 'end' ? blattEnd() : k === 'ka' ? blattKA(opt) : k === 'x' ? blattX(opt) : k === 'einzel' ? blattEinzel(opt) : k === 'az' ? blattAZ(opt) : blattWeg(k, opt);
 }
 
 // ---------- Drucken ----------
@@ -1713,7 +1782,7 @@ window.addEventListener('afterprint', () => { if (document.body.classList.contai
 
 function renderTab() {
   app.innerHTML = `<header class="top"><div class="eyebrow">Nachschlagen und Drucken</div><h1>📋 Perfekt-Tabellen</h1>
-      <p class="muted">Elf Blätter: der Bauplan, das Endungen-Blatt für den Kühlschrank, sieben Lerntabellen, die Einzelfälle mit allen Formen und eine Liste von A bis Z.</p></header>
+      <p class="muted">${BLAETTER.length} Blätter: der Bauplan, das Endungen-Blatt für den Kühlschrank, die Verben der Klassenarbeit, sieben Lerntabellen, die Einzelfälle mit allen Formen und eine Liste von A bis Z.</p></header>
     <section><div class="row"><button class="btn" id="dAlle" type="button">🖨️ Alle Blätter drucken</button><a class="btn ghost" href="latein-perfekt-tabellen.pdf" download>⬇️ Als PDF laden</a></div>
       <div class="seg" id="bl">${BLAETTER.map(k => `<button type="button" data-k="${k}" class="${k === TB ? 'on' : ''}">${BLATTKURZ[k]}</button>`).join('')}</div>
       <p class="small muted" id="tipph">Tippe ein Verb an: Dann siehst du seinen Weg zum Perfektstamm und alle Formen.</p>
@@ -1730,7 +1799,7 @@ function renderTab() {
     const offen = el.nextElementSibling && el.nextElementSibling.classList.contains('detail') ? el.nextElementSibling : el.querySelector(':scope > .detail');
     if (offen) { offen.remove(); return; }
     const v = vb(el.dataset.v), html = `<div class="small muted">${esc(woher(v))}</div>${el.classList.contains('einz') ? '' : pfadHtml(v)}<div class="small">${formenZeile(v)}</div>${v.n ? `<div class="small muted">${v.n}</div>` : ''}`;
-    if (el.tagName === 'TR') el.insertAdjacentHTML('afterend', `<tr class="detail"><td colspan="5">${html}</td></tr>`); else el.insertAdjacentHTML('beforeend', `<div class="detail">${html}</div>`);
+    if (el.tagName === 'TR') el.insertAdjacentHTML('afterend', `<tr class="detail"><td colspan="${el.children.length}">${html}</td></tr>`); else el.insertAdjacentHTML('beforeend', `<div class="detail">${html}</div>`);
   };
 }
 
@@ -1747,14 +1816,16 @@ function renderHome() {
     ${due.length ? `<section><div class="card check"><h2>🔁 Weißt du es noch?</h2><p>Kurz-Check zu ${due.length === 1 ? 'einer Station' : due.length + ' Stationen'}, die du schon verstanden hast: ${due.map(k => STATION[k].icon + ' ' + STATION[k].name).join(' · ')}. Das dauert nur ein, zwei Minuten.</p><div class="row"><button class="btn gross" id="chk" type="button">Kurz-Check starten</button></div></div></section>` : ''}
     <section><h2>1 · Verstehen</h2><p class="small muted">Sechs kurze Stationen, jede etwa fünf Minuten. Am besten der Reihe nach – vom Einfachen zum Schwierigen.</p>
       <div class="grid">${SKEYS.map((k, i) => { const s = STATION[k]; return `<button class="tile ${S.st[k] ? 'done' : k === offen ? 'next' : ''}" data-s="${k}" type="button"><b>${s.icon} ${i + 1} · ${s.name}</b><span>${s.hook}</span><span class="tag">${status(k)}</span></button>`; }).join('')}</div></section>
-    <section><h2>2 · Üben</h2><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
-    <section><h2>3 · Tabellen</h2><div class="grid"><button class="tile" id="tTab" type="button"><b>📋 Perfekt-Tabellen</b><span>Der Bauplan, sieben Lerntabellen mit festen Regeln, die Einzelfälle und alle Verben von A bis Z – zum Nachschlagen und Drucken.</span></button>
+    <section><h2>2 · Üben</h2><p class="small muted">Voreingestellt ist <b>🎯 Für die Arbeit</b>: die ${p1.length} Verben vom Wortschatz-Blatt.</p><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
+    <section><h2>3 · Tabellen</h2><div class="grid"><button class="tile" id="tKa" type="button"><b>🎯 Verben der Klassenarbeit</b><span>Die ${p1.length} Verben vom Wortschatz-Blatt auf einem Blatt – geordnet nach ihrem Weg zum Perfektstamm.</span></button>
+      <button class="tile" id="tTab" type="button"><b>📋 Perfekt-Tabellen</b><span>Der Bauplan, sieben Lerntabellen mit festen Regeln, die Einzelfälle und alle Verben von A bis Z – zum Nachschlagen und Drucken.</span></button>
       <button class="tile" id="tEnd" type="button"><b>🧲 Endungen-Blatt</b><span>Die sechs Perfekt-Endungen groß auf einem Blatt – für den Kühlschrank.</span></button>
       <a class="tile" href="latein-perfekt-tabellen.pdf" download><b>⬇️ PDF zum Ausdrucken</b><span>Alle Blätter in einer Datei.</span></a></div></section>
     <section><div class="row"><button class="linkbtn" id="reset" type="button">Fortschritt zurücksetzen</button></div></section>`;
   if (due.length) app.querySelector('#chk').onclick = startCheck;
   app.querySelectorAll('[data-s]').forEach(b => b.onclick = () => startStation(b.dataset.s));
   app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { UM = b.dataset.m; go('ueben'); });
+  app.querySelector('#tKa').onclick = () => { TB = 'ka'; go('tab'); };
   app.querySelector('#tTab').onclick = () => go('tab');
   app.querySelector('#tEnd').onclick = () => { TB = 'end'; go('tab'); };
   app.querySelector('#reset').onclick = () => { if (confirm('Wirklich alles zurücksetzen? Sterne, Kurz-Checks und Lernstand gehen verloren.')) { try { localStorage.removeItem(KEY); } catch (e) { /* nichts zu löschen */ } S = laden(); render(); } };
@@ -1771,6 +1842,8 @@ document.getElementById('homeBtn').onclick = () => {
   if (mittendrin && !confirm('Wirklich zur Übersicht? Was du hier gerade machst, zählt dann nicht.')) return;
   R = null; U = null; C = null; go('home');
 };
+// Aus dem Klassenarbeits-Menü geöffnet (latein-perfekt.html?von=arbeit): Der Zurück-Link führt wieder dorthin
+if (new URLSearchParams(location.search).get('von') === 'arbeit') { const z = document.getElementById('zurueck'); z.href = 'index.html#latein-arbeit'; z.textContent = '← Klassenarbeit'; }
 // ?druck=1 zeigt nur die Druckblätter – daraus erzeugt tools/perfekt-pdf.py das PDF
 if (new URLSearchParams(location.search).has('druck')) { document.body.classList.add('pdf'); druckFuellen(BLAETTER); }
 render();
