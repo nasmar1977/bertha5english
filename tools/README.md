@@ -65,3 +65,61 @@ Die Prüfungen stehen als nummerierte Blöcke in `latein-check.mjs`, jeder mit `
 `warn()` oder `info()`. Wenn ein neuer Fehler auftaucht, der einem Kind eine Aufgabe
 kaputtmacht: erst hier eine Prüfung ergänzen, dann den Fehler beheben. So kann er nicht
 zweimal passieren.
+
+# Perfekt-Baukasten (`latein-perfekt.html`)
+
+Die Seite hat eigene Verbdaten (`ROH`): Infinitiv, 1. Person Präsens, zerlegter Perfektstamm, Konjugation,
+Untergruppe, Lektion, Bedeutung, Heft-Lektion des Perfekts, Hinweis. Die Schreibweise steht im Kommentar über `ROH`.
+
+## Wenn eine Lektion oder ein Verb dazukommt
+
+```
+  1  Zeile in ROH ergänzen     →  in die Untergruppe, deren Regel das Verb zu 100 % erfüllt; sonst als Einzelfall (…E)
+                                   mit Hinweis und eigenem Weg in PFAD_X
+  2  node tools/perfekt-check.mjs
+        FEHLER > 0  →  beheben, zurück zu 2
+  3  Agent-Gegenprüfung        →  Perfektformen und Längenstriche, die das Heft (noch) nicht nennt
+  4  python3 tools/perfekt-pdf.py   →  PDF neu erzeugen, Seitenzahl ansehen (jedes Blatt soll auf eine Seite passen)
+  5  Version + Changelog + Tag, dann Release
+```
+
+Rückt die Klasse eine Lektion weiter, ändert sich nur die Lernstufe: Sie wird in `VERBEN` aus Lektion und Heft-Lektion
+berechnet (`v.prio`) – dort die Grenzen anpassen, ebenso die Erwartung in Prüfung 3 des Skripts.
+
+Steht eine Klassenarbeit an: In `ARBEIT.wdh` die Lektionen eintragen, die dafür wiederholt werden, und `ARBEIT.text`
+anpassen. „🎯 Für die Arbeit“ (Voreinstellung beim Üben) umfasst dann Lernstufe 1 plus die Verben dieser Lektionen.
+
+## Was `perfekt-check.mjs` prüft
+
+Aufruf: `node tools/perfekt-check.mjs` (mit `-v` zusätzlich die Zählung je Gruppe). Exit-Code 0 = sauber.
+Das Skript wertet nur den Teil der Seite zwischen `//#REIN-ANFANG` und `//#REIN-ENDE` aus (Daten und Formenbildung).
+
+| Prüfung | findet |
+|---|---|
+| `doppelt` | ein Verb zweimal, oder zwei Verben mit demselben Perfektstamm (dann wäre „Zurück zum Verb“ unlösbar) |
+| `zerlegung` | unlesbare Zerlegung des Perfektstamms (`+`, `[]`), fremde Zeichen |
+| `konjugation` | eingetragene Konjugation passt nicht zu Infinitiv und 1. Person |
+| `weg` | der letzte Schritt des Wegs ergibt nicht den Perfektstamm, oder ein Schritt hat keine Erklärung |
+| `gruppenregel` | ein Verb erfüllt die Regel seiner Untergruppe nicht (Fehler) – oder ein Einzelfall passt doch in eine Regel (Warnung) |
+| `faustregel` | die Marke „geht nach der Faustregel“ widerspricht der Form |
+| `heft-abgleich` | 1. Person, Perfekt, erste Lektion und Heft-Lektion weichen vom Vokabelheft in `index.html` ab; ein Heft-Verb fehlt |
+| `lernstufe` | Lernstufe passt nicht zu Lektion und Heft-Lektion |
+| `praesens-abgleich`, `perfekt-abgleich` | erzeugte Präsensformen bzw. das Perfekt weichen von dem ab, was `index.html` für das Verb schon führt |
+| `typ-abgleich` | Hinweis: `index.html` ordnet den Perfekt-Typ anders ein (velle, nōlle: dort „u“, hier besondere Verben) |
+
+Nicht prüfbar: Perfektformen, die das Heft noch nicht nennt (Lernstufe 2, unregelmäßig), und alle Erklärtexte.
+Dafür braucht es Schritt 3.
+
+## `perfekt-pdf.py`
+
+`python3 tools/perfekt-pdf.py` schreibt `latein-perfekt-tabellen.pdf` aus `latein-perfekt.html?druck=1`,
+`--pruefen` meldet nur Höhe und Seitenzahl je Blatt. Braucht Playwright für Python mit einem Chromium; passt der
+Standard-Browser nicht zur Bibliothek, nimmt das Skript den neuesten unter `~/.cache/ms-playwright/`. Das PDF bettet
+die Schriften des Rechners ein, auf dem es läuft – nach Layout- oder Datenänderungen neu erzeugen und mit einchecken.
+Der Druck ist auf Arial-Maße ausgelegt (hier: Liberation Sans); jedes Blatt soll unter 275 mm bleiben.
+
+## Seite im Test fahren
+
+`latein-perfekt.html?ohnesperre` schaltet die Tipp-Sperre ab (sonst verschluckt die Seite jeden Klick in den ersten
+400 ms nach einem Neuzeichnen – gewollt, aber für automatische Durchläufe hinderlich). Rückfragen („Runde beenden“,
+„Übersicht“ mitten in einer Station) sind echte `confirm`-Dialoge und müssen im Test beantwortet werden.

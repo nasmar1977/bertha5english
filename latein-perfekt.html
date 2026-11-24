@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Latein: Perfekt-Baukasten</title>
+<!-- Latein Kl. 6, „Perfekt-Baukasten“: das Perfekt Aktiv als System – zwei Stämme pro Verb, ein Satz Endungen,
+     sechs Wege zum Perfektstamm. Stoff und Begriffe nach dem Buch (Grammatik Lektion 8 B und 9 B), Wortschatz:
+     alle Verben der Lektionen 1–10 aus dem Vokabelheft (Lektion 2 von den Heft-Fotos, sie fehlt in index.html).
+     Drei Teile: Verstehen (sechs Stationen mit Kurz-Check an späteren Tagen), Üben (sechs Übungsarten),
+     Tabellen (elf Blätter zum Drucken).
+     Die Verbdaten prüft tools/perfekt-check.mjs gegen das Vokabelheft in index.html; das PDF der Tabellen
+     erzeugt tools/perfekt-pdf.py aus dieser Seite (?druck=1). Speicher: localStorage „latein-perfekt-v1“. -->
+<style>
+:root{
+  --bg:#f3f4f1; --paper:#ffffff; --ink:#1c2321; --muted:#5d6763; --line:#d6dad4;
+  --acc:#2c6b5a; --acc-soft:#dcefe8; --ton:#a8491f; --ton-soft:#f8e3d6; --blau:#2f5d9c; --blau-soft:#dfe8f6;
+  --ok:#2e7d4f; --ok-soft:#dff1e6; --bad:#b3372e; --bad-soft:#f8e1de; --mark:#fff0a8;
+  --wv:#2f5d9c; --wu:#2c6b5a; --ws:#b4532a; --wd:#7a4fa3; --wr:#b3375f; --wo:#5d6763; --wx:#8a6d1f;
+  --display:"Trebuchet MS", system-ui, sans-serif;
+  --body:Verdana, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#453a0a;
+  --wv:#8db4ec; --wu:#79c7b0; --ws:#ec9a6e; --wd:#c3a2e8; --wr:#f08fb0; --wo:#9aa7a2; --wx:#d9bd6a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1b2321; --ink:#e6ecea; --muted:#9aa7a2; --line:#33403c;
+  --acc:#79c7b0; --acc-soft:#1c3a32; --ton:#ec9a6e; --ton-soft:#3f2519; --blau:#8db4ec; --blau-soft:#1d2c42;
+  --ok:#6fd39a; --ok-soft:#173a27; --bad:#f08a80; --bad-soft:#42201d; --mark:#453a0a;
+  --wv:#8db4ec; --wu:#79c7b0; --ws:#ec9a6e; --wd:#c3a2e8; --wr:#f08fb0; --wo:#9aa7a2; --wx:#d9bd6a; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:860px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.7rem,5.5vw,2.5rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .in{max-width:860px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar a,.linkbtn{color:var(--acc);text-decoration:none;font-size:.9rem;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:inherit;min-height:40px;display:inline-flex;align-items:center}
+@media (max-width:560px){.bar .crumb{display:none}}
+.bar .crumb{color:var(--muted);font-size:.85rem;margin-left:auto}
+header.top{padding:28px 0 8px;display:grid;gap:8px}
+.eyebrow{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+section{margin-top:28px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.card>*{min-width:0}
+button{font:inherit;cursor:pointer;color:inherit}
+button,.opt,.chip{touch-action:manipulation}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none;display:inline-flex;align-items:center}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0f1518}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:400}
+.btn.gross{font-size:1.05rem;padding:14px 22px}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mitte{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;text-align:center}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;color:var(--ink);display:grid;gap:4px;align-content:start}
+.tile b{font-size:1rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.tile .sterne{color:#e2a400;font-size:1.05rem}
+a.tile{text-decoration:none}
+.tile.done{border-color:var(--ok)}
+.tile .tag{justify-self:start}
+.tile.next{border:2px solid var(--acc)}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--blau-soft);color:var(--blau);vertical-align:middle}
+.sterne{color:#e2a400;letter-spacing:2px;font-size:1.05rem}
+.sterne i{font-style:normal;color:var(--line)}
+.meter{height:8px;border-radius:4px;background:var(--acc-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc)}
+.anzeige{display:flex;gap:8px;flex-wrap:wrap}
+.anzeige span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{border:0;background:var(--bg);padding:7px 12px;min-height:40px;font-size:.9rem;white-space:nowrap}
+.seg button.on{background:var(--acc);color:#fff;font-weight:700}
+:root[data-theme="dark"] .seg button.on{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#0f1518}}
+
+/* Aufgaben */
+.q{font-size:1.05rem}
+.q b{color:var(--acc)}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts.liste{display:grid}
+.opts.liste .opt{border-radius:10px}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--bg);color:var(--ink);font-size:.95rem;min-height:44px;min-width:48px;text-align:left}
+.opts.mitte .opt{text-align:center}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.fehlt{border:2px dashed var(--ok)}
+.opt:disabled{cursor:default;opacity:1}
+.opt.blass:disabled{opacity:.5}
+.fb{display:grid;gap:10px}
+.msg{padding:10px 12px;border-radius:8px;font-size:.95rem}
+.msg.ok{background:var(--ok-soft);border-left:4px solid var(--ok)}
+.msg.no{background:var(--bad-soft);border-left:4px solid var(--bad)}
+.msg.tipp{background:var(--mark);border-left:4px solid var(--ton)}
+.progress{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.dots i.jetzt{background:var(--acc)}
+.dots i.falsch{background:var(--bad)}
+.gross{font-family:var(--display);font-size:1.8rem;font-weight:700;text-align:center;padding:6px 0;overflow-wrap:anywhere}
+.cue{text-align:center}
+.merk{background:var(--acc-soft);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.achtung{background:var(--mark);border-radius:10px;padding:10px 14px;font-size:.95rem}
+.msatz{font-size:1.05rem;line-height:2}
+.gap{display:inline-block;min-width:3.2em;text-align:center;border-bottom:2px solid var(--line);padding:0 6px;border-radius:4px}
+.gap.dran{background:var(--mark);border-color:var(--acc)}
+.gap.voll{background:var(--ok-soft);border-color:var(--ok);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;min-height:44px;font-weight:700}
+.chip.on{border-color:var(--acc);background:var(--acc-soft)}
+.chip.en{font-family:var(--display);font-size:1.1rem;color:var(--acc);border-color:var(--acc)}
+.chip:disabled{opacity:.35;cursor:default}
+.chip.wackel{animation:wackel .35s;border-color:var(--bad)}
+@keyframes wackel{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+@media (prefers-reduced-motion:reduce){.chip.wackel{animation:none}}
+.einrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center}
+.ein{font:inherit;font-family:var(--display);font-size:20px;font-weight:700;min-height:48px;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:min(100%,14em)}
+.ein.ok{border-color:var(--ok);background:var(--ok-soft)}
+.ein.no{border-color:var(--bad);background:var(--bad-soft)}
+.makron{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.einhinw:empty{display:none}
+.makron button{min-width:44px;min-height:40px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);font-family:var(--display);font-weight:700;font-size:1.05rem}
+.paare{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.paare .opt{width:100%;border-radius:10px;text-align:center;min-height:48px;font-family:var(--display);font-weight:700;font-size:1.05rem}
+
+/* Bausteine: Stamm (blau) · Zeichen (orange) · Endung (grün) */
+.lat{font-family:var(--display);font-weight:700;white-space:nowrap}
+.lat .zn,.lat .hl{color:var(--ton)}
+.lat .en{color:var(--acc)}
+.bau{display:inline-flex;gap:4px;align-items:stretch;font-family:var(--display);font-weight:700;font-size:1.35rem;vertical-align:middle;max-width:100%}
+.bau.gross{font-size:1.7rem;padding:0}
+.bau.klein{font-size:1.05rem}
+.bk{display:grid;gap:1px;justify-items:center;align-content:center;padding:5px 9px;border-radius:8px;border:2px solid var(--line);min-width:1.5em;background:var(--bg)}
+.bau.klein .bk{padding:2px 6px;border-width:1.5px}
+.bk.st{background:var(--blau-soft);border-color:var(--blau)}
+.bk.zn{background:var(--ton-soft);border-color:var(--ton);color:var(--ton)}
+.bk.en{background:var(--acc-soft);border-color:var(--acc);color:var(--acc)}
+.bk.pe{background:var(--bg);border-color:var(--muted)}
+.bk.leer{border-style:dashed;color:var(--muted);background:transparent}
+.bk .hl{color:var(--ton)}
+.psw{display:inline-grid;gap:2px;justify-items:center;align-content:start}
+.psi{display:inline-flex;gap:4px;align-items:stretch}
+.psw>small{font-family:var(--body);font-weight:400;font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-top:2px solid var(--line);width:100%;text-align:center;padding-top:1px}
+.legende{display:flex;gap:8px 14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);align-items:center}
+.wtag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:.75rem;font-weight:700;color:#fff;white-space:nowrap;vertical-align:middle}
+/* farbige Flächen auch dann drucken, wenn „Hintergrundgrafiken“ im Druckdialog aus ist – sonst stünde weiße Schrift auf weißem Papier */
+.wtag,.gnr,.balken i,.regel,.achtung,.kn,.stp{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+:root[data-theme="dark"] .wtag{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .wtag{color:#0f1518}}
+.w-v{background:var(--wv)}.w-u{background:var(--wu)}.w-s{background:var(--ws)}.w-d{background:var(--wd)}.w-r{background:var(--wr)}.w-o{background:var(--wo)}.w-x{background:var(--wx)}
+.balken{display:flex;height:28px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.balken i{display:grid;place-items:center;font-style:normal;font-size:.78rem;font-weight:700;color:#fff;min-width:0;overflow:hidden}
+:root[data-theme="dark"] .balken i{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .balken i{color:#0f1518}}
+.krow{display:grid;gap:4px}
+.wege{display:grid;gap:8px}
+.weg{border:1px solid var(--line);border-left:6px solid var(--wv);border-radius:8px;padding:8px 12px;display:grid;gap:4px;background:var(--bg)}
+.weg.w-v,.weg.w-u,.weg.w-s,.weg.w-d,.weg.w-r,.weg.w-o,.weg.w-x{background:var(--bg)}
+.weg.w-u{border-left-color:var(--wu)}.weg.w-s{border-left-color:var(--ws)}.weg.w-d{border-left-color:var(--wd)}.weg.w-r{border-left-color:var(--wr)}.weg.w-o{border-left-color:var(--wo)}.weg.w-x{border-left-color:var(--wx)}
+
+/* Tabellenblätter (Bildschirm und Druck) */
+.tabwrap{overflow-x:auto}
+.blatt{display:grid;gap:12px}
+.blatt .kopf{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;border-bottom:3px solid var(--wv);padding-bottom:6px}
+.blatt.b-u .kopf{border-color:var(--wu)}.blatt.b-s .kopf{border-color:var(--ws)}.blatt.b-d .kopf{border-color:var(--wd)}.blatt.b-r .kopf{border-color:var(--wr)}.blatt.b-o .kopf{border-color:var(--wo)}.blatt.b-x .kopf{border-color:var(--wx)}.blatt.b-n .kopf{border-color:var(--ink)}
+.blatt .kopf .wo{font-size:.8rem;color:var(--muted)}
+.regel{background:var(--acc-soft);border-radius:10px;padding:10px 14px;display:grid;gap:6px}
+table.k6{border-collapse:collapse;font-size:1.02rem}
+table.k6 td{padding:1px 18px 1px 0}
+table.k6 td.i{padding-top:4px;font-size:.9rem}
+table.pt{border-collapse:collapse;width:100%;font-size:.93rem}
+table.pt th,table.pt td{border-bottom:1px solid var(--line);padding:8px 8px 8px 0;text-align:left;vertical-align:top}
+table.pt th{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;white-space:nowrap}
+table.pt td.l{font-family:var(--display);font-weight:700;white-space:nowrap}
+table.pt td.z{text-align:right;color:var(--muted);font-size:.82rem;white-space:nowrap}
+table.pt td.n{font-size:.85rem;color:var(--muted)}
+table.pt tr.grp td{border-bottom:0;padding-top:12px;font-weight:700;font-family:var(--display)}
+ul.kompakt{list-style:none;margin:0;padding:0;columns:2;column-gap:28px;font-size:.93rem}
+ul.kompakt li{break-inside:avoid;padding:7px 0;border-bottom:1px solid var(--line)}
+ul.kompakt .de{color:var(--muted);font-size:.85rem}
+.sicher{color:var(--ok);font-size:.8rem}
+.fuss{font-size:.8rem;color:var(--muted)}
+.ausn{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.ausn .box{border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:grid;gap:4px;break-inside:avoid}
+.ausn .box h4{margin:0;font-size:.92rem;font-family:var(--body);font-weight:400}
+.ausn .box h4 b{font-family:var(--display);font-size:1rem}
+ul.az{list-style:none;margin:0;padding:0;columns:3;column-gap:22px;font-size:.84rem}
+ul.az li{break-inside:avoid;padding:1px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:2px 6px}
+ul.az li>span:first-child{flex:1 1 0;min-width:0}
+ul.az li .detail{flex-basis:100%}
+ul.az .lat{white-space:normal}
+@media (max-width:700px){ul.az{columns:1}ul.kompakt{columns:1}}
+
+/* Lernstufen: 1 fett · 2 normal · 3 grau */
+.p2 .lat,table.pt tr.p2 td.l,.box.p2 h4 b{font-weight:400}
+.p3,.p3 td,.p3 .de{color:var(--muted)}
+.p3 .lat,table.pt tr.p3 td.l,.box.p3 h4 b{font-weight:400}
+.p3 .lat .zn,.p3 .lat .hl,.p3 .lat .en{color:inherit}
+#blatt [data-v]{cursor:pointer}
+
+/* Stammbaum: Verb → zwei Stämme → drei Zeiten → sechs Personen */
+.baum{overflow-x:auto;padding:2px 0 6px}
+.baum ul{display:flex;justify-content:center;margin:0;padding:18px 0 0;list-style:none;position:relative}
+/* mittig, solange er passt; sonst beginnt er links und lässt sich schieben (statt links abgeschnitten zu sein) */
+.baum>ul{padding-top:0;width:max-content;margin:0 auto}
+.baum ul>li{position:relative;padding:18px 3px 0;display:flex;flex-direction:column;align-items:center}
+.baum ul>li::before,.baum ul>li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:18px;border-top:2px solid var(--muted)}
+.baum ul>li::after{right:auto;left:50%;border-left:2px solid var(--muted)}
+.baum ul>li:only-child::before,.baum ul>li:only-child::after{display:none}
+.baum ul>li:only-child{padding-top:0}
+.baum ul>li:first-child::before,.baum ul>li:last-child::after{border:0 none}
+.baum ul>li:last-child::before{border-right:2px solid var(--muted);border-radius:0 8px 0 0}
+.baum ul>li:first-child::after{border-radius:8px 0 0 0}
+.baum ul ul::before{content:"";position:absolute;top:0;left:50%;border-left:2px solid var(--muted);height:18px}
+.kn{border:2px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--paper);display:grid;gap:1px;justify-items:center;text-align:center}
+.kn b{font-family:var(--display);font-size:1.1rem}
+.kn small{font-size:.72rem;color:var(--muted);line-height:1.25}
+.kn.verb{border-color:var(--ink)}
+.kn.ps{border-color:var(--blau);background:var(--blau-soft)}
+.kn.pfs{border-color:var(--ton);background:var(--ton-soft)}
+.kn .hinw{max-width:11em}
+.kn.zeit{padding:6px 4px}
+.kn.zeit>b{font-size:.9rem}
+.frs{display:grid;gap:1px;justify-items:start;margin-top:3px}
+.fr{padding:4px 4px;border-radius:5px;font-size:.92rem;cursor:pointer;white-space:nowrap}
+.fr.an{background:var(--mark)}
+.fr .pn{display:inline-block;width:2.3em;font-size:.72rem;color:var(--muted);text-align:left}
+.lat .pe{color:var(--muted)}
+
+/* Weg zum Perfektstamm, Schritt für Schritt */
+.pfad{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.stpw{display:flex;gap:6px;align-items:stretch}
+.stp{border:1.5px solid var(--line);border-radius:8px;padding:5px 10px;display:grid;gap:2px;background:var(--bg);max-width:15em;align-content:start}
+.stp .lat{font-size:1.1rem}
+.stp s,.pz s{color:var(--muted);font-weight:400}
+.stp small{font-size:.8rem;color:var(--muted);line-height:1.3}
+.stp.ziel{border-color:var(--ton);background:var(--ton-soft)}
+.stp.end{border-color:var(--acc);background:var(--acc-soft)}
+.pfeil{align-self:center;color:var(--muted);font-weight:700}
+.pz{line-height:1.9}
+
+/* Untergruppen der Tabellen */
+.gruppe{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:8px}
+.gruppe.spaeter{border-style:dashed}
+.gruppe h3{font-size:1.02rem}
+.gruppe h3 small{font-family:var(--body);font-weight:400;font-size:.8rem;color:var(--muted)}
+.gruppe h4{margin:4px 0 0;font-size:.88rem;font-family:var(--body)}
+.gnr{display:inline-block;min-width:2em;text-align:center;border-radius:6px;padding:0 6px;color:#fff;font-size:.85rem}
+:root[data-theme="dark"] .gnr{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .gnr{color:#0f1518}}
+.bspweg{display:grid;gap:10px}
+.gpaar{display:grid;gap:12px}
+.reihen{display:grid;gap:4px}
+.einz{border-top:1px solid var(--line);padding-top:6px;display:grid;gap:4px}
+.gruppe h3+.einz,.gruppe p+.einz{border-top:0;padding-top:0}
+.einz .de,.box .de{color:var(--muted);font-size:.85rem}
+div.detail{display:grid;gap:6px;background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:4px;cursor:default}
+tr.detail>td{background:var(--bg);padding:8px 10px;cursor:default}
+tr.detail>td>*+*{margin-top:6px}
+.card.check{border:2px solid var(--acc)}
+
+/* Endungen-Blatt für den Kühlschrank */
+.poster{text-align:center}
+.poster .kopf,.poster .regel{text-align:left}
+.gross2{font-size:1.15rem}
+.end6{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;max-width:600px;margin:0 auto;width:100%}
+.poster .e{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:2px solid var(--line);padding:4px 6px}
+.poster .e span{font-size:.95rem;color:var(--muted);text-align:left}
+.poster .e b{font-family:var(--display);font-size:clamp(2rem,9vw,3.2rem);color:var(--acc);line-height:1.15}
+.poster .e.inf{max-width:600px;margin:0 auto;width:100%}
+@media (max-width:520px){.end6{grid-template-columns:1fr}}
+.chip.ok,.chip.no,.chip.fehlt{opacity:1}
+.chip.ok{border-color:var(--ok);background:var(--ok-soft)}
+.chip.no{border-color:var(--bad);background:var(--bad-soft)}
+.chip.fehlt{border:2px dashed var(--ok)}
+
+#druck{display:none}
+body.pdf .bar,body.pdf #app{display:none}
+body.pdf #druck{display:block;max-width:186mm;margin:0 auto;background:#fff;color:#000}
+@media print{
+  @page{size:A4;margin:11mm 12mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff; --paper:#fff; --ink:#000; --muted:#444; --line:#aaa; --acc:#1f5a4a; --acc-soft:#eef5f2; --ton:#a8431c; --ton-soft:#fbeee6;
+    --blau:#24508c; --blau-soft:#eef2f9; --ok:#2e7d4f; --ok-soft:#eef7f1; --bad:#b3372e; --bad-soft:#fbefed; --mark:#fff6c9;
+    --wv:#2f5d9c; --wu:#2c6b5a; --ws:#b4532a; --wd:#7a4fa3; --wr:#b3375f; --wo:#5d6763; --wx:#8a6d1f; color-scheme:light}
+  body{background:#fff;color:#000;padding:0;font-size:10pt;line-height:1.35}
+  body,#druck,#druck *{font-family:Arial,"Helvetica Neue",Helvetica,"Liberation Sans",sans-serif}
+  .bar{display:none!important}
+  body.druckt #app{display:none!important}
+  body:not(.druckt) #druck{display:none!important}
+  #druck{display:block;max-width:none}
+  #druck .blatt{break-after:page;gap:7pt}
+  #druck .blatt:last-child{break-after:auto}
+  #druck h2{font-size:15pt}
+  #druck h3{font-size:11pt}
+  #druck .lat .zn,#druck .lat .hl{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+  #druck .regel{padding:6pt 9pt;border:1px solid #9bb;gap:3pt}
+  #druck .achtung{padding:5pt 9pt;border:1px solid #cc9;font-size:9.5pt}
+  #druck table.k6{font-size:10.5pt}
+  #druck table.pt{font-size:9.5pt}
+  #druck table.pt th,#druck table.pt td{padding:1.8pt 6pt 1.8pt 0}
+  #druck .fr{padding:0 4pt}
+  #druck table.pt tr.grp td{padding-top:7pt}
+  #druck ul.kompakt{font-size:9.5pt;columns:2}
+  #druck ul.az{font-size:8pt;columns:3}
+  #druck .ausn{grid-template-columns:1fr 1fr;gap:5pt 8pt}
+  #druck .ausn .box{padding:3pt 6pt;gap:0}
+  #druck .ausn table.k6{font-size:9.5pt}
+  #druck .ausn .box h4{font-size:8.5pt}
+  #druck .fuss{font-size:8pt}
+  #druck .sicher{display:none}
+  #druck .wtag{color:#fff;font-size:7.5pt}
+  #druck .balken i{color:#fff}
+  #druck .bau{font-size:12pt}
+  #druck .bk{padding:2pt 6pt;border-width:1.2pt}
+  #druck .gruppe{break-inside:avoid;padding:5pt 8pt;gap:4pt}
+  #druck .gruppe.lang{break-inside:auto}
+  #druck .gruppe h3{font-size:10.5pt}
+  #druck .gruppe h4{font-size:9pt;margin-top:2pt}
+  #druck .gruppe p{font-size:9.5pt}
+  #druck .einz{padding-top:3pt;gap:1pt;break-inside:avoid}
+  #druck .pz{line-height:1.6}
+  #druck .bspweg{grid-template-columns:1fr 1fr;gap:6pt}
+  #druck .kn{padding:3pt 7pt}
+  #druck .kn b{font-size:11pt}
+  #druck .fr{font-size:9.5pt;padding:0 4pt}
+  #druck .p3,#druck .p3 td,#druck .p3 .de{color:#777}
+  #druck .gnr{color:#fff}
+  #druck .poster .e b{font-size:66pt}
+  #druck .poster .e span{font-size:17pt}
+  #druck .poster .e{padding:11pt 4pt}
+  #druck .gross2{font-size:17pt;margin:6pt 0}
+  #druck .end6{max-width:none;gap:0 14mm}
+  #druck .poster .e.inf{max-width:none}
+  #druck .poster .regel{font-size:12pt;margin-top:10pt;padding:8pt 10pt;gap:6pt}
+  #druck .small{font-size:8.5pt}
+  #druck .blatt{gap:4pt}
+  #druck .gpaar{grid-template-columns:1fr 1fr;gap:4pt;align-items:start}
+  #druck .reihen{grid-template-columns:1fr 1fr;gap:0 12pt}
+  #druck .reihen .einz:nth-child(2){border-top:0;padding-top:0}
+  #druck .fr{font-size:9pt;line-height:1.25}
+  #druck .ausn .box h4{line-height:1.25}
+  #druck .ausn .box h4 b{font-size:10pt}
+  #druck table.k6 td.i{font-size:9pt;padding-top:1pt}
+  #druck .gnr{font-size:8.5pt}
+  #druck .gruppe{gap:3pt;padding:4pt 7pt}
+  #druck .regel{padding:4pt 8pt}
+  #druck ul.kompakt{font-size:8.8pt;column-gap:14pt}
+  #druck ul.kompakt li{padding:.5pt 0}
+  #druck ul.kompakt .de,#druck .einz .de,#druck .box .de{font-size:8pt}
+  #druck .ausn{grid-template-columns:1fr 1fr 1fr;gap:3pt 5pt}
+  #druck .ausn table.k6{font-size:9pt}
+  #druck table.k6 td{padding:0 8pt 0 0}
+  #druck .baum>ul{padding-top:0}
+  #druck .baum ul{padding-top:11px}
+  #druck .baum ul>li{padding-top:11px}
+  #druck .baum ul>li:only-child{padding-top:0}
+  #druck .baum ul>li::before,#druck .baum ul>li::after,#druck .baum ul ul::before{height:11px}
+  #druck .balken{height:13pt}
+  #druck .krow{gap:1pt}
+  #druck .wege{gap:4pt}
+  #druck .legende{font-size:8pt}
+  #druck h3{margin-top:0}
+}
+</style>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a href="index.html#latein">← Latein</a>
+  <button class="linkbtn" id="homeBtn" type="button">🧱 Übersicht</button>
+  <span class="crumb" id="crumb"></span>
+</div></div>
+<main class="wrap" id="app"></main>
+<div id="druck"></div>
+<script>
+'use strict';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+//#REIN-ANFANG  (bis REIN-ENDE: nur Daten und Formenbildung, ohne Seite – das liest tools/perfekt-check.mjs)
+const MAK = { 'ā': 'a', 'ē': 'e', 'ī': 'i', 'ō': 'o', 'ū': 'u' };
+const ohneM = s => s.replace(/[āēīōū]/g, c => MAK[c]);
+const kurzEnde = s => s.slice(0, -1) + ohneM(s.slice(-1));   // letzten Buchstaben kürzen: rogā → roga
+
+// ===================================================================
+// VERBEN – alle Verben aus dem Vokabelheft, Lektion 1–10
+//  [Infinitiv, 1. Sg. Präsens, Perfektstamm zerlegt, Konjugation, Gruppe, Lektion, Bedeutung, Heft, Hinweis]
+//  Perfektstamm zerlegt:  +  trennt das Tempuszeichen ab (rogā+v, tac+u, dī+x)
+//                         [] markiert, was sich im Stamm verändert oder verdoppelt (v[ī]d, [ce]cid)
+//                         -  ist nur eine Lesehilfe hinter einer Vorsilbe (ad-fu, per-[di]d)
+//  Konjugation: a, e, i, k = konsonantisch, ki = konsonantisch mit i-Erweiterung, x = besonderes Verb
+//  Gruppe: erster Buchstabe = Weg/Tabelle (o ohne Stammveränderung, v, u, s, d Dehnung, r Reduplikation,
+//          x besondere Verben), dahinter die Untergruppe. In einer Untergruppe gilt für ALLE Verben genau
+//          dieselbe Regel (geprüft von tools/perfekt-check.mjs). E = Einzelfall, r0 = Verdopplung vorn.
+//  Lektion: erstes Vorkommen im Vokabelheft. Heft: Lektion, in der das Vokabelheft das Perfekt nennt
+//           (8, 9, 10); 0 = steht dort bis Lektion 10 nicht.
+// ===================================================================
+const ROH = [
+  // ===== Tabelle 1 · ohne Stammveränderung =====
+  ['ostendere', 'ostendō', 'ostend', 'k', 'o1', 5, 'zeigen, erklären', 0],
+  ['accendere', 'accendō', 'accend', 'k', 'o1', 5, 'anzünden, anfeuern', 0],
+  ['cōnstituere', 'cōnstituō', 'cōnstitu', 'k', 'o1', 5, 'aufstellen, beschließen', 10, 'Achtung: Das u gehört hier zum Stamm, es ist kein Zeichen. Nicht verwechseln mit cōnstitī von cōnsistere (Tabelle 6).'],
+  ['animadvertere', 'animadvertō', 'animadvert', 'k', 'o1', 7, 'bemerken', 9],
+  ['contendere', 'contendō', 'contend', 'k', 'o1', 9, 'eilen, sich anstrengen', 9],
+  ['respondēre', 'respondeō', 'respond', 'e', 'oE', 3, 'antworten', 0, 'e-Konjugation, aber kein u-Perfekt: Der Stamm respond- bleibt einfach stehen.'],
+  // ===== Tabelle 2 · v-Perfekt =====
+  ['cōgitāre', 'cōgitō', 'cōgitā+v', 'a', 'v1', 1, 'denken, nachdenken', 0],
+  ['clāmāre', 'clāmō', 'clāmā+v', 'a', 'v1', 1, 'laut rufen, schreien', 0],
+  ['dubitāre', 'dubitō', 'dubitā+v', 'a', 'v1', 1, 'zögern, zweifeln', 0],
+  ['spectāre', 'spectō', 'spectā+v', 'a', 'v1', 1, 'betrachten, anschauen', 0],
+  ['ōrāre', 'ōrō', 'ōrā+v', 'a', 'v1', 1, 'bitten, beten', 0],
+  ['exspectāre', 'exspectō', 'exspectā+v', 'a', 'v1', 2, 'warten (auf), erwarten', 0],
+  ['properāre', 'properō', 'properā+v', 'a', 'v1', 2, 'eilen, sich beeilen', 0],
+  ['intrāre', 'intrō', 'intrā+v', 'a', 'v1', 2, 'betreten, hineingehen', 0],
+  ['servāre', 'servō', 'servā+v', 'a', 'v1', 2, 'retten, bewahren', 0],
+  ['pōstulāre', 'pōstulō', 'pōstulā+v', 'a', 'v1', 2, 'fordern, verlangen', 0],
+  ['violāre', 'violō', 'violā+v', 'a', 'v1', 2, 'verletzen, beleidigen', 0],
+  ['rogāre', 'rogō', 'rogā+v', 'a', 'v1', 2, 'fragen, bitten', 0],
+  ['dēsīderāre', 'dēsīderō', 'dēsīderā+v', 'a', 'v1', 2, 'vermissen, verlangen', 0],
+  ['necāre', 'necō', 'necā+v', 'a', 'v1', 2, 'töten', 0],
+  ['narrāre', 'narrō', 'narrā+v', 'a', 'v1', 3, 'erzählen', 0],
+  ['parāre', 'parō', 'parā+v', 'a', 'v1', 3, '(vor)bereiten, vorhaben', 0],
+  ['indicāre', 'indicō', 'indicā+v', 'a', 'v1', 3, 'anzeigen, melden', 0],
+  ['negāre', 'negō', 'negā+v', 'a', 'v1', 3, 'leugnen, verneinen', 0],
+  ['probāre', 'probō', 'probā+v', 'a', 'v1', 3, 'prüfen, beweisen', 0],
+  ['vocāre', 'vocō', 'vocā+v', 'a', 'v1', 3, 'rufen, nennen', 0],
+  ['superāre', 'superō', 'superā+v', 'a', 'v1', 3, 'besiegen, überwinden', 0],
+  ['temptāre', 'temptō', 'temptā+v', 'a', 'v1', 3, 'versuchen, prüfen', 0],
+  ['mandāre', 'mandō', 'mandā+v', 'a', 'v1', 3, 'übergeben, einen Auftrag geben', 0],
+  ['amāre', 'amō', 'amā+v', 'a', 'v1', 4, 'lieben', 0],
+  ['appellāre', 'appellō', 'appellā+v', 'a', 'v1', 4, 'rufen, anrufen', 0],
+  ['agitāre', 'agitō', 'agitā+v', 'a', 'v1', 4, 'treiben, betreiben', 0],
+  ['vītāre', 'vītō', 'vītā+v', 'a', 'v1', 4, 'meiden, vermeiden', 0],
+  ['mūtāre', 'mūtō', 'mūtā+v', 'a', 'v1', 4, 'ändern, verändern', 0],
+  ['dōnāre', 'dōnō', 'dōnā+v', 'a', 'v1', 5, 'schenken', 0],
+  ['laudāre', 'laudō', 'laudā+v', 'a', 'v1', 6, 'loben', 0],
+  ['volāre', 'volō', 'volā+v', 'a', 'v1', 7, 'fliegen, eilen', 0],
+  ['iactāre', 'iactō', 'iactā+v', 'a', 'v1', 7, 'werfen, schleudern', 0],
+  ['putāre', 'putō', 'putā+v', 'a', 'v1', 8, 'glauben, meinen', 8],
+  ['pūgnāre', 'pūgnō', 'pūgnā+v', 'a', 'v1', 8, 'kämpfen', 8],
+  ['imperāre', 'imperō', 'imperā+v', 'a', 'v1', 10, 'befehlen, herrschen (über)', 10],
+  ['audīre', 'audiō', 'audī+v', 'i', 'v1', 2, 'hören', 0],
+  ['scīre', 'sciō', 'scī+v', 'i', 'v1', 2, 'wissen, kennen', 0],
+  ['nēscīre', 'nēsciō', 'nēscī+v', 'i', 'v1', 4, 'nicht wissen, nicht kennen', 0],
+  ['flēre', 'fleō', 'flē+v', 'e', 'v1', 9, 'weinen, beweinen', 9, 'e-Konjugation, aber v-Perfekt – eine Ausnahme von der Faustregel.'],
+  ['petere', 'petō', 'pet[ī]+v', 'k', 'v2', 5, 'bitten, verlangen', 8],
+  ['cupere', 'cupiō', 'cup[ī]+v', 'ki', 'v2', 6, 'wollen, wünschen', 0],
+  ['repetere', 'repetō', 'repet[ī]+v', 'k', 'v2', 7, 'wiederholen, (zurück)verlangen', 0],
+  ['quaerere', 'quaerō', 'quae[sī]+v', 'k', 'vE', 7, 'fragen, suchen', 0, 'Aus dem r wird ein s, dann kommen ī und v.'],
+  ['cōgnōscere', 'cōgnōscō', 'cōgnō+v', 'k', 'vE', 5, 'erkennen, kennenlernen', 0, 'Das -sc- fällt weg, dann kommt das v.'],
+  // ===== Tabelle 3 · u-Perfekt =====
+  ['dēbēre', 'dēbeō', 'dēb+u', 'e', 'u1', 1, 'müssen, sollen', 0],
+  ['tenēre', 'teneō', 'ten+u', 'e', 'u1', 2, 'halten, festhalten', 0],
+  ['valēre', 'valeō', 'val+u', 'e', 'u1', 2, 'gesund sein, stark sein', 0],
+  ['sustinēre', 'sustineō', 'sustin+u', 'e', 'u1', 3, 'ertragen, standhalten', 0],
+  ['prohibēre', 'prohibeō', 'prohib+u', 'e', 'u1', 3, 'abhalten, hindern', 0],
+  ['placēre', 'placeō', 'plac+u', 'e', 'u1', 3, 'gefallen', 0],
+  ['pārēre', 'pāreō', 'pār+u', 'e', 'u1', 3, 'gehorchen', 0],
+  ['timēre', 'timeō', 'tim+u', 'e', 'u1', 4, 'fürchten, Angst haben (vor)', 0],
+  ['terrēre', 'terreō', 'terr+u', 'e', 'u1', 4, 'erschrecken', 0],
+  ['habēre', 'habeō', 'hab+u', 'e', 'u1', 6, 'haben, halten', 0],
+  ['docēre', 'doceō', 'doc+u', 'e', 'u1', 6, 'lehren, unterrichten', 0],
+  ['tacēre', 'taceō', 'tac+u', 'e', 'u1', 7, 'schweigen, verschweigen', 0],
+  ['studēre', 'studeō', 'stud+u', 'e', 'u1', 8, 'sich bemühen (um), streben nach', 8],
+  ['iacēre', 'iaceō', 'iac+u', 'e', 'u1', 8, 'liegen', 8],
+  ['monēre', 'moneō', 'mon+u', 'e', 'u1', 9, 'mahnen, ermahnen', 9],
+  ['aperīre', 'aperiō', 'aper+u', 'i', 'u2', 2, 'öffnen, aufdecken', 0, 'i-Konjugation, aber u-Perfekt – eine Ausnahme von der Faustregel.'],
+  ['colere', 'colō', 'col+u', 'k', 'u2', 5, 'verehren, pflegen', 0],
+  ['ēripere', 'ēripiō', 'ērip+u', 'ki', 'u2', 7, 'entreißen', 8],
+  // ===== Tabelle 4 · s-Perfekt =====
+  ['dūcere', 'dūcō', 'dū+x', 'k', 's1', 5, 'führen, ziehen', 9],
+  ['dīcere', 'dīcō', 'dī+x', 'k', 's1', 5, 'sagen, sprechen', 9],
+  ['rīdēre', 'rīdeō', 'rī+s', 'e', 's2', 1, 'lachen, auslachen', 10],
+  ['ārdēre', 'ārdeō', 'ār+s', 'e', 's2', 4, 'brennen', 0],
+  ['accēdere', 'accēdō', 'acce[s]+s', 'k', 's3', 7, 'herbeikommen, sich nähern', 10],
+  ['discēdere', 'discēdō', 'disce[s]+s', 'k', 's3', 9, 'weggehen, auseinandergehen', 9],
+  ['mittere', 'mittō', 'm[ī]+s', 'k', 's4', 10, 'schicken, werfen', 10],
+  ['committere', 'committō', 'comm[ī]+s', 'k', 's4', 10, 'anvertrauen, begehen', 10],
+  ['manēre', 'maneō', 'm[ā]n+s', 'e', 'sE', 9, 'bleiben, warten (auf)', 9, 'An man- kommt das s. Vor ns wird der Vokal lang.'],
+  ['sentīre', 'sentiō', 's[ē]n+s', 'i', 'sE', 4, 'fühlen, meinen', 9, 'Das t fällt vor dem s weg. Vor ns wird der Vokal lang.'],
+  ['vīvere', 'vīvō', 'vī+x', 'k', 'sE', 5, 'leben', 0, 'Hier wird aus v + s ein x.'],
+  ['scrībere', 'scrībō', 'scrī[p]+s', 'k', 'sE', 5, 'schreiben, beschreiben', 0, 'Vor dem s wird aus b ein p.'],
+  ['iubēre', 'iubeō', 'iu[s]+s', 'e', 'sE', 10, 'anordnen, befehlen', 10, 'Aus b + s wird ss.'],
+  // ===== Tabelle 5 · Dehnungsperfekt =====
+  ['vidēre', 'videō', 'v[ī]d', 'e', 'd1', 1, 'sehen', 9],
+  ['venīre', 'veniō', 'v[ē]n', 'i', 'd1', 1, 'kommen', 10],
+  ['sedēre', 'sedeō', 's[ē]d', 'e', 'd1', 2, 'sitzen', 10],
+  ['prōvidēre', 'prōvideō', 'prōv[ī]d', 'e', 'd1', 3, 'sorgen für', 0],
+  ['cavēre', 'caveō', 'c[ā]v', 'e', 'd1', 3, 'vorsichtig sein, sich hüten (vor)', 0],
+  ['movēre', 'moveō', 'm[ō]v', 'e', 'd1', 4, 'bewegen, beeindrucken', 0],
+  ['circumvenīre', 'circumveniō', 'circumv[ē]n', 'i', 'd1', 4, 'umringen, umzingeln', 0],
+  ['legere', 'legō', 'l[ē]g', 'k', 'd1', 5, 'lesen, auswählen', 0],
+  ['invenīre', 'inveniō', 'inv[ē]n', 'i', 'd1', 5, 'finden, erfinden', 10],
+  ['fugere', 'fugiō', 'f[ū]g', 'ki', 'd1', 7, 'fliehen (vor), meiden', 9],
+  ['convenīre', 'conveniō', 'conv[ē]n', 'i', 'd1', 7, 'zusammenkommen, besuchen', 0],
+  ['emere', 'emō', '[ē]m', 'k', 'd1', 7, 'kaufen', 0],
+  ['capere', 'capiō', 'c[ē]p', 'ki', 'd2', 6, 'nehmen, fassen', 9],
+  ['facere', 'faciō', 'f[ē]c', 'ki', 'd2', 8, 'machen, tun', 9],
+  ['accipere', 'accipiō', 'acc[ē]p', 'ki', 'd3', 6, 'erhalten, annehmen', 9],
+  ['interficere', 'interficiō', 'interf[ē]c', 'ki', 'd3', 10, 'töten, vernichten', 10],
+  ['vincere', 'vincō', 'v[ī]c', 'k', 'd4', 9, 'siegen, besiegen', 9],
+  ['relinquere', 'relinquō', 'rel[ī]qu', 'k', 'd4', 9, 'verlassen, zurücklassen', 9],
+  ['cōgere', 'cōgō', 'co[ē]g', 'k', 'dE', 5, 'zwingen, (ver)sammeln', 0, 'Aus cōg- wird co-ēg-. Das merkst du dir einzeln.'],
+  ['cōnsīdere', 'cōnsīdō', 'cōns[ē]d', 'k', 'dE', 7, 'sich setzen, sich niederlassen', 0, 'Aus ī wird ē – wie bei sedēre → sēdī.'],
+  // ===== Tabelle 6 · Reduplikationsperfekt =====
+  ['currere', 'currō', '[cu]curr', 'k', 'r0', 9, 'laufen, eilen', 9, 'Nur die Verdopplung: Vorn kommt cu- dazu.'],
+  ['dare', 'dō', '[de]d', 'a', 'r0', 2, 'geben', 0, 'Vom Stamm bleibt nur d. Vorn kommt de- dazu.'],
+  ['stāre', 'stō', '[ste]t', 'a', 'r0', 1, 'stehen', 0, 'Vorn kommt ste- dazu, dahinter bleibt nur das t.'],
+  ['cadere', 'cadō', '[ce]cid', 'k', 'r0', 9, 'fallen', 9, 'Vorn kommt ce- dazu. Außerdem wird aus a ein i.'],
+  ['parcere', 'parcō', '[pe]perc', 'k', 'r0', 8, 'schonen, verschonen', 9, 'Vorn kommt pe- dazu. Außerdem wird aus a ein e.'],
+  ['tangere', 'tangō', '[te]tig', 'k', 'r0', 5, 'berühren', 0, 'Vorn kommt te- dazu. Außerdem wird aus a ein i, und das n fällt weg.'],
+  ['vēndere', 'vēndō', 'vēn-[di]d', 'k', 'r1', 7, 'verkaufen', 0],
+  ['perdere', 'perdō', 'per-[di]d', 'k', 'r1', 9, 'verlieren, vernichten', 9],
+  ['crēdere', 'crēdō', 'crē-[di]d', 'k', 'r1', 10, 'glauben, anvertrauen', 10],
+  ['resistere', 'resistō', 're-[sti]t', 'k', 'r2', 5, 'stehen bleiben, Widerstand leisten', 0],
+  ['cōnsistere', 'cōnsistō', 'cōn-[sti]t', 'k', 'r2', 10, 'stehen bleiben, sich aufstellen', 10],
+  ['accidere', 'accidō', 'ac-cid', 'k', 'r3', 9, 'geschehen, sich ereignen', 9, 'Gehört zu cadere → cecidī. Mit der Vorsilbe ist die Verdopplung weggefallen.'],
+  ['occurrere', 'occurrō', 'oc-curr', 'k', 'r3', 9, 'begegnen, entgegentreten', 9, 'Gehört zu currere → cucurrī. Mit der Vorsilbe ist die Verdopplung weggefallen.'],
+  ['attingere', 'attingō', 'at-tig', 'k', 'r3', 7, 'berühren', 0, 'Gehört zu tangere → tetigī. Mit der Vorsilbe ist die Verdopplung weggefallen, übrig bleibt -tig- (ohne n).'],
+  ['reperīre', 'reperiō', 're[p]per', 'i', 'rE', 2, 'finden, wiederfinden', 9, 'Hier steckt die Verdopplung innen: Das p wird verdoppelt.'],
+  ['īnstāre', 'īnstō', 'īn-[sti]t', 'a', 'rE', 3, 'bevorstehen, drohen', 0, 'Gehört zu stāre → stetī. Mit Vorsilbe heißt es -stitī.'],
+  // ===== Tabelle 7 · besondere Verben =====
+  ['esse', 'sum', 'fu', 'x', 'x1', 1, 'sein, sich befinden', 8, 'Der Perfektstamm ist ein ganz anderes Wort: fu-.'],
+  ['adesse', 'adsum', 'ad-fu', 'x', 'x1', 1, 'da sein, helfen', 8, 'Wie esse: Vorsilbe ad- und fuī.'],
+  ['deesse', 'dēsum', 'dē-fu', 'x', 'x1', 3, 'fehlen, nicht da sein', 8, 'Wie esse: Vorsilbe dē- und fuī.'],
+  ['abesse', 'absum', 'ā-fu', 'x', 'x1', 7, 'abwesend sein, fehlen', 0, 'Wie esse – aber aus ab- wird vor dem f ein langes ā-.'],
+  ['posse', 'possum', 'pot+u', 'x', 'x2', 7, 'können', 8, 'Stamm pot-, dann das Zeichen u.'],
+  ['velle', 'volō', 'vol+u', 'x', 'x2', 4, 'wollen', 8, 'Stamm vol- (wie in volō), dann das Zeichen u.'],
+  ['nōlle', 'nōlō', 'nōl+u', 'x', 'x2', 4, 'nicht wollen', 8, 'Stamm nōl- (wie in nōlō), dann das Zeichen u.']
+];
+// Verben aus Lektion 1–9, deren Perfekt anders gebildet wird und erst später im Buch kommt
+const SPAETER = [
+  ['gaudēre', 'gaudeō', 'sich freuen', 1, 'Das Perfekt hat eine ganz andere Bauart: Es besteht aus zwei Wörtern (einer Form des Verbs und einer Form von esse). Diese Bauart lernst du erst später.'],
+  ['audēre', 'audeō', 'wagen', 1, 'Wie gaudēre: Das Perfekt besteht aus zwei Wörtern. Das lernst du erst später.'],
+  ['incipere', 'incipiō', 'anfangen, beginnen', 6, 'Das Perfekt heißt meistens coepī – ein eigenes Wort. Das kommt später mit dem Vokabelheft.'],
+  ['dēsinere', 'dēsinō', 'aufhören', 8, 'Das Vokabelheft nennt für dieses Verb kein Perfekt.']
+];
+const KONJ = { a: 'a-Konjugation', e: 'e-Konjugation', i: 'i-Konjugation', k: 'konsonantische Konjugation', ki: 'konsonantische Konjugation (i-Erweiterung)', x: 'besonderes Verb' };
+// Die sieben Tabellen – vom Einfachen zum Schwierigen. n = Name wie im Buch, k = kurz
+const WEG = {
+  o: { n: 'Perfekt ohne Stammveränderung', k: 'ohne Veränderung' }, v: { n: 'v-Perfekt', k: 'v-Perfekt' }, u: { n: 'u-Perfekt', k: 'u-Perfekt' },
+  s: { n: 's-Perfekt', k: 's-Perfekt' }, d: { n: 'Dehnungsperfekt', k: 'Dehnung' }, r: { n: 'Reduplikationsperfekt', k: 'Reduplikation' },
+  x: { n: 'Besondere Verben', k: 'besondere Verben' }
+};
+const WEGE6 = ['o', 'v', 'u', 's', 'd', 'r'], TAB = WEGE6.concat('x');
+const tabNr = t => TAB.indexOf(t) + 1;
+const PERS = ['ich', 'du', 'er, sie, es', 'wir', 'ihr', 'sie (Plural)'];
+const PNAME = ['1. Person Singular', '2. Person Singular', '3. Person Singular', '1. Person Plural', '2. Person Plural', '3. Person Plural'];
+const PEND = ['ī', 'istī', 'it', 'imus', 'istis', 'ērunt'], ENDEN = PEND.concat('isse');
+
+// Stoff der nächsten Klassenarbeit: alle Verben der Lernstufe 1, dazu die Verben der Lektionen, die wiederholt werden.
+// Steht eine neue Arbeit an, hier die wiederholten Lektionen eintragen (und die Lernstufen prüfen, siehe v.prio).
+const ARBEIT = { wdh: [4] };
+const VERBEN = ROH.map(r => {
+  const v = { inf: r[0], pr: r[1], z: r[2], k: r[3], g: r[4], t: r[4][0], l: r[5], de: r[6], h: r[7], n: r[8] || '' };
+  v.ps = v.z.replace(/[\[\]+\-]/g, '');                      // Perfektstamm: rogāv
+  v.pf = v.ps + 'ī';                                         // 1. Person Perfekt: rogāvī
+  v.regel = (v.k === 'a' && v.t === 'v') || (v.k === 'e' && v.t === 'u') || (v.k === 'i' && v.t === 'v'); // geht nach der Faustregel
+  // Lernstufe: 1 = Perfekt steht im Vokabelheft von Lektion 8 oder 9 (Stoff der Arbeit) · 2 = Verb aus Lektion 1–9,
+  // Perfekt hier ergänzt · 3 = neu in Lektion 10
+  v.prio = v.l === 10 ? 3 : v.h === 8 || v.h === 9 ? 1 : 2;
+  v.einzel = /E$/.test(v.g) || v.g === 'r0';                 // keine gemeinsame Regel: für sich lernen
+  v.kern = v.prio === 1 || (v.regel && v.prio === 2);        // kann das Kind jetzt schon: steht im Heft oder folgt der Faustregel
+  v.arbeit = v.prio === 1 || ARBEIT.wdh.includes(v.l);       // Stoff der nächsten Arbeit
+  return v;
+});
+const vb = inf => VERBEN.find(v => v.inf === inf);
+const sortAZ = a => a.slice().sort((x, y) => ohneM(x.inf).localeCompare(ohneM(y.inf), 'de'));
+// Woher stammt das Verb? Text für Tooltip und Detailzeile
+const woher = v => `Lektion ${v.l}` + (v.h === v.l ? ' (gleich mit Perfekt)' : v.h ? ` · mit Perfekt noch einmal in Lektion ${v.h}` : ' · das Perfekt steht noch nicht im Vokabelheft')
+  + ` · Lernstufe ${v.prio}` + (v.arbeit && v.prio > 1 ? ` · Lektion ${v.l} wird für die Arbeit wiederholt` : '');
+
+// ---------- Formen bilden ----------
+const PRAES_X = {
+  'esse': ['sum', 'es', 'est', 'sumus', 'estis', 'sunt'], 'adesse': ['adsum', 'ades', 'adest', 'adsumus', 'adestis', 'adsunt'],
+  'abesse': ['absum', 'abes', 'abest', 'absumus', 'abestis', 'absunt'], 'deesse': ['dēsum', 'dees', 'deest', 'dēsumus', 'deestis', 'dēsunt'],   // vor Vokal ist das e kurz
+  'posse': ['possum', 'potes', 'potest', 'possumus', 'potestis', 'possunt'], 'velle': ['volō', 'vīs', 'vult', 'volumus', 'vultis', 'volunt'],
+  'nōlle': ['nōlō', 'nōn vīs', 'nōn vult', 'nōlumus', 'nōn vultis', 'nōlunt'], 'dare': ['dō', 'dās', 'dat', 'damus', 'datis', 'dant']
+};
+const IMPF_X = { 'esse': 'er', 'adesse': 'ader', 'abesse': 'aber', 'deesse': 'deer', 'posse': 'poter' };
+function praes(v) {
+  if (PRAES_X[v.inf]) return PRAES_X[v.inf];
+  const lang = v.inf.slice(0, -2), kz = kurzEnde(lang), ks = v.inf.slice(0, -3);   // rogā / roga, dīc
+  if (v.k === 'a' || v.k === 'e') return [v.pr, lang + 's', kz + 't', lang + 'mus', lang + 'tis', kz + 'nt'];
+  if (v.k === 'i') return [v.pr, lang + 's', kz + 't', lang + 'mus', lang + 'tis', kz + 'unt'];
+  return [v.pr, ks + 'is', ks + 'it', ks + 'imus', ks + 'itis', ks + (v.k === 'ki' ? 'iunt' : 'unt')];
+}
+function impf(v) {
+  if (IMPF_X[v.inf]) return ['am', 'ās', 'at', 'āmus', 'ātis', 'ant'].map(e => IMPF_X[v.inf] + e);
+  const B = ['bam', 'bās', 'bat', 'bāmus', 'bātis', 'bant'], lang = v.inf.slice(0, -2), ks = v.inf.slice(0, -3);
+  if (v.inf === 'velle') return B.map(e => 'volē' + e);
+  if (v.inf === 'nōlle') return B.map(e => 'nōlē' + e);
+  if (v.inf === 'dare') return B.map(e => 'da' + e);
+  if (v.k === 'a' || v.k === 'e') return B.map(e => lang + e);          // rogā-bam, tacē-bam
+  if (v.k === 'i') return B.map(e => kurzEnde(lang) + 'ē' + e);         // audi-ēbam
+  return B.map(e => ks + (v.k === 'ki' ? 'iē' : 'ē') + e);              // dīc-ēbam, capi-ēbam
+}
+const perf = v => PEND.map(e => v.ps + e);
+const infPf = v => v.ps + 'isse';
+// Präsensstamm, wie ihn das Buch schreibt: rogā-, mane-, senti-, capi-, dīc-
+const praesStamm = v => v.k === 'a' ? v.inf.slice(0, -2) : v.k === 'x' ? '' : v.pr.slice(0, -1);
+// alle Formen eines Verbs mit Bestimmung: z = pr | im | pf, p = 0–5 oder 6 (Infinitiv)
+function alleFormen(v) {
+  const out = [];
+  praes(v).forEach((f, p) => out.push({ f, z: 'pr', p }));
+  impf(v).forEach((f, p) => out.push({ f, z: 'im', p }));
+  perf(v).forEach((f, p) => out.push({ f, z: 'pf', p }));
+  out.push({ f: v.inf, z: 'pr', p: 6 }, { f: infPf(v), z: 'pf', p: 6 });
+  return out;
+}
+const ZEIT = { pr: 'Präsens', im: 'Imperfekt', pf: 'Perfekt' };
+
+// ---------- Der Weg vom Infinitiv zum Perfektstamm, Schritt für Schritt ----------
+//  Schreibweise der Schritte: {x} fällt weg (durchgestrichen) · [x] kommt neu dazu oder verändert sich (orange)
+//  Für die meisten Untergruppen entsteht der Weg aus der Regel; für Einzelfälle und für Gruppen, deren Weg sich
+//  nicht aus dem Infinitiv allein ergibt (r3), steht er in PFAD_X.
+const zielStamm = v => v.z.replace(/\+(.+)$/, '[$1]') + '-';
+const MITTE = {
+  s1: b => [[b + ' + [s]', 'Das Zeichen s kommt dazu.']],
+  s2: b => [[b.slice(0, -1) + '{d} + [s]', 'Das Zeichen s kommt dazu. Das d fällt weg.']],
+  s3: b => [[b + ' + [s]', 'Das Zeichen s kommt dazu.']],
+  s4: b => [[b.slice(0, -2) + '{tt} + [s]', 'Das Zeichen s kommt dazu. Das tt fällt weg.']],
+  d4: b => [[b.replace(/n(?=[^n]*$)/, '{n}') + '-', 'Das n fällt weg.']]
+};
+const ZIELTEXT = {
+  o1: 'Das ist schon der Perfektstamm. Am Stamm ändert sich nichts.', v1: 'Das Zeichen v anhängen.', v2: 'Ein langes ī und das Zeichen v anhängen.',
+  u1: 'Das Zeichen u anhängen.', u2: 'Das Zeichen u anhängen.', s1: 'c und s verschmelzen zu x.', s2: 'Übrig bleibt der Stamm mit s.',
+  s3: 'Aus d + s wird ss, und das ē davor wird kurz.', s4: 'Dabei wird das i lang.',
+  d1: 'Der Vokal im Stamm wird lang. Sonst ändert sich nichts.', d2: 'Aus dem a wird ein langes ē.', d3: 'Aus dem i wird ein langes ē.', d4: 'Dann wird das i lang.',
+  r1: 'Aus -d- wird -did-: Das d wird verdoppelt.', r2: 'Aus -sist- wird -stit-.'
+};
+const PFAD_X = {
+  'respondēre': [['respond{ēre}', 'Vom Infinitiv das -ēre wegnehmen.'], ['respond-', 'Das ist schon der Perfektstamm – ohne Zeichen.']],
+  'quaerere': [['quaer{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['quae[s]-', 'Aus dem r wird ein s.'], ['quae[s][īv]-', 'Ein langes ī und das Zeichen v anhängen.']],
+  'cōgnōscere': [['cōgnō{scere}', 'Vom Infinitiv fällt -scere weg.'], ['cōgnō[v]-', 'Das Zeichen v anhängen.']],
+  'manēre': [['man{ēre}', 'Vom Infinitiv das -ēre wegnehmen.'], ['man + [s]', 'Das Zeichen s kommt dazu.'], ['m[ā]n[s]-', 'Vor ns wird der Vokal lang.']],
+  'sentīre': [['sent{īre}', 'Vom Infinitiv das -īre wegnehmen.'], ['sen{t} + [s]', 'Das Zeichen s kommt dazu. Das t fällt weg.'], ['s[ē]n[s]-', 'Vor ns wird der Vokal lang.']],
+  'vīvere': [['vīv{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['vī{v} + [s]', 'Das Zeichen s kommt dazu.'], ['vī[x]-', 'Hier entsteht daraus ein x.']],
+  'scrībere': [['scrīb{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['scrīb + [s]', 'Das Zeichen s kommt dazu.'], ['scrī[p][s]-', 'Vor dem s wird aus b ein p.']],
+  'iubēre': [['iub{ēre}', 'Vom Infinitiv das -ēre wegnehmen.'], ['iu{b} + [s]', 'Das Zeichen s kommt dazu.'], ['iu[s][s]-', 'Aus b + s wird ss.']],
+  'cōgere': [['cōg{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['co[ē]g-', 'Aus cō- wird co-ē-. Das merkst du dir einzeln.']],
+  'cōnsīdere': [['cōnsīd{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['cōns[ē]d-', 'Aus ī wird ē – wie bei sedēre → sēdī.']],
+  'currere': [['curr{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['[cu]curr-', 'Vorn wird verdoppelt: Das c kommt mit dem u noch einmal. Sonst nichts!']],
+  'dare': [['d{are}', 'Vom Infinitiv das -are wegnehmen. Es bleibt nur das d.'], ['[de]d-', 'Vorn wird verdoppelt: Das d kommt mit einem e noch einmal.']],
+  'stāre': [['st{āre}', 'Vom Infinitiv das -āre wegnehmen. Es bleibt nur st.'], ['[ste]t-', 'Vorn kommt ste- dazu, dahinter bleibt das t.']],
+  'cadere': [['cad{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['[ce]cad-', 'Vorn wird verdoppelt: Das c kommt mit einem e noch einmal.'], ['[ce]c[i]d-', 'Dann wird aus dem a ein i.']],
+  'parcere': [['parc{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['[pe]parc-', 'Vorn wird verdoppelt: Das p kommt mit einem e noch einmal.'], ['[pe]p[e]rc-', 'Dann wird aus dem a ein e.']],
+  'tangere': [['tang{ere}', 'Vom Infinitiv das -ere wegnehmen.'], ['[te]tang-', 'Vorn wird verdoppelt: Das t kommt mit einem e noch einmal.'], ['[te]t[i]g-', 'Dann wird aus dem a ein i, und das n fällt weg.']],
+  'reperīre': [['reper{īre}', 'Vom Infinitiv das -īre wegnehmen.'], ['re[p]per-', 'Das p wird verdoppelt.']],
+  'īnstāre': [['īn-st{āre}', 'īn- und stāre: Es geht wie bei stāre → stetī.'], ['īn-[sti]t-', 'Mit Vorsilbe heißt es -stit- statt stet-.']],
+  'attingere': [['at-ting{ere}', 'at- und tangere. Das Perfekt von tangere heißt tetigī.'], ['at-tig-', 'Mit der Vorsilbe at- fällt die Verdopplung weg: Aus tetig- wird -tig-.']],
+  'accidere': [['ac-cid{ere}', 'ac- und cadere. Das Perfekt von cadere heißt cecidī.'], ['ac-cid-', 'Mit der Vorsilbe ac- fällt die Verdopplung weg: Aus cecid- wird -cid-.']],
+  'occurrere': [['oc-curr{ere}', 'oc- und currere. Das Perfekt von currere heißt cucurrī.'], ['oc-curr-', 'Mit der Vorsilbe oc- fällt die Verdopplung weg: Aus cucurr- wird -curr-.']],
+  'esse': [['es{se}', 'Der Präsensstamm hilft hier nicht weiter.'], ['[fu]-', 'Der Perfektstamm ist ein ganz anderes Wort.']],
+  'adesse': [['ad-{esse}', 'ad- und esse'], ['ad-[fu]-', 'Wie esse: Vorsilbe und fu-.']],
+  'deesse': [['de-{esse}', 'dē- und esse'], ['dē-[fu]-', 'Wie esse: Vorsilbe und fu-.']],
+  'abesse': [['ab-{esse}', 'ab- und esse'], ['[ā]-[fu]-', 'Wie esse – aber aus ab- wird vor dem f ein langes ā-.']],
+  'posse': [['pos{se}', 'posse ist aus pot- und esse entstanden.'], ['pot[u]-', 'Der Perfektstamm heißt pot- mit dem Zeichen u.']],
+  'velle': [['vel{le}', 'Im Perfekt heißt der Stamm vol- (wie in volō).'], ['vol[u]-', 'Dazu kommt das Zeichen u.']],
+  'nōlle': [['nōl{le}', 'Der Stamm heißt nōl- (wie in nōlō).'], ['nōl[u]-', 'Dazu kommt das Zeichen u.']]
+};
+function pfad(v) {
+  if (PFAD_X[v.inf]) return PFAD_X[v.inf];
+  if (v.g === 'o1') return [[v.pr.slice(0, -1) + '{ō}', `Von ${v.pr} das -ō wegnehmen.`], [zielStamm(v), ZIELTEXT.o1]];
+  const n = v.g === 'v1' ? 2 : 3, b = v.inf.slice(0, -n), end = v.inf.slice(-n);
+  return [[b + '{' + end + '}', `Vom Infinitiv das -${end} wegnehmen.`]].concat(MITTE[v.g] ? MITTE[v.g](b) : [], [[zielStamm(v), ZIELTEXT[v.g]]]);
+}
+const pfadRoh = s => s.replace(/\{[^}]*\}/g, '').replace(/[\[\]\-\s]/g, '');   // letzter Schritt ohne Auszeichnung = Perfektstamm
+//#REIN-ENDE
+
+// ---------- Bausteine zeichnen: Stamm (blau) · Zeichen und Veränderungen (orange) · Perfekt-Endung (grün) ----------
+const hl = s => s.replace(/\[([^\]]+)\]/g, '<b class="hl">$1</b>');
+const L = s => `<span class="lat">${s}</span>`;
+// Perfektform in der Schreibweise des Buchs, farbig: rogā-v-ī · māns-ī · vīd-ī   (end leer: nur der Stamm)
+function pfHtml(v, end) {
+  const [a, zn] = v.z.split('+');
+  const sep = zn && /^[vu]$/.test(zn) ? '-' : '';
+  return `<span class="lat"><span class="st">${hl(a)}</span>${zn ? sep + `<span class="zn">${zn}</span>` : ''}-${end ? `<span class="en">${end}</span>` : ''}</span>`;
+}
+const bk = (cls, html, lab) => `<span class="bk ${cls}"><span>${html}</span>${lab ? `<small>${lab}</small>` : ''}</span>`;
+// Perfektform als Bausteine; lab = true beschriftet die Steine
+// Beschriftung unter einem oder mehreren Steinen
+const unter = (html, text) => `<span class="psw"><span class="psi">${html}</span><small>${text}</small></span>`;
+function bauPf(v, end, lab, cls) {
+  const [a, zn] = v.z.split('+');
+  const stamm = bk('st', hl(a.replace(/-/g, ''))) + (zn ? bk('zn', zn) : ''), en = end === '?' ? bk('leer', '?') : bk('en', end);
+  return `<span class="bau ${cls || ''}">${lab ? unter(stamm, 'Perfektstamm') + unter(en, 'Endung') : stamm + en}</span>`;
+}
+// Präsens- und Imperfektformen zerlegen (nur für regelmäßige Verben; sonst bleibt die Form ganz)
+function teilePr(v, f) {   // wie im Buch: Präsensstamm dīc-, capi-, audi-
+  const ks = v.inf.slice(0, -3);
+  if (v.k === 'a' && f === v.pr) return [f, ''];                            // rogō: Stamm und Endung sind verschmolzen
+  if (v.k === 'k' && f.startsWith(ks)) return [ks, f.slice(ks.length)];     // dīc-ō, dīc-it, dīc-unt
+  if (/iunt$/.test(f)) return [f.slice(0, -3), 'unt'];                      // capi-unt, audi-unt
+  const m = v.k === 'x' ? null : f.match(/^(.*?)(ō|mus|tis|nt|s|t)$/);
+  return m ? [m[1], m[2]] : [f, ''];
+}
+const teileIm = (v, f) => { const m = f.match(v.k === 'a' || v.k === 'e' ? /^(.*)(b[aā])(mus|tis|nt|m|s|t)$/ : /^(.*?)(ēb[aā])(mus|tis|nt|m|s|t)$/); return m ? [m[1], m[2], m[3]] : [f, '', '']; };
+function bauPr(v, f, lab, cls) {
+  const t = teilePr(v, f), st = bk('st', t[0]), en = t[1] ? bk('pe', t[1]) : '';
+  return `<span class="bau ${cls || ''}">${lab ? (en ? unter(st, 'Präsensstamm') + unter(en, 'Endung') : unter(st, 'Stamm und Endung verschmolzen')) : st + en}</span>`;
+}
+function bauIm(v, f, lab, cls) {
+  const t = teileIm(v, f), st = bk('st', t[0]), zn = t[1] ? bk('zn', t[1]) : '', en = t[1] ? bk('pe', t[2]) : '';
+  return `<span class="bau ${cls || ''}">${lab ? unter(st, 'Präsensstamm') + (zn && unter(zn, 'Zeichen') + unter(en, 'Endung')) : st + zn + en}</span>`;
+}
+const wtag = t => `<span class="wtag w-${t}">${WEG[t].k}</span>`;
+const sterne = n => { n = Math.max(0, Math.min(3, n | 0)); return `<span class="sterne" aria-label="${n} von 3 Sternen">${'★'.repeat(n)}<i>${'★'.repeat(3 - n)}</i></span>`; };
+// Weg zum Perfektstamm: als Kästchen-Pfad (Bildschirm) oder als eine Zeile (Druck)
+const pm = s => esc(s).replace(/\[([^\]]+)\]/g, '<b class="hl">$1</b>').replace(/\{([^}]+)\}/g, '<s>$1</s>');
+function pfadHtml(v) {
+  const st = pfad(v);
+  const pfeil = '<span class="pfeil" aria-hidden="true">→</span>';
+  return `<div class="pfad">${st.map((s, i) => `<div class="stpw">${i ? pfeil : ''}<div class="stp ${i === st.length - 1 ? 'ziel' : ''}">${L(pm(s[0]))}<small>${s[1]}</small></div></div>`).join('')}<div class="stpw">${pfeil}<div class="stp end">${pfHtml(v, 'ī')}<small>Perfekt-Endung dran: fertig.</small></div></div></div>`;
+}
+const pfadZeile = v => `<span class="pz">${pfad(v).map(s => L(pm(s[0]))).join(' → ')} → ${pfHtml(v, 'ī')}</span>`;
+// Stammbaum: Verb → zwei Stämme → drei Zeiten → sechs Personen. p = markierte Person
+const PKURZ = ['ich', 'du', 'er', 'wir', 'ihr', 'sie'];
+function baumHtml(v, p, opt) {
+  opt = opt || {};
+  const reihe = (f, i) => `<div class="fr ${i === p ? 'an' : ''}" data-p="${i}">${opt.namen ? `<span class="pn">${PKURZ[i]}</span>` : ''}${f}</div>`;
+  const zeit = (name, sub, forms) => `<li><div class="kn zeit"><b>${name}</b>${sub ? `<small>${sub}</small>` : ''}<div class="frs">${forms.map(reihe).join('')}</div></div></li>`;
+  const pr = praes(v).map(f => { const t = teilePr(v, f); return L(`${t[0]}<span class="pe">${t[1]}</span>`); });
+  const im = impf(v).map(f => { const t = teileIm(v, f); return L(`${t[0]}<span class="zn">${t[1]}</span><span class="pe">${t[2]}</span>`); });
+  const pf = PEND.map(e => L(`${v.ps}<span class="en">${e}</span>`));
+  return `<div class="baum"><ul><li><div class="kn verb"><b>${v.inf}</b><small>${esc(v.de)}</small></div><ul>
+    <li><div class="kn ps"><small>Präsensstamm</small><b>${praesStamm(v)}-</b>${opt.hinw ? '<small class="hinw">Hier zählt die Konjugation.</small>' : ''}</div><ul>${zeit('Präsens', '', pr)}${zeit('Imperfekt', '', im)}</ul></li>
+    <li><div class="kn pfs"><small>Perfektstamm</small><b>${v.ps}-</b>${opt.hinw ? '<small class="hinw">Hier sind alle Verben gleich.</small>' : ''}</div><ul>${zeit('Perfekt', '', pf)}</ul></li></ul></li></ul></div>`;
+}
+
+// ---------- Eingaben prüfen ----------
+// ohne Längenstriche und andere Akzente (â oder á zählen wie ein fehlender Strich)
+const basis = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
+// Eingabe säubern: klein, ohne Trennstriche und Satzzeichen (die Seite schreibt selbst rogā-v-ī), Leerzeichen einfach
+const putz = s => String(s || '').normalize('NFC').toLowerCase().replace(/[\-–.!?,]/g, '').replace(/\s+/g, ' ').trim();
+const norm = s => basis(putz(s));
+// 'ok' genau richtig · 'strich' richtig, nur Längenstriche fehlen oder sitzen falsch (zählt als richtig, die genaue Form wird gezeigt) ·
+// 'strichfehlt' der Strich wäre hier das Entscheidende (zwilling = Form, die sich nur im Strich unterscheidet) · 'no'
+function pruefe(eingabe, soll, zwilling) {
+  const e = putz(eingabe);
+  if (basis(e) !== basis(soll)) return 'no';
+  if (e === soll) return 'ok';
+  if (zwilling && basis(zwilling) === basis(soll)) for (let i = 0; i < soll.length; i++) if (soll[i] !== zwilling[i] && e[i] !== soll[i]) return 'strichfehlt';
+  return 'strich';
+}
+const LOB = ['Richtig!', 'Genau!', 'Stimmt!', 'Sauber!', 'Sehr gut!'];
+
+// ---------- Speicher ----------
+//  st: Sterne je Station · dat: Tag, an dem die Station zum ersten Mal geschafft wurde ·
+//  chk: Kurz-Check je Station { n: bestandene Checks, due: Tag, ab dem der nächste fällig ist } ·
+//  ok: Lernstand je Verb (0–3 richtige in Folge) · cfg: Auswahl beim Üben · best: Runden je Übungsart
+const KEY = 'latein-perfekt-v1';
+const tagStr = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const heute = () => tagStr(new Date());
+const plusTage = n => { const d = new Date(); d.setDate(d.getDate() + n); return tagStr(d); };
+function laden() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { s = {}; }
+  const o = k => isObj(s[k]) ? s[k] : {}, ganz = (x, lo, hi) => Number.isInteger(x) && x >= lo && x <= hi, TAG = /^\d{4}-\d\d-\d\d$/;
+  const neu = { st: {}, dat: {}, chk: {}, ok: {}, cfg: {}, best: {} };
+  // Nur übernehmen, was die erwartete Form hat. Zu jeder geschafften Station gehören ein Datum und ein Kurz-Check;
+  // fehlt etwas davon oder ist es unlesbar, gilt „heute“ – dann meldet sich der Check einfach gleich.
+  for (const [k, v] of Object.entries(o('st'))) if (ganz(v, 1, 3)) neu.st[k] = v;
+  for (const k of Object.keys(neu.st)) {
+    const d = o('dat')[k], c = o('chk')[k];
+    neu.dat[k] = TAG.test(d) ? d : heute();
+    neu.chk[k] = { n: isObj(c) && ganz(c.n, 0, 99) ? c.n : 0, due: isObj(c) && TAG.test(c.due) ? c.due : heute() };
+  }
+  for (const [k, v] of Object.entries(o('ok'))) if (ganz(v, 0, 3)) neu.ok[k] = v;
+  for (const k of ['weg', 'umf']) if (typeof o('cfg')[k] === 'string') neu.cfg[k] = o('cfg')[k];
+  for (const [k, v] of Object.entries(o('best'))) if (isObj(v) && ganz(v.n, 0, 1e6) && ganz(v.b, 0, 100)) neu.best[k] = { n: v.n, b: v.b };
+  return neu;
+}
+let S = laden();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* voller oder gesperrter Speicher: Fortschritt gilt nur für diese Sitzung */ } }
+const datumDe = s => { const m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(s || ''); return m ? `${+m[3]}.${+m[2]}.` : ''; };
+const app = document.getElementById('app');
+let VIEW = 'home', R = null, U = null, C = null, TB = 'plan';
+function go(v) { VIEW = v; render(); window.scrollTo(0, 0); }
+// erst nach dem Tastendruck fokussieren, sonst löst dasselbe Enter gleich den nächsten Knopf aus
+const spaeterFokus = el => setTimeout(() => { if (el && el.isConnected) el.focus({ preventScroll: true }); }, 250);
+// verzögert weitermachen – aber nur, wenn die Karte noch auf dem Bildschirm ist
+const spaeter = (host, fn, ms) => setTimeout(() => { if (host.isConnected) fn(); }, ms);
+// Nach jedem Neuzeichnen kurz keine Klicks annehmen: Ein Doppeltipp auf „Weiter“ träfe sonst, was jetzt an derselben
+// Stelle liegt („Runde beenden“, eine Antwort der nächsten Aufgabe). ?ohnesperre schaltet das für Testläufe ab.
+const SPERRZEIT = /[?&]ohnesperre\b/.test(location.search) ? 0 : 400;
+let klickAb = 0;
+const sperre = () => { klickAb = performance.now() + SPERRZEIT; };
+document.addEventListener('click', e => { if (performance.now() < klickAb) { e.stopPropagation(); e.preventDefault(); } }, true);
+const dots = (n, i, falsch) => `<div class="progress"><span class="dots">${Array.from({ length: n }, (_, k) => `<i class="${falsch && falsch.has(k) ? 'falsch' : k < i ? 'on' : k === i ? 'jetzt' : ''}"></i>`).join('')}</span></div>`;
+
+// ===================================================================
+// VERSTEHEN – sechs Stationen. Jede ist eine Folge von Schritten:
+//  info (lesen, ausprobieren) · wahl (eine Antwort) · sort (einordnen) · bau (Endung anhängen) ·
+//  tipp (eintippen) · paare (zuordnen) · multi (mehrere antippen) · merk (Merksatz bauen)
+// Fehler zählt R.fehler; daraus werden am Ende die Sterne. Eine geschaffte Station merkt sich der
+// Browser mit Datum; an späteren Tagen fragt ein Kurz-Check nach (nach 1, 3, 7, 14, 30 Tagen).
+// ===================================================================
+function fbZeigen(el, ok, text, weiter, label) {
+  el.innerHTML = `<div class="fb"><div class="msg ${ok ? 'ok' : 'no'}"><b>${ok ? pick(LOB) : 'Nicht ganz.'}</b> ${text || ''}</div><div class="row"><button class="btn" id="w" type="button">${label || 'Weiter'}</button></div></div>`;
+  const w = el.querySelector('#w'); w.onclick = weiter; spaeterFokus(w);
+}
+const einHtml = () => `<div class="makron" aria-label="Längenstrich setzen">${['ā', 'ē', 'ī', 'ō', 'ū'].map(c => `<button type="button" tabindex="-1" aria-label="Längenstrich: ${c}">${c}</button>`).join('')}</div>
+  <div class="einhinw" aria-live="polite"></div>
+  <div class="einrow"><input class="ein" type="text" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Deine Antwort"><button class="btn" id="pr" type="button">Prüfen</button><button class="linkbtn" id="wn" type="button">Weiß ich nicht</button></div>`;
+const LEERHINWEIS = '<div class="msg tipp">Tippe erst deine Antwort ein. Wenn du sie nicht weißt, tippe auf „Weiß ich nicht“.</div>';
+// Strich-Knopf: macht den letzten passenden Vokal vor dem Cursor lang (venimus + ē → vēnimus); gibt es keinen, fügt er den Buchstaben ein
+function makronBinden(host) {
+  const ein = host.querySelector('.ein');
+  host.querySelectorAll('.makron button').forEach(b => b.onclick = () => {
+    if (ein.disabled) return;
+    const lang = b.textContent, a = ein.selectionStart == null ? ein.value.length : ein.selectionStart, e = ein.selectionEnd == null ? a : ein.selectionEnd;
+    const i = a === e ? ein.value.slice(0, a).toLowerCase().lastIndexOf(MAK[lang]) : -1;
+    if (i >= 0) { ein.value = ein.value.slice(0, i) + lang + ein.value.slice(i + 1); ein.focus(); ein.setSelectionRange(a, a); }
+    else { ein.value = ein.value.slice(0, a) + lang + ein.value.slice(e); ein.focus(); ein.setSelectionRange(a + 1, a + 1); }
+  });
+}
+const mitMaus = () => !('ontouchstart' in window);
+
+function sInfo(host, st, weiter) {
+  host.innerHTML = `<div class="card">${typeof st.h === 'function' ? st.h() : st.h}<div class="row"><button class="btn" id="w" type="button">${st.btn || 'Weiter'}</button></div></div>`;
+  if (st.mount) st.mount(host);
+  host.querySelector('#w').onclick = weiter;
+}
+function sWahl(host, st, weiter) {
+  const ord = shuffle(st.o.map((_, i) => i));
+  host.innerHTML = `<div class="card"><div class="q">${st.q}</div><div class="opts mitte">${ord.map(j => `<button type="button" class="opt lat" data-j="${j}">${st.o[j]}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const ok = +b.dataset.j === st.a;
+    host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.j === st.a) x.classList.add(ok ? 'ok' : 'fehlt'); });
+    if (!ok) { R.fehler++; b.classList.add('no'); }
+    fbZeigen(host.querySelector('.fbx'), ok, st.e, weiter);
+  });
+}
+function sSort(host, st, weiter) {
+  const items = st.items(), falsch = new Set(); let i = 0;
+  const zeig = () => {
+    sperre();
+    const it = items[i], rich = [].concat(it.c);
+    host.innerHTML = `<div class="card"><div class="q">${st.q}</div>${dots(items.length, i, falsch)}<div class="${it.klein ? 'cue' : 'gross'}">${it.h}</div>${it.sub ? `<p class="cue muted small">${it.sub}</p>` : ''}
+      <div class="opts mitte">${st.cats.map((c, j) => `<button type="button" class="opt" data-j="${j}">${c}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
+    const card = host.firstElementChild, nxt = () => { i++; if (i >= items.length) weiter(); else zeig(); };
+    host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+      const ok = rich.includes(+b.dataset.j), fbx = host.querySelector('.fbx'), lang = (it.e || '').replace(/<[^>]+>/g, '').length;
+      host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (rich.includes(+x.dataset.j)) x.classList.add(ok ? 'ok' : 'fehlt'); });
+      if (!ok) { R.fehler++; falsch.add(i); b.classList.add('no'); }
+      // Eine kurze Bestätigung läuft von selbst weiter. Längere Erklärungen und alles Falsche bleiben stehen, bis das Kind weitertippt.
+      if (ok && lang <= 45) { fbx.innerHTML = `<div class="msg ok"><b>✓</b> ${it.e || ''}</div>`; spaeter(card, nxt, lang ? 1500 : 700); }
+      else fbZeigen(fbx, ok, it.e, nxt);
+    });
+  };
+  zeig();
+}
+function sBau(host, st, weiter) {
+  const items = st.items(), falsch = new Set(); let i = 0;
+  const zeig = () => {
+    sperre();
+    const it = items[i], v = it.v, soll = ENDEN[it.p];
+    // Die Endungen stehen jedes Mal in anderer Reihenfolge – in Tabellenreihenfolge ließe sich die richtige einfach abzählen.
+    host.innerHTML = `<div class="card"><div class="q">${st.q}</div>${dots(items.length, i, falsch)}
+      <p class="cue"><b>${it.p === 6 ? 'Infinitiv Perfekt' : PERS[it.p]}</b> · Perfekt von <span class="lat">${v.inf}</span> <span class="muted">(${esc(v.de)})</span></p>
+      <div class="mitte" id="form">${bauPf(v, '?', false, 'gross')}</div>
+      <div class="chips mitte">${shuffle(ENDEN).map(e => `<button type="button" class="chip en" data-e="${e}">-${e}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
+    const card = host.firstElementChild;
+    host.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      if (b.dataset.e === soll) {
+        host.querySelectorAll('.chip').forEach(x => x.disabled = true); b.classList.add('on');
+        host.querySelector('#form').innerHTML = bauPf(v, soll, false, 'gross');
+        host.querySelector('.fbx').innerHTML = `<div class="msg ok"><b>✓</b> <span class="lat">${v.ps + soll}</span></div>`;
+        spaeter(card, () => { i++; if (i >= items.length) weiter(); else zeig(); }, 1100);
+      } else {
+        b.classList.add('wackel'); b.disabled = true;
+        if (!falsch.has(i)) { falsch.add(i); R.fehler++; }
+        host.querySelector('.fbx').innerHTML = `<div class="msg tipp"><span class="lat">-${b.dataset.e}</span> gehört zu „${b.dataset.e === 'isse' ? 'Infinitiv Perfekt' : PERS[ENDEN.indexOf(b.dataset.e)]}“. Versuch es noch einmal.</div>`;
+      }
+    });
+  };
+  zeig();
+}
+function sTipp(host, st, weiter) {
+  const items = st.items(), falsch = new Set(); let i = 0;
+  const zeig = () => {
+    sperre();
+    const it = items[i]; let vers = 0, fertig = false;
+    host.innerHTML = `<div class="card"><div class="q">${st.q}</div>${dots(items.length, i, falsch)}<div class="cue">${it.q}</div>${einHtml()}<div class="fbx" aria-live="polite"></div></div>`;
+    const ein = host.querySelector('.ein'), fbx = host.querySelector('.fbx'), pr = host.querySelector('#pr'), wn = host.querySelector('#wn'), hinw = host.querySelector('.einhinw');
+    const nxt = () => { i++; if (i >= items.length) weiter(); else zeig(); };
+    const zu = cls => { fertig = true; ein.disabled = true; pr.disabled = true; wn.remove(); hinw.innerHTML = ''; ein.classList.add(cls); };
+    const daneben = () => { zu('no'); R.fehler++; falsch.add(i); fbZeigen(fbx, false, `Richtig ist ${L(it.a)}. ${it.e || ''}`, nxt); };
+    const los = () => {
+      if (fertig) return;
+      if (!ein.value.trim()) { hinw.innerHTML = LEERHINWEIS; return; }
+      const fast = (it.fast || []).find(x => norm(ein.value) === norm(x.w));
+      if (fast) { hinw.innerHTML = `<div class="msg tipp">${fast.t}</div>`; ein.focus(); return; }
+      const r = pruefe(ein.value, it.a);
+      if (r === 'ok' || r === 'strich') { zu('ok'); fbZeigen(fbx, true, (r === 'strich' ? `Genau geschrieben: ${L(it.a)}. ` : '') + (it.e || ''), nxt); }
+      else if (++vers < 2) { hinw.innerHTML = `<div class="msg tipp"><b>Noch nicht.</b> ${it.tipp || 'Versuch es noch einmal.'}</div>`; ein.select(); }
+      else daneben();
+    };
+    pr.onclick = los; wn.onclick = () => { if (!fertig) daneben(); };
+    ein.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); los(); } };
+    makronBinden(host);
+    if (mitMaus()) ein.focus();
+  };
+  zeig();
+}
+function sPaare(host, st, weiter) {
+  const P = st.pairs(), li = shuffle(P.map((_, i) => i)), re = shuffle(P.map((_, i) => i)), falsch = new Set(); let sel = null, offen = P.length;
+  host.innerHTML = `<div class="card"><div class="q">${st.q}</div><div class="paare">${li.map((a, r) => `<button type="button" class="opt" data-s="l" data-i="${a}">${P[a][0]}</button><button type="button" class="opt" data-s="r" data-i="${re[r]}">${P[re[r]][1]}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
+  const fbx = host.querySelector('.fbx'), q = (s, i) => host.querySelector(`.opt[data-s="${s}"][data-i="${i}"]`);
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i;
+    if (b.dataset.s === 'l') { host.querySelectorAll('.opt[data-s="l"]').forEach(x => x.classList.remove('sel')); sel = i; b.classList.add('sel'); fbx.innerHTML = ''; return; }
+    if (sel === null) { fbx.innerHTML = '<div class="msg tipp">Tippe zuerst links ein Verb an, dann rechts den passenden Perfektstamm.</div>'; return; }
+    const l = q('l', sel);
+    if (sel === i) {
+      [l, b].forEach(x => { x.classList.remove('sel'); x.classList.add('ok'); x.disabled = true; }); sel = null; offen--; fbx.innerHTML = '';
+      if (!offen) fbZeigen(fbx, true, st.e || '', weiter);
+    } else {
+      if (!falsch.has(sel)) { falsch.add(sel); R.fehler++; }
+      [l, b].forEach(x => x.classList.add('no')); l.classList.remove('sel'); sel = null;
+      spaeter(b, () => [l, b].forEach(x => x.classList.remove('no')), 700);
+      fbx.innerHTML = '<div class="msg tipp">Das passt nicht zusammen. Vergleiche die Buchstaben genau.</div>';
+    }
+  });
+}
+function sMulti(host, st, weiter) {
+  const ord = shuffle(st.o.map((_, i) => i)), sel = new Set();
+  host.innerHTML = `<div class="card"><div class="q">${st.q}</div><div class="opts liste">${ord.map(j => `<button type="button" class="opt" data-j="${j}" aria-pressed="false">${st.o[j]}</button>`).join('')}</div><div class="row" id="prrow"><button class="btn" id="pr" type="button" disabled>Prüfen</button></div><div class="fbx" aria-live="polite"></div></div>`;
+  const pr = host.querySelector('#pr');
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const j = +b.dataset.j; if (sel.has(j)) sel.delete(j); else sel.add(j);
+    b.classList.toggle('sel', sel.has(j)); b.setAttribute('aria-pressed', sel.has(j)); pr.disabled = sel.size !== st.a.length;
+  });
+  pr.onclick = () => {
+    const ok = st.a.every(j => sel.has(j)); if (!ok) R.fehler++;
+    host.querySelectorAll('.opt').forEach(x => { const j = +x.dataset.j, an = sel.has(j), ri = st.a.includes(j); x.disabled = true; x.classList.remove('sel'); if (ri) x.classList.add(an ? 'ok' : 'fehlt'); else if (an) x.classList.add('no'); });
+    host.querySelector('#prrow').remove(); fbZeigen(host.querySelector('.fbx'), ok, st.e, weiter);
+  };
+}
+function sMerk(host, st, weiter) {
+  const teile = st.satz.split(/\{([^}]+)\}/), loes = teile.filter((_, i) => i % 2), chips = shuffle(loes.concat(st.falsch || [])); let pos = 0;
+  const satz = () => teile.map((t, i) => { if (!(i % 2)) return t; const k = (i - 1) / 2; return `<span class="gap ${k < pos ? 'voll' : k === pos ? 'dran' : ''}">${k < pos ? esc(t) : '…'}</span>`; }).join('');
+  host.innerHTML = `<div class="card"><div class="q"><b>Dein Merksatz.</b> Fülle die Lücken der Reihe nach: Tippe das passende Wort an.</div><p class="msatz" id="ms">${satz()}</p><div class="chips" id="ch">${chips.map((c, i) => `<button type="button" class="chip" data-i="${i}">${esc(c)}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
+  const ms = host.querySelector('#ms');
+  host.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    if (chips[+b.dataset.i] === loes[pos]) {
+      b.disabled = true; pos++; ms.innerHTML = satz();
+      if (pos === loes.length) { host.querySelector('#ch').remove(); fbZeigen(host.querySelector('.fbx'), true, 'Der Merksatz steht.', weiter, 'Station abschließen'); }
+    } else { b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel'); R.fehler++; }   // jeder Fehlgriff zählt – sonst könnte man einfach alle Wörter durchprobieren
+  });
+}
+const STEP = { info: sInfo, wahl: sWahl, sort: sSort, bau: sBau, tipp: sTipp, paare: sPaare, multi: sMulti, merk: sMerk };
+
+// ---------- gemeinsame Vorführ-Bausteine ----------
+const chipsFuer = (id, liste) => `<div class="chips mitte" id="${id}">${liste.map((x, i) => `<button type="button" class="chip ${i ? '' : 'on'}" data-v="${x}">${x}</button>`).join('')}</div>`;
+function chipsBinden(host, id, fn) {
+  const cs = host.querySelectorAll(`#${id} .chip`);
+  cs.forEach(b => b.onclick = () => { cs.forEach(x => x.classList.toggle('on', x === b)); fn(b.dataset.v); });
+}
+// Stammbaum zum Antippen: Verb wählen, Person wählen – markiert wird dieselbe Person in allen drei Zeiten
+function baumDemo(host, id, opt) {
+  const box = host.querySelector(`#${id}box`), wer = host.querySelector(`#${id}wer`); let v = vb(host.querySelector(`#${id} .chip.on`).dataset.v), p = 2;
+  const zeig = () => {
+    box.innerHTML = baumHtml(v, p, opt); if (wer) wer.textContent = `${PERS[p]} (${PNAME[p]})`;
+    box.querySelectorAll('.fr').forEach(r => r.onclick = () => { p = +r.dataset.p; zeig(); });
+  };
+  zeig(); chipsBinden(host, id, inf => { v = vb(inf); zeig(); });
+}
+// Weg zum Perfektstamm zum Durchtippen
+const wegDemoHtml = (id, liste) => `${chipsFuer(id, liste)}<div id="${id}box" style="display:grid;gap:8px"></div>`;
+function wegDemo(host, id) {
+  const box = host.querySelector(`#${id}box`);
+  const zeig = inf => { const v = vb(inf); box.innerHTML = `<p class="cue">${L(v.inf + ', ' + v.pr)} <span class="muted">– ${esc(v.de)}</span></p>${pfadHtml(v)}<p class="small muted">Mit allen Endungen: ${ENDEN.map(e => pfHtml(v, e)).join(' · ')}</p>`; };
+  zeig(host.querySelector(`#${id} .chip.on`).dataset.v); chipsBinden(host, id, zeig);
+}
+const tippItem = (v, frage, tipp) => ({ q: `${L(v.inf + ', ' + v.pr)} <span class="muted">(${esc(v.de)})</span><br>${frage}`, a: v.pf, tipp, e: pfHtml(v, 'ī') });
+const ausGruppe = (g, n, f) => shuffle(VERBEN.filter(v => v.g === g && v.prio < 3 && (!f || f(v)))).slice(0, n);
+
+// ---------- Station 1: Zwei Stämme ----------
+const S1_POOL = [
+  ['rogābat', 0, 'rogā-ba-t ist Imperfekt – gebaut aus dem Präsensstamm rogā-.'], ['rogāvit', 1, 'rogāv- ist der Perfektstamm von rogāre.'],
+  ['tacēmus', 0, 'tacē-mus ist Präsens, also Präsensstamm.'], ['tacuistis', 1, 'tacu- ist der Perfektstamm von tacēre.'],
+  ['dīcēbam', 0, 'dīc-ēba-m ist Imperfekt – gebaut aus dem Präsensstamm dīc-.'], ['dīxērunt', 1, 'dīx- ist der Perfektstamm von dīcere.'],
+  ['vidēre', 0, 'Der normale Infinitiv gehört zum Präsensstamm.'], ['vīdisse', 1, 'vīd-isse ist der Infinitiv Perfekt.'],
+  ['capiunt', 0, 'capi-unt ist Präsens.'], ['cēpimus', 1, 'cēp- ist der Perfektstamm von capere.'],
+  ['currēbant', 0, 'curr-ēba-nt ist Imperfekt – gebaut aus dem Präsensstamm.'], ['cucurrit', 1, 'cucurr- ist der Perfektstamm von currere.'],
+  ['manēs', 0, 'manē-s ist Präsens.'], ['mānsistī', 1, 'māns- ist der Perfektstamm von manēre.']
+];
+const s1Wahl = (inf, falsch) => { const v = vb(inf); return { t: 'wahl', q: `Die Stammformen heißen ${L(v.inf + ', ' + v.pr + ', ' + v.pf)}. Wie heißt der <b>Perfektstamm</b>?`, o: [v.ps + '-'].concat(falsch), a: 0, e: `Nimm bei der 1. Person Perfekt das -ī weg: ${L(v.pf)} → ${L(v.ps + '-')}.` }; };
+
+// ---------- Station 2: Sechs Endungen ----------
+const HABEN = ['ich habe', 'du hast', 'er (sie, es) hat', 'wir haben', 'ihr habt', 'sie haben'], SEIN = ['ich bin', 'du bist', 'er (sie, es) ist', 'wir sind', 'ihr seid', 'sie sind'];
+const S2_DEMO = { 'contendere': ['sein', 'geeilt'], 'rogāre': ['haben', 'gefragt'], 'tacēre': ['haben', 'geschwiegen'], 'dīcere': ['haben', 'gesagt'], 'vidēre': ['haben', 'gesehen'], 'currere': ['sein', 'gelaufen'], 'esse': ['sein', 'gewesen'] };
+function s2Zeig(box, inf) {
+  const v = vb(inf), d = S2_DEMO[inf], H = d[0] === 'sein' ? SEIN : HABEN;
+  box.innerHTML = `<table class="pt">${[0, 1, 2, 3, 4, 5].map(i => `<tr><td class="z" style="text-align:left">${PERS[i]}</td><td>${bauPf(v, PEND[i], false, 'klein')}</td><td class="n">${H[i]} ${d[1]}</td></tr>`).join('')}
+    <tr><td class="z" style="text-align:left">Infinitiv</td><td>${bauPf(v, 'isse', false, 'klein')}</td><td class="n">${d[1]} (zu) ${d[0]}</td></tr></table>`;
+}
+const BAU_VERBEN = ['rogāre', 'tacēre', 'dīcere', 'vidēre', 'cadere', 'esse', 'capere', 'manēre', 'currere', 'monēre', 'posse', 'facere', 'contendere', 'vincere'];
+const S2_KEIN = [['rogābant', 'tacuistī', 'dīxērunt', 'fuimus'], ['manēbat', 'vīdimus', 'cēpistis', 'cucurrī'], ['dīcēbās', 'fuērunt', 'monuistī', 'vīcit']];
+
+// ---------- Station 3: Drei Zeiten ----------
+function s3Zeig(box, v, p) {
+  box.innerHTML = `<table class="pt"><tr><td class="n">Präsens</td><td>${bauPr(v, praes(v)[p], true)}</td></tr><tr><td class="n">Imperfekt<br>(1. Vergangenheit)</td><td>${bauIm(v, impf(v)[p], true)}</td></tr><tr><td class="n">Perfekt<br>(2. Vergangenheit)</td><td>${bauPf(v, PEND[p], true)}</td></tr></table>`;
+}
+// Begründung zu einer bestimmten Form. esse, posse und ihre Verwandten haben eigene Präsensformen und ein Imperfekt ohne -ba-.
+const zeitGrund = (v, z, p, f) => z === 'pf' ? `Perfektstamm ${L(v.ps + '-')} und Perfekt-Endung ${L('-' + ENDEN[p])}.`
+  : v.k === 'x' && z === 'pr' ? `Das Präsens von ${v.inf} ist unregelmäßig: ${L(praes(v).slice(0, 3).join(', ') + ' …')}`
+  : IMPF_X[v.inf] ? `Das Imperfekt von ${v.inf} hat kein -ba-: ${L(impf(v).slice(0, 3).join(', ') + ' …')}`
+  : z === 'pr' ? 'Präsensstamm und normale Endung.' : `Das Zeichen ${L(v.k === 'a' || v.k === 'e' ? '-ba-' : '-ēba-')} verrät das Imperfekt.`;
+function s3Zeiten() {
+  const pool = VERBEN.filter(v => v.kern && v.k !== 'x'), out = [];
+  for (const z of shuffle(['pr', 'im', 'pf', 'pr', 'im', 'pf'].concat([0, 1, 2].map(() => pick(['pr', 'im', 'pf']))))) {
+    for (let n = 0; n < 80; n++) {
+      const v = pick(pool), p = rnd(0, 5), f = (z === 'pr' ? praes(v) : z === 'im' ? impf(v) : perf(v))[p];
+      // kein Verb doppelt, keine Zwillinge (die kommen im nächsten Schritt)
+      if (out.some(x => x.v === v) || alleFormen(v).filter(x => ohneM(x.f) === ohneM(f)).length > 1) continue;
+      out.push({ v, h: f, c: ['pr', 'im', 'pf'].indexOf(z), sub: `von ${v.inf} (${esc(v.de)})`, e: zeitGrund(v, z, p, f) });
+      break;
+    }
+  }
+  return out;
+}
+// Formenpaare Präsens/Perfekt derselben Person; c: 0 nur Präsens, 1 nur Perfekt, 2 beides; zw = nur der Strich unterscheidet
+function paareListe(namen, personen) {
+  const alle = [];
+  for (const inf of namen) {
+    const v = vb(inf), pr = praes(v), pf = perf(v), sub = `von ${v.inf} (${esc(v.de)})`;
+    for (const p of personen) {
+      const key = inf + p;
+      if (pr[p] === pf[p]) alle.push({ key, h: pr[p], sub, c: 2, e: `Bei ${v.inf} sind Präsensstamm und Perfektstamm gleich – und die Endung ${L('-' + PEND[p])} gibt es in beiden Zeiten.` });
+      else {
+        const zw = ohneM(pr[p]) === ohneM(pf[p]), z = zw ? ' Nur der Längenstrich macht den Unterschied!' : '';
+        alle.push({ key, h: pr[p], sub, c: 0, zw, e: `Präsens. Das Perfekt heißt ${L(pf[p])}.${z}` }, { key, h: pf[p], sub, c: 1, zw, e: `Perfekt. Das Präsens heißt ${L(pr[p])}.${z}` });
+      }
+    }
+  }
+  return alle;
+}
+// nach Plan auswählen: [[Filter, Anzahl], …]. Von einem Paar (Verb + Person) kommt höchstens eine Form dran –
+// sonst hätte die Erklärung zur ersten die Lösung der zweiten schon genannt.
+function waehle(alle, plan) {
+  const out = [], keys = new Set();
+  for (const [f, n] of plan) { let k = 0; for (const x of shuffle(alle.filter(f))) { if (k >= n) break; if (keys.has(x.key)) continue; keys.add(x.key); out.push(x); k++; } }
+  return shuffle(out);
+}
+const s3Zwillinge = () => waehle(paareListe(['animadvertere', 'contendere', 'accidere', 'occurrere', 'fugere', 'vincere', 'dīcere', 'capere', 'vidēre', 'relinquere', 'dūcere', 'facere', 'currere'], [2, 3, 5]),
+  [[x => x.c === 2, rnd(2, 3)], [x => x.zw, 1], [x => x.c === 0 && !x.zw, rnd(1, 2)], [x => x.c === 1 && !x.zw, rnd(1, 2)]]);
+
+// ---------- Station 4 und 5: die Wege ----------
+const KLAR = { o: ['contendere', 'animadvertere', 'ostendere', 'accendere'], v: ['laudāre', 'vocāre', 'audīre', 'flēre', 'putāre', 'amāre'], u: ['monēre', 'tacēre', 'studēre', 'iacēre', 'terrēre', 'timēre'], s: ['dīcere', 'dūcere', 'discēdere', 'scrībere', 'rīdēre'], d: ['vidēre', 'capere', 'facere', 'fugere', 'vincere'], r: ['currere', 'cadere', 'parcere'] };
+function wegItems(wege, jeWeg, extra) {
+  const fest = wege.reduce((a, t) => a.concat(shuffle(KLAR[t]).slice(0, jeWeg)), []);
+  const rest = shuffle(wege.reduce((a, t) => a.concat(KLAR[t]), []).filter(x => !fest.includes(x))).slice(0, extra);
+  return shuffle(fest.concat(rest)).map(inf => { const v = vb(inf); return { h: `${v.pr} → ${v.pf}`, sub: `${v.inf} (${esc(v.de)})`, c: wege.indexOf(v.t), e: `${WEG[v.t].n}: ${pfHtml(v, 'ī')}` }; });
+}
+const S5_PAARE = [['vidēre', 'vincere', 'dīcere', 'dūcere'], ['manēre', 'monēre', 'capere', 'cadere'], ['facere', 'fugere', 'flēre', 'currere']];
+function s5Strich() {
+  const alle = paareListe(['fugere', 'vidēre', 'capere', 'facere', 'vincere', 'relinquere', 'accipere'], [2, 3, 5]).filter(x => x.c < 2);
+  return waehle(alle, [[x => x.zw && x.c === 1, 1], [x => x.zw && x.c === 0, 1], [x => !x.zw && x.c === 0, rnd(1, 3)], [x => !x.zw && x.c === 1, rnd(1, 3)]]);
+}
+
+// ---------- Station 6: Faustregel, Regelbrecher, Kopfkissen ----------
+function faustChart() {
+  return [['a', 'a-Konjugation', 'v'], ['e', 'e-Konjugation', 'u'], ['i', 'i-Konjugation', 'v'], ['k', 'konsonantische Konjugation', null]].map(([k, name, regel]) => {
+    const vs = VERBEN.filter(v => k === 'k' ? (v.k === 'k' || v.k === 'ki') : v.k === k), seg = WEGE6.map(t => [t, vs.filter(v => v.t === t).length]).filter(x => x[1]);
+    // Die Zahlen stehen auch als Text da: Im Schwarz-Weiß-Druck sind die Farben der Balken nicht zu unterscheiden.
+    const rest = seg.filter(x => x[0] !== regel).map(x => `${x[1]} × ${WEG[x[0]].k}`).join(', ');
+    return `<div class="krow"><div><b>${name}</b> <span class="small muted">· ${regel ? `Faustregel: ${WEG[regel].k} – stimmt bei ${vs.filter(v => v.t === regel).length} von ${vs.length} (sonst: ${rest})` : `keine Faustregel – ${vs.length} Verben: ${rest}`}</span></div>
+      <div class="balken" role="img" aria-label="${seg.map(x => x[1] + ' ' + WEG[x[0]].k).join(', ')}">${seg.map(x => `<i class="w-${x[0]}" style="flex:${x[1]}">${x[1]}</i>`).join('')}</div></div>`;
+  }).join('') + `<div class="legende">${WEGE6.map(wtag).join(' ')}</div>`;
+}
+function s6Regel() {
+  const frei = k => VERBEN.filter(v => v.k === k && v.regel && v.prio === 2);
+  return shuffle(shuffle(frei('a')).slice(0, 2).concat(pick(frei('e')), vb(pick(['audīre', 'scīre', 'nēscīre'])))).map(v => ({
+    q: `${L(v.inf)} <span class="muted">(${esc(v.de)})</span> · ${KONJ[v.k]}<br>Bilde die <b>1. Person Perfekt</b> nach der Faustregel.`, a: v.pf,
+    tipp: v.k === 'a' ? 'a-Konjugation: Aus -āre wird -āvī.' : v.k === 'e' ? 'e-Konjugation: Aus -ēre wird -uī.' : 'i-Konjugation: Aus -īre wird -īvī.', e: pfHtml(v, 'ī') }));
+}
+const sfPaar = inf => { const v = vb(inf); return `${L(v.inf)} → ${L(v.pf)}`; };
+const S6_WOVON = [
+  ['Heißt das Imperfekt ' + L('rogā-ba-t') + ' oder ' + L('dīc-ēba-t') + '?', 0, 'Das regelt die Konjugation: -ba- bei der a- und e-Konjugation, -ēba- bei der i- und der konsonantischen.'],
+  ['Endet die 2. Person Singular Präsens auf ' + L('-ās') + ', ' + L('-ēs') + ' oder ' + L('-is') + '?', 0, 'laudās, monēs, dīcis – das regelt die Konjugation.'],
+  ['Welche Endung hat die 2. Person Plural im Perfekt?', 1, 'Immer -istis, bei jedem Verb.'],
+  ['Welche Endung hat der Infinitiv Perfekt?', 1, 'Immer -isse, bei jedem Verb.'],
+  ['Wie heißt die Endung für „du“ im Perfekt?', 1, 'Immer -istī, bei jedem Verb.'],
+  ['Hat die 3. Person Plural Präsens ' + L('-ant') + ', ' + L('-ent') + ' oder ' + L('-unt') + '?', 0, 'rogant, tacent, dīcunt – das regelt die Konjugation.'],
+  ['Heißt das Perfekt von ' + L('manēre') + ' nun ' + L('manuī') + ' oder ' + L('mānsī') + '?', 2, 'Die Faustregel würde manuī sagen – richtig ist mānsī. Das steht im Vokabelheft.'],
+  ['Heißt der Perfektstamm von ' + L('vincere') + ' nun ' + L('vīc-') + ' oder ' + L('vinx-') + '?', 2, 'Das kann man nicht ausrechnen. Es steht im Vokabelheft: vincō, vīcī.'],
+  ['Geht ein Verb der konsonantischen Konjugation den Weg mit s, mit Dehnung oder mit Verdopplung?', 2, 'Dafür gibt es keine Regel. Die Perfektform gehört zur Vokabel.']
+];
+
+const STATION = {
+  s1: { name: 'Ein Verb, zwei Stämme', icon: '🌳', hook: 'Der Stammbaum: Warum im Vokabelheft drei Formen stehen.',
+    merk: 'Jedes Verb hat {zwei} Stämme. Vom {Präsensstamm} kommen Präsens und Imperfekt, vom {Perfektstamm} alle Perfektformen. Den Perfektstamm findest du, wenn du bei der 1. Person Perfekt das {-ī} wegnimmst.', falsch: ['drei', '-ō'],
+    steps: () => [
+      { t: 'info', h: () => `<h2>Ein Verb, zwei Stämme</h2><p>Jedes lateinische Verb hat <b>zwei Stämme</b>. Aus dem <b>Präsensstamm</b> baust du Präsens und Imperfekt, aus dem <b>Perfektstamm</b> das Perfekt. Wie bei einem Stammbaum gabelt sich der Weg:</p>
+          ${chipsFuer('b1', ['rogāre', 'tacēre', 'audīre', 'dīcere', 'capere'])}<div id="b1box"></div>
+          <p class="small">Tippe eine Form an. Markiert ist dann in allen drei Zeiten dieselbe Person: <b id="b1wer"></b>. Egal welcher Ast – es geht immer um dieselben sechs Personen.</p>
+          <div class="merk">Im Vokabelheft stehen deshalb seit Lektion 8 drei Formen, die <b>Stammformen</b> – zum Beispiel ${L('putāre, putō, putāvī')}. Die letzte verrät den Perfektstamm.</div>`,
+        mount: host => baumDemo(host, 'b1') },
+      { t: 'sort', q: 'Von welchem Stamm kommt die Form?', cats: ['Präsensstamm', 'Perfektstamm'],
+        items: () => { const n0 = rnd(3, 5); return shuffle([0, 1].reduce((a, c) => a.concat(shuffle(S1_POOL.filter(x => x[1] === c)).slice(0, c ? 8 - n0 : n0)), [])).map(x => ({ h: x[0], c: x[1], e: x[2] })); } },
+      s1Wahl('manēre', ['mane-', 'mān-', 'mānsī-']), s1Wahl('capere', ['capi-', 'cap-', 'cēpī-']), s1Wahl('currere', ['curr-', 'cucur-', 'cucurrī-'])
+    ] },
+  s2: { name: 'Sechs Endungen für alle', icon: '🧲', hook: 'Ein Satz Endungen, der an jeden Perfektstamm passt.',
+    merk: 'Die Perfekt-Endungen heißen {-ī}, {-istī}, {-it}, -imus, {-istis}, {-ērunt}. Sie sind bei {allen} Verben gleich.', falsch: ['-ō', '-nt', 'manchen'],
+    steps: () => [
+      { t: 'info', h: () => `<h2>Sechs Endungen – für alle Verben</h2><p>An den Perfektstamm kommen immer dieselben sechs Endungen. Dazu gibt es den <b>Infinitiv Perfekt</b> auf ${L('<span class="en">-isse</span>')}. Am besten siehst du das bei ${L('contendere')}: Dort bleibt der Stamm gleich, nur die Endung zeigt das Perfekt.</p>
+          ${chipsFuer('s2v', Object.keys(S2_DEMO))}<div class="tabwrap" id="s2box"></div>
+          <p class="small muted">Tippe die anderen Verben an: Der Stamm wechselt, die Endungen bleiben. Beim Übersetzen einer Erzählung nimmt man im Deutschen oft das Präteritum: ${L('rogāvit')} – er fragte.</p>`,
+        mount: host => { const box = host.querySelector('#s2box'); s2Zeig(box, 'contendere'); chipsBinden(host, 's2v', inf => s2Zeig(box, inf)); } },
+      { t: 'bau', q: 'Häng die richtige Endung an den Perfektstamm.',
+        items: () => { const vs = shuffle(BAU_VERBEN); return shuffle(shuffle([0, 1, 2, 3, 4, 5]).slice(0, 5).concat(6)).map((p, i) => ({ v: vb(vs[i]), p })); } },
+      { t: 'sort', q: 'Wer tut es? Schau auf die Endung.', cats: PERS,
+        items: () => { const vs = shuffle(VERBEN.filter(v => v.kern)); return shuffle(shuffle([0, 1, 2, 3, 4, 5]).slice(0, 4).concat(rnd(0, 5), rnd(0, 5))).map((p, i) => ({ h: perf(vs[i])[p], sub: `von ${vs[i].inf} (${esc(vs[i].de)})`, c: p, e: `${L('-' + PEND[p])} heißt: ${PERS[p]}.` })); } },
+      (() => { const o = pick(S2_KEIN); return { t: 'wahl', q: 'Drei dieser Formen sind Perfekt. Welche ist <b>kein</b> Perfekt?', o, a: 0, e: `${L(o[0])} ist Imperfekt: Du erkennst es am Zeichen -ba- oder -ēba- und an der normalen Endung. Die anderen drei haben einen Perfektstamm und eine Perfekt-Endung.` }; })()
+    ] },
+  s3: { name: 'Drei Zeiten, drei Baupläne', icon: '⏳', hook: 'Präsens, Imperfekt und Perfekt auseinanderhalten.',
+    merk: 'Das Zeichen {-ba-} (oder -ēba-) verrät das Imperfekt. Die Endungen -istī, -istis und {-ērunt} gibt es nur im {Perfekt}. Bei -it und -imus entscheidet der {Stamm}.', falsch: ['-nt', 'Präsens', 'Infinitiv'],
+    steps: () => [
+      { t: 'info', h: () => `<h2>Drei Zeiten, drei Baupläne</h2><p>Du kennst jetzt drei Zeiten. Jede hat ihren eigenen Bauplan. Wähle ein Verb und eine Person:</p>
+          ${chipsFuer('s3v', ['rogāre', 'tacēre', 'audīre', 'dīcere', 'capere'])}<div class="mitte"><div class="seg" id="s3p">${PERS.map((p, i) => `<button type="button" data-p="${i}" class="${i === 2 ? 'on' : ''}">${p}</button>`).join('')}</div></div>
+          <div class="tabwrap" id="s3box"></div>
+          <div class="legende"><span class="bau klein">${bk('st', 'Stamm')}</span><span class="bau klein">${bk('zn', 'Zeichen der Zeit')}</span><span class="bau klein">${bk('pe', 'normale Endung')}</span><span class="bau klein">${bk('en', 'Perfekt-Endung')}</span></div>
+          <div class="achtung"><b>Achtung:</b> Die Endungen ${L('-it')} und ${L('-imus')} gibt es im Präsens <i>und</i> im Perfekt: ${L('dīcit')} (er sagt) – ${L('dīxit')} (er hat gesagt). Dann entscheidet der Stamm.</div>
+          <p class="small muted">Nur ${L('esse')} und ${L('posse')} haben im Imperfekt kein -ba-: ${L('eram')}, ${L('poteram')}.</p>`,
+        mount: host => {
+          const box = host.querySelector('#s3box'); let v = vb('rogāre'), p = 2; s3Zeig(box, v, p);
+          chipsBinden(host, 's3v', inf => { v = vb(inf); s3Zeig(box, v, p); });
+          const ps = host.querySelectorAll('#s3p button'); ps.forEach(b => b.onclick = () => { p = +b.dataset.p; ps.forEach(x => x.classList.toggle('on', x === b)); s3Zeig(box, v, p); });
+        } },
+      { t: 'sort', q: 'Welche Zeit ist das?', cats: ['Präsens', 'Imperfekt', 'Perfekt'], items: s3Zeiten },
+      { t: 'info', h: `<h2>Zwillinge und Fast-Zwillinge</h2>
+          <p>Bei manchen Verben sind Präsensstamm und Perfektstamm gleich. Dann sehen einige Formen genau gleich aus: ${L('animadvertit')} heißt „er bemerkt“ <i>oder</i> „er hat bemerkt“, ${L('animadvertimus')} „wir bemerken“ <i>oder</i> „wir haben bemerkt“. Was gemeint ist, zeigt nur der Satz.</p>
+          <p>Bei anderen unterscheidet nur der Längenstrich: ${L('fugit')} (er flieht) – ${L('f<b class="hl">ū</b>git')} (er ist geflohen).</p>` },
+      { t: 'sort', q: 'Präsens, Perfekt – oder ist beides möglich?', cats: ['nur Präsens', 'nur Perfekt', 'beides möglich'], items: s3Zwillinge }
+    ] },
+  s4: { name: 'Die einfachen Wege', icon: '🛤️', hook: 'Stamm bleibt gleich, v-Perfekt, u-Perfekt: drei feste Regeln.',
+    merk: 'Beim einfachsten Weg bleibt der Stamm {gleich}. Beim v-Perfekt nimmst du vom Infinitiv das {-re} weg und hängst das Zeichen {v} an. Beim u-Perfekt nimmst du {-ēre} weg und hängst das Zeichen {u} an.', falsch: ['-ō', 's', 'lang'],
+    steps: () => [
+      { t: 'info', h: () => `<h2>Wie kommt man zum Perfektstamm?</h2><p>Die Endungen sind immer gleich. Aber wie wird aus dem Präsensstamm der Perfektstamm? Dafür gibt es <b>sechs Wege</b>. Wir fangen mit dem leichtesten an.</p>
+          <h3>${wtag('o')} Weg 1: Der Stamm bleibt gleich</h3><p>Bei diesen Verben ändert sich am Stamm <b>gar nichts</b>. Du nimmst von der 1. Person Präsens das -ō weg und hängst die Perfekt-Endung an.</p>
+          ${wegDemoHtml('w1', ['contendere', 'animadvertere'])}<p class="small muted">Genau so gehen ${VERBEN.filter(v => v.g === 'o1').length} Verben. Sie stehen in Tabelle 1.</p>`, mount: host => wegDemo(host, 'w1') },
+      { t: 'tipp', q: 'Weg 1: Der Stamm bleibt gleich.', items: () => ausGruppe('o1', 2, v => !['contendere', 'animadvertere'].includes(v.inf)).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.pr)} das -ō weg und hänge -ī an.`)) },
+      { t: 'info', h: () => `<h3>${wtag('v')} Weg 2: v-Perfekt</h3><p>Nimm vom Infinitiv das <b>-re</b> weg. An den Rest hängst du das Zeichen <b>v</b>. Dann kommt wie immer die Endung.</p>
+          ${wegDemoHtml('w2', ['rogāre', 'laudāre', 'audīre', 'flēre'])}<p class="small muted">So gehen fast alle Verben der a-Konjugation – das ist die größte Gruppe (Tabelle 2).</p>`, mount: host => wegDemo(host, 'w2') },
+      { t: 'tipp', q: 'Weg 2: v-Perfekt – vom Infinitiv das -re weg, dann v.', items: () => ausGruppe('v1', 1, v => v.k === 'a' && v.prio === 2).concat(vb(pick(['audīre', 'scīre']))).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.inf)} das -re weg und hänge -vī an.`)) },
+      { t: 'info', h: () => `<h3>${wtag('u')} Weg 3: u-Perfekt</h3><p>Hier verschwindet zuerst ein Stück: Nimm vom Infinitiv das ganze <b>-ēre</b> weg – auch das ē. An den Rest hängst du das Zeichen <b>u</b>. Aus ${L('tacēre')} wird so erst ${L('tac-')}, dann ${L('tac-u-')}.</p>
+          ${wegDemoHtml('w3', ['tacēre', 'monēre', 'terrēre', 'aperīre'])}<p class="small muted">So gehen die meisten Verben der e-Konjugation (Tabelle 3).</p>`, mount: host => wegDemo(host, 'w3') },
+      { t: 'tipp', q: 'Weg 3: u-Perfekt – vom Infinitiv das -ēre weg, dann u.', items: () => ausGruppe('u1', 2, v => !['tacēre', 'monēre', 'terrēre'].includes(v.inf)).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.inf)} das -ēre weg und hänge -uī an.`)) },
+      { t: 'sort', q: 'Welchen Weg ist dieses Verb gegangen?', cats: ['o', 'v', 'u'].map(t => WEG[t].k), items: () => wegItems(['o', 'v', 'u'], 1, 3) }
+    ] },
+  s5: { name: 'Die kniffligen Wege', icon: '🧗', hook: 's-Perfekt, Dehnung und Verdopplung – Schritt für Schritt.',
+    merk: 'Beim s-Perfekt wird aus c + s ein {x}. Beim Dehnungsperfekt wird der Vokal im Stamm {lang}. Bei der Reduplikation wird der Anfang {verdoppelt}: Aus currō wird {cucurrī}.', falsch: ['z', 'kurz', 'gestrichen', 'currī'],
+    steps: () => [
+      { t: 'info', h: () => `<h3>${wtag('s')} Weg 4: s-Perfekt</h3><p>An den Stamm kommt das Zeichen <b>s</b>. Dabei stoßen zwei Konsonanten zusammen – und verändern sich. Was genau passiert, hängt vom <b>Buchstaben vor der Infinitiv-Endung</b> ab. Schau dir die Wege Schritt für Schritt an:</p>
+          ${wegDemoHtml('w4', ['dīcere', 'dūcere', 'rīdēre', 'discēdere', 'manēre', 'sentīre'])}<p class="small muted">Deshalb hat Tabelle 4 kleine Gruppen. In jeder Gruppe gilt genau eine Regel.</p>`, mount: host => wegDemo(host, 'w4') },
+      { t: 'wahl', q: `Bei ${L('dūcere')} steht vor der Endung ein c: ${L('dūc-ere')}. Jetzt kommt das Zeichen s dazu. Wie heißt der Perfektstamm?`, o: ['dūx-', 'dūcs-', 'dūs-', 'dūss-'], a: 0, e: `c und s verschmelzen zu x: ${pfHtml(vb('dūcere'), 'ī')}.` },
+      { t: 'wahl', q: `Bei ${L('rīdēre')} steht vor der Endung ein d: ${L('rīd-ēre')}. Jetzt kommt das Zeichen s dazu. Wie heißt der Perfektstamm?`, o: ['rīs-', 'rīds-', 'rīx-', 'rīd-'], a: 0, e: `Das d fällt vor dem s weg: ${pfHtml(vb('rīdēre'), 'ī')}.` },
+      { t: 'info', h: () => `<h3>${wtag('d')} Weg 5: Dehnung</h3><p>Hier gibt es <b>kein Zeichen</b>. Stattdessen wird der Vokal im Stamm <b>lang</b> – das zeigt der Längenstrich. Bei den meisten Verben ist das der einzige Unterschied. Bei wenigen wechselt der Vokal zusätzlich.</p>
+          ${wegDemoHtml('w5', ['vidēre', 'fugere', 'capere', 'facere', 'vincere'])}
+          <div class="achtung"><b>Der Strich ist hier das Perfekt:</b> ${L('fugit')} (er flieht) – ${L('f<b class="hl">ū</b>git')} (er ist geflohen).</div>`, mount: host => wegDemo(host, 'w5') },
+      { t: 'sort', q: 'Präsens oder Perfekt? Achte auf Stamm und Strich.', cats: ['Präsens', 'Perfekt'], items: s5Strich },
+      { t: 'info', h: () => `<h3>${wtag('r')} Weg 6: Reduplikation</h3><p>Auch hier gibt es kein Zeichen. Stattdessen wird der <b>Anfang verdoppelt</b>: Der erste Konsonant kommt mit einem Vokal noch einmal nach vorn. („Reduplikation“ heißt Verdopplung.)</p>
+          <p>Am einfachsten siehst du es bei ${L('currere')} – dort passiert sonst nichts. Bei den anderen ändert sich zusätzlich der Vokal im Stamm. Tippe sie der Reihe nach an:</p>
+          ${wegDemoHtml('w6', ['currere', 'cadere', 'parcere', 'accidere'])}
+          <p class="small muted">Das letzte Verb hat eine Vorsilbe: ${L('accidere')} kommt von cadere. Bei ihm und bei ${L('occurrere')} (von currere) fällt die Verdopplung weg: ${L('accidī, occurrī')}.</p>`, mount: host => wegDemo(host, 'w6') },
+      (() => { const set = pick(S5_PAARE); return { t: 'paare', q: 'Welcher Perfektstamm gehört zu welchem Verb? Tippe erst links, dann rechts.', pairs: () => set.map(inf => [vb(inf).inf, vb(inf).ps + '-']), e: 'Alle Paare gefunden. Solche ähnlichen Stämme verwechselt man leicht – genau hinschauen lohnt sich.' }; })(),
+      { t: 'sort', q: 'Welchen Weg ist dieses Verb gegangen?', cats: WEGE6.map(t => WEG[t].k), items: () => wegItems(WEGE6, 1, 2) }
+    ] },
+  s6: { name: 'Faustregel und Kopfkissen-Verben', icon: '⚖️', hook: 'Was die Konjugation verrät – und welche sieben Verben ganz eigen sind.',
+    merk: 'Die Konjugation gehört zum {Präsensstamm}. Für das Perfekt gibt sie nur eine {Faustregel}: a-Konjugation {v}-Perfekt, e-Konjugation meistens {u}-Perfekt. Das Perfekt von esse heißt {fuī}.', falsch: ['Perfektstamm', 'esī', 'Vorschrift', 's'],
+    steps: () => [
+      { t: 'info', h: () => `<h2>Wo bleibt die Konjugation?</h2><p>Schau noch einmal auf den Stammbaum und vergleiche die vier Verben. <b>Links</b> sieht jedes anders aus – dort bestimmt die Konjugation (a, e, i, konsonantisch), wie Präsens und Imperfekt gebaut sind. <b>Rechts</b> haben alle dieselben sechs Endungen.</p>
+          ${chipsFuer('b6', ['rogāre', 'tacēre', 'audīre', 'dīcere'])}<div id="b6box"></div>
+          <p class="small muted">Nach der Gabel geht es also verschieden weiter. Trotzdem reden wir auf beiden Ästen über dieselben sechs Personen.</p>`,
+        mount: host => baumDemo(host, 'b6', { hinw: true }) },
+      { t: 'info', h: () => `<h2>Die Faustregel</h2><p>Für den Weg zum Perfektstamm gibt die Konjugation nur einen <b>Tipp</b>. Wie gut er ist, zeigen die Balken: Jede Farbe ist ein Weg, die Zahl sagt, wie viele Verben ihn gehen.</p>
+          <div class="wege">${faustChart()}</div>
+          <div class="merk"><b>Faustregel:</b> a-Konjugation: fast immer v-Perfekt. e-Konjugation: meistens u-Perfekt. i-Konjugation: eigentlich v-Perfekt – aber ${L('venīre')} und seine Verwandten dehnen. Konsonantische Konjugation: keine Regel, da hilft nur das Vokabelheft.</div>` },
+      { t: 'tipp', q: 'Mit der Faustregel kannst du viele Perfektformen selbst bilden.', items: s6Regel },
+      { t: 'multi', q: 'Diese vier Verben gehören zur <b>e-Konjugation</b>. Faustregel: u-Perfekt. Zwei halten sich nicht daran – tippe die zwei <b>Regelbrecher</b> an.', o: ['monēre', 'manēre', 'tacēre', 'vidēre'].map(sfPaar), a: [1, 3],
+        e: `${L('mānsī')} ist ein s-Perfekt, ${L('vīdī')} ein Dehnungsperfekt. Solche Verben lernst du mit ihrer Tabelle.` },
+      { t: 'multi', q: 'Diese vier Verben gehören zur <b>i-Konjugation</b>. Faustregel: v-Perfekt. Tippe die zwei <b>Regelbrecher</b> an.', o: ['audīre', 'sentīre', 'scīre', 'reperīre'].map(sfPaar), a: [1, 3],
+        e: `${L('sēnsī')} ist ein s-Perfekt, ${L('repperī')} gehört zur Reduplikation.` },
+      { t: 'sort', q: 'Wovon hängt das ab?', cats: ['von der Konjugation', 'immer gleich', 'beim Verb mitlernen'], items: () => shuffle(S6_WOVON).slice(0, 6).map(x => ({ h: x[0], klein: true, c: x[1], e: x[2] })) },
+      { t: 'info', h: () => `<h2>Die 7 fürs Kopfkissen</h2><p>Nur <b>sieben</b> Verben sind ganz eigen. Und eigentlich musst du dir nur <b>vier Formen</b> merken: ${L('fuī')}, ${L('potuī')}, ${L('voluī')}, ${L('nōluī')}. Die anderen drei sind ${L('esse')} mit einer Vorsilbe.</p>
+          <div class="tabwrap"><table class="pt">${VERBEN.filter(v => v.t === 'x').map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td class="n">${v.n}</td></tr>`).join('')}</table></div>
+          <p class="small muted">Die Endungen sind auch hier dieselben: ${ENDEN.map(e => pfHtml(vb('esse'), e)).join(' · ')}</p>` },
+      { t: 'paare', q: 'Welcher Perfektstamm gehört zu welchem Verb? Tippe erst links, dann rechts.', pairs: () => ['esse', 'posse', 'velle', 'nōlle', 'adesse'].map(inf => [vb(inf).inf, vb(inf).ps + '-']), e: 'Diese kommen unters Kopfkissen.' }
+    ] }
+};
+const SKEYS = Object.keys(STATION);
+const merkHtml = k => STATION[k].merk.replace(/\{([^}]+)\}/g, '<b>$1</b>');
+
+// ---------- Kurz-Check: Fragen, mit denen eine verstandene Station später noch einmal abgeklopft wird ----------
+//  Jede Frage: { q, o: [richtig, falsch, …], e }. Die richtige Antwort steht in o an erster Stelle und wird beim Anzeigen gemischt.
+const andere = (liste, richtig, n) => shuffle(liste.filter(x => x !== richtig)).slice(0, n);
+const CHECK = {
+  s1: [
+    () => ({ q: 'Aus wie vielen Stämmen baust du Präsens, Imperfekt und Perfekt eines Verbs?', o: ['aus zwei: Präsensstamm und Perfektstamm', 'aus einem: demselben für alle Formen', 'aus drei: für jede Zeit einem eigenen', 'aus sechs: für jede Person einem eigenen'], e: 'Zwei. Vom Präsensstamm kommen Präsens und Imperfekt, vom Perfektstamm das Perfekt.' }),
+    () => ({ q: `Von welchem Stamm kommt das Imperfekt, zum Beispiel ${L('rogābam')}?`, o: ['vom Präsensstamm', 'vom Perfektstamm', 'von einem eigenen Imperfektstamm'], e: `${L('rogā-ba-m')}: Präsensstamm, Zeichen -ba-, Endung.` }),
+    () => ({ q: 'Wie findest du den Perfektstamm eines Verbs?', o: ['1. Person Perfekt ohne -ī', '3. Person Präsens ohne -t', 'Imperfekt ohne -bam', 'Den kann man nirgends ablesen.'], e: `Zum Beispiel ${L('dīxī')} → ${L('dīx-')}.` }),
+    () => { const v = vb(pick(['dūcere', 'manēre', 'vidēre', 'capere', 'monēre'])); return { q: `Die Stammformen heißen ${L(v.inf + ', ' + v.pr + ', ' + v.pf)}. Wie heißt der Perfektstamm?`, o: [v.ps + '-', praesStamm(v) + '-', v.pf + '-', v.ps.slice(0, -1) + '-'].map(L), e: `${L(v.pf)} ohne -ī: ${L(v.ps + '-')}.` }; },
+    () => { const s = pick([['tacuistis', 'tacēbam', 'tacēre', 'tacent'], ['dīxērunt', 'dīcēbant', 'dīcunt', 'dīcere'], ['vīdisse', 'vidēre', 'vidēbat', 'vidētis']]); return { q: 'Welche dieser Formen kommt vom <b>Perfektstamm</b>?', o: s.map(L), e: `${L(s[0])} hat den Perfektstamm und eine Perfekt-Endung.` }; }
+  ],
+  s2: [
+    () => { const p = rnd(0, 5); return { q: `Welche Endung hat das Perfekt für „${PERS[p]}“?`, o: ['-' + PEND[p]].concat(andere(PEND, PEND[p], 3).map(e => '-' + e)).map(L), e: `${L('-' + PEND[p])} – zum Beispiel ${L(vb('dīcere').ps + PEND[p])}.` }; },
+    () => { const p = rnd(0, 5), v = vb(pick(['dīcere', 'vidēre', 'esse', 'monēre', 'capere'])); return { q: `Wer tut es? ${L(perf(v)[p])}`, o: [PERS[p]].concat(andere(PERS, PERS[p], 3)), e: `${L('-' + PEND[p])} heißt: ${PERS[p]}.` }; },
+    () => ({ q: 'Wie endet der Infinitiv Perfekt?', o: ['-isse', '-re', '-ērunt', '-istī'].map(L), e: `Zum Beispiel ${L('rogāv-isse')}, ${L('dīx-isse')}, ${L('fu-isse')}.` }),
+    () => ({ q: 'Haben Verben der a-Konjugation andere Perfekt-Endungen als Verben der e-Konjugation?', o: ['Nein. Sie sind bei allen Verben gleich.', 'Ja. Jede Konjugation hat ihre eigenen.', 'Nur in der 3. Person Plural.'], e: `${L('rogāv-ērunt')}, ${L('tacu-ērunt')}, ${L('dīx-ērunt')}: immer dieselbe Endung.` })
+  ],
+  s3: [
+    () => ({ q: `Woran erkennst du das Imperfekt von ${L('rogāre')} oder ${L('dīcere')}?`, o: ['am Zeichen -ba- oder -ēba-', 'an der Endung -ērunt', 'am Perfektstamm', 'am Längenstrich im Stamm'], e: `${L('rogā-ba-t')}, ${L('dīc-ēba-t')}.` }),
+    () => { const s = pick([['dīxit', 'dīcit', 'dīcēbat'], ['vīcit', 'vincit', 'vincēbat'], ['cēpit', 'capit', 'capiēbat'], ['mānsit', 'manet', 'manēbat']]); return { q: 'Welche Form ist <b>Perfekt</b>?', o: s.map(L), e: `${L(s[0])} hat den Perfektstamm. ${L(s[1])} ist Präsens, ${L(s[2])} Imperfekt.` }; },
+    () => ({ q: `Welche Zeit ist ${L('animadvertit')}?`, o: ['Präsens oder Perfekt', 'Präsens oder Imperfekt', 'nur Präsens', 'nur Perfekt'], e: 'Präsensstamm und Perfektstamm sind bei animadvertere gleich. Das entscheidet nur der Satz.' }),
+    () => ({ q: 'Welche Endungen gibt es <b>nur</b> im Perfekt?', o: ['-istī, -istis, -ērunt', '-it, -imus', '-s, -t, -nt', '-ō, -mus'].map(L), e: `${L('-it')} und ${L('-imus')} gibt es auch im Präsens – da entscheidet der Stamm.` })
+  ],
+  s4: [
+    () => { const v = vb(pick(['amāre', 'narrāre', 'mūtāre', 'clāmāre', 'spectāre'])), b = v.inf.slice(0, -3); return { q: `${L(v.inf)}: Wie heißt die 1. Person Perfekt?`, o: [v.pf, b + 'āuī', b + 'ēvī', b + 'āsī'].map(L), e: `v-Perfekt: vom Infinitiv das -re weg, dann v. ${pfHtml(v, 'ī')}` }; },
+    () => { const v = vb(pick(['terrēre', 'timēre', 'habēre', 'monēre', 'tacēre'])), b = v.inf.slice(0, -3); return { q: `${L(v.inf)}: Wie heißt die 1. Person Perfekt?`, o: [v.pf, b + 'ēvī', b + 'ī', b + 'ēuī'].map(L), e: `u-Perfekt: vom Infinitiv das -ēre weg, dann u. ${pfHtml(v, 'ī')}` }; },
+    () => { const v = vb(pick(['contendere', 'ostendere', 'animadvertere'])), b = v.ps; return { q: `${L(v.inf + ', ' + v.pr)}: Wie heißt die 1. Person Perfekt?`, o: [v.pf, b + 'uī', b.slice(0, -1) + 'sī', b.slice(0, -1) + 'ī'].map(L), e: `Der Stamm bleibt gleich: ${pfHtml(v, 'ī')}` }; },
+    () => ({ q: `Was passiert beim u-Perfekt mit dem ē von ${L('tacēre')}?`, o: ['Es fällt weg: tac-u-ī.', 'Es bleibt stehen: tacē-u-ī.', 'Es wird zu i: taci-u-ī.'], e: `Erst ${L('tac-')}, dann das Zeichen u: ${pfHtml(vb('tacēre'), 'ī')}` })
+  ],
+  s5: [
+    () => ({ q: 'Was wird beim s-Perfekt aus c + s?', o: ['x – wie in dīxī', 'ss – wie in dīssī', 'cs – wie in dīcsī'], e: `${L('dīc-')} + s → ${pfHtml(vb('dīcere'), 'ī')}` }),
+    () => ({ q: 'Was passiert beim Dehnungsperfekt?', o: ['Der Vokal im Stamm wird lang.', 'Der Anfang wird verdoppelt.', 'Es kommt ein v dazu.', 'Es ändert sich gar nichts.'], e: `Zum Beispiel ${L('videō')} → ${pfHtml(vb('vidēre'), 'ī')}` }),
+    () => ({ q: `Was ist bei ${L('currō')} → ${L('cucurrī')} passiert?`, o: ['Der Anfang wurde verdoppelt.', 'Der Vokal wurde lang gemacht.', 'Es kam das Zeichen s dazu.'], e: `Reduplikation: ${pfHtml(vb('currere'), 'ī')}` }),
+    () => { const v = vb(pick(['dīcere', 'dūcere', 'vidēre', 'capere', 'cadere', 'vincere', 'parcere'])); return { q: `${L(v.pr)} → ${L(v.pf)}: Welcher Weg ist das?`, o: [WEG[v.t].k].concat(andere(['s', 'd', 'r', 'u'].map(t => WEG[t].k), WEG[v.t].k, 3)), e: `${WEG[v.t].n}: ${pfHtml(v, 'ī')}` }; }
+  ],
+  s6: [
+    () => ({ q: 'Wovon hängen die Perfekt-Endungen ab?', o: ['von nichts – sie sind immer gleich', 'von der Konjugation des Verbs', 'vom Weg zum Perfektstamm'], e: 'Sechs Endungen für alle Verben.' }),
+    () => ({ q: 'Faustregel: Welchen Weg gehen fast alle Verben der a-Konjugation?', o: ['v-Perfekt', 'u-Perfekt', 's-Perfekt', 'Dehnung'], e: `Zum Beispiel ${pfHtml(vb('rogāre'), 'ī')}` }),
+    () => ({ q: 'Faustregel: Welchen Weg gehen die meisten Verben der e-Konjugation?', o: ['u-Perfekt', 'v-Perfekt', 'Reduplikation', 'ohne Veränderung'], e: `Zum Beispiel ${pfHtml(vb('tacēre'), 'ī')}` }),
+    () => ({ q: `Wie heißt die 1. Person Perfekt von ${L('esse')}?`, o: ['fuī', 'esī', 'essī', 'esuī'].map(L), e: 'esse hat einen ganz eigenen Perfektstamm: fu-.' }),
+    () => ({ q: `Wie heißt die 1. Person Perfekt von ${L('posse')}?`, o: ['potuī', 'possī', 'possuī', 'posfuī'].map(L), e: 'Stamm pot-, dann das Zeichen u.' }),
+    () => ({ q: 'Welche Faustregel gilt für die konsonantische Konjugation?', o: ['Es gibt keine. Man lernt das Perfekt mit.', 'Es gibt eine: meistens s-Perfekt.', 'Es gibt eine: meistens Dehnung.', 'Es gibt keine. Man kann es aber ausrechnen.'], e: 'Dort kommen alle sechs Wege vor. Da hilft nur die Perfektform im Vokabelheft.' })
+  ]
+};
+const faellig = () => SKEYS.filter(k => S.st[k] && S.chk[k] && S.chk[k].due <= heute());
+// eine Kurz-Check-Frage anzeigen; fertig(ok) wird nach „Weiter“ aufgerufen
+function checkFrage(host, fr, weiterText, beiAntwort, weiter) {
+  const ord = shuffle(fr.o.map((_, i) => i));
+  host.innerHTML = `<div class="q">${fr.q}</div><div class="opts ${fr.o.some(x => x.replace(/<[^>]+>/g, '').length > 22) ? 'liste' : 'mitte'}">${ord.map(j => `<button type="button" class="opt" data-j="${j}">${fr.o[j]}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div>`;
+  host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    const ok = b.dataset.j === '0';
+    host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (x.dataset.j === '0') x.classList.add(ok ? 'ok' : 'fehlt'); });
+    if (!ok) b.classList.add('no');
+    beiAntwort(ok);   // gleich festhalten – nicht erst bei „Weiter“, sonst ließe sich eine falsche Antwort wegklicken
+    fbZeigen(host.querySelector('.fbx'), ok, fr.e, weiter, weiterText);
+  });
+}
+function startCheck() {
+  const ks = faellig(); if (!ks.length) return;
+  C = { q: ks.reduce((a, k) => a.concat(shuffle(CHECK[k]).slice(0, 2).map(f => ({ k, fr: f() }))), []), i: 0, falsch: {}, fertig: false };
+  go('check');
+}
+const ABSTAND = [3, 7, 14, 30];   // Tage bis zum nächsten Check nach dem 1., 2., 3. … bestandenen
+function renderCheck() {
+  if (C.fertig) {
+    const ks = C.q.map(x => x.k).filter((k, i, a) => a.indexOf(k) === i);
+    app.innerHTML = `<header class="top"><div class="eyebrow">Kurz-Check</div><h1>🔁 Weißt du es noch?</h1></header>
+      <section><div class="card">${ks.map(k => { const s = STATION[k], f = C.falsch[k]; return `<div class="row"><b>${s.icon} ${s.name}</b><span class="tag">${f ? 'noch wacklig' : 'sitzt ✓'}</span>${f ? `<button class="linkbtn" data-s="${k}" type="button">Station noch einmal ansehen</button>` : ''}</div>`; }).join('')}
+        <p class="small muted">${Object.keys(C.falsch).length ? 'Was noch wacklig ist, fragt dich der Baukasten morgen wieder.' : 'Alles sitzt. Der nächste Check kommt in ein paar Tagen.'}</p>
+        <div class="row"><button class="btn" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
+    app.querySelector('#hm').onclick = () => { C = null; go('home'); };
+    app.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { C = null; startStation(b.dataset.s); });
+    return;
+  }
+  const x = C.q[C.i], lauf = C;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Kurz-Check · ${STATION[x.k].icon} ${STATION[x.k].name}</div><div class="progress"><span>Frage ${C.i + 1} von ${C.q.length}</span></div>
+    <div class="meter" aria-hidden="true"><i style="width:${Math.round(100 * C.i / C.q.length)}%"></i></div></header><section><div class="card" id="cf"></div></section>`;
+  const bisher = () => S.chk[x.k] || { n: 0, due: heute() };
+  checkFrage(app.querySelector('#cf'), x.fr, C.i + 1 >= C.q.length ? 'Zum Ergebnis' : 'Weiter', ok => {
+    if (C !== lauf || ok || C.falsch[x.k]) return;
+    C.falsch[x.k] = true;   // noch wacklig: morgen wieder, eine Stufe zurück
+    S.chk[x.k] = { n: Math.max(0, bisher().n - 1), due: plusTage(1) }; save();
+  }, () => {
+    if (C !== lauf) return;
+    C.i++;
+    if (C.i >= C.q.length) {
+      C.fertig = true;
+      C.q.map(y => y.k).filter((k, i, a) => a.indexOf(k) === i && !C.falsch[k]).forEach(k => { const n = (S.chk[k] || { n: 0 }).n; S.chk[k] = { n: n + 1, due: plusTage(ABSTAND[Math.min(n, ABSTAND.length - 1)]) }; });
+      save();
+    }
+    render(); window.scrollTo(0, 0);
+  });
+}
+
+// ---------- Station spielen ----------
+function startStation(k) {
+  R = { k, i: 0, fehler: 0, fertig: null, steps: STATION[k].steps().concat({ t: 'merk', satz: STATION[k].merk, falsch: STATION[k].falsch }) };
+  go('station');
+}
+function renderStation() {
+  const s = STATION[R.k], nr = SKEYS.indexOf(R.k) + 1;
+  if (R.fertig) {
+    const nxt = SKEYS[nr], f = R.fertig.f, k = R.k, b = id => app.querySelector('#' + id);
+    if (!R.fertig.n) {   // zu viele Fehler: nichts merken, kein Kurz-Check – erst noch einmal ansehen
+      app.innerHTML = `<header class="top"><div class="eyebrow">Station ${nr} von ${SKEYS.length}</div><h1>${s.icon} ${s.name}</h1></header>
+        <section><div class="card"><p><b>Das sitzt noch nicht ganz.</b> Diesmal waren es ${f} Fehler. Das ist nicht schlimm – schau dir die Station in Ruhe noch einmal an und lies die Erklärungen genau.</p>
+          <div class="row"><button class="btn" id="nm" type="button">Noch einmal</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
+    } else {
+      app.innerHTML = `<header class="top"><div class="eyebrow">Station ${nr} von ${SKEYS.length} geschafft</div><h1>${s.icon} ${s.name}</h1></header>
+        <section><div class="card"><div class="mitte" style="font-size:1.6rem">${sterne(R.fertig.n)}</div>
+          <p class="cue">${f === 0 ? 'Ohne einen einzigen Fehler!' : f === 1 ? 'Nur ein Fehler.' : f + ' Fehler – beim zweiten Durchgang holst du mehr Sterne.'}</p>
+          <div class="merk"><b>Merke:</b> ${merkHtml(R.k)}</div>
+          <p class="small muted">Der Baukasten merkt sich, dass du das verstanden hast. An einem anderen Tag fragt er mit einem Kurz-Check noch einmal nach.</p>
+          <div class="row">${nxt ? `<button class="btn" id="nx" type="button">Nächste Station: ${STATION[nxt].icon} ${STATION[nxt].name}</button>` : '<button class="btn" id="ue" type="button">Jetzt üben</button>'}<button class="btn ghost" id="hm" type="button">Zur Übersicht</button><button class="btn ghost" id="nm" type="button">Noch einmal</button></div></div></section>`;
+      if (nxt) b('nx').onclick = () => startStation(nxt); else b('ue').onclick = () => { R = null; go('ueben'); };
+    }
+    b('hm').onclick = () => { R = null; go('home'); }; b('nm').onclick = () => startStation(k);
+    return;
+  }
+  app.innerHTML = `<header class="top"><div class="eyebrow">Verstehen · Station ${nr} von ${SKEYS.length}</div><h1>${s.icon} ${s.name}</h1>
+    <div class="meter" aria-hidden="true"><i style="width:${Math.round(100 * R.i / R.steps.length)}%"></i></div></header><section id="schritt"></section>`;
+  const st = R.steps[R.i], lauf = R;
+  STEP[st.t](document.getElementById('schritt'), st, () => {
+    if (R !== lauf) return;
+    R.i++;
+    if (R.i >= R.steps.length) {
+      const f = R.fehler, n = f <= 1 ? 3 : f <= 3 ? 2 : f <= 6 ? 1 : 0;   // mehr als sechs Fehler: noch nicht verstanden
+      if (n) {
+        S.st[R.k] = Math.max(S.st[R.k] || 0, n);
+        if (!S.dat[R.k]) { S.dat[R.k] = heute(); S.chk[R.k] = { n: 0, due: plusTage(1) }; }   // erster Kurz-Check frühestens morgen
+        save();
+      }
+      R.fertig = { n, f };
+    }
+    render(); window.scrollTo(0, 0);
+  });
+}
+
+// ===================================================================
+// ÜBEN – sechs Übungsarten, über alle Verben oder eine einzelne Tabelle, nach Lernstufe wählbar
+//  Eine Runde hat bis zu zehn Aufgaben. Was falsch war, kommt am Ende einmal wieder.
+//  Stammformen und Umformen schreiben den Lernstand je Verb mit (S.ok: 0–3 richtige in Folge).
+//  Ist schon eine Station geschafft, steckt in jeder Runde eine Zwischenfrage aus dem Kurz-Check.
+// ===================================================================
+const MODI = {
+  stamm: { name: 'Stammformen', icon: '🔤', hook: 'Infinitiv → 1. Person Perfekt. Die Grundlage für alles andere.', q: 'Wie heißt die <b>1. Person Perfekt</b>?' },
+  umform: { name: 'Umformen', icon: '🔁', hook: 'Vom Präsens ins Perfekt, gleiche Person: dīcunt → dīxērunt.', q: 'Setze die Form ins <b>Perfekt</b> – gleiche Person.' },
+  bestimm: { name: 'Bestimmen', icon: '🔍', hook: 'Welche Zeit, welche Person? Präsens, Imperfekt und Perfekt gemischt.', q: 'Bestimme die Form: <b>Zeit</b> und <b>Person</b>.' },
+  endung: { name: 'Endungen-Blitz', icon: '⚡', hook: 'Die sechs Perfekt-Endungen im Schlaf: Wer tut es? Welche Endung passt?', q: '' },
+  weg: { name: 'Welcher Weg?', icon: '🧭', hook: 'Ohne Veränderung, v, u, s, Dehnung oder Reduplikation?', q: 'Welchen <b>Weg</b> ist dieses Verb zum Perfektstamm gegangen?' },
+  grund: { name: 'Zurück zum Verb', icon: '↩️', hook: 'Von welchem Verb kommt die Perfektform? Das brauchst du beim Übersetzen.', q: 'Von welchem <b>Verb</b> kommt diese Perfektform?' }
+};
+const MKEYS = Object.keys(MODI);
+let UM = 'stamm';
+// Bei „Welcher Weg?“ nicht gefragt: Zusammensetzungen ohne Verdopplung (stehen wie im Buch bei der Reduplikation, sehen aber aus wie „ohne Veränderung“) und Verben, denen man
+// ihren Weg an der Form nicht ansieht (Dehnung oder Verdopplung nicht sichtbar, quaesīvī mit s und v)
+const WEG_AUS = ['accidere', 'occurrere', 'attingere', 'cōnsīdere', 'cōgere', 'īnstāre', 'resistere', 'cōnsistere', 'quaerere'];
+// Umfang: a = Stoff der Arbeit (Voreinstellung) · 1, 2, 3 = bis zu dieser Lernstufe
+const cfg = () => ({ weg: TAB.includes(S.cfg.weg) ? S.cfg.weg : 'alle', umf: ['a', '1', '2', '3'].includes(S.cfg.umf) ? S.cfg.umf : 'a' });
+const imUmfang = (v, umf) => umf === 'a' ? v.arbeit : v.prio <= +umf;
+function poolFuer(mode) {
+  const c = cfg(), weg = mode === 'weg' ? 'alle' : c.weg;
+  const p = VERBEN.filter(v => (weg === 'alle' || v.t === weg) && imUmfang(v, c.umf));
+  return mode === 'weg' ? p.filter(v => v.t !== 'x' && !WEG_AUS.includes(v.inf)) : p;
+}
+function lev(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function rundeBauen(mode) {
+  const pool = poolFuer(mode), merkt = mode === 'stamm' || mode === 'umform', c = cfg();
+  // schwache Verben zuerst – aber nur dort, wo der Lernstand mitgeschrieben wird
+  const reihe = merkt ? shuffle(pool).sort((a, b) => (S.ok[a.inf] || 0) - (S.ok[b.inf] || 0)) : shuffle(pool);
+  const n = Math.min(10, mode === 'stamm' || mode === 'weg' || mode === 'grund' ? pool.length : Math.max(pool.length, 6)), items = [];
+  for (let i = 0; i < n; i++) {
+    const v = reihe[i % reihe.length], it = { v };
+    if (mode === 'umform') {
+      const pr = praes(v), pf = perf(v);   // nie eine Person, in der Präsens und Perfekt gleich aussehen (animadvertit)
+      const brauchbar = [0, 1, 2, 3, 4, 5].filter(p => pr[p] !== pf[p]), frei = brauchbar.filter(p => !items.some(x => x.v === v && x.p === p));
+      it.p = pick(frei.length ? frei : brauchbar);   // sind bei einer sehr kleinen Auswahl alle Personen verbraucht, darf sich eine wiederholen
+    }
+    if (mode === 'bestimm') {
+      for (let k = 0; k < 20; k++) {
+        const r = Math.random(), z = r < .5 ? 'pf' : r < .75 ? 'pr' : 'im', p = z !== 'im' && Math.random() < .12 ? 6 : rnd(0, 5);
+        it.f = p === 6 ? (z === 'pf' ? infPf(v) : v.inf) : (z === 'pr' ? praes(v) : z === 'im' ? impf(v) : perf(v))[p];
+        if (!items.some(x => x.f === it.f)) break;
+      }
+    }
+    if (mode === 'endung') {   // abwechselnd „Wer tut es?“ und „Welche Endung?“ – nie dieselbe Aufgabe zweimal in einer Runde
+      it.art = i % 2 ? 'wer' : 'end';
+      for (let k = 0; k < 20; k++) { it.p = it.art === 'wer' ? rnd(0, 5) : rnd(0, 6); if (!items.some(x => x.v === v && x.art === it.art && x.p === it.p)) break; }
+    }
+    if (mode === 'grund') {
+      it.p = rnd(0, 5); it.f = perf(v)[it.p];
+      // falsche Antworten: Verben mit ähnlichem Perfektstamm, bevorzugt mit demselben Anfangsbuchstaben – sonst verrät schon der erste Buchstabe das Verb
+      const a0 = ohneM(v.inf)[0], fern = x => lev(ohneM(x.ps), ohneM(v.ps)) + (ohneM(x.inf)[0] === a0 ? 0 : 3);
+      const nah = shuffle(VERBEN.filter(x => x !== v && imUmfang(x, c.umf))).sort((x, y) => fern(x) - fern(y)).slice(0, 5);
+      it.o = shuffle([v].concat(shuffle(nah).slice(0, 3))).map(x => x.inf);
+    }
+    items.push(it);
+  }
+  const q = shuffle(items), gekonnt = SKEYS.filter(k => S.st[k]);
+  if (gekonnt.length && q.length >= 4) { const k = pick(gekonnt); q.splice(rnd(2, q.length - 1), 0, { blitz: true, k, fr: pick(CHECK[k])() }); }
+  return q;
+}
+function startRunde(mode) {
+  const q = rundeBauen(mode);
+  U = { mode, q, i: 0, n: q.filter(x => !x.blitz).length, richtig: 0, falsch: [], fertig: false };
+  go('runde');
+}
+const erkl = v => `${L(v.inf + ', ' + v.pr)}, ${pfHtml(v, 'ī')} ${v.t === 'x' ? '' : wtag(v.t)}${v.n ? ` <span class="small">${v.n}</span>` : ''}`;
+const bestName = x => x.p === 6 ? 'Infinitiv ' + ZEIT[x.z] : `${PNAME[x.p]} ${ZEIT[x.z]}`;
+function tippen(auf, fbx, soll, zwilling, cb) {
+  const ein = auf.querySelector('.ein'), pr = auf.querySelector('#pr'), wn = auf.querySelector('#wn'), hinw = auf.querySelector('.einhinw'); let zu = false, strich = 0;
+  const schluss = (ok, r) => { zu = true; ein.disabled = true; pr.disabled = true; wn.remove(); hinw.innerHTML = ''; ein.classList.add(ok ? 'ok' : 'no'); cb(ok, r); };
+  const los = () => {
+    if (zu) return;
+    if (!ein.value.trim()) { hinw.innerHTML = LEERHINWEIS; return; }
+    const r = pruefe(ein.value, soll, zwilling);
+    if (r === 'strichfehlt' && ++strich < 3) { hinw.innerHTML = '<div class="msg tipp"><b>Fast!</b> Hier unterscheidet nur der Längenstrich das Perfekt vom Präsens. Tippe auf den passenden Strich-Knopf: Er macht den Vokal in deinem Wort lang.</div>'; ein.focus(); return; }
+    schluss(r === 'ok' || r === 'strich', r === 'strichfehlt' ? 'no' : r);
+  };
+  pr.onclick = los; wn.onclick = () => { if (!zu) schluss(false, 'no'); };
+  ein.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); los(); } };
+  makronBinden(auf); if (mitMaus()) ein.focus();
+}
+const markiere = (auf, attr, soll, wahl) => auf.querySelectorAll(`[data-${attr}]`).forEach(x => {
+  x.disabled = true; x.classList.remove('sel');
+  if (x.dataset[attr] === String(soll)) x.classList.add(String(wahl) === String(soll) ? 'ok' : 'fehlt'); else if (x.dataset[attr] === String(wahl)) x.classList.add('no');
+});
+const AUFGABE = {
+  stamm(auf, it, fertig, fbx) {
+    const v = it.v;
+    auf.innerHTML = `<div class="gross">${v.inf}, ${v.pr}</div><p class="cue muted">${esc(v.de)}</p>${einHtml()}`;
+    tippen(auf, fbx, v.pf, null, (ok, r) => fertig(ok, (ok ? (r === 'strich' ? `Genau geschrieben: ${L(v.pf)}. ` : '') : `Richtig ist ${L(v.pf)}. `) + erkl(v)));
+  },
+  umform(auf, it, fertig, fbx) {
+    const v = it.v, cue = praes(v)[it.p], soll = perf(v)[it.p];
+    auf.innerHTML = `<div class="gross">${cue}</div><p class="cue muted">${PNAME[it.p]} Präsens von ${v.inf} (${esc(v.de)})</p>${einHtml()}`;
+    tippen(auf, fbx, soll, cue, (ok, r) => fertig(ok, (ok ? (r === 'strich' ? `Genau geschrieben: ${L(soll)}. ` : '') : `Richtig ist ${L(soll)}. `) + `${bauPf(v, PEND[it.p], false, 'klein')} ${v.t === 'x' ? '' : wtag(v.t)} <span class="small">${v.n}</span>`));
+  },
+  bestimm(auf, it, fertig) {
+    const v = it.v, an = alleFormen(v).filter(x => x.f === it.f); let z = null, p = null;
+    auf.innerHTML = `<div class="gross">${it.f}</div><p class="cue muted">von ${v.inf} (${esc(v.de)})</p>
+      <div class="opts mitte" id="oz">${['pr', 'im', 'pf'].map(k => `<button type="button" class="opt" data-z="${k}">${ZEIT[k]}</button>`).join('')}</div>
+      <div class="opts mitte" id="op">${PERS.concat('Infinitiv').map((n, i) => `<button type="button" class="opt" data-p="${i}">${n}</button>`).join('')}</div>
+      <div class="mitte" id="prrow"><button class="btn" id="pr" type="button" disabled>Prüfen</button></div>`;
+    const pr = auf.querySelector('#pr');
+    const waehle = (attr, val) => { auf.querySelectorAll(`.opt[data-${attr}]`).forEach(b => b.classList.toggle('sel', b.dataset[attr] === String(val))); pr.disabled = z === null || p === null; };
+    auf.querySelectorAll('#oz .opt').forEach(b => b.onclick = () => { z = b.dataset.z; waehle('z', z); });
+    auf.querySelectorAll('#op .opt').forEach(b => b.onclick = () => { p = +b.dataset.p; waehle('p', p); });
+    pr.onclick = () => {
+      const treffer = an.find(x => x.z === z && x.p === p), ok = !!treffer, zeig = treffer || an.find(x => x.z === z) || an[0];
+      markiere(auf, 'z', zeig.z, z); markiere(auf, 'p', zeig.p, p); auf.querySelector('#prrow').remove();
+      const auch = an.filter(x => x !== zeig).map(bestName);
+      fertig(ok, `${L(it.f)}: <b>${bestName(zeig)}</b>. ${zeig.p === 6 && zeig.z === 'pr' ? 'Das ist der normale Infinitiv.' : zeitGrund(v, zeig.z, zeig.p, it.f)}${auch.length ? ` Die Form kann auch ${auch.join(' oder ')} sein – das entscheidet der Satz.` : ''}`);
+    };
+  },
+  endung(auf, it, fertig) {
+    const v = it.v, p = it.p;
+    if (it.art === 'wer') {
+      auf.innerHTML = `<div class="q">Wer tut es? Schau auf die <b>Endung</b>.</div><div class="gross">${perf(v)[p]}</div><p class="cue muted">von ${v.inf} (${esc(v.de)})</p><div class="opts mitte">${PERS.map((n, i) => `<button type="button" class="opt" data-p="${i}">${n}</button>`).join('')}</div>`;
+      auf.querySelectorAll('.opt').forEach(b => b.onclick = () => { markiere(auf, 'p', p, b.dataset.p); fertig(+b.dataset.p === p, `${L('-' + PEND[p])} heißt: ${PERS[p]}. ${bauPf(v, PEND[p], false, 'klein')}`); });
+    } else {
+      auf.innerHTML = `<div class="q">Welche <b>Endung</b> passt?</div><p class="cue"><b>${p === 6 ? 'Infinitiv Perfekt' : PERS[p]}</b> · Perfekt von ${L(v.inf)} <span class="muted">(${esc(v.de)})</span></p><div class="mitte">${bauPf(v, '?', false, 'gross')}</div>
+        <div class="chips mitte">${shuffle(ENDEN).map(e => `<button type="button" class="chip en" data-e="${e}">-${e}</button>`).join('')}</div>`;
+      auf.querySelectorAll('.chip').forEach(b => b.onclick = () => { markiere(auf, 'e', ENDEN[p], b.dataset.e); fertig(b.dataset.e === ENDEN[p], `${p === 6 ? 'Infinitiv Perfekt' : PERS[p]}: ${bauPf(v, ENDEN[p], false, 'klein')}`); });
+    }
+  },
+  weg(auf, it, fertig) {
+    const v = it.v;
+    auf.innerHTML = `<div class="gross">${v.pr} → ${v.pf}</div><p class="cue muted">${v.inf} (${esc(v.de)})</p><div class="opts mitte">${WEGE6.map(t => `<button type="button" class="opt" data-t="${t}">${WEG[t].k}</button>`).join('')}</div>`;
+    // mānsī, sēnsī, mīsī: s-Perfekt, bei dem zusätzlich der Vokal lang wird – wer „Dehnung“ tippt, bekommt das erklärt
+    const auchLang = v.t === 's' && /\[[āēīōū]\]/.test(v.z);
+    auf.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+      const t = b.dataset.t; markiere(auf, 't', v.t, t);
+      fertig(t === v.t, (auchLang && t === 'd' ? 'Der Vokal wird hier zwar auch lang. Entscheidend ist aber das Zeichen s – so ordnet es auch das Buch ein. ' : '') + `${WEG[v.t].n}: ${pfadZeile(v)}`);
+    });
+  },
+  grund(auf, it, fertig) {
+    const v = it.v;
+    auf.innerHTML = `<div class="gross">${it.f}</div><div class="opts mitte">${it.o.map(inf => `<button type="button" class="opt lat" data-v="${inf}">${inf}</button>`).join('')}</div>`;
+    auf.querySelectorAll('.opt').forEach(b => b.onclick = () => { markiere(auf, 'v', v.inf, b.dataset.v); fertig(b.dataset.v === v.inf, `${L(it.f)} ist die ${PNAME[it.p]} Perfekt von ${erkl(v)} <span class="muted">– ${esc(v.de)}</span>`); });
+  }
+};
+function renderRunde() {
+  const m = MODI[U.mode];
+  if (U.fertig) {
+    const pct = U.n ? Math.round(100 * U.richtig / U.n) : 0, st = pct >= 90 ? 3 : pct >= 70 ? 2 : 1, mode = U.mode;
+    // Was daneben lag: bei Endungen und beim Bestimmen die Form (der Fehler lag nicht am Verb), sonst das Verb
+    let fehl = '';
+    if (U.falsch.length && mode === 'endung') fehl = `<p><b>Bei diesen Endungen lagst du daneben:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td>${bauPf(x.v, ENDEN[x.p], false, 'klein')}</td><td>${x.p === 6 ? 'Infinitiv Perfekt' : PERS[x.p]}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
+    else if (U.falsch.length && mode === 'bestimm') fehl = `<p><b>Diese Formen schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td class="l">${x.f}</td><td>${alleFormen(x.v).filter(y => y.f === x.f).map(bestName).join(' oder ')}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
+    else if (U.falsch.length) fehl = `<p><b>Diese Verben schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => x.v).filter((v, i, a) => a.indexOf(v) === i).map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td>${v.t === 'x' ? '' : wtag(v.t)}</td></tr>`).join('')}</table></div>`;
+    app.innerHTML = `<header class="top"><div class="eyebrow">Üben · ${m.name}</div><h1>${U.richtig} von ${U.n} auf Anhieb</h1></header>
+      <section><div class="card"><div class="mitte" style="font-size:1.6rem">${sterne(st)}</div>
+        ${fehl || '<p class="cue">Alles auf Anhieb richtig – stark!</p>'}
+        <div class="row"><button class="btn" id="nm" type="button">Noch eine Runde</button><button class="btn ghost" id="an" type="button">Andere Übung</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
+    app.querySelector('#nm').onclick = () => startRunde(mode);
+    app.querySelector('#an').onclick = () => { U = null; go('ueben'); };
+    app.querySelector('#hm').onclick = () => { U = null; go('home'); };
+    return;
+  }
+  const it = U.q[U.i], lauf = U, bisher = U.q.slice(0, U.i + 1);
+  const weiter = () => {
+    if (U !== lauf) return;
+    U.i++;
+    if (U.i >= U.q.length) { U.fertig = true; const b = S.best[U.mode] || {}; S.best[U.mode] = { n: (b.n || 0) + 1, b: Math.max(b.b || 0, U.n ? Math.round(100 * U.richtig / U.n) : 0) }; save(); }
+    render(); window.scrollTo(0, 0);
+  };
+  // Der Zähler nennt die Aufgaben der Runde; was wiederholt wird, zählt eigens – so wächst „von 10“ nicht mit jedem Fehler
+  const wo = it.blitz ? 'Zwischenfrage – weißt du es noch?' : it.wdh ? `Noch einmal: ${bisher.filter(x => x.wdh).length} von ${U.q.filter(x => x.wdh).length}` : `Aufgabe ${bisher.filter(x => !x.blitz && !x.wdh).length} von ${U.n}`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Üben · ${m.name}</div><div class="progress"><span>${wo}</span></div>
+      <div class="meter" aria-hidden="true"><i style="width:${Math.round(100 * U.i / U.q.length)}%"></i></div></header>
+    <section><div class="card">${it.blitz ? '<div id="auf" style="display:grid;gap:12px"></div>' : `${m.q ? `<div class="q">${m.q}</div>` : ''}<div id="auf" style="display:grid;gap:12px"></div><div class="fbx" aria-live="polite"></div>`}</div>
+      <div class="row"><button class="linkbtn" id="ab" type="button">Runde beenden</button></div></section>`;
+  app.querySelector('#ab').onclick = () => { if (confirm('Runde wirklich beenden? Sie zählt dann nicht.')) { U = null; go('ueben'); } };
+  const letzte = () => U.i + 1 >= U.q.length;
+  if (it.blitz) {   // zählt nicht für die Runde; eine falsche Antwort zieht den Kurz-Check dieser Station auf morgen vor
+    checkFrage(app.querySelector('#auf'), it.fr, letzte() ? 'Zum Ergebnis' : 'Weiter', ok => { const c = S.chk[it.k]; if (!ok && c && c.due > plusTage(1)) { c.due = plusTage(1); save(); } }, weiter);
+    return;
+  }
+  const v = it.v, fbx = app.querySelector('.fbx');
+  const fertig = (ok, html) => {
+    if (U !== lauf) return;
+    if (!it.wdh) {
+      if (ok) U.richtig++; else { U.falsch.push(it); U.q.push(Object.assign({}, it, { wdh: true })); }   // Falsches kommt am Ende einmal wieder
+      if (U.mode === 'stamm' || U.mode === 'umform') { S.ok[v.inf] = ok ? Math.min(3, (S.ok[v.inf] || 0) + 1) : 0; save(); }
+    }
+    fbZeigen(fbx, ok, html, weiter, letzte() ? 'Zum Ergebnis' : 'Weiter');
+  };
+  AUFGABE[U.mode](app.querySelector('#auf'), it, fertig, fbx);
+}
+function renderUeben() {
+  const c = cfg(), pool = poolFuer(UM), b = S.best[UM], n = u => VERBEN.filter(v => imUmfang(v, u)).length;
+  const sicher = pool.filter(v => (S.ok[v.inf] || 0) >= 2).length;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Üben</div><h1>${MODI[UM].icon} ${MODI[UM].name}</h1><p class="muted">${MODI[UM].hook}</p></header>
+    <section><div class="card">
+      <div><b>Übungsart</b></div><div class="seg" id="um">${MKEYS.map(k => `<button type="button" data-k="${k}" class="${k === UM ? 'on' : ''}">${MODI[k].icon} ${MODI[k].name}</button>`).join('')}</div>
+      <div><b>Welche Tabelle?</b></div>
+      ${UM === 'weg' ? '<p class="small muted">Bei „Welcher Weg?“ sind immer alle Tabellen gemischt – sonst wäre die Antwort ja klar.</p>' : `<div class="seg" id="uw">${['alle'].concat(TAB).map(k => `<button type="button" data-k="${k}" class="${k === c.weg ? 'on' : ''}">${k === 'alle' ? 'alle' : tabNr(k) + ' · ' + WEG[k].k}</button>`).join('')}</div>`}
+      <div><b>Welche Verben?</b></div>
+      <div class="seg" id="uu">${[['a', '🎯 Für die Arbeit'], ['1', 'Stufe 1'], ['2', 'Stufe 1 + 2'], ['3', 'alle']].map(x => `<button type="button" data-k="${x[0]}" class="${c.umf === x[0] ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
+      <p class="small muted"><b>Für die Arbeit</b> (${n('a')} Verben): alle Perfektformen, die schon im Vokabelheft stehen (Lektion 8 und 9), und die Verben aus Lektion ${ARBEIT.wdh.join(', ')}, die wiederholt wird. <b>Stufe 1</b> (${n('1')}): nur die Perfektformen aus dem Vokabelheft (Lektion 8 und 9). <b>Stufe 1 + 2</b> (${n('2')}): alle Verben aus Lektion 1–9. <b>Alle</b> (${n('3')}): auch die neuen aus Lektion 10.</p>
+      <div class="anzeige"><span>In dieser Auswahl: <b>${pool.length}</b> Verben</span><span>davon sicher: <b>${sicher}</b></span>${b ? `<span>Runden: <b>${b.n}</b> · beste: <b>${b.b} %</b></span>` : ''}</div>
+      <div class="row"><button class="btn gross" id="go" type="button" ${pool.length ? '' : 'disabled'}>Runde starten</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div>
+      <p class="small muted">„Sicher“ ist ein Verb, wenn du es bei Stammformen oder Umformen zweimal hintereinander auf Anhieb richtig hattest. Längenstriche darfst du beim Tippen weglassen – außer wenn nur der Strich Präsens und Perfekt unterscheidet.</p></div></section>`;
+  const seg = (id, fn) => app.querySelectorAll(`#${id} button`).forEach(x => x.onclick = () => { fn(x.dataset.k); save(); render(); });
+  seg('um', k => { UM = k; }); seg('uw', k => { S.cfg.weg = k; }); seg('uu', k => { S.cfg.umf = k; });
+  app.querySelector('#go').onclick = () => startRunde(UM);
+  app.querySelector('#hm').onclick = () => go('home');
+}
+
+// ===================================================================
+// TABELLEN – elf Blätter, am Bildschirm und im Druck dieselben
+//  Jede der sieben Tabellen besteht aus Untergruppen. In einer Untergruppe gilt für alle Verben genau
+//  eine Regel; was in keine Regel passt, steht darunter als Einzelfall.
+// ===================================================================
+const GR = {
+  o1: { t: 'Der Stamm bleibt gleich', bsp: ['contendere', 'animadvertere'], r: 'Nimm von der 1. Person Präsens das <b>-ō</b> weg – das ist schon der Perfektstamm. Am Stamm ändert sich <b>nichts</b>.' },
+  v1: { t: 'Infinitiv: -re weg, v dazu', bsp: ['rogāre', 'audīre'], r: 'Nimm vom Infinitiv das <b>-re</b> weg und hänge das Zeichen <b>v</b> an: Das ist der Perfektstamm (rogā-re → rogāv-).' },
+  v2: { t: 'Infinitiv: -ere weg, īv dazu', bsp: ['petere', 'cupere'], r: 'Nimm vom Infinitiv das <b>-ere</b> weg. Hänge ein langes <b>ī</b> und das Zeichen <b>v</b> an.' },
+  u1: { t: 'e-Konjugation: -ēre weg, u dazu', bsp: ['tacēre', 'monēre'], r: 'Nimm vom Infinitiv das ganze <b>-ēre</b> weg – auch das ē verschwindet. Hänge an den Rest das Zeichen <b>u</b>.' },
+  u2: { t: 'Andere Konjugationen: Endung weg, u dazu', bsp: ['ēripere', 'aperīre'], r: 'Dieselbe Regel bei drei Verben, die nicht zur e-Konjugation gehören: Nimm vom Infinitiv die Endung (<b>-ere</b> oder <b>-īre</b>) weg und hänge das Zeichen <b>u</b> an.' },
+  s1: { t: 'Vor -ere steht ein c: c + s wird x', bsp: ['dīcere', 'dūcere'], r: 'Vor der Infinitiv-Endung -ere steht ein <b>c</b> (dīc-ere). Kommt das Zeichen s dazu, verschmelzen c und s zu <b>x</b>.' },
+  s2: { t: 'Vor -ēre steht ein d: das d fällt weg', bsp: ['rīdēre', 'ārdēre'], r: 'Vor der Infinitiv-Endung -ēre steht ein <b>d</b> (rīd-ēre). Kommt das Zeichen s dazu, fällt das d weg.' },
+  s3: { t: '-cēdere wird -cessī', bsp: ['discēdere', 'accēdere'], r: 'Bei Verben auf <b>-cēdere</b> wird aus d + s ein <b>ss</b>, und das ē davor wird kurz.' },
+  s4: { t: '-mittere wird -mīsī', bsp: ['mittere', 'committere'], r: 'Bei <b>mittere</b> und seinen Zusammensetzungen fällt das tt vor dem s weg, und das i wird lang.' },
+  d1: { t: 'Nur der Längenstrich kommt dazu', bsp: ['vidēre', 'fugere'], r: 'Nimm vom Infinitiv die Endung weg. Der Vokal im Stamm wird <b>lang</b> – sonst ändert sich nichts.' },
+  d2: { t: 'Aus a wird ē', bsp: ['capere', 'facere'], r: 'Der Vokal im Stamm wechselt: Aus <b>a</b> wird ein langes <b>ē</b>.' },
+  d3: { t: 'capere und facere mit Vorsilbe: aus i wird ē', bsp: ['accipere', 'interficere'], r: 'Mit Vorsilbe haben capere und facere im Präsens ein i (ac-cipere, inter-ficere). Im Perfekt steht dasselbe lange <b>ē</b> wie in cēpī und fēcī.' },
+  d4: { t: 'Das n fällt weg, das i wird lang', bsp: ['vincere', 'relinquere'], r: 'Im Stamm steht <b>in</b>. Im Perfekt fällt das n weg, und das i wird lang.' },
+  r0: { t: 'Verdopplung vorn – jedes Verb für sich', bsp: [], r: 'Der Anfang des Verbs kommt mit einem Vokal <b>noch einmal nach vorn</b> (cu-curr-, de-d-, ste-t-). Bei currere passiert sonst nichts. Bei den anderen ändert sich zusätzlich etwas im Stamm – deshalb lernst du hier jedes Verb für sich, vom einfachen zum schwierigen.' },
+  r1: { t: '-dere wird -didī', bsp: ['perdere', 'vēndere'], r: 'Diese Verben sind Zusammensetzungen von dare (dedī). Die Verdopplung steckt innen: Aus <b>-dere</b> wird <b>-didī</b>.' },
+  r2: { t: '-sistere wird -stitī', bsp: ['resistere', 'cōnsistere'], r: 'Bei Verben auf <b>-sistere</b> heißt der Perfektstamm <b>-stit-</b>. Darin steckt dieselbe Verdopplung wie in stetī (von stāre).' },
+  r3: { t: 'cadere, currere, tangere mit Vorsilbe: ohne Verdopplung', bsp: ['accidere', 'occurrere'], r: 'Diese drei Verben kommen von cadere, currere und tangere. (Mit Vorsilbe steht schon im Präsens ein i: ac-cidere, at-tingere.) Nimm das Perfekt des Verbs ohne Vorsilbe, lass die Verdopplung weg und setze die Vorsilbe davor: ce-cidī → ac-cidī, cu-currī → oc-currī, te-tigī → at-tigī. Das ist nicht bei jedem Verb mit Vorsilbe so: per-didī und re-stitī behalten ihre Verdopplung.' },
+  x1: { t: 'esse und seine Zusammensetzungen', bsp: ['esse'], r: 'Der Perfektstamm von esse heißt <b>fu-</b>. Die Zusammensetzungen setzen ihre Vorsilbe davor: ad-fuī, dē-fuī. Nur bei abesse wird aus ab- ein langes ā-: ā-fuī.' },
+  x2: { t: 'posse, velle, nōlle', bsp: ['posse'], r: 'Diese drei bilden ein u-Perfekt von einem eigenen Stamm: <b>pot-u-</b>, <b>vol-u-</b>, <b>nōl-u-</b>.' }
+};
+const WEGDEF = {
+  o: { idee: 'Der einfachste Weg: Der Perfektstamm sieht genauso aus wie der Präsensstamm. Nur die Endung zeigt das Perfekt.',
+    achtung: `<b>Zwillinge:</b> ${L('animadvertit')} und ${L('animadvertimus')} können Präsens oder Perfekt sein – das entscheidet nur der Satz. Genauso ist es bei ${L('accidit')} und ${L('occurrit')}. Trotzdem stehen accidere und occurrere beim Reduplikationsperfekt (Tabelle 6) – so ordnet das Buch accidere ein –, weil sie von cadere und currere kommen (${L('cecidī, cucurrī')}).` },
+  v: { idee: 'An den Stamm kommt das Zeichen <b>v</b>, dann die Perfekt-Endung. Das ist der häufigste Weg.' },
+  u: { idee: 'Vom Infinitiv fällt die ganze Endung weg, auch der Vokal davor (tac-ēre). An den Rest kommt das Zeichen <b>u</b>, dann die Perfekt-Endung.',
+    achtung: `Auch ${L('posse')}, ${L('velle')} und ${L('nōlle')} haben das Zeichen u: ${L('potuī, voluī, nōluī')}. Sie stehen in Tabelle 7.` },
+  s: { idee: 'An den Stamm kommt das Zeichen <b>s</b>. Dabei stoßen zwei Konsonanten zusammen und verändern sich. Was genau passiert, hängt vom Buchstaben vor der Infinitiv-Endung ab – deshalb gibt es hier Gruppen mit je einer festen Regel.' },
+  d: { idee: 'Es gibt kein Zeichen. Stattdessen verändert sich der <b>Vokal im Stamm</b>: Er wird lang (Längenstrich!). In manchen Gruppen wechselt er zusätzlich.',
+    achtung: `<b>Der Strich ist hier das Perfekt:</b> ${L('fugit')} (er flieht) – ${L('f<b class="hl">ū</b>git')} (er ist geflohen).` },
+  r: { idee: 'Es gibt kein Zeichen. Stattdessen wird der <b>Anfang des Stamms verdoppelt</b>. („Reduplikation“ heißt Verdopplung.)',
+    achtung: `<b>Achtung, Zwillinge:</b> Bei ${L('accidere')} und ${L('occurrere')} sehen Präsensstamm und Perfektstamm gleich aus. ${L('accidit')} kann deshalb Präsens oder Perfekt sein – das entscheidet nur der Satz.` },
+  x: { idee: 'Nur <b>sieben</b> Verben sind ganz eigen – und eigentlich musst du dir nur vier Formen merken: <b>fuī, potuī, voluī, nōluī</b>. Die kommen unters Kopfkissen. Die Endungen sind dieselben wie bei allen Verben.' }
+};
+const BLAETTER = ['plan', 'end', 'o', 'v', 'u', 's', 'd', 'r', 'x', 'einzel', 'az'];
+const BLATTKURZ = { plan: 'Bauplan', end: 'Endungen', o: '1 · ohne', v: '2 · v', u: '3 · u', s: '4 · s', d: '5 · Dehnung', r: '6 · Reduplikation', x: '7 · Kopfkissen', einzel: 'Einzelfälle', az: 'A–Z' };
+const kopf = (titel, k) => `<div class="kopf"><h2>${titel}</h2><span class="wo">Latein · Perfekt-Baukasten · Lektion 1–10 · Blatt ${BLAETTER.indexOf(k) + 1} von ${BLAETTER.length}</span></div>`;
+const vAttr = v => `class="p${v.prio}" data-v="${v.inf}" title="${esc(woher(v))}"`;
+const lek = v => `L${v.l}${v.h && v.h !== v.l ? '→' + v.h : ''}${v.arbeit && v.prio > 1 ? ' 🎯' : ''}`;
+const sicherMark = (v, opt) => opt.bild && (S.ok[v.inf] || 0) >= 2 ? ' <span class="sicher" title="sicher">✓</span>' : '';
+const zeile = (v, opt) => `<tr ${vAttr(v)}><td class="l">${v.inf}</td><td class="l">${v.pr}</td><td>${esc(v.de)}</td><td class="l">${pfHtml(v, 'ī')}</td><td class="z">${lek(v)}${sicherMark(v, opt)}</td></tr>`;
+const liste = (vs, opt) => `<div class="tabwrap"><table class="pt"><tr><th>Infinitiv</th><th>1. Sg. Präsens</th><th>Bedeutung</th><th>1. Sg. Perfekt</th><th>Lektion</th></tr>${vs.map(v => zeile(v, opt)).join('')}</table></div>`;
+const kompakt = (vs, opt) => `<ul class="kompakt">${vs.map(v => `<li ${vAttr(v)}><span>${L(v.inf)}, ${L(v.pr)}, ${pfHtml(v, 'ī')}</span> <span class="de">${esc(v.de)} · ${lek(v)}${sicherMark(v, opt)}</span></li>`).join('')}</ul>`;
+const k6 = v => `<table class="k6"><tr><td>${pfHtml(v, 'ī')}</td><td>${pfHtml(v, 'imus')}</td></tr><tr><td>${pfHtml(v, 'istī')}</td><td>${pfHtml(v, 'istis')}</td></tr><tr><td>${pfHtml(v, 'it')}</td><td>${pfHtml(v, 'ērunt')}</td></tr><tr><td class="i" colspan="2">Infinitiv Perfekt: ${pfHtml(v, 'isse')}</td></tr></table>`;
+const formenZeile = v => ENDEN.map(e => pfHtml(v, e)).join(' · ');
+const wegBild = (v, opt) => opt.druck ? pfadZeile(v) : pfadHtml(v);
+// Legende eines Blatts: nur erklären, was auf dem Blatt auch vorkommt (vs = seine Verben, mitLek = die Lektion steht dabei)
+const legende = (vs, mitLek) => `<div class="fuss"><b>Fett</b> = Lernstufe 1: Das Perfekt steht im Vokabelheft von Lektion 8 oder 9 – Stoff für die Arbeit. · Normal = Lernstufe 2: Verb aus Lektion 1–9, dessen Perfekt bis Lektion 9 noch nicht im Heft steht.${vs.some(v => v.prio === 3) ? ' · <span class="p3">Grau</span> = Lernstufe 3: neu in Lektion 10.' : ''}${mitLek ? ' · L5→9 heißt: Das Verb kam in Lektion 5 vor, sein Perfekt steht im Heft von Lektion 9.' : ''}${mitLek && vs.some(v => v.arbeit && v.prio > 1) ? ` · 🎯 = aus Lektion ${ARBEIT.wdh.join(', ')}, die für die Arbeit wiederholt wird.` : ''}</div>`;
+// Verben eines Wegs nach Konjugation unterteilen (für die große Gruppe des v-Perfekts)
+const nachKonj = vs => ['a', 'i', 'e', 'k', 'ki'].map(k => [k, vs.filter(v => v.k === k)]).filter(x => x[1].length);
+
+const wegReihe = (v, opt, mitHinweis) => `<div class="einz p${v.prio}" data-v="${v.inf}" title="${esc(woher(v))}"><div>${L(v.inf + ', ' + v.pr)} <span class="de">– ${esc(v.de)} · ${lek(v)}${sicherMark(v, opt)}</span></div>${wegBild(v, opt)}${mitHinweis && v.n ? `<div class="small muted">${v.n}</div>` : ''}</div>`;
+function gruppeHtml(g, vs, opt, nr) {
+  const d = GR[g];
+  const kopfz = `<h3><span class="gnr w-${g[0]}">${nr}</span> ${d.t} <small>· ${vs.length} ${vs.length === 1 ? 'Verb' : 'Verben'}</small></h3><p><b>Regel:</b> ${d.r}</p>`;
+  if (g === 'r0') return `<div class="gruppe lang">${kopfz}<div class="reihen">${vs.map(v => wegReihe(v, opt)).join('')}</div></div>`;
+  if (vs.length <= 4) {   // kleine Gruppe: jedes Verb mit seinem Weg; alle Formen einmal am Verb mit der höchsten Lernstufe
+    const b = vs.find(v => v.prio === 1) || vs[0];
+    return `<div class="gruppe">${kopfz}${vs.map(v => wegReihe(v, opt)).join('')}${opt.druck ? '' : `<p class="small"><span class="muted">Alle Formen von ${b.inf}:</span> ${formenZeile(b)}</p>`}</div>`;
+  }
+  const b = d.bsp.map(vb);
+  const inhalt = vs.length > 14 ? nachKonj(vs).map(([k, teil]) => `<h4>${KONJ[k]}${teil.some(v => v.regel) ? '' : ' – Ausnahme von der Faustregel'}: aus -${teil[0].inf.slice(-3)} wird -${teil[0].pf.slice(teil[0].inf.length - 3)}</h4>${kompakt(teil, opt)}`).join('') : liste(vs, opt);
+  return `<div class="gruppe ${vs.length > 14 ? 'lang' : ''}">${kopfz}
+    <div class="bspweg">${b.map(v => `<div><div class="small">${L(v.inf + ', ' + v.pr)} <span class="muted">– ${esc(v.de)}</span></div>${wegBild(v, opt)}</div>`).join('')}</div>
+    <p class="small"><span class="muted">Alle Formen von ${b[0].inf}:</span> ${formenZeile(b[0])}</p>${inhalt}</div>`;
+}
+const einzelHtml = (vs, opt) => `<div class="gruppe lang"><h3><span class="gnr w-${vs[0].t}">!</span> ${vs.length === 1 ? 'Einzelfall' : 'Einzelfälle'} <small>· für sich lernen</small></h3>
+  ${vs.map(v => wegReihe(v, opt, opt.druck)).join('')}</div>`;
+function blattWeg(t, opt) {
+  const vs = VERBEN.filter(v => v.t === t), gs = vs.map(v => v.g).filter((g, i, a) => a.indexOf(g) === i && !/E$/.test(g)), einz = vs.filter(v => /E$/.test(v.g));
+  // große Gruppen über die ganze Breite; kleine Gruppen und die Einzelfälle stehen im Druck paarweise nebeneinander
+  const kaesten = gs.map((g, i) => { const teil = vs.filter(v => v.g === g); return { klein: teil.length <= 4, html: gruppeHtml(g, teil, opt, tabNr(t) + 'abcdef'[i]) }; });
+  if (einz.length) kaesten.push({ klein: true, html: einzelHtml(einz, opt) });
+  let html = '', offen = false;
+  for (const k of kaesten) { if (k.klein && !offen) { html += '<div class="gpaar">'; offen = true; } if (!k.klein && offen) { html += '</div>'; offen = false; } html += k.html; }
+  if (offen) html += '</div>';
+  return `<div class="blatt b-${t}">${kopf(`Tabelle ${tabNr(t)}: ${WEG[t].n}`, t)}
+    <div class="regel"><div><b>Grundidee:</b> ${WEGDEF[t].idee}</div><div class="small">Die Endungen sind immer dieselben: ${ENDEN.map(e => L(`<span class="en">-${e}</span>`)).join(' · ')}</div></div>
+    ${html}${WEGDEF[t].achtung ? `<div class="achtung">${WEGDEF[t].achtung}</div>` : ''}${legende(vs, true)}</div>`;
+}
+const ausBox = (v, opt, knapp) => `<div class="box p${v.prio}" title="${esc(woher(v))}"><h4>${knapp ? `<span class="wtag w-${v.t}">${tabNr(v.t)}</span> ` : ''}<b>${v.inf}, ${v.pr}, ${v.pf}</b> <span class="de">– ${esc(v.de)} · ${lek(v)}${sicherMark(v, opt)}</span></h4>${k6(v)}${v.n && !knapp ? `<div class="fuss">${v.n}</div>` : ''}</div>`;
+function blattX(opt) {
+  const vs = VERBEN.filter(v => v.t === 'x');
+  return `<div class="blatt b-x">${kopf('Tabelle 7: Die 7 fürs Kopfkissen', 'x')}
+    <div class="regel"><div><b>Grundidee:</b> ${WEGDEF.x.idee}</div></div>
+    <div class="gruppe"><h3><span class="gnr w-x">7a</span> ${GR.x1.t}</h3><p><b>Regel:</b> ${GR.x1.r}</p><div class="ausn">${vs.filter(v => v.g === 'x1').map(v => ausBox(v, opt)).join('')}</div></div>
+    <div class="gruppe"><h3><span class="gnr w-x">7b</span> ${GR.x2.t}</h3><p><b>Regel:</b> ${GR.x2.r}</p><div class="ausn">${vs.filter(v => v.g === 'x2').map(v => ausBox(v, opt)).join('')}</div></div>
+    <div class="gruppe spaeter"><h3>Wird später gelernt</h3><p class="small">Diese vier Verben aus Lektion 1–9 fehlen in den Tabellen. Ihr Perfekt kommt im Buch erst später – warum, steht daneben. <b>Bitte nicht selbst bilden!</b></p>
+      <table class="pt">${SPAETER.map(s => `<tr class="p3"><td class="l">${s[0]}, ${s[1]}</td><td>${esc(s[2])} · L${s[3]}</td><td class="n">${s[4]}</td></tr>`).join('')}</table></div>${legende(vs, true)}</div>`;
+}
+function blattEinzel(opt) {
+  const vs = VERBEN.filter(v => v.einzel);
+  return `<div class="blatt b-n">${kopf('Einzelfälle mit allen Formen', 'einzel')}
+    <p>Diese ${vs.length} Verben passen in keine feste Regel ihrer Tabelle. Deshalb stehen sie hier noch einmal mit allen Formen – zum Einzeln-Lernen. Die Zahl nennt die Tabelle, in der du ihren Weg findest.</p>
+    <div class="ausn">${vs.map(v => ausBox(v, opt, true)).join('')}</div>
+    <div class="fuss">${WEGE6.filter(t => vs.some(v => v.t === t)).map(t => `<span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].k}`).join(' · ')}</div>${legende(vs, true)}</div>`;
+}
+function blattAZ(opt) {
+  return `<div class="blatt b-n">${kopf('Alle Verben von A bis Z', 'az')}
+    <p class="small">Zum Nachschlagen: Infinitiv, 1. Person Präsens, <b>1. Person Perfekt</b>. Die Zahl nennt die Tabelle, in der das Verb steht.</p>
+    <ul class="az">${sortAZ(VERBEN).map(v => `<li ${vAttr(v)}><span>${L(v.inf)}, ${L(v.pr)}, ${L(v.pf)}</span><span class="wtag w-${v.t}">${tabNr(v.t)}</span></li>`).join('')}</ul>
+    <div class="fuss">${TAB.map(t => `<span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].k}`).join(' · ')}</div>
+    <div class="fuss">Nicht in der Liste: ${SPAETER.map(s => s[0]).join(', ')} – ihr Perfekt lernst du später.</div>${legende(VERBEN, false)}</div>`;
+}
+function blattEnd() {
+  const zeile = i => `<div class="e"><span>${PKURZ[i] === 'er' ? 'er, sie, es' : PKURZ[i]}</span><b>-${PEND[i]}</b></div>`;
+  return `<div class="blatt b-n poster">${kopf('Die sechs Perfekt-Endungen', 'end')}
+    <p class="gross2">Sie passen an <b>jeden</b> Perfektstamm – bei allen Verben.</p>
+    <div class="end6"><div>${[0, 1, 2].map(zeile).join('')}</div><div>${[3, 4, 5].map(zeile).join('')}</div></div>
+    <div class="e inf"><span>Infinitiv Perfekt</span><b>-isse</b></div>
+    <div class="regel"><div>So findest du den <b>Perfektstamm</b>: Nimm von der 1. Person Perfekt das -ī weg. ${L('dīxī')} → ${L('dīx-')}</div>
+      <div>${['rogāre', 'tacēre', 'dīcere', 'vidēre', 'currere', 'contendere', 'esse'].map(inf => pfHtml(vb(inf), 'ī')).join(' · ')}</div>
+      <div>${['rogāre', 'tacēre', 'dīcere', 'vidēre', 'currere', 'contendere', 'esse'].map(inf => pfHtml(vb(inf), 'ērunt')).join(' · ')}</div></div>
+    <p class="small muted">Zum Aufhängen: an den Kühlschrank, über den Schreibtisch oder neben das Bett.</p></div>`;
+}
+function blattPlan() {
+  const r = vb('rogāre'), n = t => VERBEN.filter(v => v.t === t).length;
+  const brecher = k => VERBEN.filter(v => v.k === k && !v.regel).map(v => `${L(v.inf)} (${tabNr(v.t)})`).join(', ');
+  return `<div class="blatt b-n">${kopf('Das Perfekt – der Bauplan', 'plan')}
+    <h3>1 · Ein Verb, zwei Stämme</h3>
+    ${baumHtml(r, -1, { namen: true, hinw: true })}
+    <p class="small">Im Vokabelheft stehen deshalb seit Lektion 8 drei Formen, zum Beispiel ${L('putāre, putō, putāvī')}. Die Perfektform ohne -ī ist der Perfektstamm. Nach der Gabel geht es verschieden weiter – aber auf beiden Ästen stehen dieselben sechs Personen.</p>
+    <h3>2 · Sieben Tabellen – vom Einfachen zum Schwierigen</h3>
+    <div class="tabwrap"><table class="pt"><tr><th>Tabelle</th><th>Was passiert mit dem Stamm?</th><th>Beispiel</th><th>Verben</th></tr>
+      ${TAB.map(t => { const v = vb({ o: 'contendere', v: 'rogāre', u: 'tacēre', s: 'dīcere', d: 'vidēre', r: 'currere', x: 'esse' }[t]); return `<tr><td><span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].n}</td><td>${{ o: 'nichts – er bleibt gleich', v: 'das Zeichen v kommt dazu', u: 'der letzte Vokal fällt weg, das Zeichen u kommt dazu', s: 'das Zeichen s kommt dazu, Konsonanten verändern sich', d: 'der Vokal im Stamm wird lang', r: 'der Anfang wird verdoppelt', x: 'ganz eigener Stamm – auswendig lernen' }[t]}</td><td class="l">${v.pr} → ${pfHtml(v, 'ī')}</td><td class="z">${n(t)}</td></tr>`; }).join('')}</table></div>
+    <h3>3 · Was die Konjugation verrät: die Faustregel</h3>
+    <p class="small">Die Konjugation gehört zum Präsensstamm. Für das Perfekt gibt sie nur einen Tipp. Jede Farbe ist ein Weg, die Zahl sagt, wie viele Verben ihn gehen.</p>
+    <div class="wege">${faustChart()}</div>
+    <p class="small"><b>Regelbrecher</b> (in Klammern die Tabelle): a-Konjugation: ${brecher('a')}. e-Konjugation: ${brecher('e')}. i-Konjugation: ${brecher('i')}.</p></div>`;
+}
+function blatt(k, opt) {
+  opt = opt || {};
+  return k === 'plan' ? blattPlan() : k === 'end' ? blattEnd() : k === 'x' ? blattX(opt) : k === 'einzel' ? blattEinzel(opt) : k === 'az' ? blattAZ(opt) : blattWeg(k, opt);
+}
+
+// ---------- Drucken ----------
+function druckFuellen(keys) { document.getElementById('druck').innerHTML = keys.map(k => blatt(k, { druck: true })).join(''); document.body.classList.add('druckt'); }
+function drucken(keys) { druckFuellen(keys); window.print(); }
+window.addEventListener('beforeprint', () => { if (!document.body.classList.contains('druckt')) druckFuellen(VIEW === 'tab' ? [TB] : BLAETTER); });
+window.addEventListener('afterprint', () => { if (document.body.classList.contains('pdf')) return; document.getElementById('druck').innerHTML = ''; document.body.classList.remove('druckt'); });
+
+function renderTab() {
+  app.innerHTML = `<header class="top"><div class="eyebrow">Nachschlagen und Drucken</div><h1>📋 Perfekt-Tabellen</h1>
+      <p class="muted">Elf Blätter: der Bauplan, das Endungen-Blatt für den Kühlschrank, sieben Lerntabellen, die Einzelfälle mit allen Formen und eine Liste von A bis Z.</p></header>
+    <section><div class="row"><button class="btn" id="dAlle" type="button">🖨️ Alle Blätter drucken</button><a class="btn ghost" href="latein-perfekt-tabellen.pdf" download>⬇️ Als PDF laden</a></div>
+      <div class="seg" id="bl">${BLAETTER.map(k => `<button type="button" data-k="${k}" class="${k === TB ? 'on' : ''}">${BLATTKURZ[k]}</button>`).join('')}</div>
+      <p class="small muted" id="tipph">Tippe ein Verb an: Dann siehst du seinen Weg zum Perfektstamm und alle Formen.</p>
+      <div class="card" id="blatt">${blatt(TB, { bild: true })}</div>
+      <div class="row"><button class="btn ghost" id="dEins" type="button">🖨️ Nur dieses Blatt drucken</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></section>`;
+  app.querySelector('#tipph').hidden = !app.querySelector('#blatt [data-v]');   // der Hinweis nur dort, wo sich etwas antippen lässt
+  app.querySelectorAll('#bl button').forEach(b => b.onclick = () => { TB = b.dataset.k; render(); });
+  app.querySelector('#dAlle').onclick = () => drucken(BLAETTER);
+  app.querySelector('#dEins').onclick = () => drucken([TB]);
+  app.querySelector('#hm').onclick = () => go('home');
+  // Verb antippen: Weg und alle Formen aufklappen
+  app.querySelector('#blatt').onclick = e => {
+    const el = e.target.closest('[data-v]'); if (!el || e.target.closest('.detail')) return;
+    const offen = el.nextElementSibling && el.nextElementSibling.classList.contains('detail') ? el.nextElementSibling : el.querySelector(':scope > .detail');
+    if (offen) { offen.remove(); return; }
+    const v = vb(el.dataset.v), html = `<div class="small muted">${esc(woher(v))}</div>${el.classList.contains('einz') ? '' : pfadHtml(v)}<div class="small">${formenZeile(v)}</div>${v.n ? `<div class="small muted">${v.n}</div>` : ''}`;
+    if (el.tagName === 'TR') el.insertAdjacentHTML('afterend', `<tr class="detail"><td colspan="5">${html}</td></tr>`); else el.insertAdjacentHTML('beforeend', `<div class="detail">${html}</div>`);
+  };
+}
+
+// ===================================================================
+// ÜBERSICHT
+// ===================================================================
+function renderHome() {
+  const offen = SKEYS.find(k => !S.st[k]), sum = SKEYS.reduce((a, k) => a + (S.st[k] || 0), 0), due = faellig();
+  const p1 = VERBEN.filter(v => v.arbeit), sicher = p1.filter(v => (S.ok[v.inf] || 0) >= 2).length;
+  const status = k => !S.st[k] ? (k === offen ? 'als Nächstes' : 'offen') : `${sterne(S.st[k])} verstanden am ${datumDe(S.dat[k])}${S.chk[k] && S.chk[k].n ? ' · Check ' + '✓'.repeat(Math.min(S.chk[k].n, 3)) : ''}`;
+  app.innerHTML = `<header class="top"><div class="eyebrow">Latein · Lektion 1–10</div><h1>🧱 Perfekt-Baukasten</h1>
+      <p class="muted">Das Perfekt ist ein Baukasten: ein Perfektstamm und eine von sechs Endungen. Hier lernst du, wie die Teile zusammenpassen – erst das Prinzip, dann alle Verben.</p>
+      <div class="anzeige"><span>Sterne: <b>${sum}</b> von ${SKEYS.length * 3}</span><span>Sichere Verben für die Arbeit: <b>${sicher}</b> von ${p1.length}</span></div></header>
+    ${due.length ? `<section><div class="card check"><h2>🔁 Weißt du es noch?</h2><p>Kurz-Check zu ${due.length === 1 ? 'einer Station' : due.length + ' Stationen'}, die du schon verstanden hast: ${due.map(k => STATION[k].icon + ' ' + STATION[k].name).join(' · ')}. Das dauert nur ein, zwei Minuten.</p><div class="row"><button class="btn gross" id="chk" type="button">Kurz-Check starten</button></div></div></section>` : ''}
+    <section><h2>1 · Verstehen</h2><p class="small muted">Sechs kurze Stationen, jede etwa fünf Minuten. Am besten der Reihe nach – vom Einfachen zum Schwierigen.</p>
+      <div class="grid">${SKEYS.map((k, i) => { const s = STATION[k]; return `<button class="tile ${S.st[k] ? 'done' : k === offen ? 'next' : ''}" data-s="${k}" type="button"><b>${s.icon} ${i + 1} · ${s.name}</b><span>${s.hook}</span><span class="tag">${status(k)}</span></button>`; }).join('')}</div></section>
+    <section><h2>2 · Üben</h2><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
+    <section><h2>3 · Tabellen</h2><div class="grid"><button class="tile" id="tTab" type="button"><b>📋 Perfekt-Tabellen</b><span>Der Bauplan, sieben Lerntabellen mit festen Regeln, die Einzelfälle und alle Verben von A bis Z – zum Nachschlagen und Drucken.</span></button>
+      <button class="tile" id="tEnd" type="button"><b>🧲 Endungen-Blatt</b><span>Die sechs Perfekt-Endungen groß auf einem Blatt – für den Kühlschrank.</span></button>
+      <a class="tile" href="latein-perfekt-tabellen.pdf" download><b>⬇️ PDF zum Ausdrucken</b><span>Alle Blätter in einer Datei.</span></a></div></section>
+    <section><div class="row"><button class="linkbtn" id="reset" type="button">Fortschritt zurücksetzen</button></div></section>`;
+  if (due.length) app.querySelector('#chk').onclick = startCheck;
+  app.querySelectorAll('[data-s]').forEach(b => b.onclick = () => startStation(b.dataset.s));
+  app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { UM = b.dataset.m; go('ueben'); });
+  app.querySelector('#tTab').onclick = () => go('tab');
+  app.querySelector('#tEnd').onclick = () => { TB = 'end'; go('tab'); };
+  app.querySelector('#reset').onclick = () => { if (confirm('Wirklich alles zurücksetzen? Sterne, Kurz-Checks und Lernstand gehen verloren.')) { try { localStorage.removeItem(KEY); } catch (e) { /* nichts zu löschen */ } S = laden(); render(); } };
+}
+function render() {
+  sperre();
+  document.getElementById('crumb').textContent = VIEW === 'station' && R ? STATION[R.k].name : VIEW === 'ueben' || VIEW === 'runde' ? 'Üben' : VIEW === 'tab' ? 'Tabellen' : VIEW === 'check' ? 'Kurz-Check' : '';
+  ({ home: renderHome, station: renderStation, ueben: renderUeben, runde: renderRunde, tab: renderTab, check: renderCheck })[VIEW]();
+}
+// gehaltene Enter-Taste soll nicht durch die Rückmeldungen rasen
+document.addEventListener('keydown', e => { if (e.repeat && e.key === 'Enter') e.preventDefault(); }, true);
+document.getElementById('homeBtn').onclick = () => {
+  const mittendrin = (VIEW === 'station' && R && !R.fertig && R.i > 0) || (VIEW === 'runde' && U && !U.fertig) || (VIEW === 'check' && C && !C.fertig);
+  if (mittendrin && !confirm('Wirklich zur Übersicht? Was du hier gerade machst, zählt dann nicht.')) return;
+  R = null; U = null; C = null; go('home');
+};
+// ?druck=1 zeigt nur die Druckblätter – daraus erzeugt tools/perfekt-pdf.py das PDF
+if (new URLSearchParams(location.search).has('druck')) { document.body.classList.add('pdf'); druckFuellen(BLAETTER); }
+render();
+</script>
+</body>
+</html>

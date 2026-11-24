@@ -1902,6 +1902,12 @@
         .klassenarbeit-card {
             background: linear-gradient(135deg, #ffe29f 0%, #ffa99f 100%);
         }
+        .set-card.perfekt-bau {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+            border-color: #ef6c00;
+        }
+        body.april-dark .set-card.perfekt-bau { border-color: #ef6c00; }
 
         .vh-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
         .vh-group { margin-bottom: 20px; }
@@ -3174,6 +3180,15 @@
             <p style="color: #666; margin-top: 10px;">Wähle deine Lektion:</p>
         </div>
         <div class="set-selection">
+            <!-- Gabel: eigene Seite, eigener Speicher (latein-perfekt.html) – bewusst die erste Karte, vor den Lektionen -->
+            <div class="set-card latin perfekt-bau" role="link" tabindex="0"
+                 onclick="location.href='latein-perfekt.html'"
+                 onkeydown="if (event.key === 'Enter') location.href='latein-perfekt.html'">
+                <div class="set-icon">🧱</div>
+                <div class="set-title">Perfekt-Baukasten</div>
+                <div class="set-info">124 Verben aus Lektion 1–10</div>
+                <div class="set-topics">Verstehen • Üben • Tabellen zum Drucken</div>
+            </div>
             <div class="set-card latin" onclick="selectLatinChapter('chapter1')">
                 <div class="set-icon">🏠</div>
                 <div class="set-title">Lektion 1</div>
@@ -4783,7 +4798,7 @@
                       present: { sg2: 'pārēs', sg3: 'pāret', pl1: 'pārēmus', pl2: 'pārētis', pl3: 'pārent' },
                       imperative: { sg: 'pārē', pl: 'pārēte' } },
                     { infinitive: 'deesse', firstPerson: 'dēsum', german: 'fehlen',
-                      present: { sg2: 'dēes', sg3: 'dēest', pl1: 'dēsumus', pl2: 'dēestis', pl3: 'dēsunt' },
+                      present: { sg2: 'dees', sg3: 'deest', pl1: 'dēsumus', pl2: 'deestis', pl3: 'dēsunt' },
                       imperative: null },
                     { infinitive: 'mandāre', firstPerson: 'mandō', german: 'übergeben',
                       present: { sg2: 'mandās', sg3: 'mandat', pl1: 'mandāmus', pl2: 'mandātis', pl3: 'mandant' },
@@ -5916,7 +5931,7 @@
                     { infinitive: 'adesse', firstPerson: 'adsum', perfect: 'adfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>ad‑fuī</b>.', german: 'da sein',
                       present: { sg2: 'ades', sg3: 'adest', pl1: 'adsumus', pl2: 'adestis', pl3: 'adsunt' } },
                     { infinitive: 'deesse', firstPerson: 'dēsum', perfect: 'dēfuī', perfectType: 'irr', perfectNote: 'wie esse → fuī, nur mit Vorsilbe: <b>dē‑fuī</b>.', german: 'fehlen',
-                      present: { sg2: 'dēes', sg3: 'dēest', pl1: 'dēsumus', pl2: 'dēestis', pl3: 'dēsunt' } },
+                      present: { sg2: 'dees', sg3: 'deest', pl1: 'dēsumus', pl2: 'deestis', pl3: 'dēsunt' } },
                     { infinitive: 'posse', firstPerson: 'possum', perfect: 'potuī', perfectType: 'irr', perfectNote: 'posse kommt von pot‑ + esse; das Perfekt heißt <b>pot‑uī</b>. Auswendig lernen!', german: 'können',
                       present: { sg2: 'potes', sg3: 'potest', pl1: 'possumus', pl2: 'potestis', pl3: 'possunt' } },
                     { infinitive: 'velle', firstPerson: 'volō', perfect: 'voluī', perfectType: 'u', perfectNote: 'an den Stamm vol‑ (wie in volō) kommt <b>‑uī</b>.', german: 'wollen',
@@ -6136,7 +6151,7 @@
                     { infinitive: 'cadere', firstPerson: 'cadō', perfect: 'cecidī', perfectType: 'red', perfectNote: 'vorn kommt <b>ce‑</b> dazu, aus a wird i: ce‑cid‑ī.', german: 'fallen',
                       present: { sg2: 'cadis', sg3: 'cadit', pl1: 'cadimus', pl2: 'caditis', pl3: 'cadunt' },
                       imperative: { sg: 'cade', pl: 'cadite' } },
-                    { infinitive: 'occurrere', firstPerson: 'occurrō', perfect: 'occurrī', perfectType: 'ohne', perfectNote: 'wie currere, aber <b>ohne</b> Verdopplung vorn: occurr‑ī.', german: 'begegnen',
+                    { infinitive: 'occurrere', firstPerson: 'occurrō', perfect: 'occurrī', perfectType: 'red', ohneTypFrage: true, perfectNote: 'gehört zu currere → cucurrī. Mit der Vorsilbe oc‑ fällt die Verdopplung weg: <b>oc‑curr‑ī</b>.', german: 'begegnen',
                       present: { sg2: 'occurris', sg3: 'occurrit', pl1: 'occurrimus', pl2: 'occurritis', pl3: 'occurrunt' },
                       imperative: { sg: 'occurre', pl: 'occurrite' } },
                     { infinitive: 'dīcere', firstPerson: 'dīcō', perfect: 'dīxī', perfectType: 's', german: 'sagen',
@@ -7458,9 +7473,19 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.46.2';
+        const APP_VERSION = '2.47.0';
 
         const changelogEntries = [
+            {
+                version: '2.47.0',
+                date: '24.11.2026',
+                items: [
+                    '<b>Neu in Latein: 🧱 Perfekt-Baukasten</b> – die erste Karte in der Latein-Auswahl. Dort lernst du, wie das Perfekt gebaut ist: Jedes Verb hat zwei Stämme, es gibt sechs Endungen für alle Verben und sechs Wege zum Perfektstamm. Erst <b>verstehen</b> (sechs kurze Stationen mit Stammbaum), dann <b>üben</b> (124 Verben aus Lektion 1–10, sechs Übungsarten). Voreingestellt ist <b>🎯 Für die Arbeit</b>: Lektion 9 und die wiederholte Lektion 4.',
+                    'Dazu <b>Tabellen zum Ausdrucken</b>: sieben Lerntabellen mit festen Regeln, die Einzelfälle mit allen Formen, alle Verben von A bis Z – und ein <b>Endungen-Blatt für den Kühlschrank</b>.',
+                    'Was du verstanden hast, merkt sich der Baukasten. An einem anderen Tag fragt er mit einem <b>Kurz-Check</b> noch einmal nach.',
+                    'Berichtigt: Bei <i>deesse</i> (fehlen) heißt es <i>dees, deest, deestis</i> – mit kurzem e, so wie im Vokabelheft.'
+                ]
+            },
             {
                 version: '2.46.2',
                 date: '16.11.2026',
@@ -8295,6 +8320,16 @@
             document.getElementById('languageSelection').style.display = 'block';
             maybeAskName();          // beim ersten Start folgt jetzt die Vornamen-Frage
             applyAprilDarkBody();
+            oeffneLateinAusRuecksprung();
+        }
+
+        // index.html#latein (Rücksprung aus latein-perfekt.html) öffnet gleich die Latein-Lektionsauswahl – aber nur,
+        // wenn gerade das Hauptmenü zu sehen ist. Der Hash wird danach entfernt, damit ein Neuladen wieder im Hauptmenü beginnt.
+        function oeffneLateinAusRuecksprung() {
+            if (location.hash !== '#latein') return;
+            if (getComputedStyle(document.getElementById('languageSelection')).display === 'none') return;
+            try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* file:// in manchen Browsern */ }
+            selectLanguage('latin');
         }
 
         // Changelog beim Laden, danach ggf. die Vornamen-Frage
@@ -8303,6 +8338,7 @@
             showChangelogIfNew();
             const splashOffen = document.getElementById('changelogSplash').style.display !== 'none';
             if (!splashOffen) maybeAskName();
+            oeffneLateinAusRuecksprung();
         });
         document.addEventListener('DOMContentLoaded', () => {
             rocketGravity = loadRocketGravity();
@@ -11923,8 +11959,9 @@
                         id: 'perf_p2i_' + vf.infinitive,
                         dvWord: vf.infinitive
                     });
-                    // 3) Welcher Bildungstyp?
-                    if (vf.perfectType && TYP[vf.perfectType]) {
+                    // 3) Welcher Bildungstyp? – nicht bei Zusammensetzungen wie occurrere: Das Buch führt sie beim
+                    //    Reduplikationsperfekt, der Form sieht man die (weggefallene) Verdopplung aber nicht an.
+                    if (vf.perfectType && TYP[vf.perfectType] && !vf.ohneTypFrage) {
                         items.push({
                             type: 'perfect', mode: 'mc',
                             prompt: vf.perfect, answer: TYP[vf.perfectType].toLowerCase(),

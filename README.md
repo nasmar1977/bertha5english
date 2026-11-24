@@ -173,6 +173,40 @@ Das lateinische Wort und die Bedeutung stehen da, gefragt ist die mittlere Spalt
 aus Bausteinen (Genitiv, Geschlecht, 1. Person, Perfekt, Femininum/Neutrum, Angaben). Nach dem Prüfen erscheint die
 Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also automatisch dabei.
 
+### 🧱 Latein: Perfekt-Baukasten
+Eigene Seite (`latein-perfekt.html`), erste Karte in der Latein-Lektionsauswahl. Lehrt das Perfekt Aktiv als System und
+führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Buch (Grammatik Lektion 8 B und 9 B).
+- **Leitbild Stammbaum**: Verb → Präsensstamm / Perfektstamm → Präsens, Imperfekt / Perfekt → sechs Personen. Die
+  Konjugation zählt nur auf dem linken Ast; rechts gelten für alle Verben dieselben sechs Endungen.
+- **Verstehen** – sechs Stationen (je etwa fünf Minuten), vom Einfachen zum Schwierigen: zwei Stämme, sechs Endungen,
+  drei Zeiten auseinanderhalten, die einfachen Wege (Stamm bleibt gleich, v, u), die kniffligen Wege (s, Dehnung,
+  Reduplikation), Faustregel und die sieben besonderen Verben. Jede Station endet mit einem Merksatz zum Zusammenbauen.
+  Sterne nach Fehlern (bis 1 / 3 / 6); mit mehr als sechs Fehlern gilt die Station als noch nicht verstanden.
+- **Kurz-Check**: Eine geschaffte Station merkt sich der Browser mit Datum. Am nächsten Tag (danach im Abstand von 3, 7,
+  14, 30 Tagen) fragt die Übersicht mit zwei Fragen je Station nach; in jeder Übungsrunde steckt eine Zwischenfrage.
+  Eine falsche Antwort wird sofort gespeichert (morgen wieder, eine Stufe zurück).
+- **Üben** – sechs Übungsarten: Stammformen, Umformen (Präsens → Perfekt), Bestimmen (Zeit und Person), Endungen-Blitz,
+  Welcher Weg?, Zurück zum Verb. Auswahl nach Tabelle und Umfang; voreingestellt ist **🎯 Für die Arbeit** (derzeit
+  46 Verben: Lernstufe 1 plus die wiederholte Lektion 4, Konstante `ARBEIT`). Falsches kommt am Rundenende einmal wieder.
+  Längenstriche dürfen beim Tippen fehlen – außer wenn nur der Strich Präsens und Perfekt unterscheidet (fugit/fūgit).
+  Die Strich-Knöpfe über dem Feld machen den letzten passenden Vokal lang. Trennstriche (rogā-v-ī) und fremde Akzente
+  werden verziehen.
+- **Tipp-Sperre**: Nach jedem Neuzeichnen nimmt die Seite 400 ms lang keine Klicks an. Ein Doppeltipp auf „Weiter“ traf
+  sonst am Handy „Runde beenden“ oder eine Antwort der nächsten Aufgabe. `?ohnesperre` schaltet das für Testläufe ab.
+- **Tabellen** – elf Blätter zum Nachschlagen und Drucken (auch als `latein-perfekt-tabellen.pdf`): Bauplan,
+  Endungen-Blatt für den Kühlschrank, sieben Lerntabellen, Einzelfälle mit allen Formen, alle Verben A–Z. Jede Tabelle
+  besteht aus Untergruppen, in denen für **alle** Verben genau eine Regel gilt; was in keine Regel passt, steht als
+  Einzelfall darunter. Reihenfolge vom Einfachen zum Schwierigen: 1 ohne Stammveränderung, 2 v, 3 u, 4 s, 5 Dehnung,
+  6 Reduplikation, 7 besondere Verben. Ein Verb antippen zeigt seinen Weg zum Perfektstamm Schritt für Schritt.
+- **Drei Lernstufen**: 1 (fett) = Perfekt steht im Vokabelheft von Lektion 8/9 (35 Verben), 2 (normal) = Verb aus
+  Lektion 1–9, Perfekt hier ergänzt (82), 3 (grau) = neu in Lektion 10 (7). Tooltip und Spalte „Lektion“ zeigen, woher
+  ein Verb stammt (`L5→9` = kam in Lektion 5 vor, Perfekt im Heft von Lektion 9).
+- Lektion 2 fehlt in `index.html`; ihre 17 Verben sind von den Heft-Fotos (S. 6–8) abgeschrieben. Nicht geübt werden
+  gaudēre, audēre, incipere und dēsinere (Perfekt anders gebaut bzw. im Heft nicht genannt) – sie stehen als
+  „Wird später gelernt“ auf dem Blatt zu Tabelle 7.
+- Speicher: `latein-perfekt-v1`. Datenprüfung `node tools/perfekt-check.mjs`, PDF `python3 tools/perfekt-pdf.py`
+  (siehe `tools/README.md`).
+
 ### 🗳️ GEWI
 - **Wiederholung Demokratie** (`gewi.html`, Karte im Hauptmenü): Klasse 6, LEK zu Buch S. 196–199 und Heft. Plan in
   sieben Schritten (etwa 60 min): Begriffe-Blitz, Check (zwei Aufgaben je Thema), Station „Demokratie in Athen“ (immer,
@@ -208,8 +242,8 @@ Heftzeile. Daten kommen direkt aus `vokabelheftData`, neue Lektionen sind also a
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.46.2
-**Datum:** 16.11.2026
+**Version:** 2.47.0
+**Datum:** 24.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -235,6 +269,8 @@ Vokabeln April: 24) + 27 Redewendungen
 |---|---|
 | `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
+| `latein-perfekt.html` | Latein: Perfekt-Baukasten (Verstehen, Üben, Tabellen), erste Karte in der Latein-Lektionsauswahl |
+| `latein-perfekt-tabellen.pdf` | die elf Tabellenblätter des Perfekt-Baukastens als PDF, erzeugt von `tools/perfekt-pdf.py` |
 | `deutsch.html` | Deutsch Kl. 6: letzter Tag vor der Arbeit (Satzglieder/Wortarten, „Wolf“), Karte im Hauptmenü |
 | `gewi.html` | GEWI Kl. 6: Wiederholung Demokratie (Athen und heute, Definitionen), Karte im Hauptmenü |
 | `nawi-menu.html` | NAWI-Zwischenmenü (Ziel der NAWI-Karte im Hauptmenü): vorn die neueste Fassung, daneben Version 1; zeigt den Stand beider Speicher |
@@ -242,7 +278,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über `nawi-menu.html` |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
-| `tools/` | Hilfsskripte rund um die Vokabeldaten |
+| `tools/` | Hilfsskripte rund um die Vokabeldaten und den Perfekt-Baukasten |
 
 ## 🚀 Wie benutzen?
 
@@ -263,6 +299,47 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.47.0 (24.11.2026)
+- **Neu: Latein „Perfekt-Baukasten“** (`latein-perfekt.html`), erste Karte in der Latein-Lektionsauswahl; Rücksprung
+  über `index.html#latein` direkt in die Lektionsauswahl. Eigener Speicher `latein-perfekt-v1`.
+- Aufbau: **Verstehen** (sechs Stationen: Stammbaum „ein Verb, zwei Stämme“, sechs Endungen, drei Zeiten, einfache
+  Wege, knifflige Wege, Faustregel und besondere Verben), **Üben** (sechs Übungsarten, Auswahl nach Tabelle und
+  Lernstufe), **Tabellen** (elf Blätter, Druck und `latein-perfekt-tabellen.pdf`).
+- Nach Rückmeldung zur vorab erklärten Systematik umgebaut: Einstieg mit den Verben ohne Stammveränderung, jede Tabelle
+  in **Untergruppen mit genau einer Regel** plus Einzelfälle, Wege zum Perfektstamm Schritt für Schritt (auch bei
+  Reduplikation erst currere, dann die mit Vokalwechsel), **Kurz-Check** an späteren Tagen und Zwischenfragen beim
+  Üben, **drei Lernstufen** (Heft-Perfekt L8/9 · ergänzt · Lektion 10) mit Herkunft je Verb, Endungen-Blatt für den
+  Kühlschrank, „Die 7 fürs Kopfkissen“.
+- Daten: 124 Verben aus Lektion 1–10. Lektion 2 (17 Verben) von den Heft-Fotos abgeschrieben, weil sie in `index.html`
+  fehlt. 76 Perfektformen nennt das Heft bis Lektion 10 gar nicht, sie sind von Hand ergänzt; vier Verben bleiben als
+  „wird später gelernt“ draußen (gaudēre, audēre, incipere, dēsinere).
+- Stoff der Arbeit (Rückmeldung vom 24.11.: Lektion 9, dazu wird Lektion 4 wiederholt): Auswahl „🎯 Für die Arbeit“
+  beim Üben voreingestellt, 🎯-Marke hinter der Lektion in den Tabellen.
+- Neu `tools/perfekt-check.mjs` (Verbdaten gegen Vokabelheft, Gruppenregeln, erzeugte Präsensformen gegen
+  `latinData`) und `tools/perfekt-pdf.py` (PDF der Tabellenblätter, meldet Höhe je Blatt).
+- accidere und occurrere stehen **wie im Buch** beim Reduplikationsperfekt (Tabelle 6), zusammen mit attingere in der
+  Gruppe „cadere, currere, tangere mit Vorsilbe: ohne Verdopplung“ (Entscheidung des Users vom 24.11.; zuerst standen
+  sie in Tabelle 1). Tabelle 1 weist auf die gleich aussehenden Formen hin; „Welcher Weg?“ fragt diese Verben nicht ab.
+  Dazu passend in `index.html`: occurrere ist im Perfekt-Modul von Lektion 9 jetzt als Reduplikation geführt, die
+  Typ-Frage entfällt dort für dieses Verb (`ohneTypFrage`). Auch diese Umstellung haben zwei Prüfer gegengelesen
+  (Latein: kein sachlicher Fehler, Formulierungen geschärft; Logik: Tabellen, Zählungen, Übungsrunden, Druck und das
+  Lektions-Modul in Ordnung).
+- **Berichtigt in `index.html`:** deesse hatte in den Verb-Formen von Lektion 3 und 8 falsche Längen (dēes, dēest,
+  dēestis). Richtig ist dees, deest, deestis – vor Vokal ist das e kurz, so druckt es auch das Heft.
+- **Zwei Prüfer vor der Freigabe.** Latein-Fachprüfung: alle 2480 erzeugten Formen gelesen, die 76 ergänzten
+  Perfektformen stimmen samt Längenstrichen; falsch waren nur die Formen von deesse, dazu zwei Erklärsätze (Imperfekt
+  von esse/posse „mit -ba-“, Zwischenüberschrift „-buī“). „Stamm“ heißt jetzt überall, was das Buch so nennt
+  (Präsensstamm dīc-, capi-; Perfektstamm als Klammer um Stamm und Zeichen). Logik- und Bedienprüfung: Doppeltipp auf
+  „Weiter“ brach am Handy 28 von 30 Runden ab (jetzt Tipp-Sperre und Rückfrage), Endungs-Knöpfe standen abzählbar in
+  Tabellenreihenfolge (jetzt gemischt), eine Station galt auch mit lauter Fehlern als verstanden (jetzt Mindestleistung,
+  im Merksatz zählt jeder Fehlgriff), farbige Kennzeichen verschwanden im Druck ohne Hintergrundgrafik
+  (`print-color-adjust`), beschädigter Speicher ließ die Seite leer (wird beim Laden bereinigt). Außerdem: Sortierfolgen
+  nicht mehr gleichmäßig verteilt, kein Formenpaar doppelt in einer Folge, Kurz-Check-Antworten ohne Längen- und
+  Form-Hinweis, Stammbaum am Handy schiebbar, Druck in Arial-Maßen wie das PDF.
+- Nicht geprüft: echtes iPad (Bildschirmtastatur, Druckdialog). Offen bleibt aus der Prüfung: „Zurück zum Verb“ ist
+  bei regelmäßigen Verben über den Wortanfang lösbar; auf sehr kleinen Handys (375 × 667) liegt „Weiter“ teils unter
+  dem Bildrand.
 
 ### Version 2.46.2 (16.11.2026)
 - NAWI-Hebel (`nawi.html` Labor zwei- und einseitig, `nawi-mission.html` Wippen-Duell): Die Rechenzeile
