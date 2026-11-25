@@ -388,7 +388,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.51.0
+**Version:** 2.51.1
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -450,6 +450,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.51.1 (25.11.2026)
+- **Rakete bei 320 px:** Die Antwortspalte lief rechts aus der Karte (Grid-Spalte `1fr` wuchs mit dem längsten Wort).
+  Jetzt `minmax(0, 1fr)`, Antworten brechen um, unter 360 px schmalere Raketenspalte.
+- **🎯-Knopf (Knackpunkte)** blieb nach einem Latein-Kapitel auf der Startseite und in der Kapitelauswahl stehen:
+  `backToLanguage()` und `backToLatinChapters()` setzen jetzt `currentLatinChapterKey` zurück.
 
 ### Version 2.51.0 (25.11.2026)
 - **Startanimation** beim Öffnen (Abschnitt „Name und Logo“), Hintergrund nach Tageszeit, wie mit dem User anhand

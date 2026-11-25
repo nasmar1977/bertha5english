@@ -1282,12 +1282,21 @@
             border-radius: 16px;
         }
         .rocket-game-grid {
-            display: grid; grid-template-columns: 110px 1fr;
+            display: grid; grid-template-columns: 110px minmax(0, 1fr);
             gap: 16px; max-width: 600px; margin: 0 auto;
         }
         @media (max-width: 480px) {
-            .rocket-game-grid { grid-template-columns: 80px 1fr; gap: 10px; }
+            .rocket-game-grid { grid-template-columns: 80px minmax(0, 1fr); gap: 10px; }
         }
+        /* sehr schmal (320 px): Spalte für die Rakete und Ränder etwas kleiner, damit die Antworten Platz haben */
+        @media (max-width: 359px) {
+            .rocket-game-grid { grid-template-columns: 64px minmax(0, 1fr); gap: 8px; }
+            .rocket-screen-bg { padding-left: 10px; padding-right: 10px; }
+            .rocket-question-area { padding: 10px; }
+        }
+        /* die Antwortspalte darf schmaler werden als ihr längstes Wort – sonst lief sie bei 320 px rechts aus der Karte */
+        .rocket-question-area { min-width: 0; }
+        .rocket-answer-btn { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
         .rocket-track {
             position: relative; height: 480px;
             background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
@@ -8147,9 +8156,17 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.51.0';
+        const APP_VERSION = '2.51.1';
 
         const changelogEntries = [
+            {
+                version: '2.51.1',
+                date: '25.11.2026',
+                items: [
+                    '<b>Rakete:</b> Auf ganz schmalen Handys passen die Antworten jetzt in die Karte.',
+                    'Der 🎯-Knopf (Knackpunkte) verschwindet wieder, wenn du ein Latein-Kapitel verlässt.'
+                ]
+            },
             {
                 version: '2.51.0',
                 date: '25.11.2026',
@@ -11086,6 +11103,7 @@
         }
 
         function backToLanguage() {
+            currentLatinChapterKey = '';   // kein Kapitel mehr gewählt – sonst bliebe der 🎯-Knopf (Knackpunkte) stehen
             hideAllScreens();
             document.getElementById('languageSelection').style.display = 'block';
             hideAprilDarkToggle();
@@ -11093,6 +11111,7 @@
         }
 
         function backToLatinChapters() {
+            currentLatinChapterKey = '';   // wie oben: in der Kapitelauswahl gibt es keine Knackpunkte
             hideAllScreens();
             document.getElementById('latinChapterSelection').style.display = 'block';
             hideAprilDarkToggle();
