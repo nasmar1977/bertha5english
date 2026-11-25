@@ -393,7 +393,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.53.0
+**Version:** 2.54.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -455,6 +455,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.54.0 (25.11.2026)
+- **Zurück zum Verb, Stufe „Mit Bestimmung“** (`S.cfg.gstufe`, Standard `best`; „Nur das Verb“ wie bisher): Präsens- und
+  Perfektformen gemischt (nie eine Person, in der beide gleich aussehen). Das Kind wählt Verb, Person (Klicktabelle
+  Sg/Pl × 1.–3. Person), Zeit (Präsens/Perfekt) und eine von vier Übersetzungen (zwei Personen × zwei Zeiten, damit weder
+  Pronomen noch Zeit allein verraten); `grundBestimmen` prüft alles zusammen. Deutsche Formen in `DE_FORM` (123 Verben,
+  ohne accidere – „geschehen“ nur in der 3. Person), `deForm(v, z, p)`. Verben mit derselben Form (volō: velle/volāre)
+  werden nicht zusammen angeboten; unterscheidet nur der Längenstrich Präsens und Perfekt, sagt das Feedback es dazu.
+  Zwei Prüfer: deutsche Formen (alle 1476 gegengelesen, drei Bedeutungen näher am Buch) und Verhalten (220 Aufgaben).
+- **Verbliste unter der Übungsauswahl** (`uebListe`): alle Verben der aktuellen Auswahl, Infinitiv (Übersetzung per
+  Hover bzw. Antippen) und 1. Person Perfekt in Bausteinen (`bauPf`); wechselt mit jeder Auswahl.
+- **Hover-Listen im Bauplan** (`verbPop`, `verbTabPop`): über jeder Verbzahl der Tabelle „Sieben Tabellen“ und jedem
+  Feld der Faustregel-Balken „3 × Reduplikation:“ mit Verb – Perfekt; über den Konjugations-Überschriften eine Tabelle
+  Verb · Übersetzung · sechs Perfektformen. Lage wird beim Öffnen berechnet (`vpopLage`: oben oder unten, nie unter der
+  Kopfleiste, nie seitlich aus dem Bild, sonst scrollbar); am Tablet per Antippen. `.balken` ohne `overflow:hidden`.
+  PDF neu erzeugt (im Druck keine Listen).
 
 ### Version 2.53.0 (25.11.2026)
 - **Perfekt-Baukasten, Stationen 4 und 5:** Sprungreiter „Weg 1 … Weg 6“ oben in jeder Karte (`wegReiter`, springt zur

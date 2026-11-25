@@ -115,6 +115,24 @@ a.tile{text-decoration:none}
 .opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:700}
 .opt.ok{border-color:var(--ok);background:var(--ok-soft)}
 .opt.no{border-color:var(--bad);background:var(--bad-soft)}
+/* Zurück zum Verb mit Bestimmung: vier Teile untereinander, Person als Klicktabelle */
+.bst{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+.bst-l{font-weight:700;margin-top:6px}
+.bst-tab{border-collapse:separate;border-spacing:6px;margin:0 auto}
+.bst-tab th{font-weight:600;color:var(--muted);font-size:.9rem;padding:0 6px;text-align:center}
+.bst-tab tbody th{text-align:right}
+.bst-tab .opt{width:100%;min-width:clamp(78px,24vw,110px);text-align:center;border-radius:10px;padding-left:8px;padding-right:8px}
+.bst-zeit .opt{min-width:120px}
+/* Verbliste unter der Übungsauswahl */
+.uliste-kopf{margin-bottom:8px}
+.uliste{list-style:none;margin:0;padding:0;columns:2 340px;column-gap:28px}
+.uliste li{break-inside:avoid;display:grid;grid-template-columns:minmax(7.5em,1fr) auto;align-items:center;gap:2px 10px;padding:4px 0;border-bottom:1px dotted var(--line)}
+.uliste .inf{font:inherit;font-weight:700;text-align:left;background:none;border:0;padding:4px 0;color:var(--ink);cursor:help;min-height:36px}
+.uliste .inf:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.uliste .bau{justify-self:start}
+.uliste .de{display:none;grid-column:1 / -1}
+.uliste li.zeig .de{display:block}
+@media print{.uliste{display:none}}
 .opt.fehlt{border:2px dashed var(--ok)}
 .opt:disabled{cursor:default;opacity:1}
 .opt.blass:disabled{opacity:.5}
@@ -192,8 +210,20 @@ a.tile{text-decoration:none}
 :root[data-theme="dark"] .wtag{color:#0f1518}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .wtag{color:#0f1518}}
 .w-v{background:var(--wv)}.w-u{background:var(--wu)}.w-s{background:var(--ws)}.w-d{background:var(--wd)}.w-r{background:var(--wr)}.w-o{background:var(--wo)}.w-x{background:var(--wx)}
-.balken{display:flex;height:28px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
-.balken i{display:grid;place-items:center;font-style:normal;font-size:.78rem;font-weight:700;color:#fff;min-width:0;overflow:hidden}
+.balken{display:flex;height:28px;border-radius:6px;border:1px solid var(--line)}   /* ohne overflow:hidden – sonst schnitte er die Hover-Liste ab */
+.balken i{display:grid;place-items:center;font-style:normal;font-size:.78rem;font-weight:700;color:#fff;min-width:0}
+.balken i:first-child{border-radius:5px 0 0 5px}.balken i:last-child{border-radius:0 5px 5px 0}.balken i:only-child{border-radius:5px}
+/* Hover-Liste der Verben über einer Zahl */
+.vpop{position:relative;cursor:help;outline:none}
+.vpop:focus-visible{text-decoration:underline}
+.vpop-l{display:none;position:fixed;z-index:30;left:0;top:0;max-width:calc(100vw - 16px);background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.25);white-space:nowrap;font-size:.85rem;font-weight:400;line-height:1.45;text-align:left;max-height:60vh;overflow:auto}
+.vpop-l.lang{columns:2;column-gap:18px}
+.vpop-tab table{border-collapse:collapse;margin-top:6px;font-size:.8rem}
+.vpop-tab th{text-align:left;color:var(--muted);font-weight:600;padding:2px 8px;border-bottom:1px solid var(--line)}
+.vpop-tab td{padding:2px 8px;border-bottom:1px dotted var(--line)}
+@media (max-width:420px){.vpop-l.lang{columns:1}}
+.vpop:hover .vpop-l,.vpop:focus .vpop-l{display:block}
+@media print{.vpop-l{display:none!important}}
 :root[data-theme="dark"] .balken i{color:#0f1518}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .balken i{color:#0f1518}}
 .krow{display:grid;gap:4px}
@@ -658,6 +688,142 @@ const ARBEIT = {
     'vincere': 'siegen, besiegen, übertreffen'
   }
 };
+// Deutsche Formen für „Zurück zum Verb“ mit Bestimmung: je Verb eine Bedeutung, Präsens ich|du|er|wir|ihr|sie,
+// Hilfsverb des Perfekts (h = haben, s = sein), Partizip, optional r = reflexiv (ich bemühe mich, ich habe mich bemüht).
+// accidere fehlt mit Absicht: „geschehen“ gibt es nur in der 3. Person.
+const DE_FORM = {
+  'ostendere': 'zeige|zeigst|zeigt|zeigen|zeigt|zeigen|h|gezeigt',
+  'accendere': 'zünde an|zündest an|zündet an|zünden an|zündet an|zünden an|h|angezündet',
+  'cōnstituere': 'beschließe|beschließt|beschließt|beschließen|beschließt|beschließen|h|beschlossen',
+  'animadvertere': 'bemerke|bemerkst|bemerkt|bemerken|bemerkt|bemerken|h|bemerkt',
+  'contendere': 'eile|eilst|eilt|eilen|eilt|eilen|s|geeilt',
+  'respondēre': 'antworte|antwortest|antwortet|antworten|antwortet|antworten|h|geantwortet',
+  'cōgitāre': 'denke|denkst|denkt|denken|denkt|denken|h|gedacht',
+  'clāmāre': 'schreie|schreist|schreit|schreien|schreit|schreien|h|geschrien',
+  'dubitāre': 'zögere|zögerst|zögert|zögern|zögert|zögern|h|gezögert',
+  'spectāre': 'betrachte|betrachtest|betrachtet|betrachten|betrachtet|betrachten|h|betrachtet',
+  'ōrāre': 'bitte|bittest|bittet|bitten|bittet|bitten|h|gebeten',
+  'exspectāre': 'erwarte|erwartest|erwartet|erwarten|erwartet|erwarten|h|erwartet',
+  'properāre': 'eile|eilst|eilt|eilen|eilt|eilen|s|geeilt',
+  'intrāre': 'betrete|betrittst|betritt|betreten|betretet|betreten|h|betreten',
+  'servāre': 'rette|rettest|rettet|retten|rettet|retten|h|gerettet',
+  'pōstulāre': 'fordere|forderst|fordert|fordern|fordert|fordern|h|gefordert',
+  'violāre': 'verletze|verletzt|verletzt|verletzen|verletzt|verletzen|h|verletzt',
+  'rogāre': 'frage|fragst|fragt|fragen|fragt|fragen|h|gefragt',
+  'dēsīderāre': 'vermisse|vermisst|vermisst|vermissen|vermisst|vermissen|h|vermisst',
+  'necāre': 'töte|tötest|tötet|töten|tötet|töten|h|getötet',
+  'narrāre': 'erzähle|erzählst|erzählt|erzählen|erzählt|erzählen|h|erzählt',
+  'parāre': 'bereite vor|bereitest vor|bereitet vor|bereiten vor|bereitet vor|bereiten vor|h|vorbereitet',
+  'indicāre': 'melde|meldest|meldet|melden|meldet|melden|h|gemeldet',
+  'negāre': 'leugne|leugnest|leugnet|leugnen|leugnet|leugnen|h|geleugnet',
+  'probāre': 'prüfe|prüfst|prüft|prüfen|prüft|prüfen|h|geprüft',
+  'vocāre': 'rufe|rufst|ruft|rufen|ruft|rufen|h|gerufen',
+  'superāre': 'besiege|besiegst|besiegt|besiegen|besiegt|besiegen|h|besiegt',
+  'temptāre': 'versuche|versuchst|versucht|versuchen|versucht|versuchen|h|versucht',
+  'mandāre': 'übergebe|übergibst|übergibt|übergeben|übergebt|übergeben|h|übergeben',
+  'amāre': 'liebe|liebst|liebt|lieben|liebt|lieben|h|geliebt',
+  'appellāre': 'rufe an|rufst an|ruft an|rufen an|ruft an|rufen an|h|angerufen',
+  'agitāre': 'treibe|treibst|treibt|treiben|treibt|treiben|h|getrieben',
+  'vītāre': 'meide|meidest|meidet|meiden|meidet|meiden|h|gemieden',
+  'mūtāre': 'ändere|änderst|ändert|ändern|ändert|ändern|h|geändert',
+  'dōnāre': 'schenke|schenkst|schenkt|schenken|schenkt|schenken|h|geschenkt',
+  'laudāre': 'lobe|lobst|lobt|loben|lobt|loben|h|gelobt',
+  'volāre': 'fliege|fliegst|fliegt|fliegen|fliegt|fliegen|s|geflogen',
+  'iactāre': 'werfe|wirfst|wirft|werfen|werft|werfen|h|geworfen',
+  'putāre': 'glaube|glaubst|glaubt|glauben|glaubt|glauben|h|geglaubt',
+  'pūgnāre': 'kämpfe|kämpfst|kämpft|kämpfen|kämpft|kämpfen|h|gekämpft',
+  'imperāre': 'befehle|befiehlst|befiehlt|befehlen|befehlt|befehlen|h|befohlen',
+  'audīre': 'höre|hörst|hört|hören|hört|hören|h|gehört',
+  'scīre': 'weiß|weißt|weiß|wissen|wisst|wissen|h|gewusst',
+  'nēscīre': 'weiß nicht|weißt nicht|weiß nicht|wissen nicht|wisst nicht|wissen nicht|h|nicht gewusst',
+  'flēre': 'weine|weinst|weint|weinen|weint|weinen|h|geweint',
+  'petere': 'verlange|verlangst|verlangt|verlangen|verlangt|verlangen|h|verlangt',
+  'cupere': 'wünsche|wünschst|wünscht|wünschen|wünscht|wünschen|h|gewünscht',
+  'repetere': 'wiederhole|wiederholst|wiederholt|wiederholen|wiederholt|wiederholen|h|wiederholt',
+  'quaerere': 'suche|suchst|sucht|suchen|sucht|suchen|h|gesucht',
+  'cōgnōscere': 'erkenne|erkennst|erkennt|erkennen|erkennt|erkennen|h|erkannt',
+  'dēbēre': 'muss|musst|muss|müssen|müsst|müssen|h|gemusst',
+  'tenēre': 'halte|hältst|hält|halten|haltet|halten|h|gehalten',
+  'valēre': 'bin gesund|bist gesund|ist gesund|sind gesund|seid gesund|sind gesund|s|gesund gewesen',
+  'sustinēre': 'ertrage|erträgst|erträgt|ertragen|ertragt|ertragen|h|ertragen',
+  'prohibēre': 'hindere|hinderst|hindert|hindern|hindert|hindern|h|gehindert',
+  'placēre': 'gefalle|gefällst|gefällt|gefallen|gefallt|gefallen|h|gefallen',
+  'pārēre': 'gehorche|gehorchst|gehorcht|gehorchen|gehorcht|gehorchen|h|gehorcht',
+  'timēre': 'fürchte|fürchtest|fürchtet|fürchten|fürchtet|fürchten|h|gefürchtet',
+  'terrēre': 'erschrecke|erschreckst|erschreckt|erschrecken|erschreckt|erschrecken|h|erschreckt',
+  'habēre': 'habe|hast|hat|haben|habt|haben|h|gehabt',
+  'docēre': 'lehre|lehrst|lehrt|lehren|lehrt|lehren|h|gelehrt',
+  'tacēre': 'schweige|schweigst|schweigt|schweigen|schweigt|schweigen|h|geschwiegen',
+  'studēre': 'bemühe|bemühst|bemüht|bemühen|bemüht|bemühen|h|bemüht|r',
+  'iacēre': 'liege|liegst|liegt|liegen|liegt|liegen|h|gelegen',
+  'monēre': 'ermahne|ermahnst|ermahnt|ermahnen|ermahnt|ermahnen|h|ermahnt',
+  'aperīre': 'öffne|öffnest|öffnet|öffnen|öffnet|öffnen|h|geöffnet',
+  'colere': 'verehre|verehrst|verehrt|verehren|verehrt|verehren|h|verehrt',
+  'ēripere': 'entreiße|entreißt|entreißt|entreißen|entreißt|entreißen|h|entrissen',
+  'dūcere': 'führe|führst|führt|führen|führt|führen|h|geführt',
+  'dīcere': 'sage|sagst|sagt|sagen|sagt|sagen|h|gesagt',
+  'rīdēre': 'lache|lachst|lacht|lachen|lacht|lachen|h|gelacht',
+  'ārdēre': 'brenne|brennst|brennt|brennen|brennt|brennen|h|gebrannt',
+  'accēdere': 'nähere|näherst|nähert|nähern|nähert|nähern|h|genähert|r',
+  'discēdere': 'gehe weg|gehst weg|geht weg|gehen weg|geht weg|gehen weg|s|weggegangen',
+  'mittere': 'schicke|schickst|schickt|schicken|schickt|schicken|h|geschickt',
+  'committere': 'vertraue an|vertraust an|vertraut an|vertrauen an|vertraut an|vertrauen an|h|anvertraut',
+  'manēre': 'bleibe|bleibst|bleibt|bleiben|bleibt|bleiben|s|geblieben',
+  'sentīre': 'fühle|fühlst|fühlt|fühlen|fühlt|fühlen|h|gefühlt',
+  'vīvere': 'lebe|lebst|lebt|leben|lebt|leben|h|gelebt',
+  'scrībere': 'schreibe|schreibst|schreibt|schreiben|schreibt|schreiben|h|geschrieben',
+  'iubēre': 'ordne an|ordnest an|ordnet an|ordnen an|ordnet an|ordnen an|h|angeordnet',
+  'vidēre': 'sehe|siehst|sieht|sehen|seht|sehen|h|gesehen',
+  'venīre': 'komme|kommst|kommt|kommen|kommt|kommen|s|gekommen',
+  'sedēre': 'sitze|sitzt|sitzt|sitzen|sitzt|sitzen|h|gesessen',
+  'prōvidēre': 'sorge vor|sorgst vor|sorgt vor|sorgen vor|sorgt vor|sorgen vor|h|vorgesorgt',
+  'cavēre': 'hüte|hütest|hütet|hüten|hütet|hüten|h|gehütet|r',
+  'movēre': 'bewege|bewegst|bewegt|bewegen|bewegt|bewegen|h|bewegt',
+  'circumvenīre': 'umzingle|umzingelst|umzingelt|umzingeln|umzingelt|umzingeln|h|umzingelt',
+  'legere': 'lese|liest|liest|lesen|lest|lesen|h|gelesen',
+  'invenīre': 'finde|findest|findet|finden|findet|finden|h|gefunden',
+  'fugere': 'fliehe|fliehst|flieht|fliehen|flieht|fliehen|s|geflohen',
+  'convenīre': 'komme zusammen|kommst zusammen|kommt zusammen|kommen zusammen|kommt zusammen|kommen zusammen|s|zusammengekommen',
+  'emere': 'kaufe|kaufst|kauft|kaufen|kauft|kaufen|h|gekauft',
+  'capere': 'nehme|nimmst|nimmt|nehmen|nehmt|nehmen|h|genommen',
+  'facere': 'mache|machst|macht|machen|macht|machen|h|gemacht',
+  'accipere': 'erhalte|erhältst|erhält|erhalten|erhaltet|erhalten|h|erhalten',
+  'interficere': 'töte|tötest|tötet|töten|tötet|töten|h|getötet',
+  'vincere': 'siege|siegst|siegt|siegen|siegt|siegen|h|gesiegt',
+  'relinquere': 'verlasse|verlässt|verlässt|verlassen|verlasst|verlassen|h|verlassen',
+  'cōgere': 'zwinge|zwingst|zwingt|zwingen|zwingt|zwingen|h|gezwungen',
+  'cōnsīdere': 'setze|setzt|setzt|setzen|setzt|setzen|h|gesetzt|r',
+  'currere': 'laufe|läufst|läuft|laufen|lauft|laufen|s|gelaufen',
+  'dare': 'gebe|gibst|gibt|geben|gebt|geben|h|gegeben',
+  'stāre': 'stehe|stehst|steht|stehen|steht|stehen|h|gestanden',
+  'cadere': 'falle|fällst|fällt|fallen|fallt|fallen|s|gefallen',
+  'parcere': 'schone|schonst|schont|schonen|schont|schonen|h|geschont',
+  'tangere': 'berühre|berührst|berührt|berühren|berührt|berühren|h|berührt',
+  'vēndere': 'verkaufe|verkaufst|verkauft|verkaufen|verkauft|verkaufen|h|verkauft',
+  'perdere': 'verliere|verlierst|verliert|verlieren|verliert|verlieren|h|verloren',
+  'crēdere': 'glaube|glaubst|glaubt|glauben|glaubt|glauben|h|geglaubt',
+  'resistere': 'leiste Widerstand|leistest Widerstand|leistet Widerstand|leisten Widerstand|leistet Widerstand|leisten Widerstand|h|Widerstand geleistet',
+  'cōnsistere': 'bleibe stehen|bleibst stehen|bleibt stehen|bleiben stehen|bleibt stehen|bleiben stehen|s|stehen geblieben',
+  'occurrere': 'begegne|begegnest|begegnet|begegnen|begegnet|begegnen|s|begegnet',
+  'attingere': 'berühre|berührst|berührt|berühren|berührt|berühren|h|berührt',
+  'reperīre': 'finde|findest|findet|finden|findet|finden|h|gefunden',
+  'īnstāre': 'stehe bevor|stehst bevor|steht bevor|stehen bevor|steht bevor|stehen bevor|h|bevorgestanden',
+  'esse': 'bin|bist|ist|sind|seid|sind|s|gewesen',
+  'adesse': 'bin da|bist da|ist da|sind da|seid da|sind da|s|da gewesen',
+  'deesse': 'fehle|fehlst|fehlt|fehlen|fehlt|fehlen|h|gefehlt',
+  'abesse': 'bin abwesend|bist abwesend|ist abwesend|sind abwesend|seid abwesend|sind abwesend|s|abwesend gewesen',
+  'posse': 'kann|kannst|kann|können|könnt|können|h|gekonnt',
+  'velle': 'will|willst|will|wollen|wollt|wollen|h|gewollt',
+  'nōlle': 'will nicht|willst nicht|will nicht|wollen nicht|wollt nicht|wollen nicht|h|nicht gewollt'
+};
+const DE_PRON = ['ich', 'du', 'er', 'wir', 'ihr', 'sie'], DE_REFL = ['mich', 'dich', 'sich', 'uns', 'euch', 'sich'];
+const DE_HABEN = ['habe', 'hast', 'hat', 'haben', 'habt', 'haben'], DE_SEIN = ['bin', 'bist', 'ist', 'sind', 'seid', 'sind'];
+function deForm(v, z, p) {
+  const d = DE_FORM[v.inf]; if (!d) return '';
+  const f = d.split('|'), refl = f[8] === 'r' ? ' ' + DE_REFL[p] : '';
+  if (z === 'pr') { const t = f[p].split(' '); return refl && t.length > 1 ? `${DE_PRON[p]} ${t[0]}${refl} ${t.slice(1).join(' ')}` : `${DE_PRON[p]} ${f[p]}${refl}`; }
+  return `${DE_PRON[p]} ${(f[6] === 's' ? DE_SEIN : DE_HABEN)[p]}${refl} ${f[7]}`;
+}
 const VERBEN = ROH.map(r => {
   const v = { inf: r[0], pr: r[1], z: r[2], k: r[3], g: r[4], t: r[4][0], l: r[5], de: r[6], h: r[7], n: r[8] || '' };
   v.ps = v.z.replace(/[\[\]+\-]/g, '');                      // Perfektstamm: rogāv
@@ -875,7 +1041,7 @@ function laden() {
     neu.chk[k] = { n: isObj(c) && ganz(c.n, 0, 99) ? c.n : 0, due: isObj(c) && TAG.test(c.due) ? c.due : heute() };
   }
   for (const [k, v] of Object.entries(o('ok'))) if (ganz(v, 0, 3)) neu.ok[k] = v;
-  for (const k of ['weg', 'umf']) if (typeof o('cfg')[k] === 'string') neu.cfg[k] = o('cfg')[k];
+  for (const k of ['weg', 'umf', 'gstufe']) if (typeof o('cfg')[k] === 'string') neu.cfg[k] = o('cfg')[k];
   for (const [k, v] of Object.entries(o('best'))) if (isObj(v) && ganz(v.n, 0, 1e6) && ganz(v.b, 0, 100)) neu.best[k] = { n: v.n, b: v.b };
   return neu;
 }
@@ -1190,14 +1356,45 @@ function s5Strich() {
   return waehle(alle, [[x => x.zw && x.c === 1, 1], [x => x.zw && x.c === 0, 1], [x => !x.zw && x.c === 0, rnd(1, 3)], [x => !x.zw && x.c === 1, rnd(1, 3)]]);
 }
 
+// Hover-Liste über einer Zahl: „3 × Reduplikation:“, darunter jedes Verb mit Perfekt. Am Tablet öffnet ein Tipp (Fokus).
+// rechts: Liste rechtsbündig, damit sie am rechten Rand nicht aus dem Bild ragt.
+function verbPop(inhalt, vs, kopf) {
+  const liste = vs.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de')).map(v => `<span class="lat">${v.inf}</span> – <span class="lat">${v.pf}</span>`).join('<br>');
+  return `<span class="vpop" tabindex="0" onclick="">${inhalt}<span class="vpop-l${vs.length > 16 ? ' lang' : ''}" role="tooltip"><b>${kopf}:</b><br>${liste}</span></span>`;
+}
+// Dasselbe als Tabelle (über den Überschriften der Faustregel): Verb · Übersetzung · alle sechs Perfektformen
+function verbTabPop(inhalt, vs, kopf) {
+  const reihen = vs.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de')).map(v => `<tr><td class="lat"><b>${v.inf}</b></td><td>${esc(v.de)}</td>${perf(v).map(f => `<td class="lat">${f}</td>`).join('')}</tr>`).join('');
+  return `<span class="vpop" tabindex="0" onclick="">${inhalt}<span class="vpop-l vpop-tab" role="tooltip"><b>${kopf}</b>
+    <table><thead><tr><th>Verb</th><th>Übersetzung</th><th>1. Sg.</th><th>2. Sg.</th><th>3. Sg.</th><th>1. Pl.</th><th>2. Pl.</th><th>3. Pl.</th></tr></thead><tbody>${reihen}</tbody></table></span></span>`;
+}
+// Lage beim Öffnen berechnen: über der Zahl, sonst darunter; nie unter der klebenden Leiste, nie seitlich aus dem Bild;
+// passt sie weder oben noch unten ganz hin, nimmt sie die größere Seite und rollt in sich.
+function vpopLage(e) {
+  const v = e.target.closest && e.target.closest('.vpop'); if (!v) return;
+  const l = v.querySelector('.vpop-l'), er = v.getBoundingClientRect(), leiste = document.querySelector('.bar');
+  const top0 = (leiste ? Math.max(0, leiste.getBoundingClientRect().bottom) : 0) + 8, bottom0 = innerHeight - 8;
+  Object.assign(l.style, { maxHeight: '', left: '0px', top: '0px' });
+  const w = l.offsetWidth, h = l.offsetHeight, oben = er.top - 8 - top0, unten = bottom0 - er.bottom - 8;
+  let y;
+  if (h <= oben) y = er.top - 8 - h;
+  else if (h <= unten) y = er.bottom + 8;
+  else if (oben > unten) { l.style.maxHeight = oben + 'px'; y = top0; }
+  else { l.style.maxHeight = unten + 'px'; y = er.bottom + 8; }
+  l.style.left = Math.max(8, Math.min(er.left + er.width / 2 - w / 2, innerWidth - 8 - w)) + 'px';
+  l.style.top = y + 'px';
+}
+document.addEventListener('mouseover', vpopLage);
+document.addEventListener('focusin', vpopLage);
 // ---------- Station 6: Faustregel, Regelbrecher, Kopfkissen ----------
 function faustChart() {
   return [['a', 'a-Konjugation', 'v'], ['e', 'e-Konjugation', 'u'], ['i', 'i-Konjugation', 'v'], ['k', 'konsonantische Konjugation', null]].map(([k, name, regel]) => {
     const vs = VERBEN.filter(v => k === 'k' ? (v.k === 'k' || v.k === 'ki') : v.k === k), seg = WEGE6.map(t => [t, vs.filter(v => v.t === t).length]).filter(x => x[1]);
     // Die Zahlen stehen auch als Text da: Im Schwarz-Weiß-Druck sind die Farben der Balken nicht zu unterscheiden.
     const rest = seg.filter(x => x[0] !== regel).map(x => `${x[1]} × ${WEG[x[0]].k}`).join(', ');
-    return `<div class="krow"><div><b>${name}</b> <span class="small muted">· ${regel ? `Faustregel: ${WEG[regel].k} – stimmt bei ${vs.filter(v => v.t === regel).length} von ${vs.length} (sonst: ${rest})` : `keine Faustregel – ${vs.length} Verben: ${rest}`}</span></div>
-      <div class="balken" role="img" aria-label="${seg.map(x => x[1] + ' ' + WEG[x[0]].k).join(', ')}">${seg.map(x => `<i class="w-${x[0]}" style="flex:${x[1]}">${x[1]}</i>`).join('')}</div></div>`;
+    return `<div class="krow"><div><b>${verbTabPop(name, vs, `${name}: ${vs.length} Verben, Perfekt in allen Personen`)}</b> <span class="small muted">· ${regel ? `Faustregel: ${WEG[regel].k} – stimmt bei ${vs.filter(v => v.t === regel).length} von ${vs.length} (sonst: ${rest})` : `keine Faustregel – ${vs.length} Verben: ${rest}`}</span></div>
+      <div class="balken" role="img" aria-label="${seg.map(x => x[1] + ' ' + WEG[x[0]].k).join(', ')}">${(() => { return seg.map(x => {
+        return `<i class="w-${x[0]}" style="flex:${x[1]}">${verbPop(x[1], vs.filter(v => v.t === x[0]), `${x[1]} × ${WEG[x[0]].k}`)}</i>`; }).join(''); })()}</div></div>`;
   }).join('') + `<div class="legende">${WEGE6.map(wtag).join(' ')}</div>`;
 }
 function s6Regel() {
@@ -1503,7 +1700,8 @@ const MODI = {
   bestimm: { name: 'Bestimmen', icon: '🔍', hook: 'Welche Zeit, welche Person? Präsens, Imperfekt und Perfekt gemischt.', q: 'Bestimme die Form: <b>Zeit</b> und <b>Person</b>.' },
   endung: { name: 'Endungen-Blitz', icon: '⚡', hook: 'Die sechs Perfekt-Endungen im Schlaf: Wer tut es? Welche Endung passt?', q: '' },
   weg: { name: 'Welcher Weg?', icon: '🧭', hook: 'Ohne Änderung, v, u, s, Dehnung oder Reduplikation?', q: 'Welchen <b>Weg</b> ist dieses Verb zum Perfektstamm gegangen?' },
-  grund: { name: 'Zurück zum Verb', icon: '↩️', hook: 'Von welchem Verb kommt die Perfektform? Das brauchst du beim Übersetzen.', q: 'Von welchem <b>Verb</b> kommt diese Perfektform?' }
+  grund: { name: 'Zurück zum Verb', icon: '↩️', hook: 'Von welchem Verb kommt die Form? Mit Bestimmung auch Person, Zeit und Übersetzung.', q: 'Von welchem <b>Verb</b> kommt diese Perfektform?',
+    qBest: 'Von welchem <b>Verb</b> kommt diese Form? <b>Bestimme</b> sie und wähle die <b>Übersetzung</b>.' }
 };
 const MKEYS = Object.keys(MODI);
 let UM = 'stamm';
@@ -1512,11 +1710,13 @@ let UM = 'stamm';
 // posse, velle und nōlle sind dabei: Ihr Weg ist das u-Perfekt (v.weg), auch wenn sie in Tabelle 7 stehen.
 const WEG_AUS = ['accidere', 'occurrere', 'attingere', 'cōnsīdere', 'cōgere', 'īnstāre', 'resistere', 'cōnsistere', 'quaerere'];
 // Umfang: a = Stoff der Arbeit, also die Verben vom Wortschatz-Blatt (Voreinstellung) · 1, 2, 3 = bis zu dieser Lernstufe
-const cfg = () => ({ weg: TAB.includes(S.cfg.weg) ? S.cfg.weg : 'alle', umf: ['a', '1', '2', '3'].includes(S.cfg.umf) ? S.cfg.umf : 'a' });
+const cfg = () => ({ weg: TAB.includes(S.cfg.weg) ? S.cfg.weg : 'alle', umf: ['a', '1', '2', '3'].includes(S.cfg.umf) ? S.cfg.umf : 'a',
+  gstufe: ['verb', 'best'].includes(S.cfg.gstufe) ? S.cfg.gstufe : 'best' });   // Zurück zum Verb: nur das Verb oder mit Bestimmung
 const imUmfang = (v, umf) => umf === 'a' ? v.arbeit : v.prio <= +umf;
 function poolFuer(mode) {
   const c = cfg(), weg = mode === 'weg' ? 'alle' : c.weg;
   const p = VERBEN.filter(v => (weg === 'alle' || v.t === weg) && imUmfang(v, c.umf));
+  if (mode === 'grund' && c.gstufe === 'best') return p.filter(v => DE_FORM[v.inf]);   // nur Verben mit deutschen Formen
   return mode === 'weg' ? p.filter(v => v.weg !== 'x' && !WEG_AUS.includes(v.inf)) : p;
 }
 function lev(a, b) {
@@ -1548,11 +1748,27 @@ function rundeBauen(mode) {
       it.art = i % 2 ? 'wer' : 'end';
       for (let k = 0; k < 20; k++) { it.p = it.art === 'wer' ? rnd(0, 5) : rnd(0, 6); if (!items.some(x => x.v === v && x.art === it.art && x.p === it.p)) break; }
     }
-    if (mode === 'grund') {
+    if (mode === 'grund' && c.gstufe === 'best') {
+      // Präsens oder Perfekt, nie eine Person, in der beide gleich aussehen (animadvertit) – sonst wäre die Zeit nicht zu bestimmen
+      const pr = praes(v), pf = perf(v), frei = [0, 1, 2, 3, 4, 5].filter(q => pr[q] !== pf[q]);
+      it.best = true; it.p = pick(frei.length ? frei : [0, 1, 2, 3, 4, 5]); it.z = Math.random() < .5 ? 'pr' : 'pf';
+      it.f = (it.z === 'pr' ? pr : pf)[it.p];
+      // Übersetzungen: zwei Personen × zwei Zeiten – jede Person und jede Zeit kommt genau zweimal vor,
+      // so verrät weder das Pronomen noch die Zeit allein die richtige Antwort
+      const gegen = it.z === 'pr' ? 'pf' : 'pr', q = pick([0, 1, 2, 3, 4, 5].filter(x => x !== it.p));
+      const wahl = [[it.p, it.z], [it.p, gegen], [q, it.z], [q, gegen]];
+      it.u = shuffle(wahl.map(([q, z]) => ({ p: q, z, t: deForm(v, z, q) })));
+    } else if (mode === 'grund') {
       it.p = rnd(0, 5); it.f = perf(v)[it.p];
       // falsche Antworten: Verben mit ähnlichem Perfektstamm, bevorzugt mit demselben Anfangsbuchstaben – sonst verrät schon der erste Buchstabe das Verb
       const a0 = ohneM(v.inf)[0], fern = x => lev(ohneM(x.ps), ohneM(v.ps)) + (ohneM(x.inf)[0] === a0 ? 0 : 3);
       const nah = shuffle(VERBEN.filter(x => x !== v && imUmfang(x, c.umf))).sort((x, y) => fern(x) - fern(y)).slice(0, 5);
+      it.o = shuffle([v].concat(shuffle(nah).slice(0, 3))).map(x => x.inf);
+    }
+    if (it.best) {   // dieselben Verb-Vorschläge wie in der einfachen Stufe – aber keins, das dieselbe Form hat (volō: velle und volāre)
+      const a0 = ohneM(v.inf)[0], fern = x => lev(ohneM(x.ps), ohneM(v.ps)) + (ohneM(x.inf)[0] === a0 ? 0 : 3);
+      const gleich = x => praes(x).includes(it.f) || perf(x).includes(it.f);
+      const nah = shuffle(VERBEN.filter(x => x !== v && imUmfang(x, c.umf) && !gleich(x))).sort((x, y) => fern(x) - fern(y)).slice(0, 5);
       it.o = shuffle([v].concat(shuffle(nah).slice(0, 3))).map(x => x.inf);
     }
     items.push(it);
@@ -1637,10 +1853,41 @@ const AUFGABE = {
   },
   grund(auf, it, fertig) {
     const v = it.v;
+    if (it.best) return grundBestimmen(auf, it, fertig);
     auf.innerHTML = `<div class="gross">${it.f}</div><div class="opts mitte">${it.o.map(inf => `<button type="button" class="opt lat" data-v="${inf}">${inf}</button>`).join('')}</div>`;
     auf.querySelectorAll('.opt').forEach(b => b.onclick = () => { markiere(auf, 'v', v.inf, b.dataset.v); fertig(b.dataset.v === v.inf, `${L(it.f)} ist die ${PNAME[it.p]} Perfekt von ${erkl(v)} <span class="muted">– ${esc(v.de)}</span>`); });
   }
 };
+// Zurück zum Verb, Stufe „Mit Bestimmung“: Verb, Person (Klicktabelle), Zeit (Schalter), Übersetzung – dann einmal prüfen
+function grundBestimmen(auf, it, fertig) {
+  const v = it.v, wahl = { v: null, p: null, z: null, u: null };
+  const zelle = q => `<button type="button" class="opt" data-p="${q}" aria-label="${PNAME[q]}">${PERS[q].replace(' (Plural)', '')}</button>`;
+  auf.innerHTML = `<div class="gross">${it.f}</div>
+    <div class="bst">
+      <div class="bst-l">1 · Von welchem Verb?</div><div class="opts mitte">${it.o.map(inf => `<button type="button" class="opt lat" data-v="${inf}">${inf}</button>`).join('')}</div>
+      <div class="bst-l">2 · Welche Person?</div>
+      <table class="bst-tab"><thead><tr><th></th><th>Singular</th><th>Plural</th></tr></thead><tbody>
+        ${[0, 1, 2].map(q => `<tr><th>${q + 1}. Person</th><td>${zelle(q)}</td><td>${zelle(q + 3)}</td></tr>`).join('')}</tbody></table>
+      <div class="bst-l">3 · Welche Zeit?</div><div class="opts mitte bst-zeit">${['pr', 'pf'].map(z => `<button type="button" class="opt" data-z="${z}">${ZEIT[z]}</button>`).join('')}</div>
+      <div class="bst-l">4 · Übersetzung</div><div class="opts liste">${it.u.map((x, i) => `<button type="button" class="opt" data-u="${i}">${esc(x.t)}</button>`).join('')}</div>
+      <div class="mitte" id="prrow"><button class="btn" id="pr" type="button" disabled>Prüfen</button></div>
+    </div>`;
+  const pr = auf.querySelector('#pr');
+  ['v', 'p', 'z', 'u'].forEach(k => auf.querySelectorAll(`.opt[data-${k}]`).forEach(b => b.onclick = () => {
+    wahl[k] = b.dataset[k];
+    auf.querySelectorAll(`.opt[data-${k}]`).forEach(x => x.classList.toggle('sel', x === b));
+    pr.disabled = Object.values(wahl).some(x => x === null);
+  }));
+  pr.onclick = () => {
+    const uRichtig = it.u.findIndex(x => x.p === it.p && x.z === it.z);
+    const ok = wahl.v === v.inf && +wahl.p === it.p && wahl.z === it.z && +wahl.u === uRichtig;
+    markiere(auf, 'v', v.inf, wahl.v); markiere(auf, 'p', it.p, wahl.p); markiere(auf, 'z', it.z, wahl.z); markiere(auf, 'u', uRichtig, wahl.u);
+    auf.querySelector('#prrow').remove();
+    const andere = (it.z === 'pr' ? perf(v) : praes(v))[it.p];   // venit / vēnit: nur der Strich unterscheidet
+    const strich = ohneM(andere) === ohneM(it.f) ? ` <b>Achte auf den Strich:</b> ${L(praes(v)[it.p])} ist Präsens, ${L(perf(v)[it.p])} ist Perfekt.` : '';
+    fertig(ok, `${L(it.f)}: <b>${PNAME[it.p]} ${ZEIT[it.z]}</b> von ${erkl(v)} – „${esc(deForm(v, it.z, it.p))}“. ${zeitGrund(v, it.z, it.p, it.f)}${strich}`);
+  };
+}
 function renderRunde() {
   const m = MODI[U.mode];
   if (U.fertig) {
@@ -1670,7 +1917,7 @@ function renderRunde() {
   const wo = it.blitz ? 'Zwischenfrage – weißt du es noch?' : it.wdh ? `Noch einmal: ${bisher.filter(x => x.wdh).length} von ${U.q.filter(x => x.wdh).length}` : `Aufgabe ${bisher.filter(x => !x.blitz && !x.wdh).length} von ${U.n}`;
   app.innerHTML = `<header class="top"><div class="eyebrow">Üben · ${m.name}</div><div class="progress"><span>${wo}</span></div>
       <div class="meter" aria-hidden="true"><i style="width:${Math.round(100 * U.i / U.q.length)}%"></i></div></header>
-    <section><div class="card">${it.blitz ? '<div id="auf" style="display:grid;gap:12px"></div>' : `${m.q ? `<div class="q">${m.q}</div>` : ''}<div id="auf" style="display:grid;gap:12px"></div><div class="fbx" aria-live="polite"></div>`}</div>
+    <section><div class="card">${it.blitz ? '<div id="auf" style="display:grid;gap:12px"></div>' : `${m.q ? `<div class="q">${it.best ? m.qBest : m.q}</div>` : ''}<div id="auf" style="display:grid;gap:12px"></div><div class="fbx" aria-live="polite"></div>`}</div>
       <div class="row"><button class="linkbtn" id="ab" type="button">Runde beenden</button></div></section>`;
   app.querySelector('#ab').onclick = () => { if (confirm('Runde wirklich beenden? Sie zählt dann nicht.')) { U = null; go('ueben'); } };
   const letzte = () => U.i + 1 >= U.q.length;
@@ -1697,16 +1944,30 @@ function renderUeben() {
     <section><div class="card">
       ${UM === 'weg' ? '<p class="small muted">In dieser Übung sind immer alle Wege gemischt – sonst wäre die Antwort ja klar.</p>' : `<div><b>Welche Tabelle?</b></div><div class="menue" id="uw">${menueZeile('Gemischt oder Kopfkissen-Verben', 'uw', ['alle', 'x'], c.weg, k => k === 'alle' ? 'alle Wege gemischt' : WEGKURZ[k])}
         ${menueZeile('Nur ein Weg zum Perfektstamm', 'uw', WEGE6, c.weg, k => WEGKURZ[k], true)}</div>`}
+      ${UM === 'grund' ? `<div><b>Stufe</b></div>
+      <div class="seg" id="ug">${[['verb', 'Nur das Verb'], ['best', 'Mit Bestimmung']].map(x => `<button type="button" data-k="${x[0]}" class="${c.gstufe === x[0] ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
+      <p class="small muted"><b>Mit Bestimmung</b>: Präsens- und Perfektformen gemischt. Du wählst das Verb, tippst in der Tabelle die Person an, stellst Präsens oder Perfekt ein und wählst die richtige Übersetzung.</p>` : ''}
       <div><b>Welche Verben?</b></div>
       <div class="seg" id="uu">${[['a', '🎯 Für die Arbeit'], ['1', 'Stufe 1'], ['2', 'Stufe 1 + 2'], ['3', 'alle']].map(x => `<button type="button" data-k="${x[0]}" class="${c.umf === x[0] ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
       <p class="small muted"><b>🎯 Für die Arbeit</b>: die ${n('a')} Verben vom Wortschatz-Blatt (${ARBEIT.name}). <b>Stufe 1</b> (${n('1')}): dazu die übrigen Perfektformen, die schon im Vokabelheft stehen (Lektion 8 und 9). <b>Stufe 1 + 2</b> (${n('2')}): alle Verben aus Lektion 1–9. <b>Alle</b> (${n('3')}): auch die neuen aus Lektion 10.</p>
       <div class="anzeige"><span>In dieser Auswahl: <b>${pool.length}</b> Verben</span><span>davon sicher: <b>${sicher}</b></span>${b ? `<span>Runden: <b>${b.n}</b> · beste: <b>${b.b} %</b></span>` : ''}</div>
       <div class="row"><button class="btn gross" id="go" type="button" ${pool.length ? '' : 'disabled'}>Runde starten</button><button class="btn ghost" id="hm" type="button">Andere Übung wählen</button></div>
-      <p class="small muted">„Sicher“ ist ein Verb, wenn du es bei Stammformen oder Umformen zweimal hintereinander auf Anhieb richtig hattest. Längenstriche darfst du beim Tippen weglassen – außer wenn nur der Strich Präsens und Perfekt unterscheidet.</p></div></section>`;
+      <p class="small muted">„Sicher“ ist ein Verb, wenn du es bei Stammformen oder Umformen zweimal hintereinander auf Anhieb richtig hattest. Längenstriche darfst du beim Tippen weglassen – außer wenn nur der Strich Präsens und Perfekt unterscheidet.</p></div></section>
+    ${uebListe(pool)}`;
   const seg = (id, fn) => app.querySelectorAll(`#${id} button`).forEach(x => x.onclick = () => { fn(x.dataset.k); save(); render(); });
-  seg('uw', k => { S.cfg.weg = k; }); seg('uu', k => { S.cfg.umf = k; });
+  seg('uw', k => { S.cfg.weg = k; }); seg('uu', k => { S.cfg.umf = k; }); seg('ug', k => { S.cfg.gstufe = k; });
   app.querySelector('#go').onclick = () => startRunde(UM);
   app.querySelector('#hm').onclick = zuUeben;
+  // Übersetzung: mit der Maus beim Darüberfahren (title), am Tablet beim Antippen
+  app.querySelectorAll('.uliste .inf').forEach(x => x.onclick = () => x.closest('li').classList.toggle('zeig'));
+}
+// Unter der Auswahl: die Verben, die gerade dran sind – Infinitiv und 1. Person Perfekt in Bausteinen. Wechselt mit jeder Auswahl.
+function uebListe(pool) {
+  if (!pool.length) return '';
+  const vs = pool.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de'));
+  return `<section><div class="card"><div class="uliste-kopf"><b>Diese ${vs.length} Verben übst du</b>
+      <span class="small muted">· Übersetzung: mit der Maus darüberfahren oder antippen</span></div>
+    <ul class="uliste">${vs.map(v => `<li><button type="button" class="inf lat" title="${esc(v.de)}">${v.inf}</button>${bauPf(v, 'ī', false, 'klein')}<span class="de small muted">${esc(v.de)}</span></li>`).join('')}</ul></div></section>`;
 }
 
 // ===================================================================
@@ -1862,7 +2123,7 @@ function blattPlan() {
     <p class="small">Im Vokabelheft stehen deshalb seit Lektion 8 drei Formen, zum Beispiel ${L('putāre, putō, putāvī')}. Die Perfektform ohne -ī ist der Perfektstamm. Nach der Gabel geht es verschieden weiter – aber auf beiden Ästen stehen dieselben sechs Personen.</p>
     <h3>2 · Sieben Tabellen – vom Einfachen zum Schwierigen</h3>
     <div class="tabwrap"><table class="pt"><tr><th>Tabelle</th><th>Was passiert mit dem Stamm?</th><th>Beispiel</th><th>Verben</th></tr>
-      ${TAB.map(t => { const v = vb({ o: 'contendere', v: 'rogāre', u: 'tacēre', s: 'dīcere', d: 'vidēre', r: 'currere', x: 'esse' }[t]); return `<tr><td><span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].n}</td><td>${{ o: 'nichts – er bleibt gleich', v: 'das Zeichen v kommt dazu', u: 'der letzte Vokal fällt weg, das Zeichen u kommt dazu', s: 'das Zeichen s kommt dazu, Konsonanten verändern sich', d: 'der Vokal im Stamm wird lang', r: 'der Anfang wird verdoppelt', x: 'esse: ganz eigener Stamm fu- · posse, velle, nōlle: u-Perfekt, aber besonderes Präsens' }[t]}</td><td class="l">${v.pr} → ${pfHtml(v, 'ī')}</td><td class="z">${n(t)}</td></tr>`; }).join('')}</table></div>
+      ${TAB.map(t => { const v = vb({ o: 'contendere', v: 'rogāre', u: 'tacēre', s: 'dīcere', d: 'vidēre', r: 'currere', x: 'esse' }[t]); return `<tr><td><span class="wtag w-${t}">${tabNr(t)}</span> ${WEG[t].n}</td><td>${{ o: 'nichts – er bleibt gleich', v: 'das Zeichen v kommt dazu', u: 'der letzte Vokal fällt weg, das Zeichen u kommt dazu', s: 'das Zeichen s kommt dazu, Konsonanten verändern sich', d: 'der Vokal im Stamm wird lang', r: 'der Anfang wird verdoppelt', x: 'esse: ganz eigener Stamm fu- · posse, velle, nōlle: u-Perfekt, aber besonderes Präsens' }[t]}</td><td class="l">${v.pr} → ${pfHtml(v, 'ī')}</td><td class="z">${verbPop(n(t), VERBEN.filter(x => x.t === t), `${n(t)} × ${WEG[t].k}`)}</td></tr>`; }).join('')}</table></div>
     <h3>3 · Was die Konjugation verrät: die Faustregel</h3>
     <p class="small">Die Konjugation gehört zum Präsensstamm. Für das Perfekt gibt sie nur einen Tipp. Jede Farbe ist ein Weg, die Zahl sagt, wie viele Verben ihn gehen.</p>
     <div class="wege">${faustChart()}</div>
