@@ -141,9 +141,10 @@ Der Druck ist auf Arial-Maße ausgelegt (hier: Liberation Sans); jedes Blatt sol
 | `verben` | die Verben mit Perfekt hier, in der Perfekt-Übung des Sets und in `ARBEIT.blatt` des Baukastens sind nicht dieselben |
 | `familie` | Kopfverb nicht geführt, Infinitiv Perfekt passt nicht zum Perfekt vom Blatt, zu wenige oder gleiche dass-Sätze, Kopfverb sieht in beiden Zeiten gleich aus, Subjekt/Verb des Hauptsatzes fehlen, Rollentausch-Fassung gleicht einer richtigen |
 | `satz` | Klammer, Infinitiv und Kopfverb eines erzeugten Satzes passen nicht zusammen (alle Fälle und Wortstellungen), Großschreibung am Satzanfang oder mitten im Satz |
-| `ohne` | ein „Satz ohne AcI“ hat an der markierten Stelle keinen Infinitiv Präsens |
+| `ohne` | ein „Satz ohne AcI“ hat an der markierten Stelle keinen Infinitiv Präsens, sein Prädikat ist doch ein Kopfverb oder steht nicht auf dem Wortschatz-Blatt |
 | `text` | Stichwort fehlt in der Wortliste, Fußnote fehlt oder bleibt unbenutzt, AcI-Marken unstimmig, Infinitiv ohne AcI hat keine Erklärung |
 | `baustein` | Musterlösung oder „auch richtig“-Fassung erfüllt einen Baustein nicht – auch in Umschrift (ae, oe, ue, ss), klein geschrieben oder mit zerlegten Umlauten; eine als `falsch` hinterlegte Fassung geht durch; ein AcI-Satz geht ohne „dass“ durch (alles Fehler). Warnung: AcI-Satz ohne Gegenprobe, Muster trifft mitten im Wort oder auf beliebigen Text |
+| `wortschatz` | ein Wort der Übersetzungstexte steht nicht auf dem Wortschatz-Blatt (die Lehrerin hat zugesagt, dass der Text der Arbeit diesen Wortschatz hat) |
 | `markieren` | ein Wort lässt sich nach dem Nachschlagen im Vokabelheft markieren, wird im Set aber nicht geübt (die Marke verschwände nie) |
 
 Nicht prüfbar: ob das Latein der Sätze und Texte stimmt und ob die Musterlösungen treffen. Dafür braucht es die

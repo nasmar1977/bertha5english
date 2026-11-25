@@ -197,9 +197,11 @@ Arbeitsblätter „Grammatik I, L 9“ (AcI: Wiederholung, Erweiterungen, Zeitve
     meldet. Zeichen wie auf dem Arbeitsblatt: Infinitiv unterstrichen, GZ/VZ darüber, A über dem Akkusativ, Klammer um
     den AcI, Kopfverb gelb. Zwölf Satzfamilien ergeben Sätze in vier Fällen (Haupthandlung Präsens/Vergangenheit ×
     Infinitiv Präsens/Perfekt) und in gemischter Wortstellung (Kopfverb am Ende oder vor dem AcI, manchmal tum/subitō
-    vorn), dazu acht Sätze mit Infinitiv, aber ohne AcI (posse, dēbēre, contendere, properāre).
-  - **Übersetzen: Pompeji** – zwei eigene Texte (8 Sätze im Präsens zum Aufwärmen, 13 Sätze in der Vergangenheit „wie
-    in der Arbeit“). Satz für Satz: Wort antippen = nachschlagen (wird gezählt), „Steckt hier ein AcI?“ als Hilfe in zwei Stufen,
+    vorn), dazu acht Sätze mit Infinitiv, aber ohne AcI (posse, contendere, properāre).
+  - **Übersetzen: Pompeji** – zwei eigene Texte (8 Sätze im Präsens zum Aufwärmen, 14 Sätze in der Vergangenheit „wie
+    in der Arbeit“ mit sieben AcI und einem Satz für Sprachkünstler). Maßstab für das Niveau ist die Übersetzungsübung
+    der Lehrerin („Snoopy und sein Haus“). Beide Texte benutzen nur Wörter vom Wortschatz-Blatt – die Klassenlehrerin
+    hat zugesagt, dass der Text der Arbeit diesen Wortschatz hat. Satz für Satz: Wort antippen = nachschlagen (wird gezählt), „Steckt hier ein AcI?“ als Hilfe in zwei Stufen,
     Eingabe prüfen (sucht Bausteine wie „dass“, „weggegangen waren“; ae/oe/ue gelten als Umlaute) oder auf Papier
     übersetzen, dann Musterlösung und
     Selbstbewertung (2/1/0 Punkte). Nachgeschlagene Wörter lassen sich im Vokabelheft des Sets markieren (derselbe
@@ -285,8 +287,8 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.48.0
-**Datum:** 24.11.2026
+**Version:** 2.48.1
+**Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
 **Latein:** Lektion 1 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 – 239 Vokabeln (bis L7) + 31 Mehrwort-Ausdrücke,
@@ -346,6 +348,26 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 
 ## 📝 Changelog
 
+### Version 2.48.1 (25.11.2026)
+- Anlass: Die Klassenlehrerin hat zugesagt, dass der Text der Arbeit den Wortschatz der zwei Wortschatz-Seiten hat. Und
+  das Niveau-Beispiel ist die Übersetzungsübung „Snoopy und sein Haus“ (lag schon vor).
+- **Übersetzungstexte nur noch mit Wörtern vom Blatt**: Text 1, letzter Satz mit posse statt dēbēre; Text 2 ohne
+  posteā und mit Vidēmus statt Scīmus. `tools/arbeit-check.mjs` meldet jetzt jedes Textwort, das nicht auf dem Blatt
+  steht (`wortschatz`).
+- **Text 2** hat 14 Sätze mit sieben AcI (wie das Arbeitsblatt der Lehrerin) und endet mit einem Satz für
+  Sprachkünstler nach dem Muster von dessen Satz 9: AcI mit posse im Infinitiv Perfekt (perdere nōn potuisse sēnsit).
+- **Sätze ohne AcI** (Übungen „AcI oder nicht?“, „Sechs Schritte“): nur noch posse, contendere, properāre – ohne dēbēre.
+- Von zwei unabhängigen Prüfern gegengelesen, beide ohne Fehlerbefund.
+  - **Latein:** eingearbeitet – der Schluss-Satz von Text 1 passt jetzt zur Geschichte (rūrsus statt in urbe); die
+    Sätze ohne AcI haben eindeutige Formen (Multī hominēs …, contendunt statt contendit); „meinte“ für sēnsit und
+    „seine Familie“ gelten als richtig; der Hinweis zum Sprachkünstler-Satz nennt die deutsche Wortstellung.
+  - **Bedienung:** eingearbeitet – die Baustein-Prüfung der neuen Sätze achtet auf die Reihenfolge der Rollen; bei den
+    beiden Sätzen mit Infinitiv ohne AcI geht kein dass-Satz mehr durch; die Hilfe nennt beim Sprachkünstler-Satz die
+    zwei Infinitive; die Marken (A, GZ/VZ) sitzen nicht mehr auf dem Rand der Wort-Kästen, Satzzeichen stehen hinter
+    der Klammer; im Lösungsdruck sind die Erklär-Zeilen kleiner als die Sätze. `arbeit-check.mjs` prüft jetzt auch, ob
+    Form und Stichwort zusammenpassen und ob in den Sätzen ohne AcI an der Stelle des Prädikats das genannte Verb steht.
+  - Nicht geändert: Ein Bestwert aus v2.48.0 (26 Punkte) steht bei Text 2 jetzt als „26 von 28“ da.
+
 ### Version 2.48.0 (24.11.2026)
 - **Neu: Latein „Klassenarbeit Dezember“** – erste Karte in der Latein-Lektionsauswahl, vor dem Perfekt-Baukasten.
   Quelle ist das Wortschatz-Blatt der Klasse (Textlexikon Lektion 9, ROMA Ausgabe A, 121 Einträge) und die
@@ -367,9 +389,9 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
   jetzt „u-Perfekt“ statt „unregelmäßig“; im Baukasten zählen die drei bei „Welcher Weg?“ als u-Perfekt (`v.weg`),
   bleiben aber mit allen Formen in Tabelle 7.
 - Lektion 10: cōnstituī hat in der Perfekt-Übung einen eigenen Hinweis (das u gehört zum Stamm).
-- Annahme, noch nicht bestätigt: Die Übersetzungstexte stehen ohne Längenstriche da, weil die Arbeitsblätter der Klasse
-  so gesetzt sind. Ein Beispiel für das Niveau des Arbeits-Textes steht noch aus; die Texte sind Daten (`TEXTE`) und
-  lassen sich austauschen.
+- Annahme: Die Übersetzungstexte stehen ohne Längenstriche da, weil die Arbeitsblätter der Klasse so gesetzt sind
+  (am 25.11. als „gute Variante“ bestätigt; ob die Arbeit selbst Längenstriche hat, ist offen). Die Texte sind Daten
+  (`TEXTE`) und lassen sich austauschen.
 - Vor der Freigabe von zwei unabhängigen Prüfern gegengelesen.
   - **Latein und Inhalt:** Abschrift des Blatts (alle 121 Einträge gegen die Fotos) und das Latein aller Sätze und
     Texte ohne Fehler. Eingearbeitet: velle gilt nicht mehr als „kein Kopfverb“ (bei verschiedenem Subjekt steht auch

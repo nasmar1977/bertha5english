@@ -7,7 +7,8 @@
 <!-- Latein Kl. 6, Klassenarbeit Dezember 2026: AcI-Werkstatt und Übersetzen.
      Stoff und Begriffe nach den Arbeitsblättern der Klasse („Grammatik I, L 9“: Wiederholung AcI, Erweiterungen,
      Zeitverhältnisse GZ/VZ mit Faustregel; „Anleitung für das Übersetzen eines Satzes mit AcI“ in sechs Schritten).
-     Die Sätze und Texte hier sind eigene, keine vom Arbeitsblatt. Wortschatz: das Blatt „Textlexikon Lektion 9“
+     Die Sätze und Texte hier sind eigene, keine vom Arbeitsblatt; die Übersetzungstexte benutzen nur Wörter vom Blatt
+     (Zusage der Klassenlehrerin: Der Text der Arbeit hat diesen Wortschatz). Wortschatz: das Blatt „Textlexikon Lektion 9“
      (ROMA A, S. 67) – dasselbe wie im Set „Klassenarbeit Dezember“ in index.html (dort Vokabeln, Vokabelheft, Spiele).
      Zwei Teile: AcI-Werkstatt (sechs Stationen, sechs Übungsarten, Spickzettel) und Übersetzen (Texte Latein → Deutsch,
      Satz für Satz, mit Nachschlagen, Bausteine-Prüfung und Musterlösung).
@@ -129,7 +130,7 @@ a.tile{text-decoration:none}
    Klammer um den AcI, Kopfverb gelb */
 .satz{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:2.9;text-align:center;overflow-wrap:anywhere;padding-top:4px}
 .satz.klein{font-size:1.08rem;line-height:2.6}
-.satz .w{display:inline-block;position:relative;line-height:1.3;padding:5px 6px;margin:0 1px;border-radius:8px;border:1.5px solid transparent;background:none;color:inherit;font:inherit}
+.satz .w{display:inline-block;position:relative;font:inherit;line-height:1.3;padding:5px 6px;margin:0 1px;border-radius:8px;border:1.5px solid transparent;background:none;color:inherit}
 .satz.tap .w{border-color:var(--line);background:var(--bg);min-height:44px;min-width:40px}
 .satz.tap .w.sel{border-color:var(--acc);background:var(--acc-soft)}
 .satz .w.inf{text-decoration:underline;text-decoration-color:var(--ton);text-decoration-thickness:3px;text-underline-offset:6px}
@@ -137,7 +138,7 @@ a.tile{text-decoration:none}
 .satz .w[data-l]::before{content:attr(data-l);position:absolute;top:-1.25em;left:50%;transform:translateX(-50%);font-family:var(--body);font-size:.72rem;font-weight:700;color:var(--blau);white-space:nowrap}
 .satz .w.inf[data-l]::before{color:var(--ton)}
 .satz .kl{color:var(--blau);font-size:1.7rem;font-weight:400;line-height:1}
-.satz .punkt{margin-left:-3px}
+.satz .punkt{margin-left:-2px}
 .satz .fn{font-family:var(--body);font-weight:400;font-size:.7rem;vertical-align:super;color:var(--muted)}
 .dt{text-align:center;font-size:1.02rem}
 .dt .dass{color:var(--blau);font-weight:700}
@@ -181,7 +182,6 @@ ul.bausteine li.fehlt{color:var(--ton)}
 /* nichts ragt aus der Karte: Rasterkinder dürfen schmaler werden, die Tafel bricht um oder lässt sich schieben */
 #schritt>*,.kasten>*,.blatt>*{min-width:0}
 .satz .nb{white-space:nowrap}
-.satz.tap .w[data-l]::before{top:-1.5em}
 .eigen{overflow-wrap:anywhere}
 
 /* Blätter zum Drucken */
@@ -211,8 +211,9 @@ ol.saetze.loesung{font-family:var(--body);font-size:.95rem;gap:6px}
   #druck h2{font-size:15pt}
   #druck h3{font-size:11pt}
   #druck .satz{font-size:12pt;line-height:2.6}
-  #druck ol.saetze{font-size:12.5pt;gap:15pt;line-height:1.9}
-  #druck ol.saetze.loesung{font-size:10.5pt;gap:5pt;line-height:1.4}
+  #druck ol.saetze{font-size:12.5pt;gap:13pt;line-height:1.9}
+  #druck ol.saetze.loesung{font-size:10pt;gap:3pt;line-height:1.32}
+  #druck ol.saetze.loesung .small{font-size:9pt}
   #druck .kasten,#druck .merk,#druck .achtung{break-inside:avoid}
   #druck .faust2,#druck .bsp{font-size:9.5pt}
   #druck .faust2>div{padding:4pt 6pt}
@@ -361,9 +362,8 @@ const LEX = [
   ['vidēre', 'videō, vīdī', 'sehen', '2'],
   ['vincere', 'vincō, vīcī', 'siegen, besiegen, übertreffen', '1'],
   ['vix', 'Adv.', 'kaum, (nur) mit Mühe', '4'],
-  // nicht auf dem Blatt, aber in den Texten hier gebraucht (aus früheren Lektionen bekannt oder als Fußnote angegeben)
-  ['dēbēre', 'dēbeō', 'müssen, sollen, schulden', ''],
-  ['posteā', 'Adv.', 'nachher, später', ''],
+  // nicht auf dem Blatt: zwei Kopfverben, die das Arbeitsblatt zum AcI nennt. In den Übersetzungstexten kommen sie nicht vor –
+  // die benutzen nur Wörter vom Blatt (prüft tools/arbeit-check.mjs).
   ['scīre', 'sciō, scīvī', 'wissen, kennen', ''],
   ['gaudēre', 'gaudeō', 'sich freuen', '']
 ];
@@ -381,7 +381,7 @@ const KOPF = [
 ];
 const KEINKOPF = [['currere', 'laufen'], ['fugere', 'fliehen'], ['capere', 'nehmen'], ['manēre', 'bleiben'], ['cadere', 'fallen'], ['venīre', 'kommen'],
   ['properāre', 'eilen'], ['relinquere', 'verlassen'], ['vincere', 'siegen'], ['perdere', 'vernichten'], ['discēdere', 'weggehen'], ['dūcere', 'führen'],
-  ['posse', 'können'], ['dēbēre', 'müssen']];
+  ['posse', 'können'], ['contendere', 'sich anstrengen']];
 // velle fehlt hier mit Absicht: Bei verschiedenem Subjekt steht auch nach velle ein AcI (Pater Aulum manēre vult).
 
 // ---------- Satzfamilien ----------
@@ -459,22 +459,24 @@ const ORDNUNGEN = [{}, { mitte: 1 }, { adv: 'tum' }, { adv: 'subito', mitte: 1 }
 // alle Sätze, die sich bilden lassen (für das Prüfskript)
 const alleSaetze = () => FAM.flatMap(f => FALL.filter(c => c[1] === 'GZ' || f.inf[1]).flatMap(c => (c[0] === 'pr' ? [undefined] : f.vg).flatMap(v => ORDNUNGEN.map(o => satz(f, c[0], c[1], { ...o, vg: v })))));
 
-// Sätze mit Infinitiv, aber OHNE AcI: Das Prädikat ist kein Kopfverb (posse, dēbēre, contendere, properāre).
+// Sätze mit Infinitiv, aber OHNE AcI: Das Prädikat ist kein Kopfverb (posse, contendere, properāre – alle vom Blatt).
 const OHNE = [
   { w: 'Aulus urbem relinquere nōn potuit', inf: 2, kopf: 4, de: 'Aulus konnte die Stadt nicht verlassen.', kv: 'posse (können)' },
-  { w: 'Claudia patrem reperīre dēbet', inf: 2, kopf: 3, de: 'Claudia muss den Vater finden.', kv: 'dēbēre (müssen)' },
-  { w: 'Hominēs ex urbe fugere contendunt', inf: 3, kopf: 4, de: 'Die Menschen strengen sich an, aus der Stadt zu fliehen.', kv: 'contendere (sich anstrengen)' },
+  { w: 'Claudia et Aulus patrem reperīre contendunt', inf: 4, kopf: 5, de: 'Claudia und Aulus strengen sich an, den Vater zu finden.', kv: 'contendere (sich anstrengen)' },
+  { w: 'Multī hominēs ex urbe fugere contendunt', inf: 4, kopf: 5, de: 'Viele Menschen strengen sich an, aus der Stadt zu fliehen.', kv: 'contendere (sich anstrengen)' },
   { w: 'Mārcus mātrem vidēre nōn iam potuit', inf: 2, kopf: 5, de: 'Marcus konnte die Mutter nicht mehr sehen.', kv: 'posse (können)' },
   { w: 'Gnaeus in tēctō manēre potest', inf: 3, kopf: 4, de: 'Gnaeus kann im Haus bleiben.', kv: 'posse (können)' },
   { w: 'Aulus Claudiam reperīre properat', inf: 2, kopf: 3, de: 'Aulus beeilt sich, Claudia zu finden.', kv: 'properāre (sich beeilen)' },
-  { w: 'Māter Aulum monēre dēbet', inf: 2, kopf: 3, de: 'Die Mutter muss Aulus ermahnen.', kv: 'dēbēre (müssen)' },
-  { w: 'Aulus parentēs vidēre potuit', inf: 2, kopf: 3, de: 'Aulus konnte die Eltern sehen.', kv: 'posse (können)' }
+  { w: 'Māter Aulum monēre potest', inf: 2, kopf: 3, de: 'Die Mutter kann Aulus ermahnen.', kv: 'posse (können)' },
+  { w: 'Aulus et Claudia urbem relinquere properant', inf: 4, kopf: 5, de: 'Aulus und Claudia beeilen sich, die Stadt zu verlassen.', kv: 'properāre (sich beeilen)' }
 ].map(o => ({ ...o, w: o.w.split(' '), a: -1, b: -1, akk: -1, aci: false }));
 
 // ---------- Texte zum Übersetzen ----------
 // la: Wörter mit Leerzeichen getrennt. Form=Stichwort schlägt in LEX nach (_ statt Leerzeichen); ohne Stichwort gilt die Form selbst.
 //     ( … ) AcI von Akkusativ bis Infinitiv · @ hinter dem Infinitiv · # hinter dem Kopfverb · ^1 Fußnote
-//     zeit: 'pr' am Satz, wenn seine Haupthandlung anders als im übrigen Text im Präsens steht · merk: Hinweis zur Lösung
+//     zeit: 'pr' am Satz, wenn seine Haupthandlung anders als im übrigen Text im Präsens steht · merk: Hinweis zur Lösung ·
+//     kuenstler: ein schwererer Satz „für Sprachkünstler“ (so heißt das auf dem Arbeitsblatt der Lehrerin) · hilfe: Zusatz in Hilfe-Stufe 2
+//     Baustein mit Muster '.' und Verbot: prüft nur, dass etwas NICHT vorkommt (kein dass-Satz, wo kein AcI steckt)
 // de: Musterlösung · auch: was sonst noch richtig ist (ganze Sätze) · falsch: was NICHT durchgehen darf (prüft tools/arbeit-check.mjs)
 // bau: Bausteine [Anzeige, Muster, was nicht vorkommen darf] – Muster ohne Umlaute und ß; die Prüfung sucht sie in der Eingabe
 const TEXTE = [
@@ -503,10 +505,10 @@ const TEXTE = [
       { la: 'Claudia flet,=flēre sed Aulus cōnsilium=cōnsilium_capere capit:=cōnsilium_capere', de: 'Claudia weint, aber Aulus fasst einen Plan:', auch: ['Claudia weint, aber Aulus fasst einen Entschluss:'],
         bau: [['Claudia weint', '\\bclaudia weint\\b'], ['aber', '\\b(aber|doch|jedoch)\\b'], ['fasst einen Plan / Entschluss', '\\bfasst\\b.*(plan|entschluss|beschluss)']],
         falsch: ['Claudia weinte, aber Aulus fasste einen Plan:'] },
-      { la: '„Statim ad parentēs=parēns properāre@ dēbēmus!“=dēbēre', de: '„Wir müssen sofort zu den Eltern eilen!“',
-        tipp: 'Hier steht ein Infinitiv (properāre), aber kein AcI: dēbēmus kommt von dēbēre (müssen) – das ist kein Kopfverb.',
-        bau: [['wir müssen', '\\bwir (mussen|sollen)\\b|\\b(mussen|sollen) wir\\b'], ['sofort', '\\bsofort\\b'], ['zu den Eltern', 'zu (den|unseren) eltern'], ['eilen', '\\b(eilen|beeilen|laufen)\\b']],
-        falsch: ['„Wir mussten sofort zu den Eltern eilen!“'] }
+      { la: '„Parentēs=parēns rūrsus reperīre@ possumus!“=posse', de: '„Wir können die Eltern wiederfinden!“', auch: ['„Wir können die Eltern wieder finden!“'],
+        tipp: 'Hier steht ein Infinitiv (reperīre), aber kein AcI: possumus kommt von posse (können) – das ist kein Kopfverb.',
+        bau: [['wir können', '\\bwir konnen\\b|\\bkonnen wir\\b'], ['die Eltern', '(die|unsere) eltern'], ['wiederfinden', '\\bwieder ?finden\\b'], ['kein dass-Satz (hier steckt kein AcI)', '.', '\\bdass\\b']],
+        falsch: ['„Wir konnten die Eltern wiederfinden!“', '„Wir können wiederfinden, dass die Eltern da sind!“'] }
     ] },
   { k: 't2', titel: 'Flucht aus Pompeji', stufe: 'wie in der Arbeit', zeit: 'vg',
     worum: 'Der Vesuv bricht aus. Erzählt wird in der Vergangenheit – achte bei jedem AcI auf das Zeitverhältnis.',
@@ -525,7 +527,7 @@ const TEXTE = [
         bau: [['sofort', '\\bsofort\\b'], ['eilte er', '\\b(eilte|beeilte|lief)\\b|\\b(ist|hat)\\b.*\\b(geeilt|beeilt|gelaufen)\\b'], ['zu Claudia', 'zu claudia']],
         falsch: ['Sofort eilt er zu Claudia.', 'Sofort beeilt er sich zu Claudia.'] },
       { la: 'Nam (mortem=mors īnstāre@) sēnsit#.=sentīre', de: 'Denn er fühlte, dass der Tod drohte.', auch: ['Denn er spürte, dass der Tod bevorstand.'],
-        bau: [['denn', '\\bdenn\\b|namlich'], ['fühlte / spürte', '\\b(fuhlte|spurte|merkte|bemerkte)\\b|\\bnahm\\b.*\\bwahr\\b|\\bhat\\b.*\\b(gefuhlt|gespurt|gemerkt|bemerkt)\\b'], ['dass', '\\bdass\\b'], ['der Tod', 'der tod'], ['drohte / bevorstand (gleichzeitig → Präteritum)', '\\b(drohte|bevorstand|bedrangte)\\b']],
+        bau: [['denn', '\\bdenn\\b|namlich'], ['fühlte / spürte', '\\b(fuhlte|spurte|merkte|bemerkte|meinte)\\b|\\bnahm\\b.*\\bwahr\\b|\\bhat\\b.*\\b(gefuhlt|gespurt|gemerkt|bemerkt|gemeint|wahrgenommen)\\b'], ['dass', '\\bdass\\b'], ['der Tod', 'der tod'], ['drohte / bevorstand (gleichzeitig → Präteritum)', '\\b(drohte|bevorstand|bedrangte)\\b']],
         falsch: ['Denn er fühlte, dass der Tod droht.', 'Denn er fühlte, dass der Tod gedroht hatte.', 'Denn er fühlt, dass der Tod drohte.'] },
       { la: 'Claudia flēvit,=flēre quia parentēs=parēns nōn repperit.=reperīre', de: 'Claudia weinte, weil sie die Eltern nicht fand.',
         bau: [['Claudia weinte', '\\bclaudia weinte\\b|\\bclaudia hat\\b.*\\bgeweint\\b'], ['weil', '\\b(weil|da|denn)\\b'], ['sie die Eltern nicht fand', '\\bsie (die|ihre) eltern nicht (fand|wiederfand|gefunden hat)\\b|\\bsie fand (die|ihre) eltern nicht\\b|\\bsie hat (die|ihre) eltern nicht gefunden\\b']],
@@ -542,19 +544,28 @@ const TEXTE = [
         falsch: ['Also fasst Aulus einen Plan und führt Claudia zur Porta Nucerina.'] },
       { la: 'Tenebrae magnae=magnus erant;=esse viam=via vix vidēre@ potuērunt.=posse', de: 'Die Dunkelheit war groß; sie konnten den Weg kaum sehen.', auch: ['Es herrschte große Dunkelheit; sie konnten die Straße nur mit Mühe sehen.'],
         tipp: 'Hier steht ein Infinitiv (vidēre), aber kein AcI: potuērunt kommt von posse – das ist kein Kopfverb.',
-        bau: [['große Dunkelheit / Finsternis', '\\b(dunkelheit|finsternis|dunkel|finster)\\b'], ['war / herrschte (Vergangenheit)', '\\b(war|waren|herrschte)\\b'], ['den Weg / die Straße', 'den weg|die strasse'], ['kaum / nur mit Mühe', '\\b(kaum|mit muhe)\\b'], ['konnten … sehen (kein AcI!)', '\\bkonnten\\b.*\\bsehen\\b|\\bsehen konnten\\b|\\bhaben\\b.*\\bsehen konnen\\b']],
-        falsch: ['Die Dunkelheit ist groß; sie können den Weg kaum sehen.'] },
+        bau: [['große Dunkelheit / Finsternis', '\\b(dunkelheit|finsternis|dunkel|finster)\\b'], ['war / herrschte (Vergangenheit)', '\\b(war|waren|herrschte)\\b'], ['den Weg / die Straße', 'den weg|die strasse'], ['kaum / nur mit Mühe', '\\b(kaum|mit muhe)\\b'], ['konnten … sehen (kein AcI!)', '\\bkonnten\\b.*\\bsehen\\b|\\bsehen konnten\\b|\\bhaben\\b.*\\bsehen konnen\\b'], ['kein dass-Satz (hier steckt kein AcI)', '.', '\\bdass\\b']],
+        falsch: ['Die Dunkelheit ist groß; sie können den Weg kaum sehen.', 'Die Dunkelheit war groß; sie konnten kaum sehen, dass der Weg da war.'] },
       { la: 'Postquam urbem=urbs relīquērunt,=relinquere dēnique parentēs=parēns repperērunt.=reperīre', de: 'Nachdem sie die Stadt verlassen hatten, fanden sie schließlich die Eltern.', auch: ['Als sie die Stadt verlassen hatten, fanden sie zuletzt die Eltern.'],
         bau: [['nachdem / als', '\\b(nachdem|als)\\b'], ['die Stadt verlassen hatten', 'stadt .*(verlassen|zuruckgelassen) hatten\\b|stadt verliessen\\b'], ['schließlich', '\\b(schliesslich|zuletzt|endlich)\\b'], ['fanden sie die Eltern', '\\bfanden sie\\b.*\\beltern\\b|\\bhaben sie\\b.*\\beltern\\b.*\\bgefunden\\b']],
         falsch: ['Nachdem sie die Stadt verlassen hatten, fanden die Eltern sie schließlich.', 'Nachdem sie die Stadt verlassen, finden sie schließlich die Eltern.'] },
-      { la: 'Posteā=posteā Aulus saepe dīcēbat#=dīcere (deōs=deus familiae=familia pepercisse@.=parcere)', de: 'Später sagte Aulus oft, dass die Götter die Familie verschont hatten.',
+      { la: 'Aulus saepe dīcēbat#=dīcere (deōs=deus familiae=familia pepercisse@.=parcere)', de: 'Aulus sagte oft, dass die Götter die Familie verschont hatten.',
         merk: 'dīcēbat ist Imperfekt – auch das ist Vergangenheit. Hier steht das Kopfverb vor dem AcI.',
-        bau: [['später', '\\b(spater|danach|nachher)\\b'], ['sagte Aulus', '\\bsagte\\b|\\bhat\\b.*\\bgesagt\\b'], ['oft', '\\boft\\b|haufig'], ['dass', '\\bdass\\b'], ['die Götter', 'die gotter'], ['die Familie (Dativ bei parcere)', '(die|seine|ihre) familie'], ['verschont hatten (vorzeitig, Haupthandlung in der Vergangenheit → Plusquamperfekt)', '(verschont|geschont) hatten\\b']],
-        falsch: ['Später sagte Aulus oft, dass die Götter die Familie verschonten.', 'Später sagte Aulus oft, dass die Götter die Familie verschont haben.', 'Später sagt Aulus oft, dass die Götter die Familie verschont hatten.', 'Später sagte Aulus oft, dass die Götter der Familie verschont hatten.'] },
-      { la: 'Scīmus#=scīre autem (Vesuvium=Vesuvius urbem=urbs perdidisse@.=perdere)', zeit: 'pr', de: 'Wir wissen aber, dass der Vesuv die Stadt vernichtet hat.',
-        merk: 'Scīmus steht im Präsens. Deshalb heißt es hier „vernichtet hat“ (Perfekt), nicht „vernichtet hatte“.',
-        bau: [['wir wissen', '\\bwir (aber )?wissen\\b|\\bwissen wir\\b'], ['aber', '\\b(aber|jedoch|doch|andererseits)\\b'], ['dass', '\\bdass\\b'], ['der Vesuv die Stadt (der erste Akkusativ wird Subjekt)', 'der vesuv .*die stadt'], ['vernichtet hat (vorzeitig, Haupthandlung im Präsens → Perfekt)', '(vernichtet|zerstort) hat\\b']],
-        falsch: ['Wir wissen aber, dass der Vesuv die Stadt vernichtet hatte.', 'Wir wussten aber, dass der Vesuv die Stadt vernichtet hat.', 'Wir wissen aber, dass die Stadt den Vesuv vernichtet hat.', 'Wir wissen aber, dass der Vesuv die Stadt vernichtet.'] }
+        bau: [['Aulus sagte', '\\bsagte\\b|\\bhat\\b.*\\bgesagt\\b'], ['oft (gehört zum Hauptsatz)', '\\b(oft|haufig)\\b.*\\bdass\\b'], ['dass', '\\bdass\\b'], ['die Götter die Familie (Dativ bei parcere)', '\\bdie gotter (die|seine|ihre) familie\\b'], ['verschont hatten (vorzeitig, Haupthandlung in der Vergangenheit → Plusquamperfekt)', '(verschont|geschont) hatten\\b']],
+        falsch: ['Aulus sagte oft, dass die Götter die Familie verschonten.', 'Aulus sagte oft, dass die Götter die Familie verschont haben.', 'Aulus sagt oft, dass die Götter die Familie verschont hatten.', 'Aulus sagte oft, dass die Götter der Familie verschont hatten.',
+          'Aulus sagte oft, dass die Familien die Götter verschont hatten.', 'Aulus sagte, dass die Götter die Familie oft verschont hatten.'] },
+      { la: 'Vidēmus#=vidēre autem (Vesuvium=Vesuvius urbem=urbs perdidisse@.=perdere)', zeit: 'pr', de: 'Wir sehen aber, dass der Vesuv die Stadt vernichtet hat.',
+        merk: 'Vidēmus steht im Präsens. Deshalb heißt es hier „vernichtet hat“ (Perfekt), nicht „vernichtet hatte“.',
+        bau: [['wir sehen', '\\bwir (aber )?sehen\\b|\\bsehen wir\\b'], ['aber', '\\b(aber|jedoch|doch|andererseits)\\b'], ['dass', '\\bdass\\b'], ['der Vesuv die Stadt (der erste Akkusativ wird Subjekt)', '\\bdass der vesuv die stadt\\b'], ['vernichtet hat (vorzeitig, Haupthandlung im Präsens → Perfekt)', '(vernichtet|zerstort) hat\\b']],
+        falsch: ['Wir sehen aber, dass der Vesuv die Stadt vernichtet hatte.', 'Wir sahen aber, dass der Vesuv die Stadt vernichtet hat.', 'Wir sehen aber, dass die Stadt den Vesuv vernichtet hat.', 'Wir sehen aber, dass der Vesuv die Stadt vernichtet.'] },
+      { la: 'Sed Aulus (Vesuvium=Vesuvius familiam=familia perdere nōn potuisse@=posse) sēnsit#.=sentīre', kuenstler: true,
+        de: 'Aber Aulus fühlte, dass der Vesuv die Familie nicht hatte vernichten können.', auch: ['Aber Aulus spürte, dass der Vesuv seine Familie nicht hatte vernichten können.', 'Aber Aulus meinte, dass der Vesuv die Familie nicht hatte zerstören können.'],
+        hilfe: 'In der Klammer stehen zwei Infinitive: perdere hängt von potuisse ab.',
+        merk: 'In der Klammer stecken zwei Infinitive: perdere gehört zu potuisse. Über gleichzeitig oder vorzeitig entscheidet potuisse. Im Deutschen steht „hatte“ vor den beiden Infinitiven: nicht hatte vernichten können.',
+        bau: [['aber', '\\b(aber|doch|jedoch)\\b'], ['Aulus fühlte / spürte', '\\baulus (fuhlte|spurte|merkte|bemerkte|meinte)\\b|\\b(fuhlte|spurte|merkte|bemerkte|meinte) aulus\\b|\\baulus (hat|nahm)\\b.*\\b(gefuhlt|gespurt|gemerkt|bemerkt|gemeint|wahrgenommen|wahr)\\b'], ['dass', '\\bdass\\b'],
+          ['der Vesuv die Familie (der erste Akkusativ wird Subjekt)', '\\bdass der vesuv (die|seine|ihre) familie\\b'], ['nicht hatte vernichten können (vorzeitig → Plusquamperfekt)', 'nicht hatte (vernichten|zerstoren) konnen\\b']],
+        falsch: ['Aber Aulus fühlte, dass der Vesuv die Familie nicht vernichten konnte.', 'Aber Aulus fühlte, dass die Familie den Vesuv nicht hatte vernichten können.', 'Aber Aulus fühlt, dass der Vesuv die Familie nicht hatte vernichten können.',
+          'Aber Aulus fühlte, dass der Vesuv die Familie nicht vernichten kann.', 'Aber der Vesuv fühlte, dass Aulus die Familie nicht hatte vernichten können.'] }
     ] }
 ];
 // Zerlegt einen Satz aus TEXTE in Wörter, Stichwörter, Fußnoten und die Stellen des AcI.
@@ -638,12 +649,13 @@ function satzHtml(s, m) {
     if (m.inf && i === s.inf) { cl.push('inf'); lab = m.zv ? s.zv : 'I'; }
     if (m.akk && i === s.akk) lab = 'A';
     if (m.kopf && i === s.kopf) cl.push('kv');      // nicht „kopf“: so heißt schon die Kopfzeile der Druckblätter
-    const attr = `class="${cl.join(' ')}"${lab ? ` data-l="${lab}"` : ''}`, wort = (m.strich === false ? ohneStrich(x) : x) + (s.fn && s.fn[i] ? `<span class="fn">${s.fn[i]}</span>` : '');
+    const teil = /^(.*?)([.,;:!?“]*)$/.exec(m.strich === false ? ohneStrich(x) : x), danach = teil[2] ? `<span class="punkt">${teil[2]}</span>` : '';
+    const attr = `class="${cl.join(' ')}"${lab ? ` data-l="${lab}"` : ''}`, wort = teil[1] + (s.fn && s.fn[i] ? `<span class="fn">${s.fn[i]}</span>` : '');
     const el = m.tap ? `<button type="button" ${attr} data-i="${i}">${wort}</button>` : `<span ${attr}>${wort}</span>`;
-    // die Klammer bleibt an ihrem Wort, sonst steht sie am Handy allein am Zeilenende
-    if (m.kl && i === s.a) return `<span class="nb"><span class="kl">(</span>${el}</span>`;
-    if (m.kl && i === s.b) return `<span class="nb">${el}<span class="kl">)</span></span>`;
-    return el;
+    // die Klammer bleibt an ihrem Wort, sonst steht sie am Handy allein am Zeilenende; Satzzeichen stehen hinter der Klammer
+    if (m.kl && i === s.a) return `<span class="nb"><span class="kl">(</span>${el}${danach}</span>`;
+    if (m.kl && i === s.b) return `<span class="nb">${el}<span class="kl">)</span>${danach}</span>`;
+    return danach ? `<span class="nb">${el}${danach}</span>` : el;
   });
   return `<div class="satz${m.tap ? ' tap' : ''}${m.klein ? ' klein' : ''}">${teile.join(' ')}${s.fn ? '' : '<span class="punkt">.</span>'}</div>`;
 }
@@ -884,8 +896,8 @@ const STATION = {
       { t: 'tippe', q: 'Tippe das <b>Kopfverb</b> an.', s, ziel: 'kopf', danach: { kopf: 1 }, why: `${L('dīcit')} (er sagt) kommt von dīcere. Davon hängt der AcI ab.`, tipp: 'Das Kopfverb ist das Prädikat des Satzes: eine gebeugte Verbform, kein Infinitiv.' },
       { t: 'wahl', vor: satzHtml(o, { inf: 1 }), q: 'Auch hier steht ein Infinitiv. Ist das ein AcI?', fest: 1, opts: ['Ja – es gibt einen Akkusativ und einen Infinitiv.', 'Nein – das Prädikat ist kein Kopfverb.'], ok: 1, liste: 1, nach: dtHtml(o),
         why: `Akkusativ und Infinitiv allein reichen nicht. Erst das Kopfverb macht den AcI. ${L('potuit')} kommt von posse (können): Der Infinitiv gehört einfach zu „konnte“.` },
-      { t: 'multi', q: 'In welchen Sätzen steckt ein AcI? Tippe <b>alle</b> an.', items: [[lsatz(sz('saxa', 'pr', 'GZ')), true], [lsatz(OHNE[1]), false], [lsatz(sz('schonen', 'vg', 'GZ')), true], [lsatz(OHNE[2]), false]],
-        why: `Schau auf das Prädikat: ${L('videt')} und ${L('putāvit')} sind Kopfverben, ${L('dēbet')} und ${L('contendunt')} nicht.` },
+      { t: 'multi', q: 'In welchen Sätzen steckt ein AcI? Tippe <b>alle</b> an.', items: [[lsatz(sz('saxa', 'pr', 'GZ')), true], [lsatz(OHNE[4]), false], [lsatz(sz('schonen', 'vg', 'GZ')), true], [lsatz(OHNE[2]), false]],
+        why: `Schau auf das Prädikat: ${L('videt')} und ${L('putāvit')} sind Kopfverben, ${L('potest')} und ${L('contendunt')} nicht.` },
       { t: 'merk', text: 'Ein AcI hängt von einem {Kopfverb} ab. Das Kopfverb ist das {Prädikat} des Satzes. Steht dort kein Kopfverb, gibt es keinen {AcI}.', extra: ['Infinitiv', 'Akkusativ'] }
     ]; } },
   s3: { titel: 'Die Klammer', sub: 'Vom Akkusativ bis zum Infinitiv', steps: () => {
@@ -1018,7 +1030,7 @@ function textSaetze(t) {
     if (s.aci) { s.zi = (s.zeit === 'pr' ? 0 : 1) + (s.zv === 'VZ' ? 2 : 0); } return s; });
 }
 // für die Regel-Zeile: Wörter ohne Satzzeichen
-const regelSatz = s => regelText({ ...s, w: s.w.map(nackt) });
+const regelSatz = (s, strich) => regelText({ ...s, w: s.w.map(w => strich === false ? ohneStrich(nackt(w)) : nackt(w)) });
 const textZeile = (s, strich) => s.w.map((w, j) => (strich ? w : ohneStrich(w)) + (s.fn[j] ? `<sup>${s.fn[j]}</sup>` : '')).join(' ');
 function startText(k, nur) {
   const t = TEXTE.find(x => x.k === k), alle = textSaetze(t);
@@ -1045,8 +1057,8 @@ function renderText() {
     const hilfeBox = !T.hilfe ? `<div class="mitte"><button class="btn ghost small" id="hilfe" type="button">🧲 Hilfe: Steckt hier ein AcI?</button></div>`
       : !s.aci ? `<div class="msg tipp">${s.tipp || 'In diesem Satz steht kein Infinitiv – also auch kein AcI.'}</div>`
       : T.hilfe === 1 ? `<div class="msg tipp">Ja. ${L(z(nackt(s.w[s.kopf])))} ist ein Kopfverb, ${L(z(nackt(s.w[s.inf])))} der Infinitiv. Jetzt du: Wo beginnt die Klammer – und ist es gleichzeitig oder vorzeitig?</div><div class="mitte"><button class="btn ghost small" id="hilfe" type="button">Noch mehr Hilfe</button></div>`
-      : `<div class="msg tipp">${regelSatz(s)}</div>`;
-    host.innerHTML = `${kopf}<p class="q"><b>Satz ${nr}.</b> Übersetze ihn. Kennst du ein Wort nicht? Tippe es an.</p>${satzHtml(s, { tap: 1, strich: str, ...(T.hilfe >= 2 ? marken : T.hilfe === 1 ? stufe1 : {}) })}<div class="lex" id="lex"></div>
+      : `<div class="msg tipp">${regelSatz(s, str)}${s.hilfe ? ' ' + s.hilfe : ''}</div>`;
+    host.innerHTML = `${kopf}<p class="q"><b>Satz ${nr}.</b> ${s.kuenstler ? '<span class="tag">für Sprachkünstler</span> Dieser Satz ist schwerer als die anderen. ' : ''}Übersetze ihn. Kennst du ein Wort nicht? Tippe es an.</p>${satzHtml(s, { tap: 1, strich: str, ...(T.hilfe >= 2 ? marken : T.hilfe === 1 ? stufe1 : {}) })}<div class="lex" id="lex"></div>
       ${hilfeBox}
       <textarea class="ueb" id="ein" placeholder="Deine Übersetzung …" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">${esc(T.eingabe)}</textarea>
       <div class="mitte"><button class="btn" id="pruef" type="button">Prüfen</button><button class="btn ghost" id="papier" type="button">Ich habe auf Papier übersetzt</button></div><div class="fb"></div>`;
@@ -1068,7 +1080,7 @@ function renderText() {
       ${bs ? `<p class="small muted">Deine Übersetzung:</p><p class="eigen">${esc(T.eingabe)}</p><ul class="bausteine">${bs.map(b => `<li class="${b.da ? '' : 'fehlt'}">${b.name}${b.da ? '' : ' – nicht gefunden'}</li>`).join('')}</ul>
         <p class="small muted">${fehlt ? 'Die Prüfung sucht nur nach einzelnen Bausteinen. Vielleicht hast du es anders ausgedrückt – vergleiche mit der Musterlösung.' : 'Alle Bausteine gefunden. Vergleiche trotzdem mit der Musterlösung: Stimmen Subjekt und Reihenfolge?'}</p>` : ''}
       <div class="muster"><b>Musterlösung:</b> ${s.de}${s.auch ? `<br><span class="small muted">Auch richtig: ${s.auch.join(' · ')}</span>` : ''}</div>
-      ${s.aci ? `<p class="small">AcI: ${regelSatz(s)}</p>` : s.tipp ? `<p class="small">${s.tipp}</p>` : ''}${s.merk ? `<p class="small">${s.merk}</p>` : ''}
+      ${s.aci ? `<p class="small">AcI: ${regelSatz(s, str)}</p>` : s.tipp ? `<p class="small">${s.tipp}</p>` : ''}${s.merk ? `<p class="small">${s.merk}</p>` : ''}
       <p class="q">Wie war dein Satz?</p><div class="opts mitte"><button class="opt" type="button" data-n="2">✅ Stimmt</button><button class="opt" type="button" data-n="1">🟡 Kleiner Fehler</button><button class="opt" type="button" data-n="0">❌ Nochmal üben</button></div>`;
     $$('.opt', host).forEach(b => b.onclick = () => { T.noten[T.i] = +b.dataset.n; T.i++; T.eingabe = ''; T.hilfe = 0; T.phase = T.i >= n ? 'ende' : 'ein'; render(); window.scrollTo(0, 0); });
   }
@@ -1093,7 +1105,7 @@ function renderTextEnde() {
     <section><div class="card" style="text-align:center"><div class="gross">${pkt} von ${max} Punkten ${st ? sterne(st) : ''}</div>
       <p>${pz >= 90 ? 'Stark – so kann die Arbeit kommen.' : pz >= 70 ? 'Schon gut. Die gelben und roten Sätze lohnen einen zweiten Versuch.' : 'Das wird noch. Nimm dir die gelben und roten Sätze gleich noch einmal vor.'}</p>
       <div class="mitte">${schwach.length ? `<button class="btn" id="nochmal" type="button">${schwach.length === 1 ? 'Nur den einen Satz mit Fehlern noch einmal' : `Nur die ${schwach.length} Sätze mit Fehlern noch einmal`}</button>` : ''}<button class="btn ${schwach.length ? 'ghost' : ''}" id="neu" type="button">Ganzen Text noch einmal</button><button class="btn ghost" id="zur" type="button">Zu den Texten</button></div></div>
-    <div class="card"><h3>Deine Sätze</h3><ol class="saetze loesung">${T.s.map((s, i) => `<li value="${T.alle.indexOf(s) + 1}">${bild[T.noten[i]]} ${L(textZeile(s, true))}<br>${s.de}</li>`).join('')}</ol></div>
+    <div class="card"><h3>Deine Sätze</h3><ol class="saetze loesung">${T.s.map((s, i) => `<li value="${T.alle.indexOf(s) + 1}">${bild[T.noten[i]]} ${L(textZeile(s, true))}${s.kuenstler ? ' <span class="tag">für Sprachkünstler</span>' : ''}<br>${s.de}</li>`).join('')}</ol></div>
     ${woerter.length ? `<div class="card"><h3>Nachgeschlagen</h3><p>${woerter.map(L).join(' · ')}</p><p class="small muted">In der Arbeit kannst du nicht nachschlagen. Lass dir diese Wörter im Vokabelheft der Klassenarbeit markieren – dann übt „🎯 Knackpunkte“ genau sie.</p><div class="row"><button class="btn ghost" id="mark" type="button">Im Vokabelheft markieren</button><span class="small" id="markinfo"></span></div></div>` : ''}
     ${T.hilfen ? `<p class="small muted">AcI-Hilfe angetippt: ${T.hilfen}-mal.</p>` : ''}</section>`;
   if ($('#nochmal')) $('#nochmal').onclick = () => startText(t.k, schwach);
@@ -1125,7 +1137,7 @@ function blattSpick() {
     <div class="zwei"><div class="kasten"><h3>Was ist ein AcI?</h3><span><b>A</b>ccūsātīvus <b>c</b>um <b>Ī</b>nfīnītīvō: Akkusativ + Infinitiv, abhängig von einem Kopfverb.</span>${satzHtml(b, { inf: 1, akk: 1, kl: 1, kopf: 1, klein: 1 })}<span class="dt">Claudia hört, <span class="dass">dass</span> <span class="sub">Aulus</span> <span class="praed">schreit</span>.</span>
       <span>Übersetzung mit <b>dass</b>. Akkusativ → Subjekt, Infinitiv → Prädikat.</span></div>
     <div class="kasten"><h3>Kopfverben</h3>${Object.entries(KOPF.reduce((g, [v, de, k]) => ((g[k] = g[k] || []).push(`${L(v)} ${de}`), g), {})).map(([k, vs]) => `<span><b>${k}:</b> ${vs.join(' · ')}</span>`).join('')}
-      <span class="small muted">Kein Kopfverb, kein AcI: Bei ${L('posse')} oder ${L('dēbēre')} gehört der Infinitiv einfach zum Prädikat.</span></div></div>
+      <span class="small muted">Kein Kopfverb, kein AcI: Bei ${L('posse')} (können) gehört der Infinitiv einfach zum Prädikat.</span></div></div>
     <div class="zwei"><div class="kasten"><h3>Die Klammer</h3><span>Sie beginnt beim <b>ersten Akkusativ</b> und endet beim <b>Infinitiv</b>. Adverbialien, Objekte und Prädikatsnomen stehen mit in der Klammer. Das Kopfverb bleibt draußen.</span></div>
     <div class="kasten"><h3>Gleichzeitig oder vorzeitig?</h3><span>Infinitiv Präsens (${L('clāmā<span class="en">re</span>')}) = <b>GZ</b>, gleichzeitig</span><span>Infinitiv Perfekt (${L('<span class="st">clāmāv</span><span class="en">isse</span>')}) = <b>VZ</b>, vorzeitig</span><span class="small muted">Infinitiv Perfekt = Perfektstamm + -isse</span></div></div>
     <div class="kasten"><h3>Faustregel: Welche Zeit steht im dass-Satz?</h3>${faustTafel(-1)}
@@ -1135,10 +1147,10 @@ function blattSpick() {
 function blattText(t, loesung) {
   const ss = textSaetze(t), str = S.cfg.strich;
   if (loesung) return `<div class="blatt">${blattKopf(t.titel + ' – Lösung', 'Übersetzen · ' + t.stufe)}
-    <ol class="saetze loesung">${ss.map(s => `<li>${L(textZeile(s, true))}<br><b>${s.de}</b>${s.auch ? ` <span class="muted">(auch: ${s.auch.join(' · ')})</span>` : ''}${s.aci ? `<br><span class="small">AcI (${s.w.slice(s.a, s.b + 1).map(nackt).join(' ')}), ${s.zv === 'GZ' ? 'gleichzeitig' : 'vorzeitig'} → ${ZEITEN[s.zi]}</span>` : s.tipp ? `<br><span class="small">${s.tipp}</span>` : ''}${s.merk ? `<br><span class="small">${s.merk}</span>` : ''}</li>`).join('')}</ol></div>`;
+    <ol class="saetze loesung">${ss.map(s => `<li>${L(textZeile(s, true))}${s.kuenstler ? ' <span class="small muted">(für Sprachkünstler)</span>' : ''}<br><b>${s.de}</b>${s.auch ? ` <span class="muted">(auch: ${s.auch.join(' · ')})</span>` : ''}${s.aci ? `<br><span class="small">AcI (${s.w.slice(s.a, s.b + 1).map(nackt).join(' ')}), ${s.zv === 'GZ' ? 'gleichzeitig' : 'vorzeitig'} → ${ZEITEN[s.zi]}</span>` : s.tipp ? `<br><span class="small">${s.tipp}</span>` : ''}${s.merk ? `<br><span class="small">${s.merk}</span>` : ''}</li>`).join('')}</ol></div>`;
   return `<div class="blatt">${blattKopf(t.titel, 'Übersetzen · ' + t.stufe)}
     <div class="kasten small"><b>Aufgaben</b><span>1. Kennzeichne alle AcIs so, wie du es gelernt hast: Infinitiv unterstreichen, Kopfverb prüfen, Klammer setzen.</span><span>2. Schreibe über jeden Infinitiv eines AcI, ob er gleichzeitig (GZ) oder vorzeitig (VZ) ist.</span><span>3. Übersetze den Text ins Deutsche. Achte auf die Zeitverhältnisse.</span></div>
-    <p class="small muted">${t.worum}</p><ol class="saetze">${ss.map(s => `<li>${textZeile(s, str)}</li>`).join('')}</ol>
+    <p class="small muted">${t.worum}</p><ol class="saetze">${ss.map(s => `<li>${textZeile(s, str)}${s.kuenstler ? ' <span class="small muted">(für Sprachkünstler)</span>' : ''}</li>`).join('')}</ol>
     <div class="fussn">${t.fuss.map((f, i) => `<span><sup>${i + 1}</sup> ${str ? f : ohneStrich(f)}</span>`).join('')}</div></div>`;
 }
 const ALLEBLAETTER = () => ['spick', ...TEXTE.flatMap(t => ['a:' + t.k, 'l:' + t.k])];

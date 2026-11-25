@@ -71,7 +71,16 @@ for (const s of D.alleSaetze()) {
   if (!/^[A-ZĀĒĪŌŪ]/.test(s.w[0]) || s.h2.length !== 2 || !/^[A-ZÄÖÜ]/.test(s.h)) err('satz', `${wo}: Satzanfang nicht groß (${s.w[0]} / ${s.h})`);
   if (s.w.slice(1).some(w => /^(Tum|Subitō|Māter|Pater|Scīmus|Scīvimus)$/.test(w))) err('satz', `${wo}: Großschreibung mitten im Satz (${s.w.join(' ')})`);
 }
-for (const o of D.OHNE) if (/isse$/.test(o.w[o.inf]) || !/(re|sse)$/.test(o.w[o.inf])) err('ohne', `${o.w.join(' ')}: Wort ${o.inf} ist kein Infinitiv Präsens`);
+for (const o of D.OHNE) {
+  if (/isse$/.test(o.w[o.inf]) || !/(re|sse)$/.test(o.w[o.inf])) err('ohne', `${o.w.join(' ')}: Wort ${o.inf} ist kein Infinitiv Präsens`);
+  const kv = o.kv.split(' ')[0];
+  if (kopf.has(kv)) err('ohne', `${o.w.join(' ')}: ${kv} ist ein Kopfverb`);
+  if (!blatt.some(e => e[0] === kv)) err('ohne', `${o.w.join(' ')}: ${kv} steht nicht auf dem Wortschatz-Blatt`);
+  if (o.kopf < 0 || o.kopf >= o.w.length || o.inf === o.kopf) err('ohne', `${o.w.join(' ')}: Stelle des Prädikats stimmt nicht`);
+  // die Form an der Stelle des Prädikats muss zu dem Verb gehören, das die Begründung nennt (posse: pot-, pos-)
+  else { const fo = D.ohneStrich(o.w[o.kopf]).toLowerCase(), st = kv === 'posse' ? /^(pot|pos)/ : new RegExp('^' + D.ohneStrich(kv).slice(0, 5));
+    if (!st.test(fo)) err('ohne', `${o.w.join(' ')}: „${o.w[o.kopf]}“ an der Stelle des Prädikats ist keine Form von ${kv}`); }
+}
 
 // 4  Texte
 for (const t of D.TEXTE) {
@@ -80,14 +89,23 @@ for (const t of D.TEXTE) {
     const wo = `${t.k} Satz ${i + 1}`, s = D.teileSatz(x.la);
     s.w.forEach((w, j) => {
       if (s.fn[j]) { benutzt.add(+s.fn[j]); if (+s.fn[j] > t.fuss.length) err('text', `${wo}: Fußnote ${s.fn[j]} gibt es nicht`); }
-      const name = /^[„]?[A-ZĀĒĪŌŪ]/.test(w) && j > 0 || /^(Aulus|Claudia|Gnaeus|Epidius|Mārcus)/.test(w);
-      if (!D.lexZu(s.key[j]).length && !name) err('text', `${wo}: „${w}“ → Stichwort „${s.key[j]}“ steht nicht in der Wortliste`);
+      // Namen stehen auch in der Wortliste (Aulus, Claudia …) – jedes Wort braucht also ein Stichwort
+      if (!D.lexZu(s.key[j]).length) err('text', `${wo}: „${w}“ → Stichwort „${s.key[j]}“ steht nicht in der Wortliste`);
+      // grobe Probe gegen ein vertauschtes Stichwort: Form und Stichwort beginnen gleich (esse: sum, est, erant, fuī)
+      else { const fo = D.ohneStrich(w.replace(/[^A-Za-zĀĒĪŌŪāēīōū]/g, '')).toLowerCase(), an = s.key[j].split(/ \/ | /).map(k => D.ohneStrich(k)[0].toLowerCase());
+        if (s.key[j] === 'esse' ? !/^[esf]/.test(fo) : !an.includes(fo[0])) err('text', `${wo}: „${w}“ passt nicht zum Stichwort „${s.key[j]}“`); }
+      // Zusage der Lehrerin: Der Text der Arbeit hat den Wortschatz des Blatts. Die Übungstexte halten sich daran.
+      if (D.lexZu(s.key[j]).length && !D.lexZu(s.key[j]).some(e => e[3])) err('wortschatz', `${wo}: „${w}“ (${s.key[j]}) steht nicht auf dem Wortschatz-Blatt`);
     });
     if (s.aci && !(s.inf === s.b && s.kopf >= 0 && (s.kopf < s.a || s.kopf > s.b))) err('text', `${wo}: AcI-Marken passen nicht (Klammer ${s.a}–${s.b}, Infinitiv ${s.inf}, Kopfverb ${s.kopf})`);
     if (!s.aci && s.inf >= 0 && !x.tipp) err('text', `${wo}: Infinitiv ohne AcI braucht eine Erklärung (tipp)`);
     if (!s.aci && / (dass|daß) /.test(x.de)) warn('text', `${wo}: Musterlösung hat einen dass-Satz, aber kein AcI ist markiert`);
     if (s.aci && !/, dass /.test(x.de)) err('text', `${wo}: AcI markiert, aber die Musterlösung hat keinen dass-Satz`);
     for (const [name, re] of x.bau) { try { new RegExp(re); } catch (e) { err('baustein', `${wo}: Muster „${re}“ ist ungültig`); } }
+    // Bausteine mit Muster '.' prüfen nur ein Verbot (kein dass-Satz) – bei den Proben „mitten im Wort“ und „beliebiger Text“ zählen sie nicht
+    const echte = t => D.bausteine(x, t).filter((b, i) => x.bau[i][1] !== '.');
+    for (const b of x.bau) if (b[1] === '.' && !b[2]) err('baustein', `${wo}: Baustein „${b[0]}“ hat weder Muster noch Verbot`);
+    if (!s.aci && s.inf >= 0 && !x.bau.some(b => b[2] && /dass/.test(b[2]))) warn('baustein', `${wo}: Infinitiv ohne AcI – ein dass-Satz sollte nicht durchgehen`);
     for (const b of D.bausteine(x, x.de)) if (!b.da) err('baustein', `${wo}: Musterlösung erfüllt den Baustein „${b.name}“ nicht`);
     for (const a of x.auch || []) {
       if (a.includes('…')) err('baustein', `${wo}: „auch“-Fassung bitte als ganzen Satz (${a})`);
@@ -101,8 +119,8 @@ for (const t of D.TEXTE) {
     const umschrift = x.de.replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue');
     for (const v of [umschrift, x.de.toLowerCase(), x.de.normalize('NFD')]) for (const b of D.bausteine(x, v)) if (!b.da) err('baustein', `${wo}: „${v}“ erfüllt den Baustein „${b.name}“ nicht`);
     // ein angehängter Buchstabe an jedem Wort (weint → weinte) darf nicht durchgehen: Muster brauchen Wortgrenzen
-    if (D.bausteine(x, x.de.replace(/([a-zäöüß]+)/gi, '$1x')).some(b => b.da)) warn('baustein', `${wo}: ein Muster trifft auch mitten im Wort (${D.bausteine(x, x.de.replace(/([a-zäöüß]+)/gi, '$1x')).filter(b => b.da).map(b => b.name).join(' · ')})`);
-    if (D.bausteine(x, 'Ich weiß es nicht.').some(b => b.da)) warn('baustein', `${wo}: ein Baustein passt auf beliebigen Text`);
+    if (echte(x.de.replace(/([a-zäöüß]+)/gi, '$1x')).some(b => b.da)) warn('baustein', `${wo}: ein Muster trifft auch mitten im Wort (${echte(x.de.replace(/([a-zäöüß]+)/gi, '$1x')).filter(b => b.da).map(b => b.name).join(' · ')})`);
+    if (echte('Ich weiß es nicht.').some(b => b.da)) warn('baustein', `${wo}: ein Baustein passt auf beliebigen Text`);
   });
   t.fuss.forEach((_, i) => { if (!benutzt.has(i + 1)) err('text', `${t.k}: Fußnote ${i + 1} wird nicht benutzt`); });
 }
