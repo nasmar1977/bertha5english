@@ -210,3 +210,10 @@ noch einer läuft.
 `latein-perfekt.html?ohnesperre` und `latein-arbeit.html?ohnesperre` schalten die Tipp-Sperre ab (sonst verschluckt die Seite jeden Klick in den ersten
 400 ms nach einem Neuzeichnen – gewollt, aber für automatische Durchläufe hinderlich). Rückfragen („Runde beenden“,
 „Übersicht“ mitten in einer Station) sind echte `confirm`-Dialoge und müssen im Test beantwortet werden.
+
+## `pauki-assets.py` – Logo und App-Symbole
+
+`python3 tools/pauki-assets.py` erzeugt aus dem Original `pauki-logo.svg` die Eule allein (`pauki-eule.svg`),
+`favicon-32.png`, `apple-touch-icon.png` (180 px auf Creme) und `icon-192.png`/`icon-512.png` für
+`manifest.webmanifest`. Nur nötig, wenn sich das Logo ändert. Die Inline-SVGs in den Seiten (Startseite,
+Link `a.pauki` in den Kopfleisten) stammen aus derselben Datei und müssen dann von Hand mitgezogen werden.

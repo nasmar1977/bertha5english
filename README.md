@@ -1,6 +1,7 @@
-# 🎮 Vokabel-Abenteuer – Vokabeltrainer
+# 🦉 Pauki
 
-Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und Latein.
+Lern-App für die 5./6. Klasse Gymnasium – Vokabeltrainer für Englisch und Latein, dazu Module für Latein,
+Deutsch, GEWI, NAWI und Musik. Bis Version 2.49 hieß sie „Vokabel-Abenteuer“.
 
 ## 📚 Features
 
@@ -21,6 +22,22 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
   Gegenstelle: Cloudflare Worker + D1, siehe [`worker/README.md`](worker/README.md).
 - ✅ 🎉 **Konfetti-Knopf** und ❄️ **Schnee-Knopf** als Belohnung für 10 Richtige in Folge – im Vokabeltrainer und auf
   den Latein-Unterseiten, dort auch Punkte und Serie – siehe „Spaß-Teile“.
+
+### 🦉 Name und Logo
+- **Pauki**, eine orange Eule mit Schriftzug. Original: `pauki-logo.svg` (Quer-Logo, durchsichtig). Daraus erzeugt
+  `tools/pauki-assets.py` die Eule allein (`pauki-eule.svg`, Favicon), `favicon-32.png`, `apple-touch-icon.png`
+  (180 px auf Creme) und `icon-192.png`/`icon-512.png` für `manifest.webmanifest`.
+- **Startseite:** Eule und Schriftzug als Inline-SVG statt der alten Überschrift, darunter „Was üben wir heute?“.
+- **Unterseiten:** oben links die Eule mit „Pauki“ als Link zur Startseite (`<a class="pauki">`, Stil im eigenen
+  `<style>` am Ende von `<head>`). Er ersetzt „← Zurück zum Vokabeltrainer“; eigene Zurück-Links („← Latein“,
+  „← NAWI-Auswahl“, „← Klassenarbeit“) bleiben daneben. Unter 360 px nur die Eule – auf den Seiten mit zwei Knöpfen
+  daneben (Perfekt-Baukasten, AcI und Übersetzen, NAWI-Mission) schon bis 420 px, sonst bräche die Leiste um. In
+  „AcI und Übersetzen“ fragt auch die Eule nach, bevor eine angefangene Runde verloren geht.
+- **Farben:** Schriftzug Marineblau `#1B2470`, im Nachtmodus Creme `#FFF4E6`; die Eule bleibt immer gleich.
+- **Seitentitel:** Startseite „Pauki“, Unterseiten „… · Pauki“; auf dem Home-Bildschirm heißt jede Seite „Pauki“
+  (`apple-mobile-web-app-title`).
+- **Nicht umbenannt**, damit nichts verloren geht: Speicher-Schlüssel (`vocabProgress`, `punkteGesamt`,
+  `latein-perfekt-v1` …), der Worker `bertha-presence` und der Pfad `…/bertha5english/`.
 
 ### 🎉 Spaß-Teile (`gimmicks.js`)
 Eine gemeinsame Datei für alle elf Seiten. Jede bindet sie am Ende von `<body>` ein und sagt mit `data-gim`, was sie
@@ -355,7 +372,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.49.1
+**Version:** 2.50.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -381,7 +398,8 @@ Vokabeln April: 24) + 27 Redewendungen
 
 | Pfad | Inhalt |
 |---|---|
-| `index.html` | der Haupttrainer — eine Datei; holt sich nur `gimmicks.js` dazu, sonst nichts aus dem Netz |
+| `index.html` | der Haupttrainer — eine Datei; holt sich nur `gimmicks.js` und die Logo-Bilder dazu, sonst nichts aus dem Netz |
+| `pauki-logo.svg`, `pauki-eule.svg`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `manifest.webmanifest` | Logo und App-Symbole, erzeugt von `tools/pauki-assets.py` (außer dem Original-Logo und dem Manifest) |
 | `gimmicks.js` | Spaß-Teile für alle Seiten: Konfetti mit Staubsauger, Schnee mit Schneeschieber, die zwei Knöpfe dafür; für die Latein-Unterseiten Punkte, Serie, „Gerade da“, Nachtmodus. Eingebunden mit Fingerabdruck (`tools/gimmicks-check.mjs --setzen`) |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `latein-arbeit.html` | Latein: Klassenarbeit Dezember – AcI-Werkstatt und Übersetzen (Pompeji), erreichbar über das Set „Klassenarbeit Dezember“ in der Latein-Lektionsauswahl |
@@ -416,6 +434,13 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.50.0 (25.11.2026)
+- **Neuer Name und Logo: Pauki** (Abschnitt „Name und Logo“). Startseite mit Logo statt „🎮 Vokabel-Abenteuer“,
+  Eule als Link zur Startseite in allen Unterseiten (statt „← Zurück zum Vokabeltrainer“), Seitentitel, Favicon,
+  Home-Bildschirm-Symbol und Manifest. Ein Designer-Agent hat die Stellen vorher gesucht; die Eule an den
+  Belohnungsmomenten und eine Startanimation folgen getrennt.
+- `gimmicks.js` und die Stimmen-Hilfe sagen „Startseite“ bzw. „Pauki“ statt „Vokabeltrainer“, wo die ganze App gemeint ist.
 
 ### Version 2.49.1 (25.11.2026)
 - Anlass: Nach dem Umbau ließen sich Konfetti und Schnee immer auslösen, und im Perfekt-Baukasten zählten die Punkte

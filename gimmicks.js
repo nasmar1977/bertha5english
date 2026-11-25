@@ -548,7 +548,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     pill.type = 'button';
     tipAnbinden(pill, () => konfettiBereit
       ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das große Konfetti gehört dir! Oder such dir einen der Knöpfe 🎉 oder ❄️ aus.'
-      : 'Für jede richtige Antwort gibt es ' + PUNKTE_JE_ANTWORT + ' Punkte. Sie zählen zu deinen Punkten im Vokabeltrainer dazu. Schaffst du ' + SERIE_ZIEL +
+      : 'Für jede richtige Antwort gibt es ' + PUNKTE_JE_ANTWORT + ' Punkte. Sie zählen zu deinen Punkten auf der Startseite dazu. Schaffst du ' + SERIE_ZIEL +
         ' richtige in Folge, gibt es das große Konfetti – oder Konfetti oder Schnee mit den Knöpfen 🎉 und ❄️. Im Moment ' + Math.min(serie, SERIE_ZIEL) + ' von ' + SERIE_ZIEL + '. Eine falsche Antwort setzt die Serie auf null.');
     pill.addEventListener('click', e => {
       e.stopPropagation();
@@ -710,7 +710,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     daKnopf = el('button', 'gim-k da', '<span class="gim-z">👥</span>');
     daKnopf.type = 'button'; daKnopf.setAttribute('aria-label', 'Liste „Gerade da“');
     tipAnbinden(daKnopf, () => !daName
-      ? 'Die Liste „Gerade da“ zeigt, wer sonst gerade übt. Trag dafür einmal deinen Vornamen im Vokabeltrainer ein.'
+      ? 'Die Liste „Gerade da“ zeigt, wer sonst gerade übt. Trag dafür einmal deinen Vornamen auf der Startseite ein.'
       : daAus ? 'Die Liste „Gerade da“ ist aus. Tipp drauf, um sie einzublenden.'
       : daSchmal() ? 'Tipp drauf: Dann siehst du kurz, wer gerade übt.' : 'Die Liste „Gerade da“ ist an. Tipp drauf, um sie auszublenden.');
     daBox = el('div', 'gim-da', '<h6>Gerade da</h6><div class="liste"></div><div class="notiz"></div><button type="button" class="ausknopf">Liste ausschalten</button>');

@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Klassenarbeit üben · Back to Camden Town</title>
+<title>Klassenarbeit üben · Back to Camden Town · Pauki</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="pauki-eule.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Pauki">
 <style>
 /* Layout: eine Londoner U-Bahn-Linie oben, jede Station ist ein Teil der Arbeit; darunter eine Karte pro Aufgabe. Bewusst nur helles Thema. */
 :root {
@@ -258,9 +263,16 @@ textarea { width: 100%; min-height: 230px; line-height: 1.6; resize: vertical; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; }
 img { max-width: 100%; }
-.backlink { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font: 600 .95rem var(--font-body); color: var(--ink); text-decoration: none; background: var(--paper); border: 2px solid var(--rule); border-radius: 999px; padding: 5px 14px; }
-.backlink:hover, .backlink:focus-visible { border-color: var(--line-blue); outline: none; }
 .kopfzeile { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 10px; }
+</style>
+<style>/* Pauki: Eule und Schriftzug, Link zur Startseite (Formen aus pauki-logo.svg) */
+a.pauki,.bar a.pauki{display:inline-flex;align-items:center;gap:7px;color:#1B2470;text-decoration:none;background:none;border:0;padding:0 6px 0 0;min-height:40px;flex:0 0 auto;justify-self:start;border-radius:8px}
+a.pauki .pk-e{display:block;width:auto;height:30px}
+a.pauki .pk-w{display:block;width:auto;height:17px}
+a.pauki:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media (max-width:359px){a.pauki .pk-w{display:none}}
+@media print{a.pauki,.bar a.pauki{display:none!important}}
+.kopfzeile a.pauki{margin-top:14px}
 </style>
 </head>
 <body>
@@ -268,7 +280,7 @@ img { max-width: 100%; }
 <div class="wrap">
   <!-- Zeile mit dem Zurück-Link -->
   <div class="kopfzeile">
-    <a class="backlink" href="index.html">← Zurück zum Vokabeltrainer</a>
+    <a class="pauki" href="index.html" aria-label="Pauki – zur Startseite"><svg class="pk-e" viewBox="26 22 148 166" aria-hidden="true" focusable="false"><polygon points="44,96 38,72 50,24 84,52 70,90" fill="#FF8A3D"/><polygon points="156,96 162,72 150,24 116,52 130,90" fill="#FF8A3D"/><ellipse cx="100" cy="112" rx="72" ry="74" fill="#FF8A3D"/><circle cx="70" cy="98" r="28" fill="#FFFFFF"/><circle cx="130" cy="98" r="28" fill="#FFFFFF"/><circle cx="70" cy="98" r="11" fill="#1B2470"/><circle cx="130" cy="98" r="11" fill="#1B2470"/><polygon points="91,122 109,122 100,137" fill="#FFC93C"/></svg><svg class="pk-w" viewBox="5 -148 487 153" aria-hidden="true" focusable="false"><path fill="currentColor" d="M25.2 1.6Q16.2 1.6 12.4 -1.1Q8.6 -3.8 7.8 -8.1Q7 -12.4 7 -16.8V-120Q7 -124.4 7.8 -128.6Q8.6 -132.8 12.4 -135.5Q16.2 -138.2 25.4 -138.2H65.2Q72.8 -138.2 81.6 -135.1Q90.4 -132 98.3 -125.6Q106.2 -119.2 111.2 -109.6Q116.2 -100 116.2 -86.8Q116.2 -73.8 111.2 -64.2Q106.2 -54.6 98.3 -48.3Q90.4 -42 81.6 -38.9Q72.8 -35.8 65 -35.8H43.6V-16.6Q43.6 -12.2 42.8 -8Q42 -3.8 38.2 -1.1Q34.4 1.6 25.2 1.6ZM43.6 -72.4H65.2Q67.8 -72.4 71.2 -73.7Q74.6 -75 77.2 -78.2Q79.8 -81.4 79.8 -87Q79.8 -91.2 77.8 -94.5Q75.8 -97.8 72.5 -99.7Q69.2 -101.6 65 -101.6H43.6ZM206.2 1.4Q197.2 1.4 193 -1.6Q190 -3.6 189.2 -6Q188.6 -5.4 187.8 -4.8Q184.8 -2.4 180 -0.5Q175.2 1.4 168.2 1.4Q159.2 1.4 150.9 -2.7Q142.6 -6.8 136.1 -14Q129.6 -21.2 125.8 -30.3Q122 -39.4 122 -49.4Q122 -59.2 125.8 -68.2Q129.6 -77.2 136.2 -84.3Q142.8 -91.4 151 -95.5Q159.2 -99.6 168.2 -99.6Q175 -99.6 179.7 -97.6Q184.4 -95.6 187.4 -93.2Q188.4 -92.4 189.2 -91.6Q189.8 -94.8 193.2 -97Q197.4 -99.8 206.4 -99.8Q215.4 -99.8 219.1 -97.1Q222.8 -94.4 223.6 -90.2Q224.4 -86 224.4 -81.6V-16.6Q224.4 -12.2 223.6 -8Q222.8 -3.8 219.1 -1.2Q215.4 1.4 206.2 1.4ZM173.2 -34.8Q177 -34.8 180.1 -36.8Q183.2 -38.8 185.1 -42.1Q187 -45.4 187 -49.2Q187 -53.2 185.1 -56.4Q183.2 -59.6 180 -61.6Q176.8 -63.6 172.8 -63.6Q168.8 -63.6 165.5 -61.6Q162.2 -59.6 160.2 -56.3Q158.2 -53 158.2 -49Q158.2 -45.2 160.3 -42Q162.4 -38.8 165.8 -36.8Q169.2 -34.8 173.2 -34.8ZM281.8 1.4Q272.2 1.4 263.9 -2.4Q255.6 -6.2 249.4 -13.1Q243.2 -20 239.8 -29.2Q236.4 -38.4 236.4 -49.2V-81.8Q236.4 -86.4 237.2 -90.5Q238 -94.6 241.8 -97.3Q245.6 -100 254.6 -100Q263.8 -100 267.5 -97.3Q271.2 -94.6 272 -90.4Q272.8 -86.2 272.8 -81.6V-49.2Q272.8 -44.6 274.5 -41.4Q276.2 -38.2 279.5 -36.5Q282.8 -34.8 287.2 -34.8Q291.6 -34.8 294.8 -36.6Q298 -38.4 299.8 -41.6Q301.6 -44.8 301.6 -49.2V-82Q301.6 -86.6 302.4 -90.7Q303.2 -94.8 307 -97.4Q310.8 -100 319.8 -100Q329 -100 332.7 -97.3Q336.4 -94.6 337.2 -90.4Q338 -86.2 338 -81.8V-16Q338 -11.6 337.2 -7.6Q336.4 -3.6 332.6 -1Q328.8 1.6 319.8 1.6Q313.2 1.6 309.5 0.1Q305.8 -1.4 304.2 -3.8Q302.8 -5.8 302.4 -7.8Q301 -6.4 299.2 -5Q296 -2.4 291.7 -0.5Q287.4 1.4 281.8 1.4ZM436.6 -31.2Q444 -24.6 444.5 -18.7Q445 -12.8 437.8 -5.2Q432.4 0.4 428.5 2.1Q424.6 3.8 420.8 2.1Q417 0.4 411.8 -4.2L387.2 -27.2V-16.2Q387.2 -11.8 386.4 -7.6Q385.6 -3.4 381.9 -0.8Q378.2 1.8 369 1.8Q360 1.8 356.2 -0.9Q352.4 -3.6 351.7 -7.8Q351 -12 351 -16.4V-127.8Q351 -132.4 351.8 -136.5Q352.6 -140.6 356.4 -143.3Q360.2 -146 369.2 -146Q378.2 -146 381.9 -143.3Q385.6 -140.6 386.4 -136.4Q387.2 -132.2 387.2 -127.6V-72.4L404.2 -89Q409 -93.6 413.2 -95.3Q417.4 -97 421.5 -95.5Q425.6 -94 430.2 -89Q438 -80.6 437.7 -75.4Q437.4 -70.2 430.2 -63L414 -48.8ZM471.4 1.8Q462.4 1.8 458.6 -0.9Q454.8 -3.6 454.1 -7.8Q453.4 -12 453.4 -16.4V-81.6Q453.4 -86 454.2 -90.1Q455 -94.2 458.8 -96.9Q462.6 -99.6 471.6 -99.6Q480.6 -99.6 484.3 -96.9Q488 -94.2 488.8 -90Q489.6 -85.8 489.6 -81.2V-16.2Q489.6 -11.8 488.8 -7.6Q488 -3.4 484.3 -0.8Q480.6 1.8 471.4 1.8ZM471.4 -109.4Q462.4 -109.4 458.6 -112.1Q454.8 -114.8 454.1 -119Q453.4 -123.2 453.4 -127.6Q453.4 -132.2 454.2 -136.3Q455 -140.4 458.8 -143Q462.6 -145.6 471.6 -145.6Q480.6 -145.6 484.3 -142.9Q488 -140.2 488.8 -136Q489.6 -131.8 489.6 -127.4Q489.6 -123 488.8 -118.8Q488 -114.6 484.3 -112Q480.6 -109.4 471.4 -109.4Z"/></svg></a>
   </div>
   <header class="top">
     <div class="roundel">
@@ -3129,6 +3141,6 @@ tick();
 render();
 </script>
 
-<script src="gimmicks.js?v=1514629d" data-gim="knoepfe"></script>
+<script src="gimmicks.js?v=aa278580" data-gim="knoepfe"></script>
 </body>
 </html>
