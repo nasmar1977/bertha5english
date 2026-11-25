@@ -174,6 +174,18 @@ a.tile{text-decoration:none}
 .psi{display:inline-flex;gap:4px;align-items:stretch}
 .psw>small{font-family:var(--body);font-weight:400;font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-top:2px solid var(--line);width:100%;text-align:center;padding-top:1px}
 .legende{display:flex;gap:8px 14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);align-items:center}
+/* Sprungreiter Weg 1 … Weg 6 oben in der Karte (Stationen „Die einfachen Wege“ und „Die kniffligen Wege“) */
+.wegreiter{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.wegreiter button{font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 12px;min-height:36px;cursor:pointer;box-shadow:inset 0 -3px 0 var(--c)}
+.wegreiter button.an{background:var(--c);border-color:var(--c);color:#fff;box-shadow:none}
+.wegreiter button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+:root[data-theme="dark"] .wegreiter button.an{color:#0f1518}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .wegreiter button.an{color:#0f1518}}
+@media print{.wegreiter{display:none}}
+.wegliste{margin:14px 0 4px;padding-top:12px;border-top:1px solid var(--line)}
+.wegliste .wl-kopf{font-weight:700;margin-bottom:6px}
+.wegliste ul{list-style:none;margin:0;padding:0;columns:2 300px;column-gap:28px}
+.wegliste li{break-inside:avoid;padding:3px 0;border-bottom:1px dotted var(--line);line-height:1.35}
 .wtag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:.75rem;font-weight:700;color:#fff;white-space:nowrap;vertical-align:middle}
 /* farbige Flächen auch dann drucken, wenn „Hintergrundgrafiken“ im Druckdialog aus ist – sonst stünde weiße Schrift auf weißem Papier */
 .wtag,.gnr,.balken i,.regel,.achtung,.kn,.stp{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -925,8 +937,14 @@ function fehlgriff(nurSerie) {
   if (window.Gimmicks) window.Gimmicks.antwort(false);
 }
 function treffer() { if (window.Gimmicks) window.Gimmicks.antwort(true); }
+// Unter jeder Weg-Erklärung (Stationen s4, s5): alle Verben dieser Tabelle untereinander – Infinitiv, Perfekt, Bedeutung
+function wegListe(k) {
+  const vs = VERBEN.filter(v => v.t === k).sort((a, b) => a.inf.localeCompare(b.inf, 'de'));
+  return `<div class="wegliste"><div class="wl-kopf">${wtag(k)} Alle ${vs.length} Verben auf diesem Weg <span class="muted">(Tabelle ${tabNr(k)})</span></div>
+    <ul>${vs.map(v => `<li><span class="lat">${v.inf}, ${v.pr}</span> → ${pfHtml(v, 'ī')} <span class="muted">– ${esc(v.de)}</span></li>`).join('')}</ul></div>`;
+}
 function sInfo(host, st, weiter) {
-  host.innerHTML = `<div class="card">${typeof st.h === 'function' ? st.h() : st.h}<div class="row"><button class="btn" id="w" type="button">${st.btn || 'Weiter'}</button></div></div>`;
+  host.innerHTML = `<div class="card">${typeof st.h === 'function' ? st.h() : st.h}${st.weg ? wegListe(st.weg) : ''}<div class="row"><button class="btn" id="w" type="button">${st.btn || 'Weiter'}</button></div></div>`;
   if (st.mount) st.mount(host);
   host.querySelector('#w').onclick = weiter;
 }
@@ -1250,14 +1268,14 @@ const STATION = {
   s4: { name: 'Die einfachen Wege', icon: '🛤️', hook: 'Stamm bleibt gleich, v-Perfekt, u-Perfekt: drei feste Regeln.',
     merk: 'Beim einfachsten Weg bleibt der Stamm {gleich}. Beim v-Perfekt nimmst du vom Infinitiv das {-re} weg und hängst das Zeichen {v} an. Beim u-Perfekt nimmst du {-ēre} weg und hängst das Zeichen {u} an.', falsch: ['-ō', 's', 'lang'],
     steps: () => [
-      { t: 'info', h: () => `<h2>Wie kommt man zum Perfektstamm?</h2><p>Die Endungen sind immer gleich. Aber wie wird aus dem Präsensstamm der Perfektstamm? Dafür gibt es <b>sechs Wege</b>. Wir fangen mit dem leichtesten an.</p>
+      { t: 'info', weg: 'o', h: () => `<h2>Wie kommt man zum Perfektstamm?</h2><p>Die Endungen sind immer gleich. Aber wie wird aus dem Präsensstamm der Perfektstamm? Dafür gibt es <b>sechs Wege</b>. Wir fangen mit dem leichtesten an.</p>
           <h3>${wtag('o')} Weg 1: Der Stamm bleibt gleich</h3><p>Bei diesen Verben ändert sich am Stamm <b>gar nichts</b>. Du nimmst von der 1. Person Präsens das -ō weg und hängst die Perfekt-Endung an.</p>
-          ${wegDemoHtml('w1', ['contendere', 'animadvertere'])}<p class="small muted">Genau so gehen ${VERBEN.filter(v => v.g === 'o1').length} Verben. Sie stehen in Tabelle 1.</p>`, mount: host => wegDemo(host, 'w1') },
+          ${wegDemoHtml('w1', ['contendere', 'animadvertere'])}<p class="small muted">Genau so gehen ${VERBEN.filter(v => v.t === 'o').length} Verben. Sie stehen in Tabelle 1 und unten in der Liste.</p>`, mount: host => wegDemo(host, 'w1') },
       { t: 'tipp', q: 'Weg 1: Der Stamm bleibt gleich.', items: () => ausGruppe('o1', 2, v => !['contendere', 'animadvertere'].includes(v.inf)).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.pr)} das -ō weg und hänge -ī an.`)) },
-      { t: 'info', h: () => `<h3>${wtag('v')} Weg 2: v-Perfekt</h3><p>Nimm vom Infinitiv das <b>-re</b> weg. An den Rest hängst du das Zeichen <b>v</b>. Dann kommt wie immer die Endung.</p>
+      { t: 'info', weg: 'v', h: () => `<h3>${wtag('v')} Weg 2: v-Perfekt</h3><p>Nimm vom Infinitiv das <b>-re</b> weg. An den Rest hängst du das Zeichen <b>v</b>. Dann kommt wie immer die Endung.</p>
           ${wegDemoHtml('w2', ['rogāre', 'laudāre', 'audīre', 'flēre'])}<p class="small muted">So gehen fast alle Verben der a-Konjugation – das ist die größte Gruppe (Tabelle 2).</p>`, mount: host => wegDemo(host, 'w2') },
       { t: 'tipp', q: 'Weg 2: v-Perfekt – vom Infinitiv das -re weg, dann v.', items: () => ausGruppe('v1', 1, v => v.k === 'a' && v.prio === 2).concat(vb(pick(['audīre', 'scīre']))).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.inf)} das -re weg und hänge -vī an.`)) },
-      { t: 'info', h: () => `<h3>${wtag('u')} Weg 3: u-Perfekt</h3><p>Hier verschwindet zuerst ein Stück: Nimm vom Infinitiv das ganze <b>-ēre</b> weg – auch das ē. An den Rest hängst du das Zeichen <b>u</b>. Aus ${L('tacēre')} wird so erst ${L('tac-')}, dann ${L('tac-u-')}.</p>
+      { t: 'info', weg: 'u', h: () => `<h3>${wtag('u')} Weg 3: u-Perfekt</h3><p>Hier verschwindet zuerst ein Stück: Nimm vom Infinitiv das ganze <b>-ēre</b> weg – auch das ē. An den Rest hängst du das Zeichen <b>u</b>. Aus ${L('tacēre')} wird so erst ${L('tac-')}, dann ${L('tac-u-')}.</p>
           ${wegDemoHtml('w3', ['tacēre', 'monēre', 'terrēre', 'aperīre'])}<p class="small muted">So gehen die meisten Verben der e-Konjugation (Tabelle 3).</p>`, mount: host => wegDemo(host, 'w3') },
       { t: 'tipp', q: 'Weg 3: u-Perfekt – vom Infinitiv das -ēre weg, dann u.', items: () => ausGruppe('u1', 2, v => !['tacēre', 'monēre', 'terrēre'].includes(v.inf)).map(v => tippItem(v, 'Wie heißt die <b>1. Person Perfekt</b>?', `Nimm von ${L(v.inf)} das -ēre weg und hänge -uī an.`)) },
       { t: 'sort', q: 'Welchen Weg ist dieses Verb gegangen?', cats: ['o', 'v', 'u'].map(t => WEG[t].k), items: () => wegItems(['o', 'v', 'u'], 1, 3) }
@@ -1265,15 +1283,15 @@ const STATION = {
   s5: { name: 'Die kniffligen Wege', icon: '🧗', hook: 's-Perfekt, Dehnung und Verdopplung – Schritt für Schritt.',
     merk: 'Beim s-Perfekt wird aus c + s ein {x}. Beim Dehnungsperfekt wird der Vokal im Stamm {lang}. Bei der Reduplikation wird der Anfang {verdoppelt}: Aus currō wird {cucurrī}.', falsch: ['z', 'kurz', 'gestrichen', 'currī'],
     steps: () => [
-      { t: 'info', h: () => `<h3>${wtag('s')} Weg 4: s-Perfekt</h3><p>An den Stamm kommt das Zeichen <b>s</b>. Dabei stoßen zwei Konsonanten zusammen – und verändern sich. Was genau passiert, hängt vom <b>Buchstaben vor der Infinitiv-Endung</b> ab. Schau dir die Wege Schritt für Schritt an:</p>
+      { t: 'info', weg: 's', h: () => `<h3>${wtag('s')} Weg 4: s-Perfekt</h3><p>An den Stamm kommt das Zeichen <b>s</b>. Dabei stoßen zwei Konsonanten zusammen – und verändern sich. Was genau passiert, hängt vom <b>Buchstaben vor der Infinitiv-Endung</b> ab. Schau dir die Wege Schritt für Schritt an:</p>
           ${wegDemoHtml('w4', ['dīcere', 'dūcere', 'rīdēre', 'discēdere', 'manēre', 'sentīre'])}<p class="small muted">Deshalb hat Tabelle 4 kleine Gruppen. In jeder Gruppe gilt genau eine Regel.</p>`, mount: host => wegDemo(host, 'w4') },
       { t: 'wahl', q: `Bei ${L('dūcere')} steht vor der Endung ein c: ${L('dūc-ere')}. Jetzt kommt das Zeichen s dazu. Wie heißt der Perfektstamm?`, o: ['dūx-', 'dūcs-', 'dūs-', 'dūss-'], a: 0, e: `c und s verschmelzen zu x: ${pfHtml(vb('dūcere'), 'ī')}.` },
       { t: 'wahl', q: `Bei ${L('rīdēre')} steht vor der Endung ein d: ${L('rīd-ēre')}. Jetzt kommt das Zeichen s dazu. Wie heißt der Perfektstamm?`, o: ['rīs-', 'rīds-', 'rīx-', 'rīd-'], a: 0, e: `Das d fällt vor dem s weg: ${pfHtml(vb('rīdēre'), 'ī')}.` },
-      { t: 'info', h: () => `<h3>${wtag('d')} Weg 5: Dehnung</h3><p>Hier gibt es <b>kein Zeichen</b>. Stattdessen wird der Vokal im Stamm <b>lang</b> – das zeigt der Längenstrich. Bei den meisten Verben ist das der einzige Unterschied. Bei wenigen wechselt der Vokal zusätzlich.</p>
+      { t: 'info', weg: 'd', h: () => `<h3>${wtag('d')} Weg 5: Dehnung</h3><p>Hier gibt es <b>kein Zeichen</b>. Stattdessen wird der Vokal im Stamm <b>lang</b> – das zeigt der Längenstrich. Bei den meisten Verben ist das der einzige Unterschied. Bei wenigen wechselt der Vokal zusätzlich.</p>
           ${wegDemoHtml('w5', ['vidēre', 'fugere', 'capere', 'facere', 'vincere'])}
           <div class="achtung"><b>Der Strich ist hier das Perfekt:</b> ${L('fugit')} (er flieht) – ${L('f<b class="hl">ū</b>git')} (er ist geflohen).</div>`, mount: host => wegDemo(host, 'w5') },
       { t: 'sort', q: 'Präsens oder Perfekt? Achte auf Stamm und Strich.', cats: ['Präsens', 'Perfekt'], items: s5Strich },
-      { t: 'info', h: () => `<h3>${wtag('r')} Weg 6: Reduplikation</h3><p>Auch hier gibt es kein Zeichen. Stattdessen wird der <b>Anfang verdoppelt</b>: Der erste Konsonant kommt mit einem Vokal noch einmal nach vorn. („Reduplikation“ heißt Verdopplung.)</p>
+      { t: 'info', weg: 'r', h: () => `<h3>${wtag('r')} Weg 6: Reduplikation</h3><p>Auch hier gibt es kein Zeichen. Stattdessen wird der <b>Anfang verdoppelt</b>: Der erste Konsonant kommt mit einem Vokal noch einmal nach vorn. („Reduplikation“ heißt Verdopplung.)</p>
           <p>Am einfachsten siehst du es bei ${L('currere')} – dort passiert sonst nichts. Bei den anderen ändert sich zusätzlich der Vokal im Stamm. Tippe sie der Reihe nach an:</p>
           ${wegDemoHtml('w6', ['currere', 'cadere', 'parcere', 'accidere'])}
           <p class="small muted">Das letzte Verb hat eine Vorsilbe: ${L('accidere')} kommt von cadere. Bei ihm und bei ${L('occurrere')} (von currere) fällt die Verdopplung weg: ${L('accidī, occurrī')}.</p>`, mount: host => wegDemo(host, 'w6') },
@@ -1433,7 +1451,8 @@ function renderStation() {
   app.innerHTML = `<header class="top"><div class="eyebrow">Verstehen · Station ${nr} von ${SKEYS.length}</div><h1>${s.icon} ${s.name}</h1>
     <div class="meter" aria-hidden="true"><i style="width:${Math.round(100 * R.i / R.steps.length)}%"></i></div></header><section id="schritt"></section>`;
   const st = R.steps[R.i], lauf = R;
-  STEP[st.t](document.getElementById('schritt'), st, () => {
+  const schritt = document.getElementById('schritt');
+  STEP[st.t](schritt, st, () => {
     if (R !== lauf) return;
     // Punkte und Serie sind da schon verbucht (treffer, fehlgriff) – je Aufgabe, nicht je Schritt.
     R.i++;
@@ -1447,6 +1466,28 @@ function renderStation() {
       R.fertig = { n, f };
     }
     render(); window.scrollTo(0, 0);
+  });
+  wegReiter(schritt);
+}
+
+// Sprungreiter „Weg 1 … Weg 6“ oben in der Karte der Stationen s4 und s5. Ein Tipp springt zur Erklärung dieses Wegs –
+// auch in die andere Station. Hervorgehoben ist der Weg, um den es gerade geht.
+const WEG_STATION = { o: 's4', v: 's4', u: 's4', s: 's5', d: 's5', r: 's5' };
+function wegReiter(host) {
+  if (R.k !== 's4' && R.k !== 's5') return;
+  const karte = host.querySelector('.card');
+  if (!karte) return;
+  let jetzt = null;
+  for (let i = Math.min(R.i, R.steps.length - 1); i >= 0; i--) if (R.steps[i].weg) { jetzt = R.steps[i].weg; break; }
+  const nav = document.createElement('nav');
+  nav.className = 'wegreiter'; nav.setAttribute('aria-label', 'Zu einem Weg springen');
+  nav.innerHTML = WEGE6.map((k, n) => `<button type="button" data-k="${k}" class="${k === jetzt ? 'an' : ''}" style="--c:var(--w${k})" title="${WEG[k].k}"${k === jetzt ? ' aria-current="step"' : ''}>Weg ${n + 1}</button>`).join('');
+  karte.prepend(nav);
+  nav.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, ziel = WEG_STATION[k];
+    if (R.k !== ziel) startStation(ziel);
+    const i = R.steps.findIndex(x => x.weg === k);
+    if (i >= 0) { R.i = i; render(); window.scrollTo(0, 0); }
   });
 }
 

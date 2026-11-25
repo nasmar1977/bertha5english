@@ -393,7 +393,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.52.1
+**Version:** 2.53.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -455,6 +455,12 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.53.0 (25.11.2026)
+- **Perfekt-Baukasten, Stationen 4 und 5:** Sprungreiter „Weg 1 … Weg 6“ oben in jeder Karte (`wegReiter`, springt zur
+  Erklärung des Wegs, auch in die andere Station; hervorgehoben ist der aktuelle Weg). Die sechs Erklärungs-Schritte
+  tragen dafür `weg: 'o' … 'r'`. Unter jeder Erklärung stehen alle Verben dieser Tabelle untereinander (`wegListe`:
+  Infinitiv, 1. Person Präsens → Perfekt, Bedeutung; breit zweispaltig).
 
 ### Version 2.52.1 (25.11.2026)
 - **Latein-Lektionsauswahl:** Die Kacheln (`.set-card`) waren deutlich größer als die Themen-Kacheln im Englischen
