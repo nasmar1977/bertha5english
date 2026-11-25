@@ -71,7 +71,6 @@ for (const name of seiten) {
     // der gemerkte Nachtmodus muss schon im Kopf gesetzt werden, sonst blitzt die Seite beim Wechsel hell auf
     if (!/<head>[\s\S]*sessionStorage\.getItem\('gimStand'\)[\s\S]*<\/head>/.test(rein)) err('betriebsart', `${name}: „voll“, aber im <head> fehlt die Zeile, die den gemerkten Nachtmodus (sessionStorage „gimStand“) sofort setzt`);
   } else if (haken) err('betriebsart', `${name}: meldet Antworten (Gimmicks.antwort), zeigt aber keine Punkte-Leiste (data-gim="${art}") – es würde nichts verbucht`);
-  if (art === 'knoepfe' && !/<div class="bar"><div class="in">/.test(rein) && !/class="gim-hier"/.test(rein)) warn('betriebsart', `${name}: weder Kopfleiste (.bar .in) noch fester Platz (<div class="gim-hier">) – die zwei Knöpfe schweben dann bei jeder Breite unten links über dem Inhalt`);
   if (html.indexOf(ganz) < html.lastIndexOf('</main>') && html.includes('</main>')) warn('einbindung', `${name}: gimmicks.js steht vor dem Ende des Inhalts – gedacht ist die Zeile direkt vor </body>`);
   if (v !== abdruck) {
     if (setzen) {
@@ -113,6 +112,9 @@ if (nacht === null) err('abgleich', 'gimmicks.js: NACHT_ZIEL nicht gefunden');
 else if (!new RegExp(`aprilStreak >= ${nacht}\\b`).test(INDEX)) err('abgleich', `Nachtmodus: gimmicks.js verlangt ${nacht} Richtige in Folge, index.html nicht (gesucht: „aprilStreak >= ${nacht}“)`);
 // Der Haupttrainer verlässt sich auf diesen Aufruf
 if (!/Gimmicks\.regen\('konfetti', \{ gross: true \}\)/.test(INDEX)) err('abgleich', 'index.html ruft das große Konfetti nicht mehr über Gimmicks.regen auf');
+// Ohne diese Brücke blieben die zwei Knöpfe im Haupttrainer für immer gesperrt (Konfetti und Schnee nur als Belohnung)
+if (!/window\.gimmicksHaupt\s*=\s*\{[\s\S]*?frei:[\s\S]*?einloesen:/.test(ohneKommentare(INDEX))) err('abgleich', 'index.html setzt window.gimmicksHaupt = { frei, einloesen, hinweis } nicht – die Knöpfe neben der Punkte-Pille blieben gesperrt');
+if (!/Gimmicks\.auffrischen\(\)/.test(ohneKommentare(INDEX))) err('abgleich', 'index.html ruft Gimmicks.auffrischen() nicht auf – die Knöpfe merken nicht, wenn die Serie voll ist');
 
 if (setzen) console.log(`Fingerabdruck ${abdruck} in ${gesetzt} Seite${gesetzt === 1 ? '' : 'n'} eingetragen.`);
 console.log(`gimmicks.js (Fingerabdruck ${abdruck}), ${eingebunden} von ${seiten.length} Seiten binden sie ein, ${verglichen} Werte mit index.html verglichen.`);

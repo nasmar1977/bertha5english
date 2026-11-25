@@ -316,7 +316,7 @@ const LEX = [
   ['nōn iam', '', 'nicht mehr', '8'],
   ['nōs', 'Akk.', 'uns', '4'],
   ['nōs', 'Nom.', 'wir', '4'],
-  ['nūbēs ātra', 'f', 'eine dunkle Wolke', '10'],
+  ['nūbēs ātra', 'f', 'eine schwarze Wolke (ātra von āter, ātra, ātrum: schwarz, dunkel)', '10'],
   ['occurrere', 'occurrō, occurrī', 'begegnen, entgegentreten', '1'],
   ['oculus', 'oculī m', 'das Auge', '6'],
   ['ops', 'opis f', 'die Hilfe, die Kraft', '3'],
@@ -338,7 +338,7 @@ const LEX = [
   ['quid?', '', 'was?', '7'],
   ['quidem', 'Adv.', 'freilich, gewiss, wenigstens, zwar', '8'],
   ['relinquere', 'relinquō, relīquī', 'verlassen, zurücklassen', '1'],
-  ['reperīre', 'reperiō, repperī', 'finden, wiederfinden', '2'],
+  ['reperīre', 'reperiō, repperī', 'finden, wiederfinden', '1'],
   ['rūrsus', 'Adv.', 'wieder', '4'],
   ['saepe', 'Adv.', 'oft', '8'],
   ['saxum', 'saxī n', 'der Fels, der Stein', '6'],
@@ -488,7 +488,7 @@ const OHNE = [
 const TEXTE = [
   { k: 't1', titel: 'Der Berg raucht', stufe: 'zum Aufwärmen', zeit: 'pr',
     worum: 'Aulus und Claudia sind in Pompeji unterwegs. Erzählt wird im Präsens.',
-    fuss: ['strepitus m – der Lärm', 'nūbēs ātra f – eine dunkle Wolke'],
+    fuss: ['strepitus m – der Lärm', 'nūbēs ātra f – eine schwarze Wolke (āter, ātra, ātrum: schwarz, dunkel)'],
     s: [
       { la: 'Aulus et Claudia in viā=via sunt.=esse', de: 'Aulus und Claudia sind auf der Straße.', auch: ['Aulus und Claudia sind auf dem Weg.'],
         bau: [['Aulus und Claudia', 'aulus und claudia'], ['sind', '\\bsind\\b|\\bbefinden sich\\b', '\\bwaren\\b'], ['auf der Straße / auf dem Weg', 'auf (der strasse|dem weg)']],
@@ -690,12 +690,15 @@ const wackeln = b => { b.classList.remove('wackel'); void b.offsetWidth; b.class
 // doppelt gezählt oder eine Auswahl gleich wieder aufgehoben.
 let tippMerker = [null, 0];
 const doppeltipp = el => { const t = performance.now(), d = SPERRZEIT > 0 && tippMerker[0] === el && t - tippMerker[1] < 450; tippMerker = [el, t]; return d; };
-// Ein Fehlgriff im laufenden Schritt. Der erste eines Schritts geht sofort an die Leiste (gimmicks.js) – nicht erst bei
-// „Weiter“, sonst ließe sich ein Fehler mit „Beenden“ wegklicken und die Serie bliebe stehen.
+// Punkte und Serie (gimmicks.js) zählen jede einzelne Aufgabe – auch dann, wenn ein Schritt mehrere hintereinander
+// stellt (Sortieren, Reihenfolge, Lücken im Merksatz, die sechs Schritte eines Satzes). Gemeldet wird sofort beim
+// Antippen, nicht erst bei „Weiter“: Sonst ließe sich ein Fehler mit „Beenden“ wegklicken, und eine richtige Antwort
+// ginge verloren. fehlgriff: jeder Fehlgriff (Serie auf null). treffer: eine Aufgabe ohne Fehlgriff gelöst.
 function fehlgriff() {
   R.fehler++;
-  if (R.fehlBei !== R.i) { R.fehlBei = R.i; if (window.Gimmicks) window.Gimmicks.antwort(false); }
+  if (window.Gimmicks) window.Gimmicks.antwort(false);
 }
+function treffer() { if (window.Gimmicks) window.Gimmicks.antwort(true); }
 function sInfo(host, st, weiter) {
   host.innerHTML = `${st.h}<div class="mitte"><button class="btn" id="w" type="button">${st.knopf || 'Weiter'}</button></div>`;
   $('#w', host).onclick = weiter;
@@ -707,7 +710,7 @@ function sWahl(host, st, weiter) {
   $$('.opt', host).forEach(b => b.onclick = () => {
     const ok = +b.dataset.i === st.ok;
     $$('.opt', host).forEach(x => { x.disabled = true; if (+x.dataset.i === st.ok) x.classList.add(ok ? 'ok' : 'fehlt'); });
-    if (!ok) { b.classList.add('no'); fehlgriff(); }
+    if (!ok) { b.classList.add('no'); fehlgriff(); } else treffer();
     if (st.nach) $('.fb', host).insertAdjacentHTML('beforebegin', st.nach);
     fbZeigen($('.fb', host), ok, st.why || '', weiter);
   });
@@ -721,7 +724,7 @@ function sSort(host, st, weiter) {
     $$('.opt', host).forEach(b => b.onclick = () => {
       const ok = +b.dataset.j === kat;
       $$('.opt', host).forEach(x => { x.disabled = true; if (+x.dataset.j === kat) x.classList.add(ok ? 'ok' : 'fehlt'); });
-      if (!ok) { b.classList.add('no'); fehlgriff(); }
+      if (!ok) { b.classList.add('no'); fehlgriff(); } else treffer();
       i++;
       if (ok) spaeter(host, zeig, 500); else fbZeigen($('.fb', host), false, why || '', zeig);
     });
@@ -735,6 +738,7 @@ function sTippe(host, st, weiter) {
   $$('.satz .w', host).forEach(b => b.onclick = () => {
     if (doppeltipp(b)) return;
     if (+b.dataset.i === ziel) {
+      if (!fehl) treffer();
       $('.satz', host).outerHTML = satzHtml(s, { ...(st.zeig || {}), ...(st.danach || {}) });
       fbZeigen($('.fb', host), true, st.why || '', weiter);
     } else {
@@ -755,6 +759,7 @@ function sKlammer(host, st, weiter) {
     if (i === erst) { erst = -1; b.classList.remove('sel'); return; }
     const a = Math.min(erst, i), z = Math.max(erst, i);
     if (a === s.a && z === s.b) {
+      if (!fehl) treffer();
       $('.satz', host).outerHTML = satzHtml(s, { inf: 1, akk: 1, kl: 1, kopf: 1 });
       fbZeigen($('.fb', host), true, st.why || `Die Klammer reicht vom Akkusativ ${L(s.w[s.a])} bis zum Infinitiv ${L(s.w[s.b])}. Das Kopfverb ${L(s.w[s.kopf])} bleibt draußen.${s.f && s.f.erw ? ` Mit in der Klammer: ${s.f.erw}.` : ''}`, weiter);
     } else {
@@ -772,13 +777,13 @@ function sMulti(host, st, weiter) {
     let gut = true;
     $$('.opt', host).forEach(b => { const soll = st.items[+b.dataset.i][1], ist = b.classList.contains('sel'); b.disabled = true; b.classList.remove('sel');
       if (soll) b.classList.add(ist ? 'ok' : 'fehlt'); else if (ist) b.classList.add('no'); if (soll !== ist) gut = false; });
-    if (!gut) fehlgriff();
+    if (!gut) fehlgriff(); else treffer();
     $('#pr', host).remove();
     fbZeigen($('.fb', host), gut, st.why || '', weiter);
   };
 }
 function sMerk(host, st, weiter) {
-  const loes = [...st.text.matchAll(/\{([^}]+)\}/g)].map(m => m[1]), chips = shuffle(loes.concat(st.extra || [])), weg = new Set(); let i = 0;
+  const loes = [...st.text.matchAll(/\{([^}]+)\}/g)].map(m => m[1]), chips = shuffle(loes.concat(st.extra || [])), weg = new Set(); let i = 0, daneben = false;
   const zeichne = () => {
     let n = 0;
     const satzT = st.text.replace(/\{([^}]+)\}/g, (_, x) => { const k = n++; return `<span class="gap ${k < i ? 'voll' : k === i ? 'dran' : ''}">${k < i ? x : '…'}</span>`; });
@@ -786,17 +791,17 @@ function sMerk(host, st, weiter) {
     if (i >= loes.length) { $('.chips', host).remove(); return fbZeigen($('.fb', host), true, st.why || 'Das ist der Merksatz dieser Station.', weiter); }
     $$('.chip', host).forEach(b => b.onclick = () => {
       if (doppeltipp(b)) return;
-      if (b.textContent === loes[i]) { weg.add(+b.dataset.k); i++; zeichne(); sperre(); } else { fehlgriff(); wackeln(b); }
+      if (b.textContent === loes[i]) { if (!daneben) treffer(); daneben = false; weg.add(+b.dataset.k); i++; zeichne(); sperre(); } else { daneben = true; fehlgriff(); wackeln(b); }
     });
   };
   zeichne();
 }
 function sReihe(host, st, weiter) {
-  const karten = shuffle(st.items.map((x, i) => [x, i])); let i = 0;
+  const karten = shuffle(st.items.map((x, i) => [x, i])); let i = 0, daneben = false;
   const zeichne = () => {
     host.innerHTML = `<p class="q">${st.q}</p><ol class="schritte">${st.items.slice(0, i).map(x => `<li class="fertig">${x}</li>`).join('')}</ol><div class="opts liste">${karten.filter(([, k]) => k >= i).map(([x, k]) => `<button class="opt" type="button" data-k="${k}">${x}</button>`).join('')}</div><div class="fb"></div>`;
     if (i >= st.items.length) return fbZeigen($('.fb', host), true, st.why || '', weiter);
-    $$('.opt', host).forEach(b => b.onclick = () => { if (doppeltipp(b)) return; if (+b.dataset.k === i) { i++; zeichne(); sperre(); } else { fehlgriff(); wackeln(b); } });
+    $$('.opt', host).forEach(b => b.onclick = () => { if (doppeltipp(b)) return; if (+b.dataset.k === i) { if (!daneben) treffer(); daneben = false; i++; zeichne(); sperre(); } else { daneben = true; fehlgriff(); wackeln(b); } });
   };
   zeichne();
 }
@@ -808,15 +813,15 @@ function sSechs(host, st, weiter) {
     host.innerHTML = `<p class="small muted">Schritt ${n + 1} von 6</p><p class="q"><b>${SCHRITTE[n]}</b>${frage ? '<br>' + frage : ''}</p>${satzHtml(s, { ...m, tap })}${m.h ? `<p class="dt">${m.h},${m.d ? ` <span class="dass">dass</span> ${m.d}.` : ' …'}</p>` : ''}${innen || ''}<div class="fb"></div>`;
     sperre();
   };
-  const knoepfe = (opts, richtig, dann, warum) => $$('.opt', host).forEach(b => b.onclick = () => {
+  const knoepfe = (opts, richtig, dann, warum) => { let daneben = false; $$('.opt', host).forEach(b => b.onclick = () => {
     const ok = +b.dataset.i === richtig;
-    if (ok) { $$('.opt', host).forEach(x => x.disabled = true); b.classList.add('ok'); dann(); }
-    else { fehlgriff(); b.classList.add('no'); b.disabled = true; if (warum) $('.fb', host).innerHTML = `<div class="msg tipp">${warum}</div>`; }
-  });
+    if (ok) { if (!daneben) treffer(); $$('.opt', host).forEach(x => x.disabled = true); b.classList.add('ok'); dann(); }
+    else { daneben = true; fehlgriff(); b.classList.add('no'); b.disabled = true; if (warum) $('.fb', host).innerHTML = `<div class="msg tipp">${warum}</div>`; }
+  }); };
   const optHtml = (opts, liste) => `<div class="opts ${liste ? 'liste' : 'mitte'}">${opts.map(([t, i]) => `<button class="opt" type="button" data-i="${i}">${t}</button>`).join('')}</div>`;
   const wortTippen = (ziel, dann, tipp) => { let fehl = 0; $$('.satz .w', host).forEach(b => b.onclick = () => {
     if (doppeltipp(b)) return;
-    if (+b.dataset.i === ziel) dann(); else { fehlgriff(); fehl++; wackeln(b); if (fehl >= 2) $('.fb', host).innerHTML = `<div class="msg tipp">${tipp}</div>`; } }); };
+    if (+b.dataset.i === ziel) { if (!fehl) treffer(); dann(); } else { fehlgriff(); fehl++; wackeln(b); if (fehl >= 2) $('.fb', host).innerHTML = `<div class="msg tipp">${tipp}</div>`; } }); };
   const schritt = () => {
     if (n === 0) { rahmen('Tippe ihn an.', '', 1); wortTippen(s.inf, () => { m.inf = 1; n = 1; schritt(); }, 'Ein Infinitiv endet auf <b>-re</b> (Präsens) oder auf <b>-isse</b> (Perfekt). <i>esse</i> und <i>posse</i> sind auch Infinitive.'); }
     else if (n === 1 && !m.kopf) { rahmen('Tippe zuerst das Prädikat an.', '', 1); wortTippen(s.kopf, () => { m.kopf = 1; schritt(); }, 'Das Prädikat ist die gebeugte Verbform – nicht der Infinitiv.'); }
@@ -825,7 +830,7 @@ function sSechs(host, st, weiter) {
       $$('.opt', host).forEach(b => b.onclick = () => {
         const ok = (+b.dataset.i === 1) === s.aci;
         $$('.opt', host).forEach(x => { x.disabled = true; if ((+x.dataset.i === 1) === s.aci) x.classList.add(ok ? 'ok' : 'fehlt'); });
-        if (!ok) { b.classList.add('no'); fehlgriff(); }
+        if (!ok) { b.classList.add('no'); fehlgriff(); } else treffer();
         if (s.aci) fbZeigen($('.fb', host), ok, `${L(s.w[s.kopf])} kommt von <b>${s.f.kv}</b> – ein Kopfverb. Also steckt in diesem Satz ein AcI.`, () => { n = 2; schritt(); });
         else { $('.fb', host).insertAdjacentHTML('beforebegin', dtHtml(s)); fbZeigen($('.fb', host), ok, `${L(s.w[s.kopf])} kommt von <b>${s.kv}</b> – das ist kein Kopfverb. Also gibt es hier <b>keinen AcI</b>: Der Infinitiv gehört einfach zum Prädikat. Du übersetzt ohne dass-Satz.`, weiter); }
       });
@@ -837,9 +842,11 @@ function sSechs(host, st, weiter) {
       knoepfe(null, s.zeit === 'pr' ? 0 : 1, () => { m.h = s.h; n = 5; spaeter(host, schritt, 500); }, `Schau genau hin: Steht ${L(s.w[s.kopf])} im Präsens oder in der Vergangenheit?`); }
     else { const wahl = falscheZeiten(s).concat(s.zi);      // die richtige Zeit und höchstens zwei falsche – immer gleich viele
       rahmen('Der Akkusativ wird zum Subjekt, der Infinitiv zum Prädikat.', optHtml(shuffle(wahl.map(i => [`…, dass ${s.f.d[i]}.`, i])), true));
+      let daneben = false;
       $$('.opt', host).forEach(b => b.onclick = () => {
         const ok = +b.dataset.i === s.zi;
-        if (!ok) { fehlgriff(); b.classList.add('no'); b.disabled = true; $('.fb', host).innerHTML = `<div class="msg tipp">Denk an die Faustregel: ${regelText(s).replace(/<b>.*<\/b>/, '?')}</div>`; return; }
+        if (ok && !daneben) treffer();
+        if (!ok) { daneben = true; fehlgriff(); b.classList.add('no'); b.disabled = true; $('.fb', host).innerHTML = `<div class="msg tipp">Denk an die Faustregel: ${regelText(s).replace(/<b>.*<\/b>/, '?')}</div>`; return; }
         m.d = s.f.d[s.zi]; rahmen('', ''); fbZeigen($('.fb', host), true, regelText(s), weiter);
       }); }
   };
@@ -990,9 +997,7 @@ function renderFolge() {
   $('#ende').onclick = () => { if (confirm('Wirklich beenden? Der Stand dieser Runde geht verloren.')) go('aci'); };
   const vorher = R.fehler;
   STEP[st.t]($('#schritt'), st, () => {
-    // Punkte und Serie wie im Haupttrainer (gimmicks.js): ein Schritt ohne Fehlgriff zählt als richtige Antwort.
-    // Ein Fehlgriff ist da schon gemeldet (fehlgriff).
-    if (st.t !== 'info' && window.Gimmicks && R.fehlBei !== R.i) window.Gimmicks.antwort(true);
+    // Punkte und Serie sind da schon verbucht (treffer, fehlgriff) – je Aufgabe, nicht je Schritt.
     if (R.fehler > vorher) R.rot.add(R.i); R.i++; if (R.i >= R.steps.length) folgeFertig(); else { render(); window.scrollTo(0, 0); } });
 }
 function folgeFertig() {
@@ -1223,6 +1228,6 @@ druckFuellen(ALLEBLAETTER());
 VIEW = location.hash === '#aci' ? 'aci' : location.hash === '#text' ? 'texte' : 'home';
 render();
 </script>
-<script src="gimmicks.js?v=375277c2" data-gim="voll"></script>
+<script src="gimmicks.js?v=1514629d" data-gim="voll"></script>
 </body>
 </html>

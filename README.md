@@ -19,31 +19,39 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ 👥 **Anwesenheitsliste** links neben der App: Vorname + „zuletzt gesehen" der anderen
   — Vorname wird beim ersten Start abgefragt, Schalter oben rechts blendet die Liste aus/ein.
   Gegenstelle: Cloudflare Worker + D1, siehe [`worker/README.md`](worker/README.md).
-- ✅ 🎉 **Konfetti-Knopf** und ❄️ **Schnee-Knopf** auf jeder Seite, Punkte und Serie auch auf den Latein-Unterseiten –
-  siehe „Spaß-Teile auf allen Seiten“.
+- ✅ 🎉 **Konfetti-Knopf** und ❄️ **Schnee-Knopf** als Belohnung für 10 Richtige in Folge – im Vokabeltrainer und auf
+  den Latein-Unterseiten, dort auch Punkte und Serie – siehe „Spaß-Teile“.
 
-### 🎉 Spaß-Teile auf allen Seiten (`gimmicks.js`)
+### 🎉 Spaß-Teile (`gimmicks.js`)
 Eine gemeinsame Datei für alle elf Seiten. Jede bindet sie am Ende von `<body>` ein und sagt mit `data-gim`, was sie
-braucht: `haupt` (Haupttrainer), `voll` (Latein-Unterseiten mit Leiste), `knoepfe` (alle anderen).
+braucht: `haupt` (Haupttrainer), `voll` (Latein-Unterseiten mit Leiste), `knoepfe` (Seiten ohne Punkte – dort zeigt
+sie nichts).
 
-- **🎉 Konfetti und ❄️ Schnee auf Knopfdruck.** Konfetti fällt und bleibt liegen, dann fährt der Staubsauger durch.
+**Regel für jede neue Iteration, in jedem Fach:** Neue Module bekommen die Spaß-Teile gleich mit – `data-gim="voll"`,
+Kopfleiste `.bar .in`, und jede einzelne Aufgabe meldet sich bei `Gimmicks.antwort` (je Aufgabe, nicht je Schritt).
+Die Zahl der Melde-Stellen gehört in `HAKEN` in `tools/gimmicks-check.mjs`.
+
+- **🎉 Konfetti und ❄️ Schnee nur als Belohnung.** Die zwei Knöpfe sind blass und gesperrt, bis 10 Richtige in Folge
+  geschafft sind; ein Tipp auf einen gesperrten Knopf erklärt das. Dann leuchten und pulsieren sie zusammen mit der
+  Punkte-Pille („Konfetti!“). Ein Tipp auf einen der drei löst die Belohnung ein – Pille: das große Konfetti,
+  Knöpfe: Konfetti oder Schnee –, die Serie beginnt von vorn. Im Haupttrainer führt `index.html` die Serie und sagt
+  `gimmicks.js` über `window.gimmicksHaupt` (`frei`, `einloesen`, `hinweis`) und `Gimmicks.auffrischen()` Bescheid.
+  Seiten ohne Punkte (Deutsch, GeWi, NAWI, Musik, Englisch-Probearbeit) haben deshalb keine Knöpfe. Konfetti fällt und bleibt liegen, dann fährt der Staubsauger durch.
   Schnee fällt langsamer, dann kommt der Schneeschieber: dasselbe rote Gerät, vorn ein blaues Schild, oben ein
   Blinklicht – vor dem Schild wächst der Schneehaufen. Es läuft immer nur ein Regen (14 bis 22 Sekunden), so lange
   sind beide Knöpfe gesperrt und blass. Der Regen liegt über der Seite, ohne sie zu sperren: Man kann währenddessen
   weiterarbeiten. Falltempo und Fahrt richten sich nach Höhe und Breite des Bildschirms – alles liegt, bevor das
   Gerät kommt, und die Fahrt dauert überall ähnlich lange. Die Flocken sind bläulich, nur im Nachtmodus weiß.
-- **Wo die zwei Knöpfe sitzen:** im Haupttrainer neben der Punkte-Pille, auf den Unterseiten rechts in der Kopfleiste.
-  Am Handy (bis 700 px) unten links in der Ecke; die Seite bekommt dann unten Luft, damit sich jeder Inhalt über die
-  Knöpfe hinwegschieben lässt. Bräche die Kopfleiste durch die Knöpfe in eine zweite Zeile um, weichen sie ebenfalls
-  in die Ecke aus. Eine Seite kann den Platz selbst vorgeben (`<div class="gim-hier"></div>`): Auf der
-  Englisch-Probearbeit sitzen sie deshalb bei jeder Breite oben rechts neben dem Zurück-Link und rollen mit – über
-  einer Arbeit soll nichts schweben.
+- **Wo die zwei Knöpfe sitzen:** im Haupttrainer neben der Punkte-Pille, am Handy (bis 700 px) unten links in der
+  Ecke; die Seite bekommt dann unten Luft, damit sich jeder Inhalt über die Knöpfe hinwegschieben lässt. Auf den
+  Latein-Unterseiten in der Leiste.
 - **Leiste der Latein-Unterseiten** (Perfekt-Baukasten, AcI und Übersetzen): Punkte-Pille mit Serie, die zwei
   Knöpfe, 👥 „Gerade da“, 🌙 Nachtmodus. Breit sitzt sie rechts in der Kopfleiste. Bis 743 px steht sie in einer
   eigenen Zeile darunter, die mit dem Inhalt rollt – die klebende Kopfleiste bleibt so hoch wie vorher.
   - **Punkte:** derselbe Speicher wie im Haupttrainer (`punkteGesamt`), 10 je richtiger Antwort. Als Antwort zählt:
-    ein Schritt einer Station oder Übungsfolge ohne Fehlgriff, eine Aufgabe einer Übungsrunde, eine Frage im
-    Kurz-Check; beim Übersetzen „Stimmt“ nur dann, wenn die Prüfung alle Bausteine gefunden hat. Reine Lese-Schritte
+    jede einzelne Aufgabe einer Station oder Übungsfolge ohne Fehlgriff – auch wenn ein Schritt mehrere stellt
+    (jedes Wort beim Sortieren, jede Endung, jedes Paar, jede Lücke im Merksatz, jeder der sechs Schritte eines
+    Satzes) –, gemeldet sofort beim Antippen; eine Aufgabe einer Übungsrunde, eine Frage im Kurz-Check; beim Übersetzen „Stimmt“ nur dann, wenn die Prüfung alle Bausteine gefunden hat. Reine Lese-Schritte
     zählen nicht. Serie, aber keine Punkte bringt, was wiederholt wird: Aufgaben am Rundenende, der Durchgang „nur
     die Sätze mit Fehlern“, dieselbe Kurz-Check-Frage ein zweites Mal (solange die Seite offen ist).
   - **Serie:** 10 Richtige in Folge machen die Pille zum Knopf „Konfetti!“ – das große Konfetti mit goldenen Sternen.
@@ -64,9 +72,8 @@ braucht: `haupt` (Haupttrainer), `voll` (Latein-Unterseiten mit Leiste), `knoepf
 - **Fehlt die Datei** (nicht geladen), laufen alle Seiten trotzdem – sie fragen vor jedem Aufruf nach
   `window.Gimmicks`. Im Haupttrainer bleibt dann die volle Serie stehen, bis die Datei wieder da ist.
 - **Bekannte Grenzen:** Eine Station mit festem Inhalt bringt bei jedem Durchgang wieder Punkte (wie jede wiederholte
-  Runde im Haupttrainer). Wer nach einer richtigen Antwort „Beenden“ statt „Weiter“ drückt, bekommt für diesen einen
-  Schritt keine Punkte. Am Handy macht die Luft unter den Eck-Knöpfen jede Seite 62 px länger, und die Eck-Knöpfe
-  liegen beim Rollen über Zeilenanfängen (am Seitenende ist alles frei). Bis 743 px rollt die Leiste der Latein-Seiten
+  Runde im Haupttrainer). Eine Aufgabe, die erst nach einem Fehlgriff gelöst wird, bringt nichts (der Fehlgriff hat die
+  Serie schon zurückgesetzt). Im Haupttrainer macht am Handy die Luft unter den Eck-Knöpfen die Seite 62 px länger. Bis 743 px rollt die Leiste der Latein-Seiten
   mit dem Inhalt weg – „+10“ und der Wechsel zu „Konfetti!“ sind dann erst wieder oben zu sehen. Getestet ist alles
   nur im simulierten Browser, nicht am echten iPad.
 - **Nach jeder Änderung an `gimmicks.js`:** `node tools/gimmicks-check.mjs --setzen`. Das trägt den Fingerabdruck der
@@ -235,8 +242,10 @@ Arbeitsblätter „Grammatik I, L 9“ (AcI: Wiederholung, Erweiterungen, Zeitve
   Wortschatz (0 → 100, Vokabeln, Vokabelheft, Mittlere Spalte, Rakete, Profi-Rakete), Perfekt (Perfekt-Übung,
   Perfekt-Baukasten) und „AcI und Übersetzen“ (zwei Karten zur eigenen Seite). Verb-Formen, Substantive, Tabellen,
   Schlange, Sätze und „Alles gemischt“ sind ausgeblendet – dafür hat das Set keine Daten.
-  - **Vokabeln**: 105 Wörter in zehn Abschnitten (neue Verben, neues Perfekt, neue Substantive I/II, neue kleine
-    Wörter, bekannte Verben, Substantive & Adjektive, Präpositionen & Pronomen, Adverbien, Bindewörter). Bild, Tipp und
+  - **Vokabeln**: 105 Wörter in neun Abschnitten (Verben aus Lektion 9, neues Perfekt, Lektion 9: 3. Deklination,
+    Lektion 9: a-/o-Deklination und kleine Wörter, Verben aus früheren Lektionen, Substantive & Adjektive,
+    Präpositionen & Pronomen, Adverbien, Bindewörter). „Neu“ heißt nur das Perfekt der Verben aus früheren
+    Lektionen – alles andere kam schon in Lektion 9 oder früher vor. Bild, Tipp und
     falsche Antworten kommen aus der Lektion, in der das Wort zuerst vorkam; elf Wörter aus Lektion 2 sind neu angelegt.
     Der Lernstand je Wort ist derselbe wie in der Lektion (gleiche ID).
   - **Vokabelheft**: alle 121 Einträge in zehn Päckchen mit Namen statt nach dem Alphabet; Päckchen 10 „Nur im Text“
@@ -280,7 +289,9 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
   14, 30 Tagen) fragt die Übersicht mit zwei Fragen je Station nach; in jeder Übungsrunde steckt eine Zwischenfrage.
   Eine falsche Antwort wird sofort gespeichert (morgen wieder, eine Stufe zurück).
 - **Üben** – sechs Übungsarten: Stammformen, Umformen (Präsens → Perfekt), Bestimmen (Zeit und Person), Endungen-Blitz,
-  Welcher Weg?, Zurück zum Verb. Auswahl nach Tabelle und Umfang; voreingestellt ist **🎯 Für die Arbeit** (die
+  Welcher Weg?, Zurück zum Verb. Die Übungsart wählt man nur über die Kacheln der Übersicht; die Seite danach fragt
+  nur noch „Welcher Weg?“ (alle gemischt, Kopfkissen-Verben oder einer der sechs Wege) und „Welche Verben?“, „Andere
+  Übung wählen“ springt zurück zu den Kacheln. Auswahl nach Weg und Umfang; voreingestellt ist **🎯 Für die Arbeit** (die
   34 Verben, die auf dem Wortschatz-Blatt der Klassenarbeit mit Perfekt stehen, Konstante `ARBEIT.blatt`). Falsches
   kommt am Rundenende einmal wieder.
   Längenstriche dürfen beim Tippen fehlen – außer wenn nur der Strich Präsens und Perfekt unterscheidet (fugit/fūgit).
@@ -290,7 +301,10 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
   sonst am Handy „Runde beenden“ oder eine Antwort der nächsten Aufgabe. `?ohnesperre` schaltet das für Testläufe ab.
 - **Tabellen** – zwölf Blätter zum Nachschlagen und Drucken (auch als `latein-perfekt-tabellen.pdf`): Bauplan,
   Endungen-Blatt für den Kühlschrank, **Klassenarbeit** (die 34 Verben nach ihrem Weg), sieben Lerntabellen,
-  Einzelfälle mit allen Formen, alle Verben A–Z. Arbeits-Verben tragen in allen Tabellen ein 🎯. Jede Tabelle
+  Einzelfälle mit allen Formen, alle Verben A–Z. Das Menü hat drei beschriftete Zeilen: Überblick · die sechs Wege
+  zum Perfektstamm (ohne Nummern, jeder Knopf in der Farbe seines Wegs: ohne-Änderung-Perfekt, v-, u-, s-Perfekt,
+  Dehnungs-, Reduplikationsperfekt) · Auswendig lernen und nachschlagen (Kopfkissen-Verben, Einzelfälle, A–Z). Auf den
+  Blättern selbst stehen weiter die Nummern „Tabelle 1–7“. Arbeits-Verben tragen in allen Tabellen ein 🎯. Jede Tabelle
   besteht aus Untergruppen, in denen für **alle** Verben genau eine Regel gilt; was in keine Regel passt, steht als
   Einzelfall darunter. Reihenfolge vom Einfachen zum Schwierigen: 1 ohne Stammveränderung, 2 v, 3 u, 4 s, 5 Dehnung,
   6 Reduplikation, 7 besondere Verben. Ein Verb antippen zeigt seinen Weg zum Perfektstamm Schritt für Schritt.
@@ -341,7 +355,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.49.0
+**Version:** 2.49.1
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -402,6 +416,40 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.49.1 (25.11.2026)
+- Anlass: Nach dem Umbau ließen sich Konfetti und Schnee immer auslösen, und im Perfekt-Baukasten zählten die Punkte
+  teilweise nicht hoch. Dazu: Die Wörter aus Lektion 9 hießen in der Klassenarbeit „neu“, obwohl sie schon gelernt
+  sind, und ātram war nicht erklärt.
+- **Konfetti und Schnee nur als Belohnung** (Abschnitt „Spaß-Teile“): Die zwei Knöpfe sind gesperrt, bis die Serie
+  voll ist, und leuchten dann mit der Punkte-Pille; einer der drei löst die Belohnung ein. Auf Seiten ohne Punkte
+  gibt es die Knöpfe nicht mehr (`data-gim="knoepfe"` zeigt nichts; der feste Platz auf der Englisch-Probearbeit
+  ist weg).
+- **Punkte je Aufgabe**: Perfekt-Baukasten und AcI-Werkstatt meldeten einen Schritt mit mehreren Aufgaben (z. B. acht
+  Wörter sortieren) als eine Antwort und nach einem Fehler gar nicht. Jetzt zählt jede Aufgabe ohne Fehlgriff, sofort
+  beim Antippen (`treffer`), jeder Fehlgriff setzt die Serie zurück (`fehlgriff`).
+- **Hinweis mit der Maus**: Ein Klick auf einen Knopf der Leiste ließ seinen Hinweis verschwinden, der vom
+  Darüberfahren schon stand – er bleibt jetzt stehen.
+- **Klassenarbeit Dezember, Vokabeln**: Abschnitte neu benannt und die Substantive nach Deklination geteilt (siehe
+  oben). Das Vokabelheft heißt in den Päckchen 1, 3, 4, 5 entsprechend.
+- **ātram**: Fußnote, Wortliste und Vokabelheft erklären jetzt *āter, ātra, ātrum* – schwarz, dunkel. PDF neu erzeugt.
+- **Perfekt-Baukasten, Menüs**: Die Übungsart stand doppelt (Kacheln der Übersicht und Auswahlleiste beim Üben) –
+  die Leiste ist weg. Die Tabellen-Auswahl hat drei Zeilen; die sechs Wege stehen ohne Nummern und farbig für sich
+  (Abschnitt „Perfekt-Baukasten“). Beim Üben dieselbe Weg-Auswahl.
+- `tools/gimmicks-check.mjs` prüft die Brücke `window.gimmicksHaupt` und den Aufruf `Gimmicks.auffrischen()`.
+- Von zwei Prüfern gegengelesen. Behoben: reperīre stand unter „Neues Perfekt“, kam aber erst in Lektion 9 dazu (jetzt
+  bei den Verben aus Lektion 9); bei „Paare finden“ setzte ein zweiter Fehlgriff mit demselben Verb die Serie nicht
+  zurück; der Hinweis am bereiten Knopf klang, als sei die Belohnung schon eingelöst; „die Knöpfe daneben“ stimmte am
+  Handy nicht; startet der Regen auf einer Latein-Seite nicht, sagt die Leiste jetzt Bescheid. Aufgeräumt: der
+  ungenutzte feste Platz für die Knöpfe in `gimmicks.js`. Das Vokabelheft ordnet die Substantive aus Lektion 9 erst
+  nach 3., dann nach a-/o-Deklination. Bewusst so gelassen: Eine verdiente Belohnung bleibt nach einer falschen
+  Antwort stehen (wie bisher); die Serie füllt sich je Aufgabe schneller als vorher je Schritt.
+- Nachprüfung der Korrekturen, eingearbeitet: „Andere Übung wählen“ landete unter der klebenden Kopfleiste; die Auswahl
+  auf der Üben-Seite hieß wie die Übung „Welcher Weg?“ (jetzt „Welche Tabelle?“, in jener Übung gar keine Auswahl);
+  am Handy stehen die sechs Wege in zwei gleich breiten Spalten, der gewählte Weg hat einen hellen Innenrand, die
+  Kopfkissen-Verben ihren Ocker-Strich. Marken „schwierig“ im Vokabelheft wandern mit, wenn ein Wort das Päckchen
+  wechselt (`vhMigriereMarken`, jetzt auch für `ka1226`: reperīre). Bei den zehn Verben „Neues Perfekt“ zeigt der
+  Tipp im Vokabeltrainer das Perfekt. Gelassen: Auf den Blättern stehen weiter „Tabelle 1–7“ mit Namen.
 
 ### Version 2.49.0 (25.11.2026)
 - Anlass: Die Spaß-Teile der Hauptseite sollen auch auf die Unterseiten – zuerst auf die zwei jüngsten
@@ -1233,7 +1281,7 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
   der ursprüngliche Grund, sie mitzuführen.
 - **Päckchen neu geschnitten**: acht statt neun, Größen 10/9/10/7/6/6/9/9 statt bis hinunter zu 3.
   Die Reihenfolge des Buchs bleibt, die Buchstaben verschieben sich. Weil der Schlüssel einer
-  Markierung den Buchstaben enthält (`en-theme1|B|rock`), hängt `vhMigriereEnglischeMarken()` sie
+  Markierung den Buchstaben enthält (`en-theme1|B|rock`), hängt `vhMigriereMarken('en-theme1')` sie
   beim Laden einmalig um und wirft Marken zu entfernten Wörtern weg.
 - **Zwei Robustheitslöcher nebenbei geschlossen**, beide vom Prüflauf gefunden:
   `renderVokabelheft` stürzte bei einem Päckchen-Index jenseits der Liste ab (möglich nach einem

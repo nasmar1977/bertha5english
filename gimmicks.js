@@ -1,21 +1,26 @@
 /* =====================================================================
    gimmicks.js – die Spaß-Teile für alle Seiten des Trainers
 
-   Konfetti (der Staubsauger räumt auf) und Schnee (der Schneeschieber räumt auf) gibt es auf jeder Seite, die
-   diese Datei einbindet. Die Unterseiten bekommen zusätzlich, was der Haupttrainer oben zeigt: Punkte mit
-   Serie, die Liste „Gerade da“ und den Nachtmodus, den man sich mit fünf Richtigen in Folge verdient.
+   Konfetti (der Staubsauger räumt auf) und Schnee (der Schneeschieber räumt auf) gibt es nur als Belohnung:
+   Die zwei Knöpfe sind gesperrt, bis zehn Richtige in Folge geschafft sind. Dann leuchten sie und die Punkte-Pille;
+   ein Tipp auf einen der drei löst die Belohnung ein (Pille: das große Konfetti), und die Serie beginnt von vorn.
+   Deshalb stehen die Knöpfe nur dort, wo es Punkte gibt: im Haupttrainer und auf den Unterseiten mit Leiste.
+   Die Unterseiten mit Leiste bekommen zusätzlich, was der Haupttrainer oben zeigt: Punkte mit Serie, die Liste
+   „Gerade da“ und den Nachtmodus, den man sich mit fünf Richtigen in Folge verdient.
 
    Einbinden (am Ende von <body>):
      <script src="gimmicks.js?v=…" data-gim="haupt"></script>     index.html: nur Regen und die zwei Knöpfe (neben der
-                                                                  Punkte-Pille); Punkte, Liste, Nachtmodus hat sie selbst
+                                                                  Punkte-Pille); Punkte, Serie, Liste, Nachtmodus hat sie
+                                                                  selbst und sagt über window.gimmicksHaupt, ob die
+                                                                  Belohnung frei ist ({ frei, einloesen, hinweis })
      <script src="gimmicks.js?v=…" data-gim="voll"></script>      Unterseiten mit Kopfleiste (.bar .in):
                                                                   Punkte, Knöpfe, „Gerade da“, Nachtmodus
-     <script src="gimmicks.js?v=…" data-gim="knoepfe"></script>   alle anderen Seiten: nur die zwei Knöpfe, rechts in
-                                                                  der Kopfleiste (.bar .in)
-   Am Handy (bis 700 px) und auf Seiten ohne Kopfleiste sitzen die zwei Knöpfe unten links in der Ecke.
-   Eine Seite kann ihnen selbst einen festen Platz geben: <div class="gim-hier"></div> (so die Englisch-Probearbeit –
-   über einer Arbeit soll nichts schweben). Die Leiste der Unterseiten steht am Handy (bis 743 px) in einer eigenen
-   Zeile unter der Kopfleiste, damit die klebende Kopfleiste nicht doppelt so hoch wird.
+     <script src="gimmicks.js?v=…" data-gim="knoepfe"></script>   Seiten ohne Punkte: zeigt nichts (ohne Punkte keine
+                                                                  Belohnung). Bekommt eine solche Seite Aufgaben, wird sie
+                                                                  „voll“ und meldet ihre Antworten.
+   Im Haupttrainer sitzen die zwei Knöpfe am Handy (bis 700 px) unten links in der Ecke. Die Leiste der Unterseiten
+   steht am Handy (bis 743 px) in einer eigenen Zeile unter der Kopfleiste, damit die klebende Kopfleiste nicht
+   doppelt so hoch wird.
    Das v=… ist der Fingerabdruck dieser Datei: Nach jeder Änderung hier „node tools/gimmicks-check.mjs --setzen“
    aufrufen, sonst holt sich der Browser noch die alte Fassung aus dem Zwischenspeicher.
    Für die Seite:
@@ -23,6 +28,7 @@
                                       Leiste steht ("voll"); mit zweiter Angabe 0: Serie ja, Punkte nein
      Gimmicks.aktiv()                 „hier wird gerade geübt“, ohne Punkte und Serie anzufassen (für die Liste „Gerade da“)
      Gimmicks.regen('konfetti' | 'schnee', { gross: true })      liefert false, wenn gerade schon ein Regen läuft
+     Gimmicks.auffrischen()           Haupttrainer: Die Belohnung ist frei geworden oder verbraucht – Knöpfe neu zeichnen
 
    Speicher, mit dem Haupttrainer geteilt: punkteGesamt, vokabelVorname, vokabelGeraeteId, vokabelAnwesenheitAus.
    Fehlt diese Datei, laufen alle Seiten trotzdem – sie fragen vor jedem Aufruf nach window.Gimmicks.
@@ -50,21 +56,17 @@
 .gim-k:focus-visible,.gim-pill:focus-visible{outline:3px solid #5a4fcf;outline-offset:3px;box-shadow:0 0 0 3px #fff}
 .gim-k.konfetti{background:linear-gradient(135deg,#f472b6 0%,#8b5cf6 100%)}
 .gim-k.schnee{background:linear-gradient(135deg,#7dd3fc 0%,#2563eb 100%)}
-.gim-k:disabled{opacity:.45;cursor:default;transform:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-/* in der Kopfleiste einer Unterseite (.bar .in): rechts außen, hinter der Brotkrumen-Zeile */
-.gim-spass.imkopf{margin:-5px 0 -5px auto;gap:10px}      /* oben und unten etwas über die Zeile hinaus: Die Leiste wird davon nicht höher */
-.crumb + .gim-spass.imkopf{margin-left:0}
-.gim-spass.imkopf .gim-k{width:40px;height:40px;font-size:19px}
+.gim-k:disabled,.gim-k.gesperrt{opacity:.45;cursor:default;transform:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.gim-k.gesperrt{filter:grayscale(55%)}
+/* Belohnung frei: Die zwei Knöpfe leuchten und pulsieren wie die Pille „Konfetti!“ */
+.gim-k.konfetti.bereit{box-shadow:0 0 14px rgba(236,72,153,.75),0 2px 6px rgba(0,0,0,.2);animation:gimPuls 1.6s ease-in-out infinite}
+.gim-k.schnee.bereit{box-shadow:0 0 14px rgba(59,130,246,.8),0 2px 6px rgba(0,0,0,.2);animation:gimPuls 1.6s ease-in-out infinite}
 .gim-spass.inleiste{margin-left:12px}           /* Haupttrainer: Abstand zum Abzeichen „10/10“ der Punkte-Pille, auch wenn sie pulsiert */
-/* fester Platz, den die Seite selbst vorgibt und selbst anordnet (<div class="gim-hier">): im Blatt, rollt mit */
-.gim-hier{flex:0 0 auto}
-.gim-spass.fest{gap:6px}
-.gim-spass.fest .gim-k{width:38px;height:38px;font-size:18px}
 /* Ecke unten links: am Handy (oben ist kein Platz mehr) und auf Seiten ohne Kopfleiste. Damit die Knöpfe nichts auf
    Dauer verdecken, bekommt die Seite unten so viel Luft, dass sich alles über sie hinwegschieben lässt. */
 .gim-spass.ecke{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:19;margin:0}
 .gim-spass.ecke .gim-k{width:42px;height:42px;font-size:20px}
-.gim-spass.ecke .gim-k:not(:disabled){opacity:.94}      /* gesperrt bleibt blass (.gim-k:disabled) */
+.gim-spass.ecke .gim-k:not(:disabled):not(.gesperrt){opacity:.94}      /* gesperrt bleibt blass */
 html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 /* Leiste der Unterseiten: rechts in der Kopfleiste; bis 743 px in einer eigenen Zeile darunter (.gim-zeile), die mitrollt */
 .gim-leiste{position:relative;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px 8px;align-items:center;margin-left:auto;max-width:100%;font-family:Verdana,system-ui,sans-serif}
@@ -85,7 +87,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 @keyframes gimPuls{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 .gim-plus{position:absolute;left:30px;top:2px;pointer-events:none;font-weight:700;color:#16a34a;text-shadow:0 1px 0 #fff;animation:gimPlus .9s ease-out forwards}
 @keyframes gimPlus{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(24px)}}
-@media (prefers-reduced-motion:reduce){.gim-pill.bereit,.gim-k.nacht.bereit{animation:none}.gim-plus{animation-duration:.01s}}
+@media (prefers-reduced-motion:reduce){.gim-pill.bereit,.gim-k.nacht.bereit,.gim-k.konfetti.bereit,.gim-k.schnee.bereit{animation:none}.gim-plus{animation-duration:.01s}}
 /* ein Hinweis-Feld für die ganze Leiste: hängt rechts unter ihr und bleibt so auch am Handy im Bild */
 .gim-tip{position:absolute;top:calc(100% + 10px);right:0;z-index:40;width:min(270px,calc(100vw - 24px));background:#263238;color:#fff;padding:9px 13px;border-radius:10px;font-size:13px;font-weight:400;line-height:1.35;text-align:left;
   border:1px solid rgba(255,255,255,.16);box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .15s ease,transform .15s ease}
@@ -120,7 +122,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 :root[data-theme="dark"] .gim-da{background:rgba(27,35,33,.96);color:#e6ecea}
 :root[data-theme="dark"] .gim-da .notiz{border-top-color:#33403c}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gim-da{background:rgba(27,35,33,.96);color:#e6ecea}:root:not([data-theme="light"]) .gim-da .notiz{border-top-color:#33403c}}
-@media print{.gim-spass,.gim-leiste,.gim-zeile,.gim-hier,.gim-da,#konfettiCanvas{display:none!important}html.gim-platz{padding-bottom:0!important}}
+@media print{.gim-spass,.gim-leiste,.gim-zeile,.gim-da,#konfettiCanvas{display:none!important}html.gim-platz{padding-bottom:0!important}}
 `));
 
   // ===================================================================
@@ -130,12 +132,11 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   // ===================================================================
   let laeuft = false;
   const knoepfe = [];
-  const knoepfeSperren = an => knoepfe.forEach(b => { b.disabled = an; });
 
   function regen(art, opt) {
     opt = opt || {};
     if (laeuft || document.getElementById('konfettiCanvas')) return false;
-    laeuft = true; knoepfeSperren(true);
+    laeuft = true; knoepfeAuffrischen();
     const schnee = art === 'schnee';
     const ruhig = medium('(prefers-reduced-motion: reduce)');
     const c = document.createElement('canvas');
@@ -143,7 +144,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     c.setAttribute('aria-hidden', 'true');
     document.body.appendChild(c);
     const ctx = c.getContext('2d');
-    if (!ctx) { c.remove(); laeuft = false; knoepfeSperren(false); return false; }      // kein Zeichenfeld zu bekommen: dann eben kein Regen
+    if (!ctx) { c.remove(); laeuft = false; knoepfeAuffrischen(); return false; }      // kein Zeichenfeld zu bekommen: dann eben kein Regen
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const sonde = el('div', 'konfetti-sonde');
     document.body.appendChild(sonde);
@@ -312,7 +313,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       if (window.visualViewport) { window.visualViewport.removeEventListener('resize', groesse); window.visualViewport.removeEventListener('scroll', groesse); }
       c.width = c.height = 0;                // gibt den Bildspeicher gleich frei (iPad: der Vorrat für Zeichenfelder ist knapp)
       sonde.remove(); c.remove();
-      laeuft = false; knoepfeSperren(false);
+      laeuft = false; knoepfeAuffrischen();
       if (typeof opt.fertig === 'function') opt.fertig();
     }
 
@@ -393,15 +394,47 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   }
 
   // ===================================================================
-  // Die zwei Knöpfe: Konfetti und Schnee
+  // Die zwei Knöpfe: Konfetti und Schnee – nur als Belohnung für zehn Richtige in Folge.
+  // Die Serie führt im Haupttrainer index.html (window.gimmicksHaupt), auf den Unterseiten diese Datei.
+  // Gesperrt bleiben sie antippbar (kein disabled): Ein Tipp erklärt, wie man sie sich verdient.
   // ===================================================================
+  const haupt = () => (MODUS === 'haupt' && window.gimmicksHaupt) || null;
+  const frei = () => MODUS === 'haupt' ? !!(haupt() && haupt().frei()) : konfettiBereit;
+  function einloesen() {
+    if (MODUS === 'haupt') { const h = haupt(); if (h) h.einloesen(); return; }
+    konfettiBereit = false; serie = 0; punkteZeigen(0); standMerken();
+  }
+  function knoepfeAuffrischen() {
+    const ok = frei();
+    knoepfe.forEach(b => {
+      b.disabled = laeuft;
+      b.classList.toggle('gesperrt', !laeuft && !ok);
+      b.classList.toggle('bereit', !laeuft && ok);
+      b.setAttribute('aria-label', b.tipText());
+      if (MODUS !== 'voll') b.title = b.tipText();
+    });
+    tipAuffrischen();
+  }
   function knopf(art, zeichen, text) {
     const b = el('button', 'gim-k ' + art, zeichen);
-    b.type = 'button'; b.setAttribute('aria-label', text);
-    if (MODUS === 'voll') tipAnbinden(b, () => text); else b.title = text;
-    b.disabled = laeuft;
+    b.type = 'button';
+    const tt = () => frei()
+      ? text + '. Das löst deine Belohnung ein – danach beginnt die Serie von vorn.'
+      : (art === 'schnee' ? 'Schnee' : 'Konfetti') + ' gibt es als Belohnung: Schaffe ' + SERIE_ZIEL + ' richtige Antworten in Folge' +
+        (MODUS === 'voll' ? ' (im Moment ' + Math.min(serie, SERIE_ZIEL) + ' von ' + SERIE_ZIEL + ')' : '') + ' – dann leuchtet dieser Knopf.';
+    if (MODUS === 'voll') tipAnbinden(b, tt); else b.tipText = tt;
     b.addEventListener('mousedown', e => e.preventDefault());           // der Klick soll einem Eingabefeld nicht den Fokus nehmen
-    b.addEventListener('click', e => { e.stopPropagation(); tipWeg(); regen(art); });
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      if (laeuft) return;
+      if (!frei()) {                                                     // noch nicht verdient: nur erklären
+        if (MODUS === 'voll') tipUmschalten(b); else { const h = haupt(); if (h && h.hinweis) h.hinweis(); }
+        return;
+      }
+      tipWeg();
+      if (regen(art)) einloesen();
+      else if (MODUS === 'voll') tipKurz('Das klemmt gerade. Versuch es gleich noch einmal – deine Belohnung bleibt dir erhalten.');
+    });
     knoepfe.push(b);
     return b;
   }
@@ -417,36 +450,15 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   const SCHMAL = '(max-width: 700px)';
   function knoepfeSetzen(leiste, klasse) {
     const box = spassKnoepfe();
-    // Die Seite gibt den Platz selbst vor (<div class="gim-hier">): dort bleiben sie, bei jeder Breite, nichts schwebt
-    const hier = klasse === 'imkopf' ? document.querySelector('.gim-hier') : null;
-    if (hier) { box.className = 'gim-spass fest'; hier.appendChild(box); return; }
     const setzen = () => {
-      let ecke = !leiste || medium(SCHMAL);
-      if (!ecke && klasse === 'imkopf') {
-        // Kopfleiste einer Unterseite: nur, wenn sie dadurch nicht in eine zweite Zeile umbricht
-        // (lange Brotkrumen-Zeile, schmales Fenster) – sonst lieber in die Ecke
-        box.className = 'gim-spass imkopf';
-        if (box.parentNode !== leiste) leiste.appendChild(box);
-        box.style.display = 'none'; const ohne = leiste.offsetHeight;
-        box.style.display = ''; ecke = leiste.offsetHeight > ohne + 6;
-      }
+      const ecke = !leiste || medium(SCHMAL);
       box.className = 'gim-spass ' + (ecke ? 'ecke' : klasse);
       const ziel = ecke ? document.body : leiste;
       if (box.parentNode !== ziel) ziel.appendChild(box);
       document.documentElement.classList.toggle('gim-platz', ecke);
     };
     setzen();
-    if (!leiste) return;
-    if (window.matchMedia) { const m = window.matchMedia(SCHMAL); if (m.addEventListener) m.addEventListener('change', setzen); else if (m.addListener) m.addListener(setzen); }
-    if (klasse !== 'imkopf') return;
-    // Die Seite schreibt ihre Brotkrumen-Zeile selbst um, das Fenster wird schmaler: dann neu entscheiden
-    let wartet = false;
-    const neu = () => { if (wartet) return; wartet = true; requestAnimationFrame(() => { wartet = false; setzen(); }); };
-    window.addEventListener('resize', neu);
-    if (window.ResizeObserver) {
-      const ro = new ResizeObserver(neu); ro.observe(leiste);
-      const spur = leiste.querySelector('.crumb'); if (spur) ro.observe(spur);      // wird sie kürzer, ändert sich die Leiste selbst nicht
-    }
+    if (leiste && window.matchMedia) { const m = window.matchMedia(SCHMAL); if (m.addEventListener) m.addEventListener('change', setzen); else if (m.addListener) m.addListener(setzen); }
   }
 
   // ===================================================================
@@ -482,7 +494,7 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     pill.querySelector('.gim-zahl').textContent = punkte.toLocaleString('de-DE');
     pill.querySelector('.gim-abz').textContent = s + '/' + SERIE_ZIEL;
     pill.classList.toggle('bereit', konfettiBereit);
-    tipAuffrischen();
+    knoepfeAuffrischen();
     pill.setAttribute('aria-label', konfettiBereit ? 'Großes Konfetti regnen lassen' : punkte + ' Punkte, Serie ' + s + ' von ' + SERIE_ZIEL);
     if (neu > 0) { const plus = el('span', 'gim-plus', '+' + neu); pill.appendChild(plus); setTimeout(() => plus.remove(), 900); }
   }
@@ -519,7 +531,10 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     clearTimeout(tipUhr); tipUhr = setTimeout(tipWeg, 4000);
   }
   function tipUmschalten(b) {
-    if (tipVon === b) { tipWeg(); return; }
+    if (tipVon === b) {                      // mit der Maus steht der Hinweis schon vom Darüberfahren: stehen lassen
+      if (medium('(hover: hover)')) { clearTimeout(tipUhr); return; }
+      tipWeg(); return;
+    }
     tipZeigen(b); clearTimeout(tipUhr); tipUhr = setTimeout(tipWeg, 6000);
   }
   function tipAnbinden(b, text) {
@@ -532,9 +547,9 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       '<span class="gim-zahl">0</span><span class="gim-kt">Konfetti!</span><span class="gim-abz">0/10</span>');
     pill.type = 'button';
     tipAnbinden(pill, () => konfettiBereit
-      ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das große Konfetti gehört dir!'
+      ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das große Konfetti gehört dir! Oder such dir einen der Knöpfe 🎉 oder ❄️ aus.'
       : 'Für jede richtige Antwort gibt es ' + PUNKTE_JE_ANTWORT + ' Punkte. Sie zählen zu deinen Punkten im Vokabeltrainer dazu. Schaffst du ' + SERIE_ZIEL +
-        ' richtige in Folge, gibt es das große Konfetti. Im Moment ' + Math.min(serie, SERIE_ZIEL) + ' von ' + SERIE_ZIEL + '. Eine falsche Antwort setzt die Serie auf null.');
+        ' richtige in Folge, gibt es das große Konfetti – oder Konfetti oder Schnee mit den Knöpfen 🎉 und ❄️. Im Moment ' + Math.min(serie, SERIE_ZIEL) + ' von ' + SERIE_ZIEL + '. Eine falsche Antwort setzt die Serie auf null.');
     pill.addEventListener('click', e => {
       e.stopPropagation();
       if (konfettiBereit) {
@@ -724,9 +739,9 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   // Aufbau je nach Seite
   // ===================================================================
   function aufbauen() {
-    if (MODUS === 'haupt') { knoepfeSetzen(document.getElementById('punkteLeiste'), 'inleiste'); return; }   // index.html: neben die Punkte-Pille
+    if (MODUS === 'haupt') { knoepfeSetzen(document.getElementById('punkteLeiste'), 'inleiste'); knoepfeAuffrischen(); return; }   // index.html: neben die Punkte-Pille
     const kopf = document.querySelector('.bar .in');
-    if (MODUS !== 'voll' || !kopf) { knoepfeSetzen(kopf, 'imkopf'); return; }                                 // nur die zwei Knöpfe
+    if (MODUS !== 'voll' || !kopf) return;          // Seite ohne Punkte: ohne Serie keine Belohnung, also auch keine Knöpfe
     const leiste = el('div', 'gim-leiste');
     leiste.appendChild(pillBauen());
     const zwei = spassKnoepfe(); [...zwei.children].forEach(b => leiste.appendChild(b));
@@ -762,6 +777,6 @@ html.gim-platz{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     });
     document.addEventListener('click', tipWeg);                        // Tipp irgendwo sonst: Hinweis weg
   }
-  window.Gimmicks = { regen: regen, antwort: antwort, aktiv: aktiv, laeuft: () => laeuft, modus: MODUS };
+  window.Gimmicks = { regen: regen, antwort: antwort, aktiv: aktiv, auffrischen: knoepfeAuffrischen, laeuft: () => laeuft, modus: MODUS };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aufbauen); else aufbauen();
 })();

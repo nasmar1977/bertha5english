@@ -89,6 +89,13 @@ a.tile{text-decoration:none}
 .seg{display:inline-flex;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
 .seg button{border:0;background:var(--bg);padding:7px 12px;min-height:40px;font-size:.9rem;white-space:nowrap}
 .seg button.on{background:var(--acc);color:#fff;font-weight:700}
+/* Die sechs Wege zum Perfektstamm: jeder Knopf in der Farbe seines Wegs (Strich unten, gewählt ganz gefüllt) */
+.seg.wegwahl button{box-shadow:inset 0 -4px 0 var(--c)}
+.seg.wegwahl button.on{background:var(--c);box-shadow:inset 0 0 0 3px rgba(255,255,255,.6)}
+@media (max-width:480px){.seg.wegwahl{display:grid;grid-template-columns:1fr 1fr}.seg.wegwahl button{white-space:normal}}
+.menue{display:grid;gap:4px;margin:4px 0 10px;justify-items:start}
+#ueben{scroll-margin-top:76px}
+.menue .ml{font-size:.8rem;color:var(--muted);margin-top:6px}
 :root[data-theme="dark"] .seg button.on{color:#0f1518}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#0f1518}}
 
@@ -889,12 +896,16 @@ function makronBinden(host) {
 }
 const mitMaus = () => !('ontouchstart' in window);
 
-// Ein Fehlgriff im laufenden Schritt. Der erste eines Schritts geht sofort an die Leiste (gimmicks.js) – nicht erst bei
-// „Weiter“, sonst ließe sich ein Fehler mit „Übersicht“ wegklicken und die Serie bliebe stehen.
-function fehlgriff() {
-  R.fehler++;
-  if (R.fehlBei !== R.i) { R.fehlBei = R.i; if (window.Gimmicks) window.Gimmicks.antwort(false); }
+// Punkte und Serie (gimmicks.js) zählen jede einzelne Aufgabe – auch dann, wenn ein Schritt mehrere hintereinander
+// stellt (Sortieren, Endungen bauen, Eintippen, Paare, Lücken im Merksatz). Gemeldet wird sofort beim Antippen, nicht
+// erst bei „Weiter“: Sonst ließe sich ein Fehler mit „Übersicht“ wegklicken, und eine richtige Antwort ginge verloren.
+// fehlgriff: jeder Fehlgriff (Serie auf null). treffer: eine Aufgabe ohne Fehlgriff gelöst.
+// nurSerie: derselbe Fehler noch einmal (z. B. dasselbe Paar) – Serie auf null, aber kein weiterer Fehler für die Sterne
+function fehlgriff(nurSerie) {
+  if (!nurSerie) R.fehler++;
+  if (window.Gimmicks) window.Gimmicks.antwort(false);
 }
+function treffer() { if (window.Gimmicks) window.Gimmicks.antwort(true); }
 function sInfo(host, st, weiter) {
   host.innerHTML = `<div class="card">${typeof st.h === 'function' ? st.h() : st.h}<div class="row"><button class="btn" id="w" type="button">${st.btn || 'Weiter'}</button></div></div>`;
   if (st.mount) st.mount(host);
@@ -906,7 +917,7 @@ function sWahl(host, st, weiter) {
   host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
     const ok = +b.dataset.j === st.a;
     host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.j === st.a) x.classList.add(ok ? 'ok' : 'fehlt'); });
-    if (!ok) { fehlgriff(); b.classList.add('no'); }
+    if (!ok) { fehlgriff(); b.classList.add('no'); } else treffer();
     fbZeigen(host.querySelector('.fbx'), ok, st.e, weiter);
   });
 }
@@ -921,7 +932,7 @@ function sSort(host, st, weiter) {
     host.querySelectorAll('.opt').forEach(b => b.onclick = () => {
       const ok = rich.includes(+b.dataset.j), fbx = host.querySelector('.fbx'), lang = (it.e || '').replace(/<[^>]+>/g, '').length;
       host.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (rich.includes(+x.dataset.j)) x.classList.add(ok ? 'ok' : 'fehlt'); });
-      if (!ok) { fehlgriff(); falsch.add(i); b.classList.add('no'); }
+      if (!ok) { fehlgriff(); falsch.add(i); b.classList.add('no'); } else treffer();
       // Eine kurze Bestätigung läuft von selbst weiter. Längere Erklärungen und alles Falsche bleiben stehen, bis das Kind weitertippt.
       if (ok && lang <= 45) { fbx.innerHTML = `<div class="msg ok"><b>✓</b> ${it.e || ''}</div>`; spaeter(card, nxt, lang ? 1500 : 700); }
       else fbZeigen(fbx, ok, it.e, nxt);
@@ -942,6 +953,7 @@ function sBau(host, st, weiter) {
     const card = host.firstElementChild;
     host.querySelectorAll('.chip').forEach(b => b.onclick = () => {
       if (b.dataset.e === soll) {
+        if (!falsch.has(i)) treffer();
         host.querySelectorAll('.chip').forEach(x => x.disabled = true); b.classList.add('on');
         host.querySelector('#form').innerHTML = bauPf(v, soll, false, 'gross');
         host.querySelector('.fbx').innerHTML = `<div class="msg ok"><b>✓</b> <span class="lat">${v.ps + soll}</span></div>`;
@@ -971,7 +983,7 @@ function sTipp(host, st, weiter) {
       const fast = (it.fast || []).find(x => norm(ein.value) === norm(x.w));
       if (fast) { hinw.innerHTML = `<div class="msg tipp">${fast.t}</div>`; ein.focus(); return; }
       const r = pruefe(ein.value, it.a);
-      if (r === 'ok' || r === 'strich') { zu('ok'); fbZeigen(fbx, true, (r === 'strich' ? `Genau geschrieben: ${L(it.a)}. ` : '') + (it.e || ''), nxt); }
+      if (r === 'ok' || r === 'strich') { zu('ok'); treffer(); fbZeigen(fbx, true, (r === 'strich' ? `Genau geschrieben: ${L(it.a)}. ` : '') + (it.e || ''), nxt); }
       else if (++vers < 2) { hinw.innerHTML = `<div class="msg tipp"><b>Noch nicht.</b> ${it.tipp || 'Versuch es noch einmal.'}</div>`; ein.select(); }
       else daneben();
     };
@@ -992,10 +1004,11 @@ function sPaare(host, st, weiter) {
     if (sel === null) { fbx.innerHTML = '<div class="msg tipp">Tippe zuerst links ein Verb an, dann rechts den passenden Perfektstamm.</div>'; return; }
     const l = q('l', sel);
     if (sel === i) {
+      if (!falsch.has(i)) treffer();
       [l, b].forEach(x => { x.classList.remove('sel'); x.classList.add('ok'); x.disabled = true; }); sel = null; offen--; fbx.innerHTML = '';
       if (!offen) fbZeigen(fbx, true, st.e || '', weiter);
     } else {
-      if (!falsch.has(sel)) { falsch.add(sel); fehlgriff(); }
+      if (!falsch.has(sel)) { falsch.add(sel); fehlgriff(); } else fehlgriff(true);
       [l, b].forEach(x => x.classList.add('no')); l.classList.remove('sel'); sel = null;
       spaeter(b, () => [l, b].forEach(x => x.classList.remove('no')), 700);
       fbx.innerHTML = '<div class="msg tipp">Das passt nicht zusammen. Vergleiche die Buchstaben genau.</div>';
@@ -1011,7 +1024,7 @@ function sMulti(host, st, weiter) {
     b.classList.toggle('sel', sel.has(j)); b.setAttribute('aria-pressed', sel.has(j)); pr.disabled = sel.size !== st.a.length;
   });
   pr.onclick = () => {
-    const ok = st.a.every(j => sel.has(j)); if (!ok) fehlgriff();
+    const ok = st.a.every(j => sel.has(j)); if (!ok) fehlgriff(); else treffer();
     host.querySelectorAll('.opt').forEach(x => { const j = +x.dataset.j, an = sel.has(j), ri = st.a.includes(j); x.disabled = true; x.classList.remove('sel'); if (ri) x.classList.add(an ? 'ok' : 'fehlt'); else if (an) x.classList.add('no'); });
     host.querySelector('#prrow').remove(); fbZeigen(host.querySelector('.fbx'), ok, st.e, weiter);
   };
@@ -1020,12 +1033,13 @@ function sMerk(host, st, weiter) {
   const teile = st.satz.split(/\{([^}]+)\}/), loes = teile.filter((_, i) => i % 2), chips = shuffle(loes.concat(st.falsch || [])); let pos = 0;
   const satz = () => teile.map((t, i) => { if (!(i % 2)) return t; const k = (i - 1) / 2; return `<span class="gap ${k < pos ? 'voll' : k === pos ? 'dran' : ''}">${k < pos ? esc(t) : '…'}</span>`; }).join('');
   host.innerHTML = `<div class="card"><div class="q"><b>Dein Merksatz.</b> Fülle die Lücken der Reihe nach: Tippe das passende Wort an.</div><p class="msatz" id="ms">${satz()}</p><div class="chips" id="ch">${chips.map((c, i) => `<button type="button" class="chip" data-i="${i}">${esc(c)}</button>`).join('')}</div><div class="fbx" aria-live="polite"></div></div>`;
-  const ms = host.querySelector('#ms');
+  const ms = host.querySelector('#ms'); let daneben = false;      // Fehlgriff bei der Lücke, die gerade dran ist
   host.querySelectorAll('.chip').forEach(b => b.onclick = () => {
     if (chips[+b.dataset.i] === loes[pos]) {
+      if (!daneben) treffer(); daneben = false;
       b.disabled = true; pos++; ms.innerHTML = satz();
       if (pos === loes.length) { host.querySelector('#ch').remove(); fbZeigen(host.querySelector('.fbx'), true, 'Der Merksatz steht.', weiter, 'Station abschließen'); }
-    } else { b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel'); fehlgriff(); }   // jeder Fehlgriff zählt – sonst könnte man einfach alle Wörter durchprobieren
+    } else { b.classList.remove('wackel'); void b.offsetWidth; b.classList.add('wackel'); daneben = true; fehlgriff(); }   // jeder Fehlgriff zählt – sonst könnte man einfach alle Wörter durchprobieren
   });
 }
 const STEP = { info: sInfo, wahl: sWahl, sort: sSort, bau: sBau, tipp: sTipp, paare: sPaare, multi: sMulti, merk: sMerk };
@@ -1402,9 +1416,7 @@ function renderStation() {
   const st = R.steps[R.i], lauf = R;
   STEP[st.t](document.getElementById('schritt'), st, () => {
     if (R !== lauf) return;
-    // Punkte und Serie wie im Haupttrainer (gimmicks.js): ein Schritt ohne Fehlgriff zählt als richtige Antwort.
-    // Ein Fehlgriff ist da schon gemeldet (fehlgriff).
-    if (st.t !== 'info' && window.Gimmicks && R.fehlBei !== R.i) window.Gimmicks.antwort(true);
+    // Punkte und Serie sind da schon verbucht (treffer, fehlgriff) – je Aufgabe, nicht je Schritt.
     R.i++;
     if (R.i >= R.steps.length) {
       const f = R.fehler, n = f <= 1 ? 3 : f <= 3 ? 2 : f <= 6 ? 1 : 0;   // mehr als sechs Fehler: noch nicht verstanden
@@ -1430,7 +1442,7 @@ const MODI = {
   umform: { name: 'Umformen', icon: '🔁', hook: 'Vom Präsens ins Perfekt, gleiche Person: dīcunt → dīxērunt.', q: 'Setze die Form ins <b>Perfekt</b> – gleiche Person.' },
   bestimm: { name: 'Bestimmen', icon: '🔍', hook: 'Welche Zeit, welche Person? Präsens, Imperfekt und Perfekt gemischt.', q: 'Bestimme die Form: <b>Zeit</b> und <b>Person</b>.' },
   endung: { name: 'Endungen-Blitz', icon: '⚡', hook: 'Die sechs Perfekt-Endungen im Schlaf: Wer tut es? Welche Endung passt?', q: '' },
-  weg: { name: 'Welcher Weg?', icon: '🧭', hook: 'Ohne Veränderung, v, u, s, Dehnung oder Reduplikation?', q: 'Welchen <b>Weg</b> ist dieses Verb zum Perfektstamm gegangen?' },
+  weg: { name: 'Welcher Weg?', icon: '🧭', hook: 'Ohne Änderung, v, u, s, Dehnung oder Reduplikation?', q: 'Welchen <b>Weg</b> ist dieses Verb zum Perfektstamm gegangen?' },
   grund: { name: 'Zurück zum Verb', icon: '↩️', hook: 'Von welchem Verb kommt die Perfektform? Das brauchst du beim Übersetzen.', q: 'Von welchem <b>Verb</b> kommt diese Perfektform?' }
 };
 const MKEYS = Object.keys(MODI);
@@ -1583,7 +1595,7 @@ function renderRunde() {
         ${fehl || '<p class="cue">Alles auf Anhieb richtig – stark!</p>'}
         <div class="row"><button class="btn" id="nm" type="button">Noch eine Runde</button><button class="btn ghost" id="an" type="button">Andere Übung</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
     app.querySelector('#nm').onclick = () => startRunde(mode);
-    app.querySelector('#an').onclick = () => { U = null; go('ueben'); };
+    app.querySelector('#an').onclick = () => { U = null; zuUeben(); };
     app.querySelector('#hm').onclick = () => { U = null; go('home'); };
     return;
   }
@@ -1623,19 +1635,18 @@ function renderUeben() {
   const sicher = pool.filter(v => (S.ok[v.inf] || 0) >= 2).length;
   app.innerHTML = `<header class="top"><div class="eyebrow">Üben</div><h1>${MODI[UM].icon} ${MODI[UM].name}</h1><p class="muted">${MODI[UM].hook}</p></header>
     <section><div class="card">
-      <div><b>Übungsart</b></div><div class="seg" id="um">${MKEYS.map(k => `<button type="button" data-k="${k}" class="${k === UM ? 'on' : ''}">${MODI[k].icon} ${MODI[k].name}</button>`).join('')}</div>
-      <div><b>Welche Tabelle?</b></div>
-      ${UM === 'weg' ? '<p class="small muted">Bei „Welcher Weg?“ sind immer alle Tabellen gemischt – sonst wäre die Antwort ja klar.</p>' : `<div class="seg" id="uw">${['alle'].concat(TAB).map(k => `<button type="button" data-k="${k}" class="${k === c.weg ? 'on' : ''}">${k === 'alle' ? 'alle' : tabNr(k) + ' · ' + WEG[k].k}</button>`).join('')}</div>`}
+      ${UM === 'weg' ? '<p class="small muted">In dieser Übung sind immer alle Wege gemischt – sonst wäre die Antwort ja klar.</p>' : `<div><b>Welche Tabelle?</b></div><div class="menue" id="uw">${menueZeile('Gemischt oder Kopfkissen-Verben', 'uw', ['alle', 'x'], c.weg, k => k === 'alle' ? 'alle Wege gemischt' : WEGKURZ[k])}
+        ${menueZeile('Nur ein Weg zum Perfektstamm', 'uw', WEGE6, c.weg, k => WEGKURZ[k], true)}</div>`}
       <div><b>Welche Verben?</b></div>
       <div class="seg" id="uu">${[['a', '🎯 Für die Arbeit'], ['1', 'Stufe 1'], ['2', 'Stufe 1 + 2'], ['3', 'alle']].map(x => `<button type="button" data-k="${x[0]}" class="${c.umf === x[0] ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
       <p class="small muted"><b>🎯 Für die Arbeit</b>: die ${n('a')} Verben vom Wortschatz-Blatt (${ARBEIT.name}). <b>Stufe 1</b> (${n('1')}): dazu die übrigen Perfektformen, die schon im Vokabelheft stehen (Lektion 8 und 9). <b>Stufe 1 + 2</b> (${n('2')}): alle Verben aus Lektion 1–9. <b>Alle</b> (${n('3')}): auch die neuen aus Lektion 10.</p>
       <div class="anzeige"><span>In dieser Auswahl: <b>${pool.length}</b> Verben</span><span>davon sicher: <b>${sicher}</b></span>${b ? `<span>Runden: <b>${b.n}</b> · beste: <b>${b.b} %</b></span>` : ''}</div>
-      <div class="row"><button class="btn gross" id="go" type="button" ${pool.length ? '' : 'disabled'}>Runde starten</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div>
+      <div class="row"><button class="btn gross" id="go" type="button" ${pool.length ? '' : 'disabled'}>Runde starten</button><button class="btn ghost" id="hm" type="button">Andere Übung wählen</button></div>
       <p class="small muted">„Sicher“ ist ein Verb, wenn du es bei Stammformen oder Umformen zweimal hintereinander auf Anhieb richtig hattest. Längenstriche darfst du beim Tippen weglassen – außer wenn nur der Strich Präsens und Perfekt unterscheidet.</p></div></section>`;
   const seg = (id, fn) => app.querySelectorAll(`#${id} button`).forEach(x => x.onclick = () => { fn(x.dataset.k); save(); render(); });
-  seg('um', k => { UM = k; }); seg('uw', k => { S.cfg.weg = k; }); seg('uu', k => { S.cfg.umf = k; });
+  seg('uw', k => { S.cfg.weg = k; }); seg('uu', k => { S.cfg.umf = k; });
   app.querySelector('#go').onclick = () => startRunde(UM);
-  app.querySelector('#hm').onclick = () => go('home');
+  app.querySelector('#hm').onclick = zuUeben;
 }
 
 // ===================================================================
@@ -1678,7 +1689,12 @@ const WEGDEF = {
   x: { idee: '<b>Sieben</b> Verben lernst du auswendig – sie kommen unters Kopfkissen. Bei esse und seinen Zusammensetzungen ist der Perfektstamm ein ganz anderes Wort: <b>fu-</b>. Bei posse, velle und nōlle ist das <b>Präsens</b> besonders; ihr Perfekt ist ein u-Perfekt. Eigentlich musst du dir nur vier Formen merken: <b>fuī, potuī, voluī, nōluī</b>. Die Endungen sind dieselben wie bei allen Verben.' }
 };
 const BLAETTER = ['plan', 'end', 'ka', 'o', 'v', 'u', 's', 'd', 'r', 'x', 'einzel', 'az'];
-const BLATTKURZ = { plan: 'Bauplan', end: 'Endungen', ka: '🎯 Klassenarbeit', o: '1 · ohne', v: '2 · v', u: '3 · u', s: '4 · s', d: '5 · Dehnung', r: '6 · Reduplikation', x: '7 · Kopfkissen', einzel: 'Einzelfälle', az: 'A–Z' };
+// Namen in den Menüs: die sechs Wege ohne Nummer, so wie man sie ausspricht
+const WEGKURZ = { o: 'ohne-Änderung-Perfekt', v: 'v-Perfekt', u: 'u-Perfekt', s: 's-Perfekt', d: 'Dehnungsperfekt', r: 'Reduplikationsperfekt', x: '🛏️ Kopfkissen-Verben' };
+const BLATTKURZ = Object.assign({ plan: 'Bauplan', end: 'Endungen', ka: '🎯 Klassenarbeit', einzel: 'Einzelfälle', az: 'A–Z' }, WEGKURZ);
+// Ein Menü in drei Zeilen: Überblick · die sechs Wege (farbig) · Besonderes. wahl(k) → class="on"
+const segKnopf = (k, an, text) => `<button type="button" data-k="${k}" class="${an ? 'on' : ''}"${TAB.includes(k) ? ` style="--c:var(--w${k})"` : ''}>${text}</button>`;
+const menueZeile = (titel, id, keys, an, text, wege) => `<div class="ml">${titel}</div><div class="seg${wege ? ' wegwahl' : ''}" data-id="${id}">${keys.map(k => segKnopf(k, k === an, text(k))).join('')}</div>`;
 const kopf = (titel, k) => `<div class="kopf"><h2>${titel}</h2><span class="wo">Latein · Perfekt-Baukasten · Lektion 1–10 · Blatt ${BLAETTER.indexOf(k) + 1} von ${BLAETTER.length}</span></div>`;
 const vAttr = v => `class="p${v.prio}" data-v="${v.inf}" title="${esc(woher(v))}"`;
 const lek = v => `L${v.l}${v.h && v.h !== v.l ? '→' + v.h : ''}${v.arbeit ? ' 🎯' : ''}`;
@@ -1807,7 +1823,9 @@ function renderTab() {
   app.innerHTML = `<header class="top"><div class="eyebrow">Nachschlagen und Drucken</div><h1>📋 Perfekt-Tabellen</h1>
       <p class="muted">${BLAETTER.length} Blätter: der Bauplan, das Endungen-Blatt für den Kühlschrank, die Verben der Klassenarbeit, sieben Lerntabellen, die Einzelfälle mit allen Formen und eine Liste von A bis Z.</p></header>
     <section><div class="row"><button class="btn" id="dAlle" type="button">🖨️ Alle Blätter drucken</button><a class="btn ghost" href="latein-perfekt-tabellen.pdf" download>⬇️ Als PDF laden</a></div>
-      <div class="seg" id="bl">${BLAETTER.map(k => `<button type="button" data-k="${k}" class="${k === TB ? 'on' : ''}">${BLATTKURZ[k]}</button>`).join('')}</div>
+      <div class="menue" id="bl">${menueZeile('Überblick', 'bl', ['plan', 'end', 'ka'], TB, k => BLATTKURZ[k])}
+        ${menueZeile('Die sechs Wege zum Perfektstamm', 'bl', WEGE6, TB, k => BLATTKURZ[k], true)}
+        ${menueZeile('Auswendig lernen und nachschlagen', 'bl', ['x', 'einzel', 'az'], TB, k => BLATTKURZ[k])}</div>
       <p class="small muted" id="tipph">Tippe ein Verb an: Dann siehst du seinen Weg zum Perfektstamm und alle Formen.</p>
       <div class="card" id="blatt">${blatt(TB, { bild: true })}</div>
       <div class="row"><button class="btn ghost" id="dEins" type="button">🖨️ Nur dieses Blatt drucken</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></section>`;
@@ -1839,7 +1857,7 @@ function renderHome() {
     ${due.length ? `<section><div class="card check"><h2>🔁 Weißt du es noch?</h2><p>Kurz-Check zu ${due.length === 1 ? 'einer Station' : due.length + ' Stationen'}, die du schon verstanden hast: ${due.map(k => STATION[k].icon + ' ' + STATION[k].name).join(' · ')}. Das dauert nur ein, zwei Minuten.</p><div class="row"><button class="btn gross" id="chk" type="button">Kurz-Check starten</button></div></div></section>` : ''}
     <section><h2>1 · Verstehen</h2><p class="small muted">Sechs kurze Stationen, jede etwa fünf Minuten. Am besten der Reihe nach – vom Einfachen zum Schwierigen.</p>
       <div class="grid">${SKEYS.map((k, i) => { const s = STATION[k]; return `<button class="tile ${S.st[k] ? 'done' : k === offen ? 'next' : ''}" data-s="${k}" type="button"><b>${s.icon} ${i + 1} · ${s.name}</b><span>${s.hook}</span><span class="tag">${status(k)}</span></button>`; }).join('')}</div></section>
-    <section><h2>2 · Üben</h2><p class="small muted">Voreingestellt ist <b>🎯 Für die Arbeit</b>: die ${p1.length} Verben vom Wortschatz-Blatt.</p><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
+    <section id="ueben"><h2>2 · Üben</h2><p class="small muted">Voreingestellt ist <b>🎯 Für die Arbeit</b>: die ${p1.length} Verben vom Wortschatz-Blatt.</p><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
     <section><h2>3 · Tabellen</h2><div class="grid"><button class="tile" id="tKa" type="button"><b>🎯 Verben der Klassenarbeit</b><span>Die ${p1.length} Verben vom Wortschatz-Blatt auf einem Blatt – geordnet nach ihrem Weg zum Perfektstamm.</span></button>
       <button class="tile" id="tTab" type="button"><b>📋 Perfekt-Tabellen</b><span>Der Bauplan, sieben Lerntabellen mit festen Regeln, die Einzelfälle und alle Verben von A bis Z – zum Nachschlagen und Drucken.</span></button>
       <button class="tile" id="tEnd" type="button"><b>🧲 Endungen-Blatt</b><span>Die sechs Perfekt-Endungen groß auf einem Blatt – für den Kühlschrank.</span></button>
@@ -1853,6 +1871,8 @@ function renderHome() {
   app.querySelector('#tEnd').onclick = () => { TB = 'end'; go('tab'); };
   app.querySelector('#reset').onclick = () => { if (confirm('Wirklich alles zurücksetzen? Sterne, Kurz-Checks und Lernstand gehen verloren.')) { try { localStorage.removeItem(KEY); } catch (e) { /* nichts zu löschen */ } S = laden(); render(); } };
 }
+// Zur Übersicht, gleich bei „2 · Üben“ – dort wählt man die Übungsart
+function zuUeben() { go('home'); const z = document.getElementById('ueben'); if (z) z.scrollIntoView(); }
 function render() {
   sperre();
   document.getElementById('crumb').textContent = VIEW === 'station' && R ? STATION[R.k].name : VIEW === 'ueben' || VIEW === 'runde' ? 'Üben' : VIEW === 'tab' ? 'Tabellen' : VIEW === 'check' ? 'Kurz-Check' : '';
@@ -1871,6 +1891,6 @@ if (new URLSearchParams(location.search).get('von') === 'arbeit') { const z = do
 if (new URLSearchParams(location.search).has('druck')) { document.body.classList.add('pdf'); druckFuellen(BLAETTER); }
 render();
 </script>
-<script src="gimmicks.js?v=375277c2" data-gim="voll"></script>
+<script src="gimmicks.js?v=1514629d" data-gim="voll"></script>
 </body>
 </html>
