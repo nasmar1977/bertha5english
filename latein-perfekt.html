@@ -193,7 +193,7 @@ a.tile{text-decoration:none}
 .psw>small{font-family:var(--body);font-weight:400;font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-top:2px solid var(--line);width:100%;text-align:center;padding-top:1px}
 .legende{display:flex;gap:8px 14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);align-items:center}
 /* Sprungreiter Weg 1 … Weg 6 oben in der Karte (Stationen „Die einfachen Wege“ und „Die kniffligen Wege“) */
-.wegreiter{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.wegreiter{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .wegreiter button{font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 12px;min-height:36px;cursor:pointer;box-shadow:inset 0 -3px 0 var(--c)}
 .wegreiter button.an{background:var(--c);border-color:var(--c);color:#fff;box-shadow:none}
 .wegreiter button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
@@ -217,12 +217,14 @@ a.tile{text-decoration:none}
 .vpop{position:relative;cursor:help;outline:none}
 .vpop:focus-visible{text-decoration:underline}
 .vpop-l{display:none;position:fixed;z-index:30;left:0;top:0;max-width:calc(100vw - 16px);background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.25);white-space:nowrap;font-size:.85rem;font-weight:400;line-height:1.45;text-align:left;max-height:60vh;overflow:auto}
-.vpop-l.lang{columns:2;column-gap:18px}
 .vpop-tab table{border-collapse:collapse;margin-top:6px;font-size:.8rem}
 .vpop-tab th{text-align:left;color:var(--muted);font-weight:600;padding:2px 8px;border-bottom:1px solid var(--line)}
 .vpop-tab td{padding:2px 8px;border-bottom:1px dotted var(--line)}
-@media (max-width:420px){.vpop-l.lang{columns:1}}
-.vpop:hover .vpop-l,.vpop:focus .vpop-l{display:block}
+@media (max-width:420px){.vpop-l .vpop-g.lang{columns:1}}
+.vpop.auf .vpop-l{display:block}
+.vpop-g{display:block}
+.vpop-g > span{display:block;break-inside:avoid}
+.vpop-g.lang{columns:2;column-gap:18px}   /* spaltenweise alphabetisch; die Höhe begrenzt erst .vpop-l, das rollt */
 @media print{.vpop-l{display:none!important}}
 :root[data-theme="dark"] .balken i{color:#0f1518}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .balken i{color:#0f1518}}
@@ -783,7 +785,7 @@ const DE_FORM = {
   'legere': 'lese|liest|liest|lesen|lest|lesen|h|gelesen',
   'invenīre': 'finde|findest|findet|finden|findet|finden|h|gefunden',
   'fugere': 'fliehe|fliehst|flieht|fliehen|flieht|fliehen|s|geflohen',
-  'convenīre': 'komme zusammen|kommst zusammen|kommt zusammen|kommen zusammen|kommt zusammen|kommen zusammen|s|zusammengekommen',
+  'convenīre': 'besuche|besuchst|besucht|besuchen|besucht|besuchen|h|besucht',
   'emere': 'kaufe|kaufst|kauft|kaufen|kauft|kaufen|h|gekauft',
   'capere': 'nehme|nimmst|nimmt|nehmen|nehmt|nehmen|h|genommen',
   'facere': 'mache|machst|macht|machen|macht|machen|h|gemacht',
@@ -807,7 +809,7 @@ const DE_FORM = {
   'occurrere': 'begegne|begegnest|begegnet|begegnen|begegnet|begegnen|s|begegnet',
   'attingere': 'berühre|berührst|berührt|berühren|berührt|berühren|h|berührt',
   'reperīre': 'finde|findest|findet|finden|findet|finden|h|gefunden',
-  'īnstāre': 'stehe bevor|stehst bevor|steht bevor|stehen bevor|steht bevor|stehen bevor|h|bevorgestanden',
+  'īnstāre': 'bedränge|bedrängst|bedrängt|bedrängen|bedrängt|bedrängen|h|bedrängt',
   'esse': 'bin|bist|ist|sind|seid|sind|s|gewesen',
   'adesse': 'bin da|bist da|ist da|sind da|seid da|sind da|s|da gewesen',
   'deesse': 'fehle|fehlst|fehlt|fehlen|fehlt|fehlen|h|gefehlt',
@@ -1106,7 +1108,7 @@ function treffer() { if (window.Gimmicks) window.Gimmicks.antwort(true); }
 // Unter jeder Weg-Erklärung (Stationen s4, s5): alle Verben dieser Tabelle untereinander – Infinitiv, Perfekt, Bedeutung
 function wegListe(k) {
   const vs = VERBEN.filter(v => v.t === k).sort((a, b) => a.inf.localeCompare(b.inf, 'de'));
-  return `<div class="wegliste"><div class="wl-kopf">${wtag(k)} Alle ${vs.length} Verben auf diesem Weg <span class="muted">(Tabelle ${tabNr(k)})</span></div>
+  return `<div class="wegliste"><div class="wl-kopf">${wtag(k)} Alle ${vs.length} Verben in Tabelle ${tabNr(k)}</div>
     <ul>${vs.map(v => `<li><span class="lat">${v.inf}, ${v.pr}</span> → ${pfHtml(v, 'ī')} <span class="muted">– ${esc(v.de)}</span></li>`).join('')}</ul></div>`;
 }
 function sInfo(host, st, weiter) {
@@ -1358,20 +1360,22 @@ function s5Strich() {
 
 // Hover-Liste über einer Zahl: „3 × Reduplikation:“, darunter jedes Verb mit Perfekt. Am Tablet öffnet ein Tipp (Fokus).
 // rechts: Liste rechtsbündig, damit sie am rechten Rand nicht aus dem Bild ragt.
+let vpopNr = 0;
 function verbPop(inhalt, vs, kopf) {
-  const liste = vs.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de')).map(v => `<span class="lat">${v.inf}</span> – <span class="lat">${v.pf}</span>`).join('<br>');
-  return `<span class="vpop" tabindex="0" onclick="">${inhalt}<span class="vpop-l${vs.length > 16 ? ' lang' : ''}" role="tooltip"><b>${kopf}:</b><br>${liste}</span></span>`;
+  const id = 'vp' + (++vpopNr);
+  const liste = vs.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de')).map(v => `<span><span class="lat">${v.inf}</span> – <span class="lat">${v.pf}</span></span>`).join('');
+  return `<span class="vpop" tabindex="0" aria-describedby="${id}">${inhalt}<span class="vpop-l" id="${id}" role="tooltip"><b>${kopf}:</b><span class="vpop-g${vs.length > 16 ? ' lang' : ''}">${liste}</span></span></span>`;
 }
 // Dasselbe als Tabelle (über den Überschriften der Faustregel): Verb · Übersetzung · alle sechs Perfektformen
 function verbTabPop(inhalt, vs, kopf) {
   const reihen = vs.slice().sort((a, b) => a.inf.localeCompare(b.inf, 'de')).map(v => `<tr><td class="lat"><b>${v.inf}</b></td><td>${esc(v.de)}</td>${perf(v).map(f => `<td class="lat">${f}</td>`).join('')}</tr>`).join('');
-  return `<span class="vpop" tabindex="0" onclick="">${inhalt}<span class="vpop-l vpop-tab" role="tooltip"><b>${kopf}</b>
+  const id = 'vp' + (++vpopNr);
+  return `<span class="vpop" tabindex="0" aria-describedby="${id}">${inhalt}<span class="vpop-l vpop-tab" id="${id}" role="tooltip"><b>${kopf}</b>
     <table><thead><tr><th>Verb</th><th>Übersetzung</th><th>1. Sg.</th><th>2. Sg.</th><th>3. Sg.</th><th>1. Pl.</th><th>2. Pl.</th><th>3. Pl.</th></tr></thead><tbody>${reihen}</tbody></table></span></span>`;
 }
 // Lage beim Öffnen berechnen: über der Zahl, sonst darunter; nie unter der klebenden Leiste, nie seitlich aus dem Bild;
 // passt sie weder oben noch unten ganz hin, nimmt sie die größere Seite und rollt in sich.
-function vpopLage(e) {
-  const v = e.target.closest && e.target.closest('.vpop'); if (!v) return;
+function vpopLage(v) {
   const l = v.querySelector('.vpop-l'), er = v.getBoundingClientRect(), leiste = document.querySelector('.bar');
   const top0 = (leiste ? Math.max(0, leiste.getBoundingClientRect().bottom) : 0) + 8, bottom0 = innerHeight - 8;
   Object.assign(l.style, { maxHeight: '', left: '0px', top: '0px' });
@@ -1384,8 +1388,33 @@ function vpopLage(e) {
   l.style.left = Math.max(8, Math.min(er.left + er.width / 2 - w / 2, innerWidth - 8 - w)) + 'px';
   l.style.top = y + 'px';
 }
-document.addEventListener('mouseover', vpopLage);
-document.addEventListener('focusin', vpopLage);
+// Öffnen beim Darüberfahren oder Fokus; Schließen erst nach kurzer Pause – so kommt die Maus über die Lücke in die Liste
+// und kann darin rollen. Ein Tipp/Klick hält die Liste offen, ein zweiter schließt sie; Scrollen und Escape schließen auch.
+let vpopZu = null;
+const vpopVon = e => e.target && e.target.closest ? e.target.closest('.vpop') : null;
+function vpopAuf(v) {
+  clearTimeout(vpopZu);
+  document.querySelectorAll('.vpop.auf').forEach(x => { if (x !== v) { x.classList.remove('auf'); delete x.dataset.fest; } });
+  if (!v.classList.contains('auf')) { v.classList.add('auf'); vpopLage(v); }
+}
+function vpopAlleZu() { document.querySelectorAll('.vpop.auf').forEach(x => { x.classList.remove('auf'); delete x.dataset.fest; }); }
+document.addEventListener('mouseover', e => { const v = vpopVon(e); if (v) vpopAuf(v); });
+document.addEventListener('mouseout', e => {
+  const v = vpopVon(e); if (!v || (e.relatedTarget && v.contains(e.relatedTarget))) return;
+  clearTimeout(vpopZu);
+  vpopZu = setTimeout(() => { if (!v.dataset.fest && document.activeElement !== v) v.classList.remove('auf'); }, 350);
+});
+document.addEventListener('click', e => {
+  const v = vpopVon(e);
+  if (!v) { vpopAlleZu(); return; }
+  if (e.target.closest('.vpop-l')) return;            // in der Liste klicken/rollen schließt nicht
+  if (v.dataset.fest) { v.classList.remove('auf'); delete v.dataset.fest; v.blur(); }
+  else { vpopAuf(v); v.dataset.fest = '1'; }
+});
+document.addEventListener('focusin', e => { const v = vpopVon(e); if (v) vpopAuf(v); });
+document.addEventListener('focusout', e => { const v = vpopVon(e); if (v && !v.dataset.fest && !v.matches(':hover')) v.classList.remove('auf'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') vpopAlleZu(); });
+window.addEventListener('scroll', vpopAlleZu, { passive: true });
 // ---------- Station 6: Faustregel, Regelbrecher, Kopfkissen ----------
 function faustChart() {
   return [['a', 'a-Konjugation', 'v'], ['e', 'e-Konjugation', 'u'], ['i', 'i-Konjugation', 'v'], ['k', 'konsonantische Konjugation', null]].map(([k, name, regel]) => {
@@ -1393,7 +1422,7 @@ function faustChart() {
     // Die Zahlen stehen auch als Text da: Im Schwarz-Weiß-Druck sind die Farben der Balken nicht zu unterscheiden.
     const rest = seg.filter(x => x[0] !== regel).map(x => `${x[1]} × ${WEG[x[0]].k}`).join(', ');
     return `<div class="krow"><div><b>${verbTabPop(name, vs, `${name}: ${vs.length} Verben, Perfekt in allen Personen`)}</b> <span class="small muted">· ${regel ? `Faustregel: ${WEG[regel].k} – stimmt bei ${vs.filter(v => v.t === regel).length} von ${vs.length} (sonst: ${rest})` : `keine Faustregel – ${vs.length} Verben: ${rest}`}</span></div>
-      <div class="balken" role="img" aria-label="${seg.map(x => x[1] + ' ' + WEG[x[0]].k).join(', ')}">${(() => { return seg.map(x => {
+      <div class="balken">${(() => { return seg.map(x => {
         return `<i class="w-${x[0]}" style="flex:${x[1]}">${verbPop(x[1], vs.filter(v => v.t === x[0]), `${x[1]} × ${WEG[x[0]].k}`)}</i>`; }).join(''); })()}</div></div>`;
   }).join('') + `<div class="legende">${WEGE6.map(wtag).join(' ')}</div>`;
 }
@@ -1629,7 +1658,11 @@ function renderStation() {
   const s = STATION[R.k], nr = SKEYS.indexOf(R.k) + 1;
   if (R.fertig) {
     const nxt = SKEYS[nr], f = R.fertig.f, k = R.k, b = id => app.querySelector('#' + id);
-    if (!R.fertig.n) {   // zu viele Fehler: nichts merken, kein Kurz-Check – erst noch einmal ansehen
+    if (R.fertig.ausgelassen) {   // übersprungen: nichts merken, freundlich sagen warum
+      app.innerHTML = `<header class="top"><div class="eyebrow">Station ${nr} von ${SKEYS.length}</div><h1>${s.icon} ${s.name}</h1></header>
+        <section><div class="card"><p><b>Du bist bis zum Ende gesprungen.</b> Die Sterne für diese Station gibt es, wenn du sie einmal ganz durchgehst – mit allen Übungen.</p>
+          <div class="row"><button class="btn" id="nm" type="button">Station von vorn</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
+    } else if (!R.fertig.n) {   // zu viele Fehler: nichts merken, kein Kurz-Check – erst noch einmal ansehen
       app.innerHTML = `<header class="top"><div class="eyebrow">Station ${nr} von ${SKEYS.length}</div><h1>${s.icon} ${s.name}</h1></header>
         <section><div class="card"><p><b>Das sitzt noch nicht ganz.</b> Diesmal waren es ${f} Fehler. Das ist nicht schlimm – schau dir die Station in Ruhe noch einmal an und lies die Erklärungen genau.</p>
           <div class="row"><button class="btn" id="nm" type="button">Noch einmal</button><button class="btn ghost" id="hm" type="button">Zur Übersicht</button></div></div></section>`;
@@ -1652,15 +1685,18 @@ function renderStation() {
   STEP[st.t](schritt, st, () => {
     if (R !== lauf) return;
     // Punkte und Serie sind da schon verbucht (treffer, fehlgriff) – je Aufgabe, nicht je Schritt.
+    (R.erledigt = R.erledigt || new Set()).add(R.i);
     R.i++;
     if (R.i >= R.steps.length) {
-      const f = R.fehler, n = f <= 1 ? 3 : f <= 3 ? 2 : f <= 6 ? 1 : 0;   // mehr als sechs Fehler: noch nicht verstanden
+      // Mit dem Sprungreiter übersprungen? Dann gibt es keine Sterne – die Station zählt erst, wenn jeder Schritt gemacht ist
+      const ausgelassen = R.sprung && R.erledigt.size < R.steps.length;
+      const f = R.fehler, n = ausgelassen ? 0 : f <= 1 ? 3 : f <= 3 ? 2 : f <= 6 ? 1 : 0;   // mehr als sechs Fehler: noch nicht verstanden
       if (n) {
         S.st[R.k] = Math.max(S.st[R.k] || 0, n);
         if (!S.dat[R.k]) { S.dat[R.k] = heute(); S.chk[R.k] = { n: 0, due: plusTage(1) }; }   // erster Kurz-Check frühestens morgen
         save();
       }
-      R.fertig = { n, f };
+      R.fertig = { n, f, ausgelassen };
     }
     render(); window.scrollTo(0, 0);
   });
@@ -1672,19 +1708,20 @@ function renderStation() {
 const WEG_STATION = { o: 's4', v: 's4', u: 's4', s: 's5', d: 's5', r: 's5' };
 function wegReiter(host) {
   if (R.k !== 's4' && R.k !== 's5') return;
-  const karte = host.querySelector('.card');
-  if (!karte) return;
   let jetzt = null;
   for (let i = Math.min(R.i, R.steps.length - 1); i >= 0; i--) if (R.steps[i].weg) { jetzt = R.steps[i].weg; break; }
   const nav = document.createElement('nav');
   nav.className = 'wegreiter'; nav.setAttribute('aria-label', 'Zu einem Weg springen');
   nav.innerHTML = WEGE6.map((k, n) => `<button type="button" data-k="${k}" class="${k === jetzt ? 'an' : ''}" style="--c:var(--w${k})" title="${WEG[k].k}"${k === jetzt ? ' aria-current="step"' : ''}>Weg ${n + 1}</button>`).join('');
-  karte.prepend(nav);
+  host.before(nav);   // vor der Karte: Tipp- und Sortier-Schritte zeichnen ihre Karte je Aufgabe neu
   nav.querySelectorAll('button').forEach(b => b.onclick = () => {
     const k = b.dataset.k, ziel = WEG_STATION[k];
-    if (R.k !== ziel) startStation(ziel);
+    if (R.k !== ziel) {
+      if (R.i > 0 && !confirm(`Zur Station „${STATION[ziel].name}“ wechseln? Was du hier schon gemacht hast, zählt dann nicht.`)) return;
+      startStation(ziel);
+    }
     const i = R.steps.findIndex(x => x.weg === k);
-    if (i >= 0) { R.i = i; render(); window.scrollTo(0, 0); }
+    if (i >= 0) { R.i = i; R.sprung = true; render(); window.scrollTo(0, 0); }
   });
 }
 
@@ -1873,9 +1910,10 @@ function grundBestimmen(auf, it, fertig) {
       <div class="mitte" id="prrow"><button class="btn" id="pr" type="button" disabled>Prüfen</button></div>
     </div>`;
   const pr = auf.querySelector('#pr');
+  auf.querySelectorAll('.opt').forEach(b => b.setAttribute('aria-pressed', 'false'));
   ['v', 'p', 'z', 'u'].forEach(k => auf.querySelectorAll(`.opt[data-${k}]`).forEach(b => b.onclick = () => {
     wahl[k] = b.dataset[k];
-    auf.querySelectorAll(`.opt[data-${k}]`).forEach(x => x.classList.toggle('sel', x === b));
+    auf.querySelectorAll(`.opt[data-${k}]`).forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
     pr.disabled = Object.values(wahl).some(x => x === null);
   }));
   pr.onclick = () => {
@@ -1888,6 +1926,8 @@ function grundBestimmen(auf, it, fertig) {
     fertig(ok, `${L(it.f)}: <b>${PNAME[it.p]} ${ZEIT[it.z]}</b> von ${erkl(v)} – „${esc(deForm(v, it.z, it.p))}“. ${zeitGrund(v, it.z, it.p, it.f)}${strich}`);
   };
 }
+// Bestwert je Übung – „Zurück zum Verb“ mit Bestimmung zählt getrennt von der einfachen Stufe
+const bestKey = (mode, best) => mode === 'grund' && best ? 'grund-best' : mode;
 function renderRunde() {
   const m = MODI[U.mode];
   if (U.fertig) {
@@ -1896,6 +1936,7 @@ function renderRunde() {
     let fehl = '';
     if (U.falsch.length && mode === 'endung') fehl = `<p><b>Bei diesen Endungen lagst du daneben:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td>${bauPf(x.v, ENDEN[x.p], false, 'klein')}</td><td>${x.p === 6 ? 'Infinitiv Perfekt' : PERS[x.p]}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
     else if (U.falsch.length && mode === 'bestimm') fehl = `<p><b>Diese Formen schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td class="l">${x.f}</td><td>${alleFormen(x.v).filter(y => y.f === x.f).map(bestName).join(' oder ')}</td><td class="n">von ${x.v.inf}</td></tr>`).join('')}</table></div>`;
+    else if (U.falsch.length && mode === 'grund' && U.falsch.some(x => x.best)) fehl = `<p><b>Diese Formen schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => `<tr><td class="l">${x.f}</td><td>${PNAME[x.p]} ${ZEIT[x.z]}</td><td>„${esc(deForm(x.v, x.z, x.p))}“</td><td class="l">${x.v.inf}</td></tr>`).join('')}</table></div>`;
     else if (U.falsch.length) fehl = `<p><b>Diese Verben schaust du dir am besten noch einmal an:</b></p><div class="tabwrap"><table class="pt">${U.falsch.map(x => x.v).filter((v, i, a) => a.indexOf(v) === i).map(v => `<tr><td class="l">${v.inf}, ${v.pr}</td><td class="l">${pfHtml(v, 'ī')}</td><td>${esc(v.de)}</td><td>${v.weg === 'x' ? '' : wtag(v.weg)}</td></tr>`).join('')}</table></div>`;
     app.innerHTML = `<header class="top"><div class="eyebrow">Üben · ${m.name}</div><h1>${U.richtig} von ${U.n} auf Anhieb</h1></header>
       <section><div class="card"><div class="mitte" style="font-size:1.6rem">${sterne(st)}</div>
@@ -1910,7 +1951,7 @@ function renderRunde() {
   const weiter = () => {
     if (U !== lauf) return;
     U.i++;
-    if (U.i >= U.q.length) { U.fertig = true; const b = S.best[U.mode] || {}; S.best[U.mode] = { n: (b.n || 0) + 1, b: Math.max(b.b || 0, U.n ? Math.round(100 * U.richtig / U.n) : 0) }; save(); }
+    if (U.i >= U.q.length) { U.fertig = true; const bk = bestKey(U.mode, U.q.some(x => x.best)), b = S.best[bk] || {}; S.best[bk] = { n: (b.n || 0) + 1, b: Math.max(b.b || 0, U.n ? Math.round(100 * U.richtig / U.n) : 0) }; save(); }
     render(); window.scrollTo(0, 0);
   };
   // Der Zähler nennt die Aufgaben der Runde; was wiederholt wird, zählt eigens – so wächst „von 10“ nicht mit jedem Fehler
@@ -1930,7 +1971,7 @@ function renderRunde() {
     if (U !== lauf) return;
     if (window.Gimmicks) window.Gimmicks.antwort(ok, it.wdh ? 0 : undefined);   // Wiederholung am Rundenende: Serie ja, Punkte nein
     if (!it.wdh) {
-      if (ok) U.richtig++; else { U.falsch.push(it); U.q.push(Object.assign({}, it, { wdh: true })); }   // Falsches kommt am Ende einmal wieder
+      if (ok) U.richtig++; else { U.falsch.push(it); U.q.push(Object.assign({}, it, { wdh: true }, it.o ? { o: shuffle(it.o.slice()) } : {}, it.u ? { u: shuffle(it.u.slice()) } : {})); }   // Falsches kommt am Ende einmal wieder
       if (U.mode === 'stamm' || U.mode === 'umform') { S.ok[v.inf] = ok ? Math.min(3, (S.ok[v.inf] || 0) + 1) : 0; save(); }
     }
     fbZeigen(fbx, ok, html, weiter, letzte() ? 'Zum Ergebnis' : 'Weiter');
@@ -1938,7 +1979,7 @@ function renderRunde() {
   AUFGABE[U.mode](app.querySelector('#auf'), it, fertig, fbx);
 }
 function renderUeben() {
-  const c = cfg(), pool = poolFuer(UM), b = S.best[UM], n = u => VERBEN.filter(v => imUmfang(v, u)).length;
+  const c = cfg(), pool = poolFuer(UM), b = S.best[bestKey(UM, c.gstufe === 'best')], n = u => VERBEN.filter(v => imUmfang(v, u)).length;
   const sicher = pool.filter(v => (S.ok[v.inf] || 0) >= 2).length;
   app.innerHTML = `<header class="top"><div class="eyebrow">Üben</div><h1>${MODI[UM].icon} ${MODI[UM].name}</h1><p class="muted">${MODI[UM].hook}</p></header>
     <section><div class="card">
@@ -2178,7 +2219,7 @@ function renderHome() {
     ${due.length ? `<section><div class="card check"><h2>🔁 Weißt du es noch?</h2><p>Kurz-Check zu ${due.length === 1 ? 'einer Station' : due.length + ' Stationen'}, die du schon verstanden hast: ${due.map(k => STATION[k].icon + ' ' + STATION[k].name).join(' · ')}. Das dauert nur ein, zwei Minuten.</p><div class="row"><button class="btn gross" id="chk" type="button">Kurz-Check starten</button></div></div></section>` : ''}
     <section><h2>1 · Verstehen</h2><p class="small muted">Sechs kurze Stationen, jede etwa fünf Minuten. Am besten der Reihe nach – vom Einfachen zum Schwierigen.</p>
       <div class="grid">${SKEYS.map((k, i) => { const s = STATION[k]; return `<button class="tile ${S.st[k] ? 'done' : k === offen ? 'next' : ''}" data-s="${k}" type="button"><b>${s.icon} ${i + 1} · ${s.name}</b><span>${s.hook}</span><span class="tag">${status(k)}</span></button>`; }).join('')}</div></section>
-    <section id="ueben"><h2>2 · Üben</h2><p class="small muted">Voreingestellt ist <b>🎯 Für die Arbeit</b>: die ${p1.length} Verben vom Wortschatz-Blatt.</p><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[m] ? `<span class="tag">Runden: ${S.best[m].n} · beste: ${S.best[m].b} %</span>` : ''}</button>`).join('')}</div></section>
+    <section id="ueben"><h2>2 · Üben</h2><p class="small muted">Voreingestellt ist <b>🎯 Für die Arbeit</b>: die ${p1.length} Verben vom Wortschatz-Blatt.</p><div class="grid">${MKEYS.map(m => `<button class="tile" data-m="${m}" type="button"><b>${MODI[m].icon} ${MODI[m].name}</b><span>${MODI[m].hook}</span>${S.best[bestKey(m, cfg().gstufe === 'best')] ? `<span class="tag">Runden: ${S.best[bestKey(m, cfg().gstufe === 'best')].n} · beste: ${S.best[bestKey(m, cfg().gstufe === 'best')].b} %</span>` : ''}</button>`).join('')}</div></section>
     <section><h2>3 · Tabellen</h2><div class="grid"><button class="tile" id="tKa" type="button"><b>🎯 Verben der Klassenarbeit</b><span>Die ${p1.length} Verben vom Wortschatz-Blatt auf einem Blatt – geordnet nach ihrem Weg zum Perfektstamm.</span></button>
       <button class="tile" id="tTab" type="button"><b>📋 Perfekt-Tabellen</b><span>Der Bauplan, sieben Lerntabellen mit festen Regeln, die Einzelfälle und alle Verben von A bis Z – zum Nachschlagen und Drucken.</span></button>
       <button class="tile" id="tEnd" type="button"><b>🧲 Endungen-Blatt</b><span>Die sechs Perfekt-Endungen groß auf einem Blatt – für den Kühlschrank.</span></button>

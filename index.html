@@ -1307,7 +1307,8 @@
         }
         /* die Antwortspalte darf schmaler werden als ihr längstes Wort – sonst lief sie bei 320 px rechts aus der Karte */
         .rocket-question-area { min-width: 0; }
-        .rocket-answer-btn { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+        .rocket-answer-btn { min-width: 0; overflow-wrap: break-word; hyphens: auto; }
+        @media (max-width: 359px) { .rocket-question-area .rocket-answer-grid { grid-template-columns: 1fr; } }   /* spezifischer: die Grundregel steht weiter unten */
         .rocket-track {
             position: relative; height: 480px;
             background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
@@ -2366,6 +2367,12 @@
             background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%); color: #e8eaf6;
         }
         body.april-dark .header h1, body.april-dark .header p { color: #e8eaf6; }
+        /* „Was ist neu?“ lässt sich seit 2.51.0 auch im Nachtmodus öffnen – die Farben stehen dort inline */
+        body.april-dark #changelogSplash h1 { color: #e8eaf6 !important; }
+        body.april-dark #changelogSplash p { color: #b0bec5 !important; }
+        body.april-dark #changelogContent div[style] > div[style] { color: #8ab4f8 !important; }
+        body.april-dark #changelogContent span[style] { color: #9aa0b4 !important; }
+        body.april-dark #changelogContent li { color: #e8eaf6; }
         body.april-dark .back-btn { background: #37474f; color: #e8eaf6; }
         body.april-dark .word-card {
             background: linear-gradient(135deg, #2d3142 0%, #1e2030 100%);
@@ -3084,7 +3091,7 @@
         /* nachmittags ist die Eule heller (Orange auf Orange) – im Flug wird sie so orange wie das Logo, in dem sie landet */
         #paukiStart .ps-eule .k { transition: fill .38s; }
         #paukiStart.landet { --ps-koerper: #FF8A3D; }
-        #paukiStart .ps-eule { position: relative; width: min(52vw, 280px); height: auto; overflow: visible; will-change: transform; }
+        #paukiStart .ps-eule { position: relative; width: min(52vw, 280px, 45vh); height: auto; overflow: visible; will-change: transform; }
         #paukiStart .ps-eule .k { fill: var(--ps-koerper); }
         #paukiStart .ps-eule g { transform-box: fill-box; transform-origin: center; }
         #paukiStart .ps-eule #psKopf { transform-origin: 50% 70%; }
@@ -3171,7 +3178,7 @@
                 setTimeout(function () { box.remove(); }, 600);
             } else box.remove();
         }
-        function taste(e) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ende(true); } }
+        function taste(e) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); ende(true); } }
         box.addEventListener('click', function () { ende(true); });
         document.addEventListener('keydown', taste, true);
         netz = setTimeout(ende, 6000);   // Sicherheitsnetz: nie länger als 6 s
@@ -7999,6 +8006,8 @@
         let aprilStreak = 0;
         let aprilDarkReady = false;
         let aprilDarkActive = false;
+        // Pauki oben lädt nach der Rückfrage neu (räumt jedes Spiel auf) – ein verdienter Nachtmodus soll das überstehen
+        try { if (sessionStorage.getItem('paukiNacht') === '1') { aprilDarkActive = true; document.addEventListener('DOMContentLoaded', () => applyAprilDarkBody()); } sessionStorage.removeItem('paukiNacht'); } catch (e) { }
         let isAprilChapter = false;
 
         // Latin-specific state
@@ -8175,9 +8184,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.54.0';
+        const APP_VERSION = '2.54.1';
 
         const changelogEntries = [
+            {
+                version: '2.54.1',
+                date: '25.11.2026',
+                items: [
+                    '<b>Perfekt-Baukasten:</b> Die Verblisten beim Darüberfahren bleiben offen, wenn du mit der Maus hineinfährst – ein Tipp hält sie offen, ein zweiter schließt sie. Die Leiste „Weg 1 … Weg 6“ bleibt jetzt bei jeder Aufgabe stehen. Sterne gibt es nur, wenn du die Station ganz durchgehst.',
+                    '<b>Zurück zum Verb mit Bestimmung:</b> Am Ende siehst du die Formen mit Bestimmung und Übersetzung, die du dir noch einmal anschauen solltest.',
+                    '„Was ist neu?“ ist jetzt auch im Nachtmodus gut lesbar, und der Nachtmodus bleibt an, wenn du mit Pauki zur Startseite gehst.'
+                ]
+            },
             {
                 version: '2.54.0',
                 date: '25.11.2026',
@@ -9112,7 +9130,7 @@
             const imUeben = (paukiSichtbar('mitteScreen') && msZustand && msZustand.fertig > 0 && msZustand.fertig < msZustand.alle.length) ||
                 (paukiSichtbar('vokabelheftScreen') && vhMode !== 'read');
             if ((imSpiel || imUeben) && !confirm('Zur Startseite? Diese Runde wird abgebrochen.')) { e.preventDefault(); return; }
-            if (imSpiel) return;   // der Link lädt index.html neu
+            if (imSpiel) { try { if (aprilDarkActive) sessionStorage.setItem('paukiNacht', '1'); } catch (e) { } return; }   // der Link lädt index.html neu
             e.preventDefault();
             if (imUeben && vhMode !== 'read') vhStopPractice();
             // wie „Zurück“ bis ganz nach oben: kein Thema mehr gewählt, also auch kein 🎯-Knopf
@@ -9169,6 +9187,7 @@
         }
 
         function dismissChangelog() {
+            try { sessionStorage.setItem('paukiStartGesehen', '1'); } catch (e) { }
             localStorage.setItem('changelog_seen_version', APP_VERSION);
             document.getElementById('changelogSplash').style.display = 'none';
             document.getElementById('languageSelection').style.display = 'block';
@@ -9542,6 +9561,7 @@
         }
 
         function closeNameSplash() {
+            try { sessionStorage.setItem('paukiStartGesehen', '1'); } catch (e) { }
             document.getElementById('nameSplash').style.display = 'none';
             if (nameReturnEl) nameReturnEl.style.display = nameReturnDisplay;
             applyAprilDarkBody();
@@ -14959,6 +14979,7 @@
 
             const timeElapsed = (Date.now() - currentWordStartTime) / 1000;
             const stats = wordStats[currentWord];
+            if (!stats) return;   // kein Wort aktiv (z. B. Enter auf der Startseite)
             stats.attempts++;
 
             if (answer === currentWord && correctLetters === currentWord.length) {

@@ -46,7 +46,8 @@ Schleier, aus dem ein Haken ausgeschnitten ist (`::after` mit zwei Masken, `mask
   („Was ist neu?“, Namensfrage, Sprung in ein Untermenü), blendet sie nur aus. Ein Tipp überspringt sie; bei
   „Bewegung reduzieren“ nur ein kurzes Ausblenden; nach spätestens 6 s ist sie in jedem Fall weg. „Gesehen“ merkt sie
   sich erst am Ende und nicht, solange „Was ist neu?“ oder die Namensfrage davor stehen – dann kommt der Flug beim
-  nächsten Öffnen. Escape, Enter und Leertaste überspringen ebenfalls. Nachmittags wird die hellere Eule im Flug so
+  nächsten Öffnen (nach „Weiter“ bzw. dem Namen gilt sie dann für diese Sitzung als gesehen). Escape, Enter und
+  Leertaste überspringen ebenfalls. Nachmittags wird die hellere Eule im Flug so
   orange wie das Logo.
 - **Pauki oben** (`#paukiOben`): auf jedem Bildschirm des Trainers außer der Startseite oben in der Mitte, Schriftzug
   weiß auf Lila. Schmal (bis 767 px) ist der Streifen oben voll; dort steht die Eule allein in der Karte gleich
@@ -393,7 +394,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.54.0
+**Version:** 2.54.1
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -455,6 +456,22 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.54.1 (25.11.2026)
+- Anlass: Gesamtprüfung von v2.50.0–v2.54.0 durch zwei Prüfer, danach eine Nachprüfung der Korrekturen.
+- **Perfekt-Baukasten:**
+  - Hover-Listen per JS (`vpopAuf`, Schließen nach 350 ms, damit die Maus über die Lücke in die Liste kommt;
+    Klick hält, zweiter Klick schließt, Escape und Scrollen schließen); lange Listen zweispaltig in `.vpop-g`
+    (schmal einspaltig), rollen in sich; `aria-describedby`, `.balken` ohne `role=img`.
+  - Sprungreiter vor der Karte (verschwand ab der 2. Aufgabe eines Tipp-/Sortier-Schritts); Sterne nur, wenn jeder
+    Schritt erledigt ist (`R.erledigt`, sonst eigener Hinweis); Rückfrage vor dem Wechsel in die andere Station.
+  - „Mit Bestimmung“: eigene Fehlertabelle auf der Ergebnis-Seite, Bestwert getrennt (`bestKey` → `grund-best`, auch
+    auf der Übersichtskachel), Wiederholungen neu gemischt, `aria-pressed`; īnstāre → bedrängen, convenīre → besuchen.
+- **index.html:**
+  - „Was ist neu?“ im Nachtmodus lesbar; der Nachtmodus übersteht das Neuladen durch Pauki (`paukiNacht`).
+  - Enter während der Startanimation löst nichts mehr darunter aus (stopPropagation, `checkAnswer` ohne Wort).
+  - Nach „Weiter“/Name gilt die Startanimation für die Sitzung als gesehen.
+  - Rakete unter 360 px einspaltig; Startanimation im Querformat nach der Höhe begrenzt.
 
 ### Version 2.54.0 (25.11.2026)
 - **Zurück zum Verb, Stufe „Mit Bestimmung“** (`S.cfg.gstufe`, Standard `best`; „Nur das Verb“ wie bisher): Präsens- und
