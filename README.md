@@ -34,6 +34,22 @@ Deutsch, GEWI, NAWI und Musik. Bis Version 2.49 hieß sie „Vokabel-Abenteuer�
   daneben (Perfekt-Baukasten, AcI und Übersetzen, NAWI-Mission) schon bis 420 px, sonst bräche die Leiste um. In
   „AcI und Übersetzen“ fragt auch die Eule nach, bevor eine angefangene Runde verloren geht.
 - **Farben:** Schriftzug Marineblau `#1B2470`, im Nachtmodus Creme `#FFF4E6`; die Eule bleibt immer gleich.
+- **Startanimation** (`#paukiStart` ganz vorn in `<body>` von index.html): Die Eule springt herein, schaut kurz zur
+  Seite, zwinkert und fliegt ins Logo der Startseite, zusammen etwa 1,7 s. Hintergrund nach Tageszeit des Geräts:
+  5–12 Uhr Creme, 12–18 Uhr Orange (Eule etwas heller), sonst Nachtblau. Einmal je Sitzung (`sessionStorage`
+  `paukiStartGesehen`), damit die Rückkehr aus einem Modul sie nicht wiederholt. Ist das Logo gerade nicht zu sehen
+  („Was ist neu?“, Namensfrage, Sprung in ein Untermenü), blendet sie nur aus. Ein Tipp überspringt sie; bei
+  „Bewegung reduzieren“ nur ein kurzes Ausblenden; nach spätestens 6 s ist sie in jedem Fall weg. „Gesehen“ merkt sie
+  sich erst am Ende und nicht, solange „Was ist neu?“ oder die Namensfrage davor stehen – dann kommt der Flug beim
+  nächsten Öffnen. Escape, Enter und Leertaste überspringen ebenfalls. Nachmittags wird die hellere Eule im Flug so
+  orange wie das Logo.
+- **Pauki oben** (`#paukiOben`): auf jedem Bildschirm des Trainers außer der Startseite oben in der Mitte, Schriftzug
+  weiß auf Lila. Schmal (bis 767 px) ist der Streifen oben voll; dort steht die Eule allein in der Karte gleich
+  neben jedem „← Zurück“ (`.pauki-neben`, beim Laden angelegt). Ein Tipp führt zur Startseite – aus einem Menü ohne
+  Neuladen; mitten in einer Runde (Spiele, Funkzentrale/Sätze/Hör-Detektiv beim Spielen, Mittlere Spalte, Vokabelheft
+  beim Abdecken) erst nach einer Rückfrage. Auf der Startseite, der Namensfrage und „Was ist neu?“ ist es ausgeblendet
+  (Klasse `weg`, per MutationObserver – nicht mit `:has()`, das ältere iPads nicht kennen).
+- **„Was ist neu?“** öffnet sich jederzeit über den Knopf unten auf der Startseite (mit der aktuellen Version).
 - **Seitentitel:** Startseite „Pauki“, Unterseiten „… · Pauki“; auf dem Home-Bildschirm heißt jede Seite „Pauki“
   (`apple-mobile-web-app-title`).
 - **Nicht umbenannt**, damit nichts verloren geht: Speicher-Schlüssel (`vocabProgress`, `punkteGesamt`,
@@ -372,7 +388,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.50.0
+**Version:** 2.51.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -434,6 +450,14 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.51.0 (25.11.2026)
+- **Startanimation** beim Öffnen (Abschnitt „Name und Logo“), Hintergrund nach Tageszeit, wie mit dem User anhand
+  einer Vorschau abgestimmt (Tempo 1,7 s). Zwei Prüfer: „gesehen“ erst am Ende, Sicherheitsnetz auch bei „Bewegung
+  reduzieren“, Tasten, kein Farbsprung, Zwinkern ohne Rest-Strich, Doppeltipp geht nicht durch.
+- **Pauki oben** in allen Menüs und Spielen des Trainers, am Handy neben „← Zurück“.
+- **„Was ist neu?“** jederzeit über einen Knopf unten auf der Startseite.
+- **Klassenarbeit Dezember:** Die Karten heißen dort „Klassenarbeit: Vokabeln“ und „Klassenarbeit: Vokabelheft“.
 
 ### Version 2.50.0 (25.11.2026)
 - **Neuer Name und Logo: Pauki** (Abschnitt „Name und Logo“). Startseite mit Logo statt „🎮 Vokabel-Abenteuer“,
