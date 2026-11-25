@@ -1984,6 +1984,14 @@
             border-color: #ef6c00;
         }
         body.april-dark .set-card.perfekt-bau { border-color: #ef6c00; }
+        /* Latein-Lektionsauswahl so groß wie die Themen-Kacheln im Englischen (.module-card): gleiche Polsterung und
+           Schriftgrößen, und Klassenarbeit/Perfekt-Baukasten als normale Kacheln im Raster statt über die ganze Breite */
+        #latinChapterSelection .set-card { padding: 20px; }
+        #latinChapterSelection .set-card.arbeit-karte, #latinChapterSelection .set-card.perfekt-bau { grid-column: auto; }
+        #latinChapterSelection .set-icon { font-size: 2.5em; margin-bottom: 8px; }
+        #latinChapterSelection .set-title { font-size: 1.1em; margin-bottom: 5px; }
+        #latinChapterSelection .set-info { font-size: 0.9em; margin-bottom: 5px; }
+        #latinChapterSelection .set-topics { font-size: 0.8em; }
 
         .vh-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
         .vh-group { margin-bottom: 20px; }
@@ -8167,9 +8175,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.52.0';
+        const APP_VERSION = '2.52.1';
 
         const changelogEntries = [
+            {
+                version: '2.52.1',
+                date: '25.11.2026',
+                items: [
+                    '<b>Latein:</b> Die Kacheln für die Lektionen sind jetzt so groß wie im Englischen – auch „Klassenarbeit Dezember“ und der Perfekt-Baukasten stehen im selben Raster.'
+                ]
+            },
             {
                 version: '2.52.0',
                 date: '25.11.2026',

@@ -393,7 +393,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.52.0
+**Version:** 2.52.1
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -455,6 +455,11 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.52.1 (25.11.2026)
+- **Latein-Lektionsauswahl:** Die Kacheln (`.set-card`) waren deutlich größer als die Themen-Kacheln im Englischen
+  (`.module-card`). Unter `#latinChapterSelection` jetzt dieselbe Polsterung und dieselben Schriftgrößen;
+  „Klassenarbeit Dezember“ und „Perfekt-Baukasten“ stehen als normale Kacheln im Raster statt über die ganze Breite.
 
 ### Version 2.52.0 (25.11.2026)
 - **Erledigte Fächer:** Musik, Deutsch, GEWI und NAWI tragen auf der Startseite einen grauen Schleier mit
