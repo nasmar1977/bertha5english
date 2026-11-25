@@ -260,12 +260,19 @@ body { margin: 0; }
 img { max-width: 100%; }
 .backlink { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font: 600 .95rem var(--font-body); color: var(--ink); text-decoration: none; background: var(--paper); border: 2px solid var(--rule); border-radius: 999px; padding: 5px 14px; }
 .backlink:hover, .backlink:focus-visible { border-color: var(--line-blue); outline: none; }
+.kopfzeile { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 10px; }
+.kopfzeile .gim-hier { margin-left: auto; }   /* auch wenn die Knöpfe bei 320 px in eine eigene Zeile rutschen: rechts */
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <a class="backlink" href="index.html">← Zurück zum Vokabeltrainer</a>
+  <!-- Zeile mit dem Zurück-Link; rechts der Platz für den Konfetti- und den Schnee-Knopf aus gimmicks.js (gim-hier).
+       Fest im Blatt, rollt mit: Über einer Probearbeit soll nichts schweben. -->
+  <div class="kopfzeile">
+    <a class="backlink" href="index.html">← Zurück zum Vokabeltrainer</a>
+    <div class="gim-hier"></div>
+  </div>
   <header class="top">
     <div class="roundel">
       <div class="ring" aria-hidden="true"></div>
@@ -3125,5 +3132,6 @@ tick();
 render();
 </script>
 
+<script src="gimmicks.js?v=375277c2" data-gim="knoepfe"></script>
 </body>
 </html>

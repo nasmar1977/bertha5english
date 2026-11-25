@@ -166,7 +166,46 @@ Text im Präsens steht; `merk` für einen Hinweis zur Lösung.
 `python3 tools/arbeit-pdf.py` schreibt `latein-arbeit-blaetter.pdf` (Spickzettel, je Text Arbeitsblatt und Lösung),
 `--pruefen` meldet nur Höhe und Seitenzahl. Jedes Blatt soll unter 271 mm bleiben.
 
+## Spaß-Datei: `gimmicks-check.mjs`
+
+`gimmicks.js` gehört zu allen Seiten. Drei Dinge können dabei auseinanderlaufen, und genau die prüft das Skript:
+
+| Prüfung | Was sie findet |
+|---|---|
+| `einbindung` | Seite bindet die Datei nicht, doppelt oder mit altem Fingerabdruck ein (`gimmicks.js?v=…`) |
+| `betriebsart` | unbekanntes `data-gim`; `haupt` außerhalb von `index.html`; `voll` ohne Kopfleiste oder mit einer anderen Zahl von Melde-Stellen (`Gimmicks.antwort`) als in `HAKEN` hinterlegt; eine Seite meldet Antworten, hat aber keine Leiste |
+| `abgleich` | Speicher-Schlüssel, Server-Adresse der Liste „Gerade da“, Punkte je Antwort, Länge der Serie, Takt der Liste und Schwelle des Nachtmodus stehen in `gimmicks.js` anders als in `index.html` |
+
+```bash
+node tools/gimmicks-check.mjs            # prüfen
+node tools/gimmicks-check.mjs --setzen   # nach jeder Änderung an gimmicks.js: Fingerabdruck in alle Seiten eintragen
+```
+
+Kommentare zählen bei alledem nicht mit – eine auskommentierte Einbindung ist keine. Das Skript läuft nicht von
+selbst: vor jedem Commit, der `gimmicks.js` oder eine Seite anfasst, von Hand aufrufen.
+
+Der Fingerabdruck sind die ersten acht Zeichen der SHA-256-Summe der Datei. Er steht nur in der Adresse, damit der
+Browser nach einer Änderung nicht die alte Fassung aus seinem Zwischenspeicher nimmt. Eine neue Seite bekommt die Zeile
+`<script src="gimmicks.js?v=…" data-gim="knoepfe"></script>` direkt vor `</body>`; Seiten, die nicht zum Trainer
+gehören, stehen im Skript in der Liste `OHNE`. Hat die Seite keine Kopfleiste (`.bar .in`), bekommt sie dort, wo
+die zwei Knöpfe sitzen sollen, ein `<div class="gim-hier"></div>` – sonst schweben sie bei jeder Breite unten links
+über dem Inhalt (das Skript warnt). Anordnen muss die Seite diesen Platz selbst, am besten als Teil einer Flex-Zeile
+(`klassenarbeit.html`: `.kopfzeile`); ein `float` quetscht den Block darunter zusammen.
+
+Soll eine Seite Punkte vergeben, braucht sie `data-gim="voll"`, die Kopfleiste `<div class="bar"><div class="in">`,
+im `<head>` die Zeile, die den gemerkten Nachtmodus sofort setzt (aus `latein-arbeit.html` übernehmen), und
+an jeder Stelle, an der eine Antwort feststeht, `if (window.Gimmicks) window.Gimmicks.antwort(richtig)` – mit einer
+zweiten Angabe `0`, wenn die Antwort für die Serie zählen soll, aber keine Punkte bringt. Ein Fehlgriff wird sofort
+gemeldet, nicht erst bei „Weiter“ (in den zwei Latein-Seiten macht das `fehlgriff()`). Die Zahl der Melde-Stellen
+gehört danach in `HAKEN` im Prüfskript.
+
 ## Seite im Test fahren
+
+**Netz sperren.** Der Server der Liste „Gerade da“ ist echt. Im Playwright-Test deshalb
+`ctx.route(re.compile(r'^https?://'), lambda r: r.abort())`; ohne gespeicherten Vornamen (`vokabelVorname`) senden die
+Unterseiten ohnehin nichts. Einen Regen löst `Gimmicks.regen('konfetti' | 'schnee')` aus, `Gimmicks.laeuft()` sagt, ob
+noch einer läuft.
+
 
 `latein-perfekt.html?ohnesperre` und `latein-arbeit.html?ohnesperre` schalten die Tipp-Sperre ab (sonst verschluckt die Seite jeden Klick in den ersten
 400 ms nach einem Neuzeichnen – gewollt, aber für automatische Durchläufe hinderlich). Rückfragen („Runde beenden“,

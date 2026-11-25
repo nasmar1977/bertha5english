@@ -19,6 +19,60 @@ Ein interaktiver Vokabeltrainer für die 5. Klasse Gymnasium – Englisch und La
 - ✅ 👥 **Anwesenheitsliste** links neben der App: Vorname + „zuletzt gesehen" der anderen
   — Vorname wird beim ersten Start abgefragt, Schalter oben rechts blendet die Liste aus/ein.
   Gegenstelle: Cloudflare Worker + D1, siehe [`worker/README.md`](worker/README.md).
+- ✅ 🎉 **Konfetti-Knopf** und ❄️ **Schnee-Knopf** auf jeder Seite, Punkte und Serie auch auf den Latein-Unterseiten –
+  siehe „Spaß-Teile auf allen Seiten“.
+
+### 🎉 Spaß-Teile auf allen Seiten (`gimmicks.js`)
+Eine gemeinsame Datei für alle elf Seiten. Jede bindet sie am Ende von `<body>` ein und sagt mit `data-gim`, was sie
+braucht: `haupt` (Haupttrainer), `voll` (Latein-Unterseiten mit Leiste), `knoepfe` (alle anderen).
+
+- **🎉 Konfetti und ❄️ Schnee auf Knopfdruck.** Konfetti fällt und bleibt liegen, dann fährt der Staubsauger durch.
+  Schnee fällt langsamer, dann kommt der Schneeschieber: dasselbe rote Gerät, vorn ein blaues Schild, oben ein
+  Blinklicht – vor dem Schild wächst der Schneehaufen. Es läuft immer nur ein Regen (14 bis 22 Sekunden), so lange
+  sind beide Knöpfe gesperrt und blass. Der Regen liegt über der Seite, ohne sie zu sperren: Man kann währenddessen
+  weiterarbeiten. Falltempo und Fahrt richten sich nach Höhe und Breite des Bildschirms – alles liegt, bevor das
+  Gerät kommt, und die Fahrt dauert überall ähnlich lange. Die Flocken sind bläulich, nur im Nachtmodus weiß.
+- **Wo die zwei Knöpfe sitzen:** im Haupttrainer neben der Punkte-Pille, auf den Unterseiten rechts in der Kopfleiste.
+  Am Handy (bis 700 px) unten links in der Ecke; die Seite bekommt dann unten Luft, damit sich jeder Inhalt über die
+  Knöpfe hinwegschieben lässt. Bräche die Kopfleiste durch die Knöpfe in eine zweite Zeile um, weichen sie ebenfalls
+  in die Ecke aus. Eine Seite kann den Platz selbst vorgeben (`<div class="gim-hier"></div>`): Auf der
+  Englisch-Probearbeit sitzen sie deshalb bei jeder Breite oben rechts neben dem Zurück-Link und rollen mit – über
+  einer Arbeit soll nichts schweben.
+- **Leiste der Latein-Unterseiten** (Perfekt-Baukasten, AcI und Übersetzen): Punkte-Pille mit Serie, die zwei
+  Knöpfe, 👥 „Gerade da“, 🌙 Nachtmodus. Breit sitzt sie rechts in der Kopfleiste. Bis 743 px steht sie in einer
+  eigenen Zeile darunter, die mit dem Inhalt rollt – die klebende Kopfleiste bleibt so hoch wie vorher.
+  - **Punkte:** derselbe Speicher wie im Haupttrainer (`punkteGesamt`), 10 je richtiger Antwort. Als Antwort zählt:
+    ein Schritt einer Station oder Übungsfolge ohne Fehlgriff, eine Aufgabe einer Übungsrunde, eine Frage im
+    Kurz-Check; beim Übersetzen „Stimmt“ nur dann, wenn die Prüfung alle Bausteine gefunden hat. Reine Lese-Schritte
+    zählen nicht. Serie, aber keine Punkte bringt, was wiederholt wird: Aufgaben am Rundenende, der Durchgang „nur
+    die Sätze mit Fehlern“, dieselbe Kurz-Check-Frage ein zweites Mal (solange die Seite offen ist).
+  - **Serie:** 10 Richtige in Folge machen die Pille zum Knopf „Konfetti!“ – das große Konfetti mit goldenen Sternen.
+    Ein Fehler setzt die Serie auf null, und zwar sofort beim ersten Fehlgriff eines Schritts (nicht erst bei
+    „Weiter“ – sonst ließe er sich mit „Beenden“ wegklicken); beim Übersetzen ist „Nochmal üben“ der Fehler.
+    Läuft gerade schon ein Regen, bleibt die Belohnung stehen, und die Leiste sagt kurz Bescheid.
+  - **„Gerade da“:** dieselbe Liste und derselbe Server wie im Haupttrainer. Gesendet wird nur, wenn dort ein Vorname
+    eingetragen wurde und die Liste nicht ausgeschaltet ist; die Unterseiten fragen nie selbst nach einem Namen.
+    Vor jedem Senden sehen Unterseiten und Haupttrainer frisch nach: Wird die Liste auf einer Seite ausgeschaltet,
+    hört auch jede andere offene Seite sofort auf zu senden. Breit steht die Liste links neben der Seite, sonst
+    klappt sie unter dem Knopf auf.
+  - **Nachtmodus:** nach 5 Richtigen in Folge umschaltbar, wie im Haupttrainer.
+  - **Was sich die Leiste merkt:** Serie, verdiente Belohnung und Nachtmodus gelten, solange das Fenster offen ist –
+    auch beim Wechsel zwischen den zwei Latein-Seiten und nach dem Neuladen (`sessionStorage`, Schlüssel `gimStand`).
+    Der Haupttrainer führt seine Serie weiter für sich. Damit der gemerkte Nachtmodus beim Seitenwechsel nicht hell
+    aufblitzt, setzt ihn eine Zeile im `<head>` der zwei Seiten sofort.
+  - **Nicht übernommen:** 🎯 Knackpunkte und 😀 Emoji-Schalter – beide schalten nur etwas an den Vokabelspielen.
+- **Fehlt die Datei** (nicht geladen), laufen alle Seiten trotzdem – sie fragen vor jedem Aufruf nach
+  `window.Gimmicks`. Im Haupttrainer bleibt dann die volle Serie stehen, bis die Datei wieder da ist.
+- **Bekannte Grenzen:** Eine Station mit festem Inhalt bringt bei jedem Durchgang wieder Punkte (wie jede wiederholte
+  Runde im Haupttrainer). Wer nach einer richtigen Antwort „Beenden“ statt „Weiter“ drückt, bekommt für diesen einen
+  Schritt keine Punkte. Am Handy macht die Luft unter den Eck-Knöpfen jede Seite 62 px länger, und die Eck-Knöpfe
+  liegen beim Rollen über Zeilenanfängen (am Seitenende ist alles frei). Bis 743 px rollt die Leiste der Latein-Seiten
+  mit dem Inhalt weg – „+10“ und der Wechsel zu „Konfetti!“ sind dann erst wieder oben zu sehen. Getestet ist alles
+  nur im simulierten Browser, nicht am echten iPad.
+- **Nach jeder Änderung an `gimmicks.js`:** `node tools/gimmicks-check.mjs --setzen`. Das trägt den Fingerabdruck der
+  Datei in alle Seiten ein (`gimmicks.js?v=…`); sonst holt der Browser noch die alte Fassung aus dem Zwischenspeicher.
+  Dasselbe Skript vergleicht, was die Datei aus `index.html` wiederholt (Speicher-Schlüssel, Server-Adresse, Punkte je
+  Antwort, Länge der Serie).
 
 ### 🇬🇧 Englisch
 - **📝 Klassenarbeit üben** (`klassenarbeit.html`, Kachel unter den Themen): Probe-Arbeit zu Theme 1 nach den
@@ -287,7 +341,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.48.1
+**Version:** 2.49.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -313,7 +367,8 @@ Vokabeln April: 24) + 27 Redewendungen
 
 | Pfad | Inhalt |
 |---|---|
-| `index.html` | die komplette App — eine Datei, lädt nichts aus dem Netz nach |
+| `index.html` | der Haupttrainer — eine Datei; holt sich nur `gimmicks.js` dazu, sonst nichts aus dem Netz |
+| `gimmicks.js` | Spaß-Teile für alle Seiten: Konfetti mit Staubsauger, Schnee mit Schneeschieber, die zwei Knöpfe dafür; für die Latein-Unterseiten Punkte, Serie, „Gerade da“, Nachtmodus. Eingebunden mit Fingerabdruck (`tools/gimmicks-check.mjs --setzen`) |
 | `klassenarbeit.html` | Probe-Klassenarbeit Englisch (Theme 1), eigene Seite, verlinkt aus der Themenauswahl |
 | `latein-arbeit.html` | Latein: Klassenarbeit Dezember – AcI-Werkstatt und Übersetzen (Pompeji), erreichbar über das Set „Klassenarbeit Dezember“ in der Latein-Lektionsauswahl |
 | `latein-arbeit-blaetter.pdf` | Spickzettel AcI, Arbeitsblätter und Lösungen der beiden Texte als PDF, erzeugt von `tools/arbeit-pdf.py` |
@@ -326,7 +381,7 @@ Vokabeln April: 24) + 27 Redewendungen
 | `nawi-mission.html` | NAWI Kl. 6, zweite Fassung „Mission Kräfte“ – derselbe Stoff, kurz: Tipp → Experiment → Spiel → Merksatz; Blitzrunde, Endgegner, Spickzettel. Erreichbar über `nawi-menu.html` |
 | `moldau-1.html`, `moldau.html` | Musik-Probearbeiten Runde 1 und 2, über die Karte „Musik“ |
 | `worker/` | Cloudflare Worker + D1: Liste „Gerade da“ und KI-Korrektur für „Sätze schreiben“ |
-| `tools/` | Hilfsskripte rund um die Vokabeldaten, den Perfekt-Baukasten und die Klassenarbeits-Seite |
+| `tools/` | Hilfsskripte rund um die Vokabeldaten, den Perfekt-Baukasten, die Klassenarbeits-Seite und die Spaß-Datei |
 
 ## 🚀 Wie benutzen?
 
@@ -347,6 +402,55 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.49.0 (25.11.2026)
+- Anlass: Die Spaß-Teile der Hauptseite sollen auch auf die Unterseiten – zuerst auf die zwei jüngsten
+  (Perfekt-Baukasten, AcI und Übersetzen) –, dazu ein Konfetti- und ein Schnee-Knopf für alle Seiten; beim Schnee wird
+  der Staubsauger zum Schneeschieber.
+- **Neu: `gimmicks.js`** – eine gemeinsame Datei für alle elf Seiten (Abschnitt „Spaß-Teile auf allen Seiten“).
+  Konfetti mit Staubsauger und Schnee mit Schneeschieber, je ein Knopf auf jeder Seite.
+- **Latein-Unterseiten mit Leiste**: Punkte (derselbe Speicher wie im Haupttrainer), Serie mit großem Konfetti,
+  „Gerade da“, Nachtmodus. `latein-arbeit.html` und `latein-perfekt.html` melden dafür jede Antwort
+  (`Gimmicks.antwort`).
+- **Haupttrainer**: Der eingebaute Konfetti-Code ist ausgezogen (rund 150 Zeilen weniger), die volle Serie ruft jetzt
+  das große Konfetti aus `gimmicks.js` – neu mit goldenen Sternen. Die Punkte-Pille liest ihren Stand neu, wenn man
+  von einer Unterseite zurückkommt oder in einem zweiten Fenster übt.
+- **Liste „Gerade da“**: Haupttrainer und Unterseiten sehen vor jedem Senden nach, ob die Liste noch an ist – auch
+  dann, wenn sie in einem anderen Fenster oder auf einer anderen Seite ausgeschaltet wurde (`presenceAbgleichen`).
+- **Neu: `tools/gimmicks-check.mjs`** – prüft Einbindung (Fingerabdruck, Betriebsart) und den Abgleich mit `index.html`.
+- Von zwei unabhängigen Prüfern gegengelesen.
+  - **Logik** – ein Fehler, behoben: Eine schon offene Unterseite sendete weiter an die Liste „Gerade da“, nachdem
+    die Liste anderswo ausgeschaltet oder der Vorname gelöscht worden war. Dazu eingearbeitet: Der erste Fehlgriff
+    eines Schritts setzt die Serie sofort zurück (vorher ließ er sich mit „Beenden“ wegklicken); dieselbe
+    Kurz-Check-Frage bringt nur einmal Punkte; Serie, Belohnung und Nachtmodus überstehen den Wechsel zwischen den
+    Latein-Seiten; ein Fehler beim Zeichnen lässt keinen gesperrten Knopf zurück, das Zeichenfeld gibt seinen
+    Speicher sofort frei; „Nochmal üben“ beim Übersetzen zählt als Fehler; ein Tipp auf „Konfetti!“ während eines
+    Regens erklärt sich; das Einschalten der Liste am Handy schickt eine Anfrage statt zwei; ein Klick auf die
+    Spaß-Knöpfe nimmt dem Eingabefeld nicht mehr den Fokus; die Fahrt des Geräts dauert auf breiten Bildschirmen
+    nicht mehr länger. `gimmicks-check.mjs` zählt Kommentare nicht mehr mit, erkennt doppelte Einbindungen in
+    anderer Schreibweise, kennt die Zahl der Melde-Stellen je Seite und vergleicht auch das 90-Sekunden-Fenster.
+  - **Darstellung** – ein Fehler, behoben: In der Ecke sahen gesperrte Knöpfe nicht gesperrt aus. Dazu eingearbeitet:
+    Auf der Englisch-Probearbeit lagen die zwei Knöpfe am iPad hochkant über Aufgaben und Feldern – sie sitzen
+    jetzt fest oben neben dem Zurück-Link; Schnee und Konfetti sprangen auf hohen Bildschirmen in einem Bild auf
+    den Boden, wenn das Gerät losfuhr – das Falltempo richtet sich jetzt nach der Höhe; in mittelbreiten Fenstern
+    sprang der Inhalt, wenn die Pille zu „Konfetti!“ wurde – die Leiste hat bis 743 px ihre eigene Zeile; der
+    gemerkte Nachtmodus blitzte beim Seitenwechsel hell auf; die Hinweise sagen „Vokabeltrainer“ statt
+    „Haupttrainer“ und überall „das große Konfetti“; die zwei Knöpfe kamen nicht aus der Ecke zurück, wenn die
+    Brotkrumen-Zeile wieder kürzer wurde. Kleineres: Flocken auf hellem Grund bläulich, Fokus-Rahmen auf weißer
+    Leiste sichtbar, kein klebender Schwebe-Zustand am Tablet, Fenster „Gerade da“ bündig unter dem Knopf.
+  - Eine Nachprüfung der Korrekturen fand noch zwei Fehler darin, beide behoben: Auf der weißen Karte der
+    Hauptseite waren die Flocken nur Ringe (sie sind jetzt überall bläulich, außer im Nachtmodus); auf der
+    Englisch-Probearbeit quetschte der Platz der Knöpfe am Handy den Kopf zusammen (Zurück-Link und Knöpfe stehen
+    jetzt in einer gemeinsamen Zeile). Dazu: mehr Abstand zwischen Abzeichen und Konfetti-Knopf, engere Leiste bei
+    320 px, das Fenster „Gerade da“ klappt beim Rollen zu. Aus der Nachprüfung der Logik (kein Fehler): Lässt sich
+    der Schalter der Liste nicht speichern, gilt auf den Unterseiten wie im Haupttrainer, was die Seite weiß;
+    „dieselbe Kurz-Check-Frage“ heißt gleicher Text und gleiche richtige Antwort; die Tipp-Sperre der Latein-Seiten
+    gilt am Handy auch für die Leiste (dort rollt sie mit dem Inhalt); der Schalter der Liste fragt nach dem
+    Vornamen, wenn der inzwischen fehlt; `gimmicks-check.mjs` prüft die Kopf-Zeile ohne Kommentare.
+  - Nicht geändert: Die Eck-Knöpfe am Handy sitzen links (rechts lägen sie öfter auf leeren Zeilenenden, auf den
+    Musik-Seiten aber auf den Auswahlfeldern); Tippflächen von 40 bis 46 px; nach Enter auf einen Spaß-Knopf fällt
+    der Tastatur-Fokus auf die Seite. Bestand, bei der Prüfung aufgefallen: `moldau-1.html` rollt bei 820 px um 8 px
+    waagerecht; bei gesperrtem Speicher wirft der Haupttrainer beim Start zwei Fehler.
 
 ### Version 2.48.1 (25.11.2026)
 - Anlass: Die Klassenlehrerin hat zugesagt, dass der Text der Arbeit den Wortschatz der zwei Wortschatz-Seiten hat. Und

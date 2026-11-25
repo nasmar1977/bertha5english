@@ -2973,8 +2973,6 @@
             0%, 100% { transform: scale(1); }
             50%      { transform: scale(1.06); }
         }
-        #konfettiCanvas { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 3000; }
-        .konfetti-sonde { position: fixed; bottom: 0; height: 0; padding-bottom: env(safe-area-inset-bottom, 0px); visibility: hidden; pointer-events: none; }
         @media (max-width: 520px) {
             .punkte-leiste { top: 10px; left: 10px; gap: 8px; }
             .punkte-pill { height: 40px; padding: 0 12px 0 9px; font-size: 0.95em; }
@@ -7976,9 +7974,18 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.48.1';
+        const APP_VERSION = '2.49.0';
 
         const changelogEntries = [
+            {
+                version: '2.49.0',
+                date: '25.11.2026',
+                items: [
+                    '<b>Neu: 🎉 Konfetti-Knopf und ❄️ Schnee-Knopf</b> – auf jeder Seite. Beim Konfetti räumt der Staubsauger auf, beim Schnee kommt der Schneeschieber.',
+                    '<b>Punkte, Serie, „Gerade da“ und Nachtmodus</b> gibt es jetzt auch im <b>Perfekt-Baukasten</b> und bei <b>AcI und Übersetzen</b>. Die Punkte von dort zählen zu deinen Punkten im Vokabeltrainer dazu.',
+                    'Nach 10 Richtigen in Folge gibt es weiterhin das <b>große Konfetti</b> – jetzt mit goldenen Sternen.'
+                ]
+            },
             {
                 version: '2.48.1',
                 date: '25.11.2026',
@@ -8905,6 +8912,7 @@
         let myName = '';
         let presenceOff = false;
         let presenceTimer = null;
+        let presenceOhneSpeicher = false;   // true, sobald sich die Einstellung nicht speichern ließ
         // Auf schmalen Geräten steht die Liste nicht dauerhaft daneben, sondern
         // klappt auf Knopfdruck unter dem Schalter auf. Der Herzschlag läuft
         // dabei weiter — die anderen sollen einen ja sehen.
@@ -8930,7 +8938,7 @@
             try {
                 if (myName) localStorage.setItem(NAME_KEY, myName);
                 localStorage.setItem(PRESENCE_OFF_KEY, presenceOff ? '1' : '0');
-            } catch (e) {}
+            } catch (e) { presenceOhneSpeicher = true; }      // lässt sich nichts speichern, gilt, was diese Seite weiß
         }
 
         // Eigene Geräte-ID: sorgt dafür, dass ein geänderter Vorname dieselbe
@@ -9059,7 +9067,23 @@
             el.style.display = text ? 'block' : 'none';
         }
 
+        // Die Unterseiten (gimmicks.js) und ein zweites Fenster können die Liste aus- und einschalten. Vor jedem Senden
+        // wird deshalb frisch nachgesehen; „aus“ heißt ab sofort: Es wird nichts mehr gesendet.
+        // Liefert true, wenn sich etwas geändert hat – dann ist schon gestoppt oder neu gestartet.
+        function presenceAbgleichen() {
+            if (presenceOhneSpeicher) return false;
+            let aus, name;
+            try { aus = localStorage.getItem(PRESENCE_OFF_KEY) === '1'; name = localStorage.getItem(NAME_KEY) || ''; } catch (e) { return false; }
+            if (aus === presenceOff && name === myName) return false;
+            presenceOff = aus; myName = name;
+            if (presenceOff || !myName) stopPresence(); else startPresence();
+            return true;
+        }
+        window.addEventListener('storage', e => { if (e.key === PRESENCE_OFF_KEY || e.key === NAME_KEY || e.key === null) presenceAbgleichen(); });
+        window.addEventListener('pageshow', e => { if (e.persisted) presenceAbgleichen(); });
+
         async function refreshPresence() {
+            if (presenceAbgleichen() || presenceOff || !myName) return;
             try {
                 renderPresence(await fetchPresence());
                 setPresenceNote(PRESENCE_NOTE);
@@ -9071,6 +9095,7 @@
         function startPresence() {
             if (!document.getElementById('presencePanel')) return;
             refreshPresence();
+            if (presenceOff || !myName) return;      // der Abgleich darin hat gerade gestoppt
             if (presenceTimer) clearInterval(presenceTimer);
             presenceTimer = setInterval(refreshPresence, PRESENCE_REFRESH_MS);
             updatePresenceSicht();
@@ -9143,6 +9168,12 @@
         }
 
         function togglePresence() {
+            // an, aber (nicht mehr) mit Vornamen – etwa weil er anderswo gelöscht wurde: erst fragen.
+            // Steht die Frage schon da (erster Start), bleibt sie einfach stehen.
+            if (!presenceOff && !myName) {
+                if (document.getElementById('nameSplash').style.display !== 'block') openNameSplash();
+                return;
+            }
             if (presenceOff) {                       // aus → an
                 presenceOff = false;
                 savePresencePrefs();
@@ -9995,6 +10026,14 @@
             try { localStorage.setItem(PUNKTE_KEY, String(punkteGesamt)); } catch (e) {}
             punkteAnzeigen(n);
         }
+        // Die Unterseiten (gimmicks.js) schreiben in denselben Speicher. Kommt man von dort mit „Zurück“ wieder
+        // (Seite aus dem Zwischenspeicher des Browsers) oder übt in einem zweiten Fenster, zeigt die Pille den neuen Stand.
+        function punkteNeuLesen() {
+            try { punkteGesamt = Math.max(punkteGesamt, parseInt(localStorage.getItem(PUNKTE_KEY), 10) || 0); } catch (e) {}
+            punkteAnzeigen(0);
+        }
+        window.addEventListener('storage', e => { if (e.key === PUNKTE_KEY) punkteNeuLesen(); });
+        window.addEventListener('pageshow', e => { if (e.persisted) punkteNeuLesen(); });
 
         let zuletztRichtig = { id: null, zeit: 0 };
         function antwortVerbucht(richtig, info) {
@@ -10026,14 +10065,14 @@
             const s = Math.min(serie, SERIE_ZIEL);
             document.getElementById('serieBadge').textContent = s + '/' + SERIE_ZIEL;
             document.getElementById('punkteTip').textContent = konfettiBereit
-                ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das Konfetti gehört dir!'
+                ? 'Du hast ' + SERIE_ZIEL + ' richtige Antworten in Folge geschafft. Tipp drauf – das große Konfetti gehört dir!'
                 : 'Für jede richtige Antwort gibt es ' + PUNKTE_JE_ANTWORT + ' Punkte. Schaffst du ' + SERIE_ZIEL +
-                  ' richtige in Folge, gibt es Konfetti – im Moment ' + s + ' von ' + SERIE_ZIEL +
+                  ' richtige in Folge, gibt es das große Konfetti – im Moment ' + s + ' von ' + SERIE_ZIEL +
                   '. Eine falsche Antwort setzt die Serie auf null.';
             // Ist die Serie voll, wird die Punkte-Pille selbst zum Konfetti-Knopf
             const pill = document.getElementById('punktePill');
             pill.classList.toggle('bereit', konfettiBereit);
-            pill.setAttribute('aria-label', konfettiBereit ? 'Konfetti regnen lassen' : punkteGesamt + ' Punkte, Serie ' + s + ' von ' + SERIE_ZIEL);
+            pill.setAttribute('aria-label', konfettiBereit ? 'Großes Konfetti regnen lassen' : punkteGesamt + ' Punkte, Serie ' + s + ' von ' + SERIE_ZIEL);
             if (neu > 0) {
                 const plus = document.createElement('span');
                 plus.className = 'punkte-plus';
@@ -10146,7 +10185,7 @@
             if (btn && !btn.hidden) btn.focus({ preventScroll: true });
         }
 
-        // ---- Konfetti mit Staubsauger (alles gezeichnet, keine Emojis) ----
+        // ---- Konfetti: Die volle Serie macht die Punkte-Pille zum Knopf für das große Konfetti ----
         let punkteTipUhr = null;
         function punktePillKlick(ev) {
             if (ev) ev.stopPropagation();
@@ -10157,178 +10196,22 @@
             if (pill.classList.contains('tip-an')) punkteTipUhr = setTimeout(() => pill.classList.remove('tip-an'), 5000);
         }
 
+        // Der Regen selbst (Konfetti mit Staubsauger, Schnee mit Schneeschieber) wird in gimmicks.js gezeichnet –
+        // gemeinsam für alle Seiten. Von dort kommen auch die zwei Knöpfe neben der Punkte-Pille.
         function konfettiAusloesen() {
             if (!konfettiBereit) return;
+            if (!window.Gimmicks) return;                                   // gimmicks.js fehlt: Die Belohnung bleibt stehen
+            if (!window.Gimmicks.regen('konfetti', { gross: true })) {      // es läuft schon ein Regen: Sie bleibt ebenfalls stehen
+                const pill = document.getElementById('punktePill');
+                document.getElementById('punkteTip').textContent = 'Gleich! Warte, bis alles weggeräumt ist – dann tipp noch einmal drauf.';
+                pill.classList.add('tip-an');
+                clearTimeout(punkteTipUhr);
+                punkteTipUhr = setTimeout(() => { pill.classList.remove('tip-an'); punkteAnzeigen(0); }, 4000);
+                return;
+            }
             konfettiBereit = false;
             serie = 0;
             punkteAnzeigen(0);
-            konfettiRegen();
-        }
-
-        function konfettiRegen() {
-            if (document.getElementById('konfettiCanvas')) return;
-            const ruhig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            const c = document.createElement('canvas');
-            c.id = 'konfettiCanvas';
-            c.setAttribute('aria-hidden', 'true');
-            document.body.appendChild(c);
-            const ctx = c.getContext('2d');
-            const dpr = Math.min(2, window.devicePixelRatio || 1);
-            const sonde = document.createElement('div');
-            sonde.className = 'konfetti-sonde';
-            document.body.appendChild(sonde);
-            let W = 0, H = 0;
-            const groesse = () => {
-                // iOS: 100vh reicht hinter die Leiste – der Boden ist das, was man wirklich sieht
-                const vv = window.visualViewport;
-                W = Math.round(vv ? vv.width : window.innerWidth);
-                H = Math.round(vv ? vv.height : window.innerHeight);
-                // über dem Home-Balken landen (safe-area unten): Canvas endet dort
-                H -= sonde.offsetHeight;
-                c.style.width = W + 'px'; c.style.height = H + 'px';
-                c.style.top = (vv ? vv.offsetTop : 0) + 'px'; c.style.left = (vv ? vv.offsetLeft : 0) + 'px';
-                c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                // Beim Drehen: was schon liegt, rutscht auf den neuen Boden
-                if (typeof teile !== 'undefined') teile.forEach(t => { if (t.liegt && !t.saug) t.y = H - t.abstand; });
-            };
-            groesse();
-            window.addEventListener('resize', groesse);
-            if (window.visualViewport) { window.visualViewport.addEventListener('resize', groesse); window.visualViewport.addEventListener('scroll', groesse); }
-
-            const FARBEN = ['#ef4444', '#f59e0b', '#facc15', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
-            const anzahl = ruhig ? 60 : Math.max(120, Math.min(340, Math.round(W * H / 3200)));
-            var teile = [];
-            for (let i = 0; i < anzahl; i++) {
-                teile.push({
-                    x: Math.random() * W, y: -10 - Math.random() * H * 0.9,
-                    vx: (Math.random() - 0.5) * 1.4, vy: 1 + Math.random() * 2,
-                    w: 6 + Math.random() * 6, h: 3 + Math.random() * 3,
-                    rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.25,
-                    farbe: FARBEN[i % FARBEN.length], rund: Math.random() < 0.25,
-                    phase: Math.random() * Math.PI * 2, abstand: 2 + Math.random() * 12,
-                    liegt: false, weg: false, saug: 0
-                });
-                if (ruhig) { const t = teile[teile.length - 1]; t.liegt = true; t.y = H - t.abstand; t.rot = 0; }
-            }
-
-            const sauger = { x: 0, aktiv: false, richtung: -1, start: 0 };
-            const t0 = performance.now();
-            let zuletzt = t0;
-
-            function zeichneTeil(t, s) {
-                ctx.save();
-                ctx.translate(t.x, t.y);
-                ctx.rotate(t.rot);
-                ctx.scale(s, s);
-                ctx.fillStyle = t.farbe;
-                if (t.rund) { ctx.beginPath(); ctx.arc(0, 0, t.h, 0, Math.PI * 2); ctx.fill(); }
-                else ctx.fillRect(-t.w / 2, -t.h / 2, t.w, t.h);
-                ctx.restore();
-            }
-
-            // Bodenstaubsauger, fährt nach links; Düse vorne, Schlauch zum Gerät
-            function zeichneSauger(x, zeit, saugt) {
-                const boden = H - 2, wackel = saugt ? Math.sin(zeit / 40) * 0.8 : 0;
-                ctx.save();
-                ctx.translate(0, wackel);
-                // Schlauch
-                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 7; ctx.lineCap = 'round';
-                ctx.beginPath(); ctx.moveTo(x + 8, boden - 34);
-                ctx.bezierCurveTo(x - 20, boden - 70, x - 52, boden - 66, x - 62, boden - 48); ctx.stroke();
-                // Saugrohr
-                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 5;
-                ctx.beginPath(); ctx.moveTo(x - 62, boden - 48); ctx.lineTo(x - 74, boden - 12); ctx.stroke();
-                // Düse
-                ctx.fillStyle = '#64748b';
-                ctx.beginPath(); ctx.moveTo(x - 98, boden); ctx.lineTo(x - 54, boden);
-                ctx.lineTo(x - 62, boden - 12); ctx.lineTo(x - 88, boden - 12); ctx.closePath(); ctx.fill();
-                // Gerät
-                ctx.fillStyle = '#e11d48';
-                ctx.beginPath(); ctx.moveTo(x + 6, boden - 14);
-                ctx.lineTo(x + 6, boden - 40); ctx.quadraticCurveTo(x + 8, boden - 58, x + 40, boden - 58);
-                ctx.lineTo(x + 96, boden - 58); ctx.quadraticCurveTo(x + 118, boden - 58, x + 118, boden - 36);
-                ctx.lineTo(x + 118, boden - 14); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#9f1239'; ctx.fillRect(x + 6, boden - 22, 112, 8);
-                // Griff
-                ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 5;
-                ctx.beginPath(); ctx.moveTo(x + 46, boden - 58); ctx.quadraticCurveTo(x + 64, boden - 78, x + 84, boden - 58); ctx.stroke();
-                // Lüftungsschlitze
-                ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 2;
-                for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(x + 90 + i * 7, boden - 48); ctx.lineTo(x + 90 + i * 7, boden - 30); ctx.stroke(); }
-                // Räder
-                [x + 28, x + 96].forEach(rx => {
-                    ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.arc(rx, boden - 10, 10, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.arc(rx, boden - 10, 3.5, 0, Math.PI * 2); ctx.fill();
-                });
-                // Sog-Striche vor der Düse
-                if (saugt) {
-                    ctx.strokeStyle = 'rgba(100,116,139,0.55)'; ctx.lineWidth = 2;
-                    for (let i = 0; i < 3; i++) {
-                        const off = ((zeit / 6) + i * 9) % 26;
-                        ctx.beginPath(); ctx.moveTo(x - 128 + off, boden - 6 - i * 5); ctx.lineTo(x - 116 + off, boden - 6 - i * 5); ctx.stroke();
-                    }
-                }
-                ctx.restore();
-            }
-
-            function bild(jetzt) {
-                const k = Math.min(3, (jetzt - zuletzt) / 16.7);
-                zuletzt = jetzt;
-                ctx.clearRect(0, 0, W, H);
-                let fallend = 0;
-                for (const t of teile) {
-                    if (t.weg) continue;
-                    if (!t.liegt) {
-                        fallend++;
-                        t.vy = Math.min(3.4, t.vy + 0.045 * k);
-                        t.x += (t.vx + Math.sin(t.phase + t.y / 45) * 0.7) * k;
-                        t.y += t.vy * k;
-                        t.rot += t.vr * k;
-                        if (t.y >= H - t.abstand) {
-                            t.y = H - t.abstand; t.liegt = true;
-                            t.rot = Math.round(t.rot / Math.PI) * Math.PI + (Math.random() - 0.5) * 0.5;
-                        }
-                    }
-                }
-                // Der Sauger kommt, wenn alles liegt (spätestens nach 9 s)
-                const alter = jetzt - t0;
-                if (!sauger.aktiv && (fallend === 0 || alter > 9000)) {
-                    sauger.aktiv = true; sauger.x = W + 140; sauger.start = jetzt;
-                    teile.forEach(t => { if (!t.liegt) { t.liegt = true; t.y = H - t.abstand; } });
-                }
-                let saugt = false;
-                if (sauger.aktiv) {
-                    sauger.x -= (ruhig ? 6 : 2.1) * k;
-                    const mund = sauger.x - 76;
-                    for (const t of teile) {
-                        if (t.weg || !t.liegt) continue;
-                        if (t.saug > 0 || (t.x > mund - 34 && t.x < mund + 30)) {
-                            t.saug = Math.min(1, t.saug + 0.09 * k);
-                            t.x += (mund - t.x) * 0.25 * k;
-                            t.y += (H - 8 - t.y) * 0.25 * k;
-                            saugt = true;
-                            if (t.saug >= 1) t.weg = true;
-                        } else if (t.x > mund + 30) {
-                            // schon überfahren, ohne erfasst zu werden: nachträglich einsaugen
-                            t.saug = 0.01;
-                        }
-                    }
-                }
-                for (const t of teile) if (!t.weg) zeichneTeil(t, 1 - t.saug * 0.8);
-                if (sauger.aktiv) zeichneSauger(sauger.x, jetzt - sauger.start, saugt);
-
-                const fertig = sauger.aktiv && sauger.x < -140 && teile.every(t => t.weg);
-                if (fertig) {
-                    window.removeEventListener('resize', groesse);
-                    if (window.visualViewport) { window.visualViewport.removeEventListener('resize', groesse); window.visualViewport.removeEventListener('scroll', groesse); }
-                    sonde.remove();
-                    c.remove();
-                    return;
-                }
-                requestAnimationFrame(bild);
-            }
-            requestAnimationFrame(bild);
         }
 
         function punkteInit() {
@@ -17567,5 +17450,6 @@
         document.getElementById('clearBtn').addEventListener('click', clearAnswer);
         document.getElementById('continueBtn').addEventListener('click', continueToNextWord);
     </script>
+<script src="gimmicks.js?v=375277c2" data-gim="haupt"></script>
 </body>
 </html>
