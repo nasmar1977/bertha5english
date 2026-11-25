@@ -23,6 +23,11 @@ Deutsch, GEWI, NAWI und Musik. Bis Version 2.49 hieß sie „Vokabel-Abenteuer�
 - ✅ 🎉 **Konfetti-Knopf** und ❄️ **Schnee-Knopf** als Belohnung für 10 Richtige in Folge – im Vokabeltrainer und auf
   den Latein-Unterseiten, dort auch Punkte und Serie – siehe „Spaß-Teile“.
 
+### ✅ Fächer ohne aktuelle Inhalte
+Karten auf der Startseite mit der Klasse `erledigt` (zurzeit Musik, Deutsch, GEWI, NAWI) bekommen einen grauen
+Schleier, aus dem ein Haken ausgeschnitten ist (`::after` mit zwei Masken, `mask-composite: exclude` bzw.
+`-webkit-mask-composite: xor`). Die Karte bleibt anklickbar. Gibt es wieder etwas Neues, die Klasse einfach entfernen.
+
 ### 🦉 Name und Logo
 - **Pauki**, eine orange Eule mit Schriftzug. Original: `pauki-logo.svg` (Quer-Logo, durchsichtig). Daraus erzeugt
   `tools/pauki-assets.py` die Eule allein (`pauki-eule.svg`, Favicon), `favicon-32.png`, `apple-touch-icon.png`
@@ -388,7 +393,7 @@ führt alle 124 Verben aus Lektion 1–10 in sieben Tabellen. Begriffe wie im Bu
 
 ## 🎯 Aktueller Stand
 
-**Version:** 2.51.1
+**Version:** 2.52.0
 **Datum:** 25.11.2026
 **Englisch:** 265 Vokabeln (6. Kl. Theme 1: 66 + 5. Kl. Theme 2: 77 + Theme 3: 98 +
 Vokabeln April: 24) + 27 Redewendungen
@@ -450,6 +455,10 @@ Live: [https://nasmar1977.github.io/bertha5english/](https://nasmar1977.github.i
 - **Enter/Space:** Antwort prüfen / Weiter
 
 ## 📝 Changelog
+
+### Version 2.52.0 (25.11.2026)
+- **Erledigte Fächer:** Musik, Deutsch, GEWI und NAWI tragen auf der Startseite einen grauen Schleier mit
+  ausgeschnittenem Haken (Abschnitt „Fächer ohne aktuelle Inhalte“).
 
 ### Version 2.51.1 (25.11.2026)
 - **Rakete bei 320 px:** Die Antwortspalte lief rechts aus der Karte (Grid-Spalte `1fr` wuchs mit dem längsten Wort).

@@ -870,6 +870,17 @@
         .lang-card.latin {
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
         }
+        /* Fach ohne aktuelle Inhalte: grauer Schleier, aus dem ein Haken ausgeschnitten ist. Die Karte bleibt anklickbar. */
+        .lang-card.erledigt { position: relative; }
+        .lang-card.erledigt::after {
+            content: ''; position: absolute; top: -3px; right: -3px; bottom: -3px; left: -3px; border-radius: 20px; pointer-events: none;
+            background: rgba(84, 90, 106, 0.8);
+            --haken: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M13 34 L27 48 L52 19' fill='none' stroke='black' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            -webkit-mask: var(--haken) center / 104px 104px no-repeat, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: var(--haken) center / 104px 104px no-repeat, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+        }
         .lang-card.musik {
             background: linear-gradient(135deg, #e0c3fc 0%, #c2e9fb 100%);
         }
@@ -3251,7 +3262,7 @@
                 <div class="lang-title">Latein</div>
                 <div class="lang-info">Vokabeln, Verben &amp; Sätze</div>
             </div>
-            <div class="lang-card musik" role="button" tabindex="0"
+            <div class="lang-card musik erledigt" title="Gerade nichts Aktuelles – die Übungen kannst du trotzdem öffnen" role="button" tabindex="0"
                  onclick="selectLanguage('musik')"
                  onkeydown="if (event.key === 'Enter') selectLanguage('musik')">
                 <div class="lang-icon">🎻</div>
@@ -3259,7 +3270,7 @@
                 <div class="lang-info">Probearbeiten: Die Moldau &amp; Holzbläser</div>
             </div>
             <!-- Gabel: eigene Seite, eigener Speicher (deutsch.html) -->
-            <div class="lang-card deutsch" role="link" tabindex="0"
+            <div class="lang-card deutsch erledigt" title="Gerade nichts Aktuelles – die Übungen kannst du trotzdem öffnen" role="link" tabindex="0"
                  onclick="location.href='deutsch.html'"
                  onkeydown="if (event.key === 'Enter') location.href='deutsch.html'">
                 <div class="lang-icon">📕</div>
@@ -3267,7 +3278,7 @@
                 <div class="lang-info">Satzglieder, Wortarten &amp; „Wolf“</div>
             </div>
             <!-- Gabel: eigene Seite, eigener Speicher (gewi.html) -->
-            <div class="lang-card gewi" role="link" tabindex="0"
+            <div class="lang-card gewi erledigt" title="Gerade nichts Aktuelles – die Übungen kannst du trotzdem öffnen" role="link" tabindex="0"
                  onclick="location.href='gewi.html'"
                  onkeydown="if (event.key === 'Enter') location.href='gewi.html'">
                 <div class="lang-icon">🗳️</div>
@@ -3275,7 +3286,7 @@
                 <div class="lang-info">Demokratie: Athen &amp; heute</div>
             </div>
             <!-- Gabel: Zwischenmenü nawi-menu.html → nawi-mission.html (neu) oder nawi.html (Version 1), je eigener Speicher -->
-            <div class="lang-card nawi" role="link" tabindex="0"
+            <div class="lang-card nawi erledigt" title="Gerade nichts Aktuelles – die Übungen kannst du trotzdem öffnen" role="link" tabindex="0"
                  onclick="location.href='nawi-menu.html'"
                  onkeydown="if (event.key === 'Enter') location.href='nawi-menu.html'">
                 <div class="lang-icon">⚖️</div>
@@ -8156,9 +8167,16 @@
         // CHANGELOG SPLASH – shown once per version
         // ===================================================================
 
-        const APP_VERSION = '2.51.1';
+        const APP_VERSION = '2.52.0';
 
         const changelogEntries = [
+            {
+                version: '2.52.0',
+                date: '25.11.2026',
+                items: [
+                    '<b>Musik, Deutsch, GEWI und NAWI</b> haben jetzt einen grauen Schleier mit Haken: Dort ist gerade alles erledigt. Die Übungen kannst du trotzdem noch öffnen.'
+                ]
+            },
             {
                 version: '2.51.1',
                 date: '25.11.2026',
